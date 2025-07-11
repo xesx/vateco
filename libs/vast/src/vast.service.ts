@@ -1,36 +1,52 @@
-// import { HttpService } from '@nestjs/axios'
+import * as assert from 'node:assert/strict'
+
+import axios from 'axios'
+
 import { Injectable } from '@nestjs/common'
-// import { firstValueFrom } from 'rxjs'
+import { ConfigService } from '@nestjs/config'
 
 @Injectable()
 export class VastService {
-  private readonly baseUrl = 'https://api.vast.ai/v0'
-  // private readonly apiKey = process.env.VAST_API_KEY
+  private readonly baseUrl = 'https://console.vast.ai/api/v0'
+  private readonly apiKey: string
 
-  // constructor(private readonly http: HttpService) {}
+  constructor(private readonly configService: ConfigService) {
+    const apiKey = this.configService.get<string>('VAST_AI_API_KEY')
+    assert(apiKey)
 
-  test() {
-    return 'test vast ai response'
+    this.apiKey = apiKey
   }
 
-  // private get headers() {
-  //   return {
-  //     Authorization: `Bearer ${this.apiKey}`,
-  //     'Content-Type': 'application/json',
-  //   }
-  // }
+  private get headers() {
+    return {
+      'Authorization': `Bearer ${this.apiKey}`,
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+    }
+  }
 
-  // async listInstances() {
-  //   const response = await firstValueFrom(
-  //     this.http.get(`${this.baseUrl}/instances`, { headers: this.headers }),
-  //   )
-  //   return response.data
-  // }
+  private generateRequestUrl(path): string {
+    return `${this.baseUrl}${path}`
+  }
 
-  // async createInstance(payload: any) {
-  //   const response = await firstValueFrom(
-  //     this.http.post(`${this.baseUrl}/instances`, payload, { headers: this.headers }),
-  //   )
-  //   return response.data
-  // }
+  async importBalance(): Promise<any> {
+    const response = await axios.get(this.generateRequestUrl('/users/{user_id}/machine-earnings/'), {
+      headers: this.headers,
+    })
+
+    return response?.data
+  }
+
+  async importOffers(): Promise<any> {
+    const response = await axios.put(this.generateRequestUrl('/search/asks/'), {
+      headers: this.headers,
+      body: {
+        q: {
+          gpu_name: { 'eq': 'RTX 3090' },
+        }
+      }
+    })
+
+    return response?.data
+  }
 }

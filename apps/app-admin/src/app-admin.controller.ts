@@ -7,7 +7,7 @@ export class AppAdminController {
   constructor(private readonly vastService: VastService) {}
 
   @Get('version')
-  getHello(): string {
-    return this.vastService.test()
+  async test(): Promise<any> {
+    return await this.vastService.importOffers()
   }
 }
