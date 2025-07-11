@@ -1,12 +1,20 @@
-import { NestFactory } from '@nestjs/core'
-import { AppModule } from './app.module'
+import * as assert from 'node:assert'
 
-const PORT = 3000
+import { NestFactory } from '@nestjs/core'
+import { ConfigService } from '@nestjs/config'
+
+import { AppModule } from './app.module'
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule)
-  await app.listen(process.env.PORT ?? PORT)
-  console.log('Listening on port:', PORT)
+
+  const config = app.get(ConfigService)
+  const port = config.get<number>('PORT')
+
+  assert(port, 'main_bootstrap_43 "port" is undefined')
+
+  await app.listen(port)
+  console.log('Listening on port:', port)
 }
 
 bootstrap()
