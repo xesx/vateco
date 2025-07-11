@@ -4,5 +4,26 @@
   "sourceRoot": "src",
   "compilerOptions": {
     "deleteOutDir": true
+  },
+  "monorepo": true,
+  "projects": {
+    "app-admin": {
+      "type": "application",
+      "root": "apps/app-admin",
+      "entryFile": "main",
+      "sourceRoot": "apps/app-admin/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/app-admin/tsconfig.app.json"
+      }
+    },
+    "app-bot": {
+      "type": "application",
+      "root": "apps/app-bot",
+      "entryFile": "main",
+      "sourceRoot": "apps/app-bot/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/app-bot/tsconfig.app.json"
+      }
+    }
   }
 }

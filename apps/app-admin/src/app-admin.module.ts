@@ -1,8 +1,7 @@
 import { Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
 
-import { AppController } from './app.controller'
-import { AppService } from './app.service'
+import { AppAdminController } from './app-admin.controller'
 
 @Module({
   imports: [
@@ -11,7 +10,7 @@ import { AppService } from './app.service'
       envFilePath: ['.env'], // можно указать разные файлы для dev/prod
     }),
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [AppAdminController],
+  providers: [],
 })
-export class AppModule {}
+export class AppAdminModule {}
