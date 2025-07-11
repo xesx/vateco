@@ -8,9 +8,9 @@
   "scripts": {
     "build": "nest build",
     "format": "prettier --write \"apps/**/*.ts\" \"libs/**/*.ts\"",
-    "start:admin:dev": "nest start --watch",
-    "start:admin:debug": "nest start --debug --watch",
-    "start:admin:prod": "node dist/main",
+    "start:admin:dev": "npx nest start app-admin --watch",
+    "start:admin:debug": "npx nest start app-admin --debug --watch",
+    "start:admin:prod": "node dist/apps/app-admin/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest",
     "test:watch": "jest --watch",

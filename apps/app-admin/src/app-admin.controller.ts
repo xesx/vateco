@@ -1,11 +1,13 @@
 import { Controller, Get } from '@nestjs/common'
 
+import { VastService } from '@libs/vast'
+
 @Controller()
 export class AppAdminController {
-  constructor() {}
+  constructor(private readonly vastService: VastService) {}
 
-  @Get()
+  @Get('version')
   getHello(): string {
-    return 'asdasdsad'
+    return this.vastService.test()
   }
 }

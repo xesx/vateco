@@ -1,5 +1,5 @@
 {
-  "extends": "../../tsconfig.json",
+  "extends": "../../tsconfig.json.json",
   "compilerOptions": {
     "declaration": false,
     "outDir": "../../dist/apps/app-bot"
