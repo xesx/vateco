@@ -14,7 +14,8 @@ async function bootstrap() {
   assert(port, 'main_bootstrap_43 "port" is undefined')
 
   await app.listen(port)
-  console.log('Listening on port:', port)
+
+  console.log('main_bootstrap_99 Listening on port:', port)
 }
 
 bootstrap()
