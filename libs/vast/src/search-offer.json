@@ -1,0 +1,65 @@
+{
+  "gpu_name": {
+    "in": [
+      "RTX 3090",
+      "RTX 4090",
+      "RTX 5090",
+      "RTX 3080",
+      "RTX 3070",
+      "RTX 3060"
+    ]
+  },
+  "disk_space": {
+    "gte": 79.99999999999997
+  },
+  "allocated_storage": 79.99999999999997,
+  "duration": {
+    "gte": 259200
+  },
+  "type": "ask",
+  "rentable": {
+    "eq": true
+  },
+  "verified": {
+    "eq": true
+  },
+  "reliability2": {
+    "gte": 0.9
+  },
+  "dph_total": {
+    "lte": 0.7330583785946045
+  },
+  "inet_down_cost": {
+    "lte": 0.0009792738631846463
+  },
+  "inet_up_cost": {
+    "lte": 9.339083320471251E-10
+  },
+  "image_tag": {
+    "eq": "vastai/comfy:@vastai-automatic-tag"
+  },
+  "direct_port_count": {
+    "gte": 2
+  },
+  "order": [
+    [
+      "dph_total",
+      "asc"
+    ],
+    [
+      "total_flops",
+      "asc"
+    ]
+  ],
+  "sort_option": {
+    "0": [
+      "dph_total",
+      "asc"
+    ],
+    "1": [
+      "total_flops",
+      "asc"
+    ]
+  },
+  "limit": 192
+}

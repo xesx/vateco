@@ -30,7 +30,8 @@ export class VastService {
   }
 
   async importBalance(): Promise<any> {
-    const response = await axios.get(this.generateRequestUrl('/users/{user_id}/machine-earnings/'), {
+    const path = '/users/{user_id}/machine-earnings/'
+    const response = await axios.get(this.generateRequestUrl(path), {
       headers: this.headers,
     })
 
@@ -38,11 +39,19 @@ export class VastService {
   }
 
   async importOffers(): Promise<any> {
-    const response = await axios.put(this.generateRequestUrl('/search/asks/'), {
+    const path = '/search/asks/'
+    const response = await axios.put(this.generateRequestUrl(path), {
       headers: this.headers,
       body: {
         q: {
-          gpu_name: { 'eq': 'RTX 3090' },
+          'gpu_name': { 'eq': 'RTX 3090' },
+          'disk_space': { 'gte': 100 },
+          'allocated_storage': 100,
+          'rentable': { 'eq': true },
+          'limit': 100,
+          'inet_down_cost': { 'lte': 0.001 },
+          'inet_up_cost': { 'lte': 100.00 },
+          'dph_total': { 'lte': 0.50 },
         }
       }
     })

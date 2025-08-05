@@ -6,7 +6,7 @@ import { VastService } from '@libs/vast'
 export class AppAdminController {
   constructor(private readonly vastService: VastService) {}
 
-  @Get('version')
+  @Get('vast/search/offers')
   async test(): Promise<any> {
     return await this.vastService.importOffers()
   }
