@@ -2,7 +2,14 @@ import { Module } from '@nestjs/common'
 import { ConfigModule, ConfigService } from '@nestjs/config'
 
 import { TelegrafModule } from 'nestjs-telegraf'
-import { AppTelegramBotService } from './app-telegram-bot.service'
+// import { AppTelegramBotService } from './app-telegram-bot.service'
+
+import { CommonHandlerTgBot } from './handler/common.handler.tg-bot'
+
+import { HelpCommandTgBot } from './command/help.command.tg-bot'
+import { StartCommandTgBot } from './command/start.command.tg-bot'
+
+import { MenuCallbackTgBot } from './callback/menu.callback.tg-bot'
 
 @Module({
   imports: [
@@ -25,7 +32,13 @@ import { AppTelegramBotService } from './app-telegram-bot.service'
     }),
   ],
   controllers: [],
-  providers: [AppTelegramBotService],
+  providers: [
+    // order is important, as handlers are executed in the order they are registered
+    HelpCommandTgBot,
+    StartCommandTgBot,
+    MenuCallbackTgBot,
+    CommonHandlerTgBot,
+  ],
 })
 
 export class AppTelegramBotModule {}
