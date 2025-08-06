@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common'
 import { ConfigModule, ConfigService } from '@nestjs/config'
 
 import { TelegrafModule } from 'nestjs-telegraf'
-import { AppBotService } from './app-bot.service'
+import { AppTelegramBotService } from './app-telegram-bot.service'
 
 @Module({
   imports: [
@@ -25,7 +25,7 @@ import { AppBotService } from './app-bot.service'
     }),
   ],
   controllers: [],
-  providers: [AppBotService],
+  providers: [AppTelegramBotService],
 })
 
-export class AppBotModule {}
+export class AppTelegramBotModule {}

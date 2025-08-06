@@ -16,13 +16,13 @@
         "tsConfigPath": "apps/app-admin/tsconfig.app.json"
       }
     },
-    "app-bot": {
+    "app-telegram-bot": {
       "type": "application",
-      "root": "apps/app-bot",
+      "root": "apps/app-telegram-bot",
       "entryFile": "main",
-      "sourceRoot": "apps/app-bot/src",
+      "sourceRoot": "apps/app-telegram-bot/src",
       "compilerOptions": {
-        "tsConfigPath": "apps/app-bot/tsconfig.app.json"
+        "tsConfigPath": "apps/app-telegram-bot/tsconfig.app.json"
       }
     }
   }

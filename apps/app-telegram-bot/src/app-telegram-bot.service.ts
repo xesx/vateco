@@ -5,7 +5,7 @@ import { Context, Telegraf } from 'telegraf'
 import { message } from 'telegraf/filters'
 
 @Injectable()
-export class AppBotService implements OnModuleInit {
+export class AppTelegramBotService implements OnModuleInit {
   constructor(
     @InjectBot() private readonly bot: Telegraf<Context>
   ) {}

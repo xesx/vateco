@@ -11,7 +11,7 @@
     "start:admin:dev": "npx nest start app-admin --watch",
     "start:admin:debug": "npx nest start app-admin --debug --watch",
     "start:admin:prod": "node dist/apps/app-admin/main",
-    "bot:start": "nest start app-bot",
+    "bot:start": "nest start app-telegram-bot",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest",
     "test:watch": "jest --watch",
