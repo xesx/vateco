@@ -33,11 +33,11 @@ export class SetVastAiInstanceSearchParamsCallbackTgBot {
     // Обработка нажатия кнопки "Закрыть"
     this.bot.action('action:close', (ctx) => {
       this.appTelegramBotService.safeAnswerCallback(ctx)
-      ctx.editMessageText('Меню закрыто.')
+      // ctx.editMessageText('Меню закрыто.')
     })
 
     // Обработка выбора GPU с использованием регулярного выражения
-    this.bot.action(/^action:gpuselect_(.+)$/, (ctx) => {
+    this.bot.action(/^action:gpuselect:(.+)$/, (ctx) => {
       const gpuModel = ctx.match[1] // извлекаем часть после подчеркивания
       ctx.session.vastAi.searchParams.gpu = gpuModel
 
@@ -81,9 +81,9 @@ export class SetVastAiInstanceSearchParamsCallbackTgBot {
     ctx.editMessageText(
       'Select GPU:',
       Markup.inlineKeyboard([
-        [Markup.button.callback('RTX 3060', 'action:gpuselect_RTX 3060')],
-        [Markup.button.callback('RTX 3090', 'action:gpuselect_RTX 3090')],
-        [Markup.button.callback('RTX 4090', 'action:gpuselect_RTX 4090')],
+        [Markup.button.callback('RTX 3060', 'action:gpuselect:RTX 3060')],
+        [Markup.button.callback('RTX 3090', 'action:gpuselect:RTX 3090')],
+        [Markup.button.callback('RTX 4090', 'action:gpuselect:RTX 4090')],
       ]),
     )
   }
