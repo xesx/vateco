@@ -48,10 +48,11 @@ export class VastService {
           'disk_space': { 'gte': 100 },
           'allocated_storage': 100,
           'rentable': { 'eq': true },
+          "static_ip": { "eq": true },
           'limit': 100,
-          'inet_down_cost': { 'lte': 0.001 },
-          'inet_up_cost': { 'lte': 100.00 },
-          'dph_total': { 'lte': 0.50 },
+          'inet_down_cost': { 'lte': 0.005 },
+          'inet_up_cost': { 'lte': 0.005 },
+          'dph_total': { 'lte': 0.80 },
         }
       }
     })
@@ -59,3 +60,5 @@ export class VastService {
     return response?.data
   }
 }
+
+

@@ -18,5 +18,11 @@ export interface SessionData {
   step?: string
   userId?: number
   counter?: number
+  vastAi?: {
+    instance: any
+    searchParams: {
+      gpu?: string
+      [key: string]: any
+    }
+  }
 }
-

@@ -11,6 +11,7 @@ export class HelpCommandTgBot {
         '*Доступные команды:*\n' +
         '/start — начать диалог\n' +
         '/help — это сообщение\n' +
+        '/searchparams — это сообщение\n' +
         '/menu — показать меню',
         {
           parse_mode: 'Markdown',

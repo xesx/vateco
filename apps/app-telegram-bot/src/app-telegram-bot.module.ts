@@ -8,13 +8,18 @@ import { TelegrafModule } from 'nestjs-telegraf'
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const LocalSession = require('telegraf-session-local') as LocalSessionConstructor
 
+import { VastModule } from '@libs/vast'
+
 import { CommonHandlerTgBot } from './handler/common.handler.tg-bot'
 
 import { HelpCommandTgBot } from './command/help.command.tg-bot'
 import { StartCommandTgBot } from './command/start.command.tg-bot'
 import { TestCommandTgBot } from './command/test.command.tg-bot'
 
-import { MenuCallbackTgBot } from './callback/menu.callback.tg-bot'
+import {
+  MenuCallbackTgBot,
+  SearchVastAiInstanceParamsCallbackTgBot,
+} from './callback'
 
 @Module({
   imports: [
@@ -45,6 +50,7 @@ import { MenuCallbackTgBot } from './callback/menu.callback.tg-bot'
       },
       inject: [ConfigService],
     }),
+    VastModule,
   ],
   controllers: [],
   providers: [
@@ -52,7 +58,10 @@ import { MenuCallbackTgBot } from './callback/menu.callback.tg-bot'
     HelpCommandTgBot,
     StartCommandTgBot,
     TestCommandTgBot,
+
     MenuCallbackTgBot,
+    SearchVastAiInstanceParamsCallbackTgBot,
+
     CommonHandlerTgBot,
   ],
 })
