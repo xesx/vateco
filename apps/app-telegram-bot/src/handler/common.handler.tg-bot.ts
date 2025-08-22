@@ -4,6 +4,7 @@ import { InjectBot } from 'nestjs-telegraf'
 import { Context, Telegraf } from 'telegraf'
 import { message } from 'telegraf/filters'
 
+
 @Injectable()
 export class CommonHandlerTgBot {
   constructor(@InjectBot() private readonly bot: Telegraf<Context>) {
