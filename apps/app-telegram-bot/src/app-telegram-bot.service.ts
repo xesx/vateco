@@ -1,34 +1,24 @@
-import { Injectable, OnModuleInit } from '@nestjs/common'
-import { InjectBot } from 'nestjs-telegraf'
+import { Injectable } from '@nestjs/common'
+// import { InjectBot } from 'nestjs-telegraf'
 
-import { Context, Telegraf } from 'telegraf'
+// import { Telegraf } from 'telegraf'
+import { TelegramContext } from './types'
 // import { message } from 'telegraf/filters'
 
 @Injectable()
-export class AppTelegramBotService implements OnModuleInit {
-  constructor(
-    @InjectBot() private readonly bot: Telegraf<Context>
-  ) {}
+export class AppTelegramBotService {
+  // constructor(
+  //   @InjectBot() private readonly bot: Telegraf<TelegramContext>
+  // ) {}
 
-  onModuleInit() {
-    this.bot.start((ctx) =>
-      ctx.reply('🚀 Бот запущен! Используй /search для поиска.')
-    )
-    //
-    // this.bot.command('search', async (ctx) => {
-    //   try {
-    //     // const result = await this.vastService.searchOffer({ query: 'gpu' });
-    //     const result = [{a: 1, b: 2}, {c: 3, d: 4}] // Заглушка для примера
-    //     await ctx.reply(`Результат поиска: ${JSON.stringify(result, null, 2)}`)
-    //   } catch (error) {
-    //     await ctx.reply(`Ошибка: ${error.message}`)
-    //   }
-    // })
-    //
-    // this.bot.on(message('text'), (ctx) => {
-    //   ctx.reply(`Вы написали: "${ctx.message.text}"`)
-    // })
-
-    console.log('✅ Telegram bot is running (polling mode)')
+  safeAnswerCallback(ctx: TelegramContext, text?: string) {
+    try {
+      ctx.answerCbQuery(text)
+    } catch (error) {
+      // Игнорируем ошибки timeout для answerCbQuery
+      if (!error.message?.includes('query is too old')) {
+        console.error('AnswerCbQuery error:', error)
+      }
+    }
   }
 }

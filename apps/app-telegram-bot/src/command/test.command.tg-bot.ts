@@ -12,7 +12,7 @@ export class TestCommandTgBot {
   ) {
     this.bot.command('test', async (ctx) => {
 
-      const offers = await this.vastService.importOffers()
+      const offers = await this.vastService.importOffers({ gpu: 'RTX 3060' })
       console.log('\x1b[36m', 'offers', offers, '\x1b[0m')
 
       ctx.reply(
