@@ -23,6 +23,8 @@ import {
   SetVastAiInstanceSearchParamsCallbackTgBot,
   SearchVastAiOfferCallbackTgBot,
   CreateVastAiInstanceCallbackTgBot,
+  ShowVastAiInstanceCallbackTgBot,
+  DestroyVastAiInstanceCallbackTgBot,
 } from './callback'
 
 @Module({
@@ -53,7 +55,7 @@ import {
               ctx.session.step = ctx.session.step || '__undefined__'
 
               ctx.session.vastAi ??= {}
-              ctx.session.vastAi.instance ??= null
+              ctx.session.vastAi.instance ??= {}
               ctx.session.vastAi.searchParams ??= {}
               ctx.session.vastAi.searchParams.gpu ??= 'RTX 3060'
               ctx.session.vastAi.searchParams.geolocation ??= '' +
@@ -80,6 +82,8 @@ import {
     SetVastAiInstanceSearchParamsCallbackTgBot,
     SearchVastAiOfferCallbackTgBot,
     CreateVastAiInstanceCallbackTgBot,
+    ShowVastAiInstanceCallbackTgBot,
+    DestroyVastAiInstanceCallbackTgBot,
 
     CommonHandlerTgBot,
   ],

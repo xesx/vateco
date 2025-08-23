@@ -15,8 +15,8 @@ export interface CallbackData {
 }
 
 export type VastAiInstance = {
-  id: number
-  rent: boolean
+  id?: number
+  offerId?: number
   [key: string]: any
 }
 
@@ -25,7 +25,7 @@ export interface SessionData {
   userId?: number
   counter?: number
   vastAi: {
-    instance: VastAiInstance | null
+    instance: VastAiInstance
     searchParams: {
       gpu: string
       geolocation: string

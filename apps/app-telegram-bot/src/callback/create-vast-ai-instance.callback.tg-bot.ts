@@ -23,7 +23,7 @@ export class CreateVastAiInstanceCallbackTgBot {
 
   @Step('start')
   private async handleCreateVastAiInstance(ctx: TelegramContext) {
-    const offerId = ctx.session.vastAi.instance?.id
+    const offerId = ctx.session.vastAi.instance?.offerId
 
     if (!offerId) {
       ctx.reply('No instance selected. Use /search to find an instance first.')
@@ -31,9 +31,12 @@ export class CreateVastAiInstanceCallbackTgBot {
     }
 
     const result = await this.vastService.createInstance({ offerId })
+    ctx.session.step = 'rent'
+    ctx.session.vastAi.instance.id = result.new_contract
+
     console.log('\x1b[36m', 'result', result, '\x1b[0m');
 
-    ctx.reply('Instance creation initiated. Check your Vast.ai dashboard for details.')
+    ctx.reply('Instance creation initiated. Check your Vast.ai dashboard for details.' + JSON.stringify(result))
     // if (ctx.callbackQuery) {
     //   ctx.editMessageText(message, keyboard)
     // } else {

@@ -34,8 +34,12 @@ export class BaseCommandTgBot {
       '*Доступные команды:*\n' +
       '/start — начать диалог\n' +
       '/help — это сообщение\n' +
-      '/searchparams — это сообщение\n' +
-      '/menu — показать меню',
+      '/searchparams\n' +
+      '/search\n' +
+      '/create\n' +
+      '/show\n' +
+      '/destroy\n' +
+      '/test — показать меню',
       {
         parse_mode: 'Markdown',
         ...Markup.removeKeyboard(),

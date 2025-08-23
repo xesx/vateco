@@ -46,14 +46,20 @@ export class VastService {
 
     const data = {
       'q': {
+        'verified': { 'eq': true },
+        'num_gpus': { 'eq': 1 },
         'gpu_name': { 'eq': gpu },
         'disk_space': { 'gte': 100 },
         'allocated_storage': 100,
         'rentable': { 'eq': true },
+        'reliability2': { 'gte': 0.9 },
+        'duration': { 'gte': 1 },
+        'cuda_max_good': { 'gte': 12.4 },
+        'direct_port_count': { 'gte': 2 },
         'geolocation': geolocation ? { 'in': geolocation } : undefined,
         'static_ip': { 'eq': true },
-        'inet_down_cost': { 'lte': 0.005 },
-        'inet_up_cost': { 'lte': 0.005 },
+        'inet_down_cost': { 'lte': 0.01 },
+        'inet_up_cost': { 'lte': 0.01 },
         'dph_total': { 'lte': 0.8 },
         'type': 'on-demand',
 
@@ -99,6 +105,32 @@ export class VastService {
     const response = await axios.put(
       this.generateRequestUrl(path.replace('{ask_id}', offerId.toString())),
       data,
+      {
+        headers: this.headers,
+      }
+    )
+
+    return response?.data
+  }
+
+  async showInstance({ instanceId }): Promise<any> {
+    const path = `/instances/${instanceId}/`
+
+    const response = await axios.get(
+      this.generateRequestUrl(path),
+      {
+        headers: this.headers,
+      }
+    )
+
+    return response?.data
+  }
+
+  async destroyInstance({ instanceId }): Promise<any> {
+    const path = `/instances/${instanceId}/`
+
+    const response = await axios.delete(
+      this.generateRequestUrl(path),
       {
         headers: this.headers,
       }

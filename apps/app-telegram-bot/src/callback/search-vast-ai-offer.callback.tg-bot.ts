@@ -21,20 +21,15 @@ export class SearchVastAiOfferCallbackTgBot {
     this.bot.command('search', (ctx) => this.handleSearchVastAiOffer(ctx))
 
     // Обработка выбора инстанса
-    this.bot.action(/^action:select_vast_inctance:(.+)$/, (ctx) => {
-      const instanceId = ctx.match[1] // извлекаем часть после подчеркивания
+    this.bot.action(/^action:select_vast_offer:(.+)$/, (ctx) => {
+      const offerId = ctx.match[1] // извлекаем часть после подчеркивания
 
-      console.log('\x1b[36m', 'instanceId', instanceId, '\x1b[0m');
-      ctx.session.vastAi.instance = ctx.session.vastAi.instance || {
-        id: Number(instanceId),
-        rent: false,
-      }
+      console.log('\x1b[36m', 'offerId', offerId, '\x1b[0m');
 
-      ctx.session.vastAi.instance.id = Number(instanceId)
-      ctx.session.vastAi.instance.rent = false
+      ctx.session.vastAi.instance.offerId = Number(offerId)
 
       this.tgbotsrv.safeAnswerCallback(ctx)
-      ctx.reply('Selected Instance Id: ' + instanceId)
+      ctx.reply('Selected offer Id: ' + offerId)
       // this.showSearchParamsMenu(ctx)
     })
   }
@@ -64,8 +59,9 @@ export class SearchVastAiOfferCallbackTgBot {
             o.geolocation,
             o.dph_total.toFixed(2) + '$',
             `cuda ${o.cuda_max_good}`,
+            `rel${o.reliability2?.toFixed?.(2)}`
           ].join(' '),
-          `action:select_vast_inctance:${o.id}`)
+          `action:select_vast_offer:${o.id}`)
         ]
       })
     )
@@ -75,7 +71,5 @@ export class SearchVastAiOfferCallbackTgBot {
     } else {
       ctx.reply(message, keyboard)
     }
-    // console.log(JSON.stringify(offers.offers[0], null, 4))
-    // this.showSearchParamsMenu(ctx)
   }
 }
