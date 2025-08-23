@@ -12,17 +12,35 @@ import { Step } from '../step.decorator'
 import { TelegramContext } from '../types'
 
 @Injectable()
-export class SearchVastAiInstanceCallbackTgBot {
+export class SearchVastAiOfferCallbackTgBot {
   constructor(
     @InjectBot() private readonly bot: Telegraf<TelegramContext>,
-    private readonly appTelegramBotService: AppTelegramBotService,
+    private readonly tgbotsrv: AppTelegramBotService,
     private readonly vastService: VastService,
   ) {
-    this.bot.command('search', (ctx) => this.handleSearch(ctx))
+    this.bot.command('search', (ctx) => this.handleSearchVastAiOffer(ctx))
+
+    // Обработка выбора инстанса
+    this.bot.action(/^action:select_vast_inctance:(.+)$/, (ctx) => {
+      const instanceId = ctx.match[1] // извлекаем часть после подчеркивания
+
+      console.log('\x1b[36m', 'instanceId', instanceId, '\x1b[0m');
+      ctx.session.vastAi.instance = ctx.session.vastAi.instance || {
+        id: Number(instanceId),
+        rent: false,
+      }
+
+      ctx.session.vastAi.instance.id = Number(instanceId)
+      ctx.session.vastAi.instance.rent = false
+
+      this.tgbotsrv.safeAnswerCallback(ctx)
+      ctx.reply('Selected Instance Id: ' + instanceId)
+      // this.showSearchParamsMenu(ctx)
+    })
   }
 
   @Step('start')
-  private async handleSearch(ctx: TelegramContext) {
+  private async handleSearchVastAiOffer(ctx: TelegramContext) {
     const gpu = ctx.session.vastAi.searchParams.gpu
     const selectedGeo = ctx.session.vastAi.searchParams.geolocation
 
@@ -35,8 +53,7 @@ export class SearchVastAiInstanceCallbackTgBot {
     }
 
     const result = await this.vastService.importOffers({ gpu, geolocation })
-    // console.log(result.offers.map(i => ({gpu_name, geolocation})))
-    const offers = result.offers.sort((a, b) => a.dph_total - b.dph_total)
+    const offers = result.offers
 
     const message = 'Результаты поиска:'
     const keyboard = Markup.inlineKeyboard(
@@ -48,7 +65,6 @@ export class SearchVastAiInstanceCallbackTgBot {
             o.dph_total.toFixed(2) + '$',
             `cuda ${o.cuda_max_good}`,
           ].join(' '),
-          // `${o.geolocation} ${o.dph_total}`,
           `action:select_vast_inctance:${o.id}`)
         ]
       })
@@ -62,19 +78,4 @@ export class SearchVastAiInstanceCallbackTgBot {
     // console.log(JSON.stringify(offers.offers[0], null, 4))
     // this.showSearchParamsMenu(ctx)
   }
-
-  // private showSearchParamsMenu(ctx: TelegramContext) {
-  //   const message = 'Параметры поиска:'
-  //   const keyboard = Markup.inlineKeyboard([
-  //     [Markup.button.callback(`GPU name (${ctx.session.vastAi.searchParams.gpu})`, 'action:gpu')],
-  //     [Markup.button.callback(`Geolocation (${ctx.session.vastAi.searchParams.geolocation})`, 'action:geolocation')],
-  //     [Markup.button.callback('❌ Закрыть', 'action:close')],
-  //   ])
-  //
-  //   if (ctx.callbackQuery) {
-  //     ctx.editMessageText(message, keyboard)
-  //   } else {
-  //     ctx.reply(message, keyboard)
-  //   }
-  // }
 }

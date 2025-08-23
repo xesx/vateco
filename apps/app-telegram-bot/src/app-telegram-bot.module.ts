@@ -21,7 +21,8 @@ import { TestCommandTgBot } from './command/test.command.tg-bot'
 import {
   MenuCallbackTgBot,
   SetVastAiInstanceSearchParamsCallbackTgBot,
-  SearchVastAiInstanceCallbackTgBot,
+  SearchVastAiOfferCallbackTgBot,
+  CreateVastAiInstanceCallbackTgBot,
 } from './callback'
 
 @Module({
@@ -77,7 +78,8 @@ import {
 
     MenuCallbackTgBot,
     SetVastAiInstanceSearchParamsCallbackTgBot,
-    SearchVastAiInstanceCallbackTgBot,
+    SearchVastAiOfferCallbackTgBot,
+    CreateVastAiInstanceCallbackTgBot,
 
     CommonHandlerTgBot,
   ],

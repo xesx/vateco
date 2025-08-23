@@ -14,12 +14,18 @@ export interface CallbackData {
   data?: any
 }
 
+export type VastAiInstance = {
+  id: number
+  rent: boolean
+  [key: string]: any
+}
+
 export interface SessionData {
   step?: string
   userId?: number
   counter?: number
   vastAi: {
-    instance: any
+    instance: VastAiInstance | null
     searchParams: {
       gpu: string
       geolocation: string

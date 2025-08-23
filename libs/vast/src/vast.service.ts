@@ -52,15 +52,52 @@ export class VastService {
         'rentable': { 'eq': true },
         'geolocation': geolocation ? { 'in': geolocation } : undefined,
         'static_ip': { 'eq': true },
-        'limit': 100,
         'inet_down_cost': { 'lte': 0.005 },
         'inet_up_cost': { 'lte': 0.005 },
         'dph_total': { 'lte': 0.8 },
+        'type': 'on-demand',
+
+        'order': [['dph_total', 'asc']],
+        'limit': 20,
       }
     }
 
     const response = await axios.put(
       this.generateRequestUrl(path),
+      data,
+      {
+        headers: this.headers,
+      }
+    )
+
+    return response?.data
+  }
+
+  async createInstance({
+    offerId,
+    // image,
+    // diskSpace = 100,
+    // label,
+    // onstart,
+    // runargs
+  }: {
+    offerId: number
+    // image: string
+    // diskSpace?: number
+    // label?: string
+    // onstart?: string
+    // runargs?: string[]
+  }): Promise<any> {
+    const path = '/asks/{ask_id}/'
+
+    const data = {
+      'template_id': 238049,
+      // 'template_hash_id': '38b51029b13fd32ff54dc8782beec17f',
+      'client_id': 'me',
+    }
+
+    const response = await axios.put(
+      this.generateRequestUrl(path.replace('{ask_id}', offerId.toString())),
       data,
       {
         headers: this.headers,
