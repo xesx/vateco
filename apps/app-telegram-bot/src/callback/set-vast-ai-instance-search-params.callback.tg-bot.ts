@@ -13,26 +13,26 @@ import { TelegramContext } from '../types'
 export class SetVastAiInstanceSearchParamsCallbackTgBot {
   constructor(
     @InjectBot() private readonly bot: Telegraf<TelegramContext>,
-    @Inject() private readonly appTelegramBotService: AppTelegramBotService,
+    @Inject() private readonly tgbotsrv: AppTelegramBotService,
   ) {
     // Команда, чтобы показать меню
     this.bot.command('searchparams', (ctx) => this.handleSearchParams(ctx))
 
     // Обработка нажатия кнопки "GPU name"
     this.bot.action('action:gpu', (ctx) => {
-      this.appTelegramBotService.safeAnswerCallback(ctx) // подтверждаем нажатие
+      this.tgbotsrv.safeAnswerCallback(ctx) // подтверждаем нажатие
       this.showGpuSelectionMenu(ctx)
     })
 
     // Обработка нажатия кнопки "Geolocation"
     this.bot.action('action:geolocation', (ctx) => {
-      this.appTelegramBotService.safeAnswerCallback(ctx) // подтверждаем нажатие
+      this.tgbotsrv.safeAnswerCallback(ctx) // подтверждаем нажатие
       this.showGeolocationSelectionMenu(ctx)
     })
 
     // Обработка нажатия кнопки "Закрыть"
     this.bot.action('action:close', (ctx) => {
-      this.appTelegramBotService.safeAnswerCallback(ctx)
+      this.tgbotsrv.safeAnswerCallback(ctx)
       // ctx.editMessageText('Меню закрыто.')
     })
 
@@ -41,7 +41,7 @@ export class SetVastAiInstanceSearchParamsCallbackTgBot {
       const gpuModel = ctx.match[1] // извлекаем часть после подчеркивания
       ctx.session.vastAi.searchParams.gpu = gpuModel
 
-      this.appTelegramBotService.safeAnswerCallback(ctx)
+      this.tgbotsrv.safeAnswerCallback(ctx)
       ctx.reply('Selected GPU: ' + gpuModel)
       this.showSearchParamsMenu(ctx)
     })
@@ -51,7 +51,7 @@ export class SetVastAiInstanceSearchParamsCallbackTgBot {
       const geolocation = ctx.match[1] // извлекаем часть после подчеркивания
       ctx.session.vastAi.searchParams.geolocation = geolocation
 
-      this.appTelegramBotService.safeAnswerCallback(ctx)
+      this.tgbotsrv.safeAnswerCallback(ctx)
       ctx.reply('Selected Geolocation: ' + geolocation)
       this.showSearchParamsMenu(ctx)
     })

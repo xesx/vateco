@@ -34,9 +34,32 @@ export class SearchVastAiInstanceCallbackTgBot {
       geolocation = ['RU', 'SE', 'GB', 'PL', 'PT', 'SI', 'DE', 'IT']
     }
 
-    console.log('\x1b[36m', '{ gpu, geolocation }', { gpu, geolocation }, '\x1b[0m')
-    const offers = await this.vastService.importOffers({ gpu, geolocation })
-    console.log(offers)
+    const result = await this.vastService.importOffers({ gpu, geolocation })
+    // console.log(result.offers.map(i => ({gpu_name, geolocation})))
+    const offers = result.offers.sort((a, b) => a.dph_total - b.dph_total)
+
+    const message = 'Результаты поиска:'
+    const keyboard = Markup.inlineKeyboard(
+      offers.map(o => {
+        return [Markup.button.callback(
+          [
+            `${o.num_gpus}x ${o.gpu_name}`,
+            o.geolocation,
+            o.dph_total.toFixed(2) + '$',
+            `cuda ${o.cuda_max_good}`,
+          ].join(' '),
+          // `${o.geolocation} ${o.dph_total}`,
+          `action:select_vast_inctance:${o.id}`)
+        ]
+      })
+    )
+
+    if (ctx.callbackQuery) {
+      ctx.editMessageText(message, keyboard)
+    } else {
+      ctx.reply(message, keyboard)
+    }
+    // console.log(JSON.stringify(offers.offers[0], null, 4))
     // this.showSearchParamsMenu(ctx)
   }
 

@@ -19,8 +19,8 @@ export class VastService {
 
   private get headers() {
     return {
-      'Authorization': `Bearer ${this.apiKey}`,
-      'Accept': 'application/json',
+      Authorization: `Bearer ${this.apiKey}`,
+      Accept: 'application/json',
       'Content-Type': 'application/json',
     }
   }
@@ -38,28 +38,35 @@ export class VastService {
     return response?.data
   }
 
-  async importOffers({ gpu, geolocation }: { gpu: string, geolocation?: string[] }): Promise<any> {
+  async importOffers({ gpu, geolocation }: {
+    gpu: string
+    geolocation?: string[]
+  }): Promise<any> {
     const path = '/search/asks/'
-    const response = await axios.put(this.generateRequestUrl(path), {
-      headers: this.headers,
-      body: {
-        q: {
-          'gpu_name': { 'eq': gpu },
-          'disk_space': { 'gte': 100 },
-          'allocated_storage': 100,
-          'rentable': { 'eq': true },
-          'geolocation': geolocation ? { 'in': geolocation } : undefined,
-          "static_ip": { "eq": true },
-          'limit': 100,
-          'inet_down_cost': { 'lte': 0.005 },
-          'inet_up_cost': { 'lte': 0.005 },
-          'dph_total': { 'lte': 0.80 },
-        }
+
+    const data = {
+      'q': {
+        'gpu_name': { 'eq': gpu },
+        'disk_space': { 'gte': 100 },
+        'allocated_storage': 100,
+        'rentable': { 'eq': true },
+        'geolocation': geolocation ? { 'in': geolocation } : undefined,
+        'static_ip': { 'eq': true },
+        'limit': 100,
+        'inet_down_cost': { 'lte': 0.005 },
+        'inet_up_cost': { 'lte': 0.005 },
+        'dph_total': { 'lte': 0.8 },
       }
-    })
+    }
+
+    const response = await axios.put(
+      this.generateRequestUrl(path),
+      data,
+      {
+        headers: this.headers,
+      }
+    )
 
     return response?.data
   }
 }
-
-
