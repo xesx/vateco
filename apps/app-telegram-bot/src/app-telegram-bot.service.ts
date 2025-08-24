@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 // import { InjectBot } from 'nestjs-telegraf'
+import { Markup } from 'telegraf'
 
-// import { Telegraf } from 'telegraf'
 import { TelegramContext } from './types'
 // import { message } from 'telegraf/filters'
 
@@ -20,5 +20,22 @@ export class AppTelegramBotService {
         console.error('AnswerCbQuery error:', error)
       }
     }
+  }
+
+  generateInlineKeyboard (options: [string, string][][]){
+    // Пример генерации клавиатуры
+    return Markup.inlineKeyboard(
+      options.map(row =>
+        row.map(([label, action]) =>
+          Markup.button.callback(label, action)
+        )
+      )
+    )
+    // Пример жестко закодированной клавиатуры
+    // return Markup.inlineKeyboard([
+    //   [Markup.button.callback('RTX 3060', 'action:gpuselect:RTX 3060')],
+    //   [Markup.button.callback('RTX 3090', 'action:gpuselect:RTX 3090')],
+    //   [Markup.button.callback('RTX 4090', 'action:gpuselect:RTX 4090')],
+    // ])
   }
 }

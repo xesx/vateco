@@ -12,7 +12,7 @@ import { Step } from '../step.decorator'
 import { TelegramContext } from '../types'
 
 @Injectable()
-export class SearchVastAiOfferCallbackTgBot {
+export class SearchOfferVastAiTgBot {
   constructor(
     @InjectBot() private readonly bot: Telegraf<TelegramContext>,
     private readonly tgbotsrv: AppTelegramBotService,
@@ -45,6 +45,8 @@ export class SearchVastAiOfferCallbackTgBot {
       geolocation = [selectedGeo]
     } else if (selectedGeo === 'europe') {
       geolocation = ['RU', 'SE', 'GB', 'PL', 'PT', 'SI', 'DE', 'IT']
+    } else if (selectedGeo === 'north-america') {
+      geolocation = ['US', 'CA']
     }
 
     const result = await this.vastService.importOffers({ gpu, geolocation })

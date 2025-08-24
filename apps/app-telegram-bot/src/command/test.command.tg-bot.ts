@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { Context, Telegraf } from 'telegraf'
 import { InjectBot } from 'nestjs-telegraf'
+import { Markup } from 'telegraf'
 
 import { VastService } from '@libs/vast'
 
@@ -10,16 +11,14 @@ export class TestCommandTgBot {
     @InjectBot() private readonly bot: Telegraf<Context>,
     private readonly vastService: VastService,
   ) {
-    this.bot.command('test', async (ctx) => {
+    this.bot.command('test', (ctx) => {
 
-      const offers = await this.vastService.importOffers({ gpu: 'RTX 3060' })
-      console.log('\x1b[36m', 'offers', offers, '\x1b[0m')
-
+      // Пример: кнопка "Меню" под полем ввода текста
       ctx.reply(
-        '🚀 test reply',
-        {
-          parse_mode: 'Markdown',
-        },
+        'Выберите действие:',
+        Markup.keyboard([['📋 Меню']])
+          .resize()   // подгоняет под экран
+          .oneTime()  // спрячется после выбора
       )
     })
   }

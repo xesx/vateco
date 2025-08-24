@@ -12,7 +12,7 @@ import { Step } from '../step.decorator'
 import { TelegramContext } from '../types'
 
 @Injectable()
-export class CreateVastAiInstanceCallbackTgBot {
+export class CreateInstanceVastAiTgBot {
   constructor(
     @InjectBot() private readonly bot: Telegraf<TelegramContext>,
     private readonly tgbotsrv: AppTelegramBotService,

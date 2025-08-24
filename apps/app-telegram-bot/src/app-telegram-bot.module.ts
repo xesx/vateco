@@ -14,18 +14,16 @@ import { VastModule } from '@libs/vast'
 
 import { CommonHandlerTgBot } from './handler/common.handler.tg-bot'
 
-// import { HelpCommandTgBot } from './command/help.command.tg-bot'
 import { BaseCommandTgBot } from './command/base.command.tg-bot'
 import { TestCommandTgBot } from './command/test.command.tg-bot'
 
 import {
-  MenuCallbackTgBot,
-  SetVastAiInstanceSearchParamsCallbackTgBot,
-  SearchVastAiOfferCallbackTgBot,
-  CreateVastAiInstanceCallbackTgBot,
-  ShowVastAiInstanceCallbackTgBot,
-  DestroyVastAiInstanceCallbackTgBot,
-} from './callback'
+  SetSearchOfferParamsVastAiTgBot,
+  SearchOfferVastAiTgBot,
+  CreateInstanceVastAiTgBot,
+  ShowInstanceVastAiTgBot,
+  DestroyInstanceVastAiTgBot,
+} from './vast-ai-command'
 
 @Module({
   imports: [
@@ -78,12 +76,11 @@ import {
     BaseCommandTgBot,
     TestCommandTgBot,
 
-    MenuCallbackTgBot,
-    SetVastAiInstanceSearchParamsCallbackTgBot,
-    SearchVastAiOfferCallbackTgBot,
-    CreateVastAiInstanceCallbackTgBot,
-    ShowVastAiInstanceCallbackTgBot,
-    DestroyVastAiInstanceCallbackTgBot,
+    SetSearchOfferParamsVastAiTgBot,
+    SearchOfferVastAiTgBot,
+    CreateInstanceVastAiTgBot,
+    ShowInstanceVastAiTgBot,
+    DestroyInstanceVastAiTgBot,
 
     CommonHandlerTgBot,
   ],

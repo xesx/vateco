@@ -1,0 +1,248 @@
+{
+  "instances":
+  {
+    "actual_status": "running",
+    "bundle_id": 418619184,
+    "bw_nvlink": 0,
+    "client_run_time": 1.1,
+    "compute_cap": 860,
+    "cpu_arch": "amd64",
+    "cpu_cores": 24,
+    "cpu_cores_effective": 12,
+    "cpu_name": "AMD Ryzen 9 5900X 12-Core Processor",
+    "cpu_ram": 31983,
+    "cpu_util": 0.08166666666666667,
+    "credit_balance": null,
+    "credit_discount": null,
+    "credit_discount_max": 0,
+    "cuda_max_good": 12.4,
+    "cur_state": "running",
+    "direct_port_count": 100,
+    "direct_port_end": 40378,
+    "direct_port_start": 40214,
+    "disk_bw": 3705.1791,
+    "disk_name": "nvme",
+    "disk_space": 150,
+    "disk_usage": 0.2529999911785126,
+    "disk_util": 0.2529999911785126,
+    "dlperf": 33.599848,
+    "dlperf_per_dphtotal": 166.61081652892562,
+    "dph_base": 0.16,
+    "dph_total": 0.20166666666666666,
+    "driver_version": "550.127.08",
+    "duration": 569438.8087699413,
+    "end_date": 1756593489,
+    "external": false,
+    "extra_env":
+    [
+      [
+        "-p 1111:1111",
+        "1"
+      ],
+      [
+        "-p 8080:8080",
+        "1"
+      ],
+      [
+        "-p 8384:8384",
+        "1"
+      ],
+      [
+        "-p 72299:72299",
+        "1"
+      ],
+      [
+        "-p 8188:8188",
+        "1"
+      ],
+      [
+        "OPEN_BUTTON_PORT",
+        "1111"
+      ],
+      [
+        "JUPYTER_DIR",
+        "/"
+      ],
+      [
+        "DATA_DIRECTORY",
+        "/workspace/"
+      ],
+      [
+        "PORTAL_CONFIG",
+        "localhost:1111:11111:/:Instance Portal|localhost:8188:18188:/:ComfyUI|localhost:8080:18080:/:Jupyter|localhost:8080:8080:/terminals/1:Jupyter Terminal|localhost:8384:18384:/:Syncthing"
+      ],
+      [
+        "PROVISIONING_SCRIPT",
+        "https://raw.githubusercontent.com/xesx/vastai-scripts/refs/heads/master/start-base.sh"
+      ],
+      [
+        "COMFYUI_ARGS",
+        "--disable-auto-launch --port 18188 --enable-cors-header --listen"
+      ],
+      [
+        "YANDEX_DISK_REFRESH_TOKEN",
+        "1:AAA:1:aNGfX04HuISovJDP:veR1zoh4t9iFpCVmve7Wq6vqJBzvf7ZxqCf3Gt3Hkh7ZbjieyqOKrk8SkeXb02Wi4lfD9Dg:B3GSYugTPzXVbOMX_96DIg"
+      ],
+      [
+        "OPEN_BUTTON_TOKEN",
+        "1"
+      ],
+      [
+        "JUPYTER_TYPE",
+        "lab"
+      ]
+    ],
+    "flops_per_dphtotal": 174.8755041322314,
+    "geolocation": "Bulgaria, BG",
+    "gpu_arch": "nvidia",
+    "gpu_display_active": false,
+    "gpu_frac": 0.5,
+    "gpu_lanes": 8,
+    "gpu_mem_bw": 804.8,
+    "gpu_name": "RTX 3090",
+    "gpu_ram": 24576,
+    "gpu_temp": 50.99995,
+    "gpu_totalram": 24576,
+    "gpu_util": 0,
+    "has_avx": 1,
+    "host_id": 99672,
+    "host_run_time": 2592000,
+    "hosting_type": null,
+    "id": 25248654,
+    "image_args":
+    [],
+    "image_runtype": "jupyter_direc ssh_direc ssh_proxy",
+    "image_uuid": "vastai/comfy:cuda-12.4-auto",
+    "inet_down": 270.6,
+    "inet_down_billed": 33280,
+    "inet_down_cost": 0.0009114583333333332,
+    "inet_up": 163.7,
+    "inet_up_billed": 97587.2,
+    "inet_up_cost": 0.0009114583333333332,
+    "instance":
+    {
+      "gpuCostPerHour": 0.16,
+      "diskHour": 0.041666666666666664,
+      "totalHour": 0.20166666666666666,
+      "discountTotalHour": 0,
+      "discountedTotalPerHour": 0
+    },
+    "intended_status": "running",
+    "internet_down_cost_per_tb": 0.9333333333333332,
+    "internet_up_cost_per_tb": 0.9333333333333332,
+    "is_bid": false,
+    "jupyter_token": "af6e2a3cd6ac2d51fcbd7a182b33ed4e7d8cc3c0e332cc5136373dbfea1ce2c7",
+    "label": null,
+    "local_ipaddrs": "192.168.100.4 192.168.122.1 172.17.0.1 \n",
+    "logo": "/static/logos/vastai_small2.png",
+    "machine_dir_ssh_port": 40399,
+    "machine_id": 19299,
+    "mem_limit": 22.2298112,
+    "mem_usage": 1.02912,
+    "min_bid": 0.7999999999999999,
+    "mobo_name": "X570S AORUS PRO AX",
+    "next_state": "running",
+    "num_gpus": 1,
+    "onstart": "entrypoint.sh",
+    "os_version": "20.04",
+    "pci_gen": 4,
+    "pcie_bw": 12.8,
+    "ports":
+    {
+      "1111/tcp": [
+        {
+          "HostIp": "0.0.0.0",
+          "HostPort": "40214"
+        },
+        {
+          "HostIp": "::",
+          "HostPort": "40214"
+        }
+      ],
+      "22/tcp": [
+        {
+          "HostIp": "0.0.0.0",
+          "HostPort": "40217"
+        },
+        {
+          "HostIp": "::",
+          "HostPort": "40217"
+        }
+      ],
+      "40286/tcp": [
+        {
+          "HostIp": "0.0.0.0",
+          "HostPort": "40286"
+        },
+        {
+          "HostIp": "::",
+          "HostPort": "40286"
+        }
+      ],
+      "8080/tcp":
+      [
+        {
+          "HostIp": "0.0.0.0",
+          "HostPort": "40235"
+        },
+        {
+          "HostIp": "::",
+          "HostPort": "40235"
+        }
+      ],
+      "8188/tcp":
+      [
+        {
+          "HostIp": "0.0.0.0",
+          "HostPort": "40378"
+        },
+        {
+          "HostIp": "::",
+          "HostPort": "40378"
+        }
+      ],
+      "8384/tcp":
+      [
+        {
+          "HostIp": "0.0.0.0",
+          "HostPort": "40216"
+        },
+        {
+          "HostIp": "::",
+          "HostPort": "40216"
+        }
+      ]
+    },
+    "public_ipaddr": "92.247.223.169",
+    "reliability2": 0.996574,
+    "rentable": true,
+    "score": 161.08846769291108,
+    "search":
+    {
+      "gpuCostPerHour": 0.16,
+      "diskHour": 0.041666666666666664,
+      "totalHour": 0.20166666666666666,
+      "discountTotalHour": 0,
+      "discountedTotalPerHour": 0.20166666666666666
+    },
+    "ssh_host": "ssh3.vast.ai",
+    "ssh_idx": "3",
+    "ssh_port": 18654,
+    "start_date": 1756023108.7937963,
+    "static_ip": true,
+    "status_msg": "success, running vastai/comfy_cuda-12.4-auto/jupyter",
+    "storage_cost": 0.19999999999999998,
+    "storage_total_cost": 0.041666666666666664,
+    "template_hash_id": "53839af31a621cdb08db024f2ded716b",
+    "template_id": 272890,
+    "time_remaining": "Unlimited",
+    "time_remaining_isbid": "Unlimited",
+    "total_flops": 35.26656,
+    "uptime_mins": null,
+    "verification": "verified",
+    "vmem_usage": 0.570312,
+    "vram_costperhour": 0.000008205837673611111,
+    "webpage": null,
+    "template_name": "comfyui_api"
+  }
+}
