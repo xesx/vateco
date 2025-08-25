@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { Telegraf } from 'telegraf'
 import { InjectBot } from 'nestjs-telegraf'
-import { Markup } from 'telegraf'
 
 import { VastService } from '@libs/vast'
 

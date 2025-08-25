@@ -10,24 +10,22 @@ import { Step } from '../step.decorator'
 @Injectable()
 export class BaseCommandTgBot {
   constructor(@InjectBot() private readonly bot: Telegraf<TelegramContext>) {
-    this.bot.command('start', (ctx) => this.handleStart(ctx))
+    // this.bot.command('start', (ctx) => this.handleStart(ctx))
     this.bot.command('help', (ctx) => this.handleHelp(ctx))
     // this.bot.command('next', (ctx) => this.handleNext(ctx))
   }
 
-  @Step('__undefined__', '_test')
-  private handleStart(ctx: TelegramContext) {
-    ctx.session.counter = ctx.session.counter || 0
-    ctx.session.counter++
-    ctx.session.step = 'start'
-    ctx.reply(
-      '🚀 Привет! Я — Telegram-бот на NestJS.\n' +
-      'Используй /help, чтобы увидеть список команд.',
-      {
-        parse_mode: 'Markdown',
-      },
-    )
-  }
+  // @Step('__undefined__', '_test')
+  // private handleStart(ctx: TelegramContext) {
+  //   ctx.session.step = 'start'
+  //   ctx.reply(
+  //     '🚀 Привет! Я — Telegram-бот на NestJS.\n' +
+  //     'Используй /help, чтобы увидеть список команд.',
+  //     {
+  //       parse_mode: 'Markdown',
+  //     },
+  //   )
+  // }
 
   private handleHelp(ctx: TelegramContext) {
     ctx.reply(

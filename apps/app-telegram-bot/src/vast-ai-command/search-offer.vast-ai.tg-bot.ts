@@ -19,6 +19,7 @@ export class SearchOfferVastAiTgBot {
     private readonly vastService: VastService,
   ) {
     this.bot.command('search', (ctx) => this.handleSearchVastAiOffer(ctx))
+    this.bot.action('action:search:offers', (ctx) => this.handleSearchVastAiOffer(ctx))
 
     // Обработка выбора инстанса
     this.bot.action(/^action:select_vast_offer:(.+)$/, (ctx) => {
@@ -57,15 +58,18 @@ export class SearchOfferVastAiTgBot {
       offers.map(o => {
         return [Markup.button.callback(
           [
-            `${o.num_gpus}x ${o.gpu_name}`,
-            o.geolocation,
+            `${o?.num_gpus}x ${o.gpu_name}`,
+            (o.geolocation?.split(',')?.[1] || o.geolocation || 'N/A')?.trim?.(),
             o.dph_total.toFixed(2) + '$',
-            `cuda ${o.cuda_max_good}`,
-            `rel${o.reliability2?.toFixed?.(2)}`
+            `cuda ${o.cuda_max_good} `,
+            `[${o.reliability2?.toFixed?.(2)}]`
           ].join(' '),
           `action:select_vast_offer:${o.id}`)
         ]
-      })
+      }).concat([
+        [Markup.button.callback('🔄 Refresh', 'action:search:offers')],
+        [Markup.button.callback('⬅️ Back', 'action:search:params')]
+      ])
     )
 
     if (ctx.callbackQuery) {

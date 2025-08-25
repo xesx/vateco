@@ -79,31 +79,16 @@ export class VastService {
     return response?.data
   }
 
-  async createInstance({
-    offerId,
-    // image,
-    // diskSpace = 100,
-    // label,
-    // onstart,
-    // runargs
-  }: {
-    offerId: number
-    // image: string
-    // diskSpace?: number
-    // label?: string
-    // onstart?: string
-    // runargs?: string[]
-  }): Promise<any> {
-    const path = '/asks/{ask_id}/'
+  async createInstance({ offerId }: { offerId: number }): Promise<any> {
+    const path = `/asks/${offerId}/`
 
     const data = {
       'template_id': 238049,
-      // 'template_hash_id': '38b51029b13fd32ff54dc8782beec17f',
       'client_id': 'me',
     }
 
     const response = await axios.put(
-      this.generateRequestUrl(path.replace('{ask_id}', offerId.toString())),
+      this.generateRequestUrl(path),
       data,
       {
         headers: this.headers,

@@ -1,7 +1,6 @@
 import { Injectable, Inject } from '@nestjs/common'
 import { Telegraf } from 'telegraf'
 import { InjectBot } from 'nestjs-telegraf'
-import { Markup } from 'telegraf'
 
 import { AppTelegramBotService } from '../app-telegram-bot.service'
 
@@ -16,28 +15,29 @@ export class SetSearchOfferParamsVastAiTgBot {
     @Inject() private readonly tgbotsrv: AppTelegramBotService,
   ) {
     // Команда, чтобы показать меню
-    this.bot.command('searchparams', (ctx) => this.handleSearchParams(ctx))
+    this.bot.command('start', (ctx) => this.handleSearchParams(ctx))
+    this.bot.action('action:search:params', (ctx) => this.handleSearchParams(ctx))
 
     // Обработка нажатия кнопки "GPU name"
-    this.bot.action('action:gpu', (ctx) => {
+    this.bot.action('action:search:params:gpu', (ctx) => {
       this.tgbotsrv.safeAnswerCallback(ctx) // подтверждаем нажатие
       this.showGpuSelectionMenu(ctx)
     })
 
     // Обработка нажатия кнопки "Geolocation"
-    this.bot.action('action:geolocation', (ctx) => {
+    this.bot.action('action:search:params:geolocation', (ctx) => {
       this.tgbotsrv.safeAnswerCallback(ctx) // подтверждаем нажатие
       this.showGeolocationSelectionMenu(ctx)
     })
 
     // Обработка нажатия кнопки "Закрыть"
-    this.bot.action('action:close', (ctx) => {
+    this.bot.action('action:search:params:close', (ctx) => {
       this.tgbotsrv.safeAnswerCallback(ctx)
       // ctx.editMessageText('Меню закрыто.')
     })
 
     // Обработка выбора GPU с использованием регулярного выражения
-    this.bot.action(/^action:gpuselect:(.+)$/, (ctx) => {
+    this.bot.action(/^action:search:params:gpu:select:(.+)$/, (ctx) => {
       const gpuModel = ctx.match[1] // извлекаем часть после подчеркивания
       ctx.session.vastAi.searchParams.gpu = gpuModel
 
@@ -47,7 +47,7 @@ export class SetSearchOfferParamsVastAiTgBot {
     })
 
     // Обработка выбора геолокации с использованием регулярного выражения
-    this.bot.action(/^action:geolocationselect:(.+)$/, (ctx) => {
+    this.bot.action(/^action:search:params:geolocation:select:(.+)$/, (ctx) => {
       const geolocation = ctx.match[1] // извлекаем часть после подчеркивания
       ctx.session.vastAi.searchParams.geolocation = geolocation
 
@@ -65,8 +65,9 @@ export class SetSearchOfferParamsVastAiTgBot {
   private showSearchParamsMenu(ctx: TelegramContext) {
     const message = 'Параметры поиска:'
     const keyboard = this.tgbotsrv.generateInlineKeyboard([
-      [[`GPU name (${ctx.session.vastAi.searchParams.gpu})`, 'action:gpu']],
-      [[`Geolocation (${ctx.session.vastAi.searchParams.geolocation})`, 'action:geolocation']],
+      [[`GPU name (${ctx.session.vastAi.searchParams.gpu})`, 'action:search:params:gpu']],
+      [[`Geolocation (${ctx.session.vastAi.searchParams.geolocation})`, 'action:search:params:geolocation']],
+      [[`Start search`, 'action:search:offers']],
       [['❌ Закрыть', 'action:close']],
     ])
 
@@ -81,9 +82,9 @@ export class SetSearchOfferParamsVastAiTgBot {
     ctx.editMessageText(
       'Select GPU:',
       this.tgbotsrv.generateInlineKeyboard([
-        [['RTX 3060', 'action:gpuselect:RTX 3060']],
-        [['RTX 3090', 'action:gpuselect:RTX 3090']],
-        [['RTX 4090', 'action:gpuselect:RTX 4090']],
+        [['RTX 3060', 'action:search:params:gpu:select:RTX 3060']],
+        [['RTX 3090', 'action:search:params:gpu:select:RTX 3090']],
+        [['RTX 4090', 'action:search:params:gpu:select:RTX 4090']],
       ]),
     )
   }
@@ -92,76 +93,76 @@ export class SetSearchOfferParamsVastAiTgBot {
     ctx.editMessageText(
       'Select Geolocation:',
       this.tgbotsrv.generateInlineKeyboard([
-        [['ALL WORLD', 'action:geolocationselect:any']],
-        [['Europe', 'action:geolocationselect:europe']],
+        [['ALL WORLD', 'action:search:params:geolocation:select:any']],
+        [['Europe', 'action:search:params:geolocation:select:europe']],
         [
-          ['RU', 'action:geolocationselect:RU'],
-          ['SE', 'action:geolocationselect:SE'],
-          ['GB', 'action:geolocationselect:GB'],
-          ['PL', 'action:geolocationselect:PL'],
-          ['PT', 'action:geolocationselect:PT'],
-          ['SI', 'action:geolocationselect:SI'],
-          ['DE', 'action:geolocationselect:DE'],
-          ['IT', 'action:geolocationselect:IT'],
+          ['RU', 'action:search:params:geolocation:select:RU'],
+          ['SE', 'action:search:params:geolocation:select:SE'],
+          ['GB', 'action:search:params:geolocation:select:GB'],
+          ['PL', 'action:search:params:geolocation:select:PL'],
+          ['PT', 'action:search:params:geolocation:select:PT'],
+          ['SI', 'action:search:params:geolocation:select:SI'],
+          ['DE', 'action:search:params:geolocation:select:DE'],
+          ['IT', 'action:search:params:geolocation:select:IT'],
         ],
         [
-          ['LT', 'action:geolocationselect:LT'],
-          ['GR', 'action:geolocationselect:GR'],
-          ['FI', 'action:geolocationselect:FI'],
-          ['IS', 'action:geolocationselect:IS'],
-          ['AT', 'action:geolocationselect:AT'],
-          ['FR', 'action:geolocationselect:FR'],
-          ['RO', 'action:geolocationselect:RO'],
-          ['MD', 'action:geolocationselect:MD'],
+          ['LT', 'action:search:params:geolocation:select:LT'],
+          ['GR', 'action:search:params:geolocation:select:GR'],
+          ['FI', 'action:search:params:geolocation:select:FI'],
+          ['IS', 'action:search:params:geolocation:select:IS'],
+          ['AT', 'action:search:params:geolocation:select:AT'],
+          ['FR', 'action:search:params:geolocation:select:FR'],
+          ['RO', 'action:search:params:geolocation:select:RO'],
+          ['MD', 'action:search:params:geolocation:select:MD'],
         ],
         [
-          ['HU', 'action:geolocationselect:HU'],
-          ['NO', 'action:geolocationselect:NO'],
-          ['MK', 'action:geolocationselect:MK'],
-          ['BG', 'action:geolocationselect:BG'],
-          ['ES', 'action:geolocationselect:ES'],
+          ['HU', 'action:search:params:geolocation:select:HU'],
+          ['NO', 'action:search:params:geolocation:select:NO'],
+          ['MK', 'action:search:params:geolocation:select:MK'],
+          ['BG', 'action:search:params:geolocation:select:BG'],
+          ['ES', 'action:search:params:geolocation:select:ES'],
         ],
         [
-          ['CH', 'action:geolocationselect:CH'],
-          ['HR', 'action:geolocationselect:HR'],
-          ['NL', 'action:geolocationselect:NL'],
-          ['CZ', 'action:geolocationselect:CZ'],
-          ['EE', 'action:geolocationselect:EE'],
+          ['CH', 'action:search:params:geolocation:select:CH'],
+          ['HR', 'action:search:params:geolocation:select:HR'],
+          ['NL', 'action:search:params:geolocation:select:NL'],
+          ['CZ', 'action:search:params:geolocation:select:CZ'],
+          ['EE', 'action:search:params:geolocation:select:EE'],
         ],
-        [['North America', 'action:geolocationselect:north-america']],
+        [['North America', 'action:search:params:geolocation:select:north-america']],
         [
-          ['US', 'action:geolocationselect:US'],
-          ['CA', 'action:geolocationselect:CA'],
+          ['US', 'action:search:params:geolocation:select:US'],
+          ['CA', 'action:search:params:geolocation:select:CA'],
         ],
-        [['South America', 'action:geolocationselect:south-america']],
+        [['South America', 'action:search:params:geolocation:select:south-america']],
         [
-          ['BR', 'action:geolocationselect:BR'],
-          ['AR', 'action:geolocationselect:AR'],
-          ['CL', 'action:geolocationselect:CL'],
+          ['BR', 'action:search:params:geolocation:select:BR'],
+          ['AR', 'action:search:params:geolocation:select:AR'],
+          ['CL', 'action:search:params:geolocation:select:CL'],
         ],
-        [['Asia', 'action:geolocationselect:asia']],
+        [['Asia', 'action:search:params:geolocation:select:asia']],
         [
-          ['CN', 'action:geolocationselect:CN'],
-          ['JP', 'action:geolocationselect:JP'],
-          ['KR', 'action:geolocationselect:KR'],
-          ['ID', 'action:geolocationselect:ID'],
-          ['IN', 'action:geolocationselect:IN'],
-          ['HK', 'action:geolocationselect:HK'],
-          ['MY', 'action:geolocationselect:MY'],
-        ],
-        [
-          ['IL', 'action:geolocationselect:IL'],
-          ['TH', 'action:geolocationselect:TH'],
-          ['QA', 'action:geolocationselect:QA'],
-          ['TR', 'action:geolocationselect:TR'],
-          ['VN', 'action:geolocationselect:VN'],
+          ['CN', 'action:search:params:geolocation:select:CN'],
+          ['JP', 'action:search:params:geolocation:select:JP'],
+          ['KR', 'action:search:params:geolocation:select:KR'],
+          ['ID', 'action:search:params:geolocation:select:ID'],
+          ['IN', 'action:search:params:geolocation:select:IN'],
+          ['HK', 'action:search:params:geolocation:select:HK'],
+          ['MY', 'action:search:params:geolocation:select:MY'],
         ],
         [
-          ['TW', 'action:geolocationselect:TW'],
-          ['OM', 'action:geolocationselect:OM'],
-          ['SG', 'action:geolocationselect:SG'],
-          ['AE', 'action:geolocationselect:AE'],
-          ['KZ', 'action:geolocationselect:KZ'],
+          ['IL', 'action:search:params:geolocation:select:IL'],
+          ['TH', 'action:search:params:geolocation:select:TH'],
+          ['QA', 'action:search:params:geolocation:select:QA'],
+          ['TR', 'action:search:params:geolocation:select:TR'],
+          ['VN', 'action:search:params:geolocation:select:VN'],
+        ],
+        [
+          ['TW', 'action:search:params:geolocation:select:TW'],
+          ['OM', 'action:search:params:geolocation:select:OM'],
+          ['SG', 'action:search:params:geolocation:select:SG'],
+          ['AE', 'action:search:params:geolocation:select:AE'],
+          ['KZ', 'action:search:params:geolocation:select:KZ'],
         ],
       ]),
     )
