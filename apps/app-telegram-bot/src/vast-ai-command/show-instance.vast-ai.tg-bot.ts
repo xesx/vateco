@@ -24,17 +24,17 @@ export class ShowInstanceVastAiTgBot {
   @Step('rent')
   private async handleShowVastAiInstance(ctx: TelegramContext) {
     const instanceId = ctx.session.instanceId
-    console.log('\x1b[36m', 'instanceId', instanceId, '\x1b[0m');
 
-    const result = await this.vastService.showInstance({ instanceId })
-    console.log('\x1b[36m', 'result', JSON.stringify(result, null, 2), '\x1b[0m');
+    const instance = await this.vastService.showInstance({ instanceId })
+    console.log('\x1b[36m', 'result', JSON.stringify(instance, null, 2), '\x1b[0m');
 
-    const instance = result.instances
     const comfyuiLink =`http://${instance.public_ipaddr || 'N/A'}:${instance.ports?.['8188/tcp']?.[0]?.HostPort || 'N/A'}` +
       `?token=${instance.jupyter_token || 'N/A'}`
 
     const appsMenuLink =`http://${instance.public_ipaddr || 'N/A'}:${instance.ports?.['1111/tcp']?.[0]?.HostPort || 'N/A'}` +
       `?token=${instance.jupyter_token || 'N/A'}`
+
+    const startDate = new Date(Math.round((instance.start_date * 1000))).toLocaleString()
 
     const message = `🖥️ *Instance #${instance.id}*\n\n` +
       `📊 *Status:* ${instance.actual_status || 'unknown'}\n` +
@@ -46,9 +46,9 @@ export class ShowInstanceVastAiTgBot {
       // `🔑 *SSH Password:* ${instance.ssh_password || 'N/A'}\n` +
       // `🔌 *SSH Port:* ${instance.ssh_port || 'N/A'}\n` +
       `💰 *Price:* $${(instance.dph_total?.toFixed(2)) || '0'}/hour\n` +
-      `⏰ *Start at:* ${new Date(Math.round((instance.start_date * 1000)))}\n` +
+      `⏰ *Start at:* ${startDate}\n` +
       // `💸 *Total Cost:* $${((instance.duration || 0) / 3600 * (instance.dph_total || 0)).toFixed(2)}` + `\n` +
-      `🔗 *Apps Menu Link:* [appsMenuLink](${appsMenuLink})\n` +
+      `🔗 *Apps Menu Link:* [-->>](${appsMenuLink})\n` +
       `🔗 *ComfyUI Link:* [${comfyuiLink}](${comfyuiLink})\n`
 
     ctx.reply(message, { parse_mode: 'Markdown' })

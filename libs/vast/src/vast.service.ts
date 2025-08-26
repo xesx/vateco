@@ -5,6 +5,8 @@ import axios from 'axios'
 import { Injectable } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 
+import type { TVastAiInstanceStatus } from './type'
+
 @Injectable()
 export class VastService {
   private readonly baseUrl = 'https://console.vast.ai/api/v0'
@@ -98,17 +100,21 @@ export class VastService {
     return response?.data
   }
 
-  async showInstance({ instanceId }): Promise<any> {
+  async showInstance({ instanceId }): Promise<TVastAiInstanceStatus> {
     const path = `/instances/${instanceId}/`
 
-    const response = await axios.get(
-      this.generateRequestUrl(path),
-      {
-        headers: this.headers,
-      }
-    )
+    let instance = { actual_status: 'undefined' }
 
-    return response?.data
+    try {
+      const response = await axios.get(this.generateRequestUrl(path), { headers: this.headers })
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      instance = (response?.data?.instances || { actual_status: 'not_found' }) as TVastAiInstanceStatus
+    } catch (error) {
+      console.log('VastService_showInstance_31', error)
+      instance = { actual_status: 'error' }
+    }
+
+    return instance
   }
 
   async destroyInstance({ instanceId }): Promise<any> {
