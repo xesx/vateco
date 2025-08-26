@@ -22,7 +22,7 @@ export class SearchOfferVastAiTgBot {
     this.bot.action('action:search:offers', (ctx) => this.handleSearchVastAiOffer(ctx))
 
     // Обработка выбора инстанса
-    this.bot.action(/^action:select_vast_offer:(.+)$/, (ctx) => {
+    this.bot.action(/^action:search:offers:select:(.+)$/, (ctx) => {
       const offerId = ctx.match[1] // извлекаем часть после подчеркивания
 
       console.log('\x1b[36m', 'offerId', offerId, '\x1b[0m');
@@ -30,8 +30,8 @@ export class SearchOfferVastAiTgBot {
       ctx.session.offerId = Number(offerId)
 
       this.tgbotsrv.safeAnswerCallback(ctx)
-      ctx.reply('Selected offer Id: ' + offerId)
-      // this.showSearchParamsMenu(ctx)
+      // ctx.reply('Selected offer Id: ' + offerId)
+      tgbotsrv.showSearchParamsMenu(ctx)
     })
   }
 
@@ -64,7 +64,7 @@ export class SearchOfferVastAiTgBot {
             `cuda ${o.cuda_max_good} `,
             `[${o.reliability2?.toFixed?.(2)}]`
           ].join(' '),
-          `action:select_vast_offer:${o.id}`)
+          `action:search:offers:select:${o.id}`)
         ]
       }).concat([
         [Markup.button.callback('🔄 Refresh', 'action:search:offers')],

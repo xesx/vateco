@@ -18,6 +18,7 @@ export class ShowInstanceVastAiTgBot {
     private readonly vastService: VastService,
   ) {
     this.bot.command('show', (ctx) => this.handleShowVastAiInstance(ctx))
+    this.bot.action('action:instance:show', (ctx) => this.handleShowVastAiInstance(ctx))
   }
 
   @Step('rent')
@@ -26,10 +27,13 @@ export class ShowInstanceVastAiTgBot {
     console.log('\x1b[36m', 'instanceId', instanceId, '\x1b[0m');
 
     const result = await this.vastService.showInstance({ instanceId })
-    console.log('\x1b[36m', 'result', JSON.stringify(result), '\x1b[0m');
+    console.log('\x1b[36m', 'result', JSON.stringify(result, null, 2), '\x1b[0m');
 
     const instance = result.instances
     const comfyuiLink =`http://${instance.public_ipaddr || 'N/A'}:${instance.ports?.['8188/tcp']?.[0]?.HostPort || 'N/A'}` +
+      `?token=${instance.jupyter_token || 'N/A'}`
+
+    const appsMenuLink =`http://${instance.public_ipaddr || 'N/A'}:${instance.ports?.['1111/tcp']?.[0]?.HostPort || 'N/A'}` +
       `?token=${instance.jupyter_token || 'N/A'}`
 
     const message = `🖥️ *Instance #${instance.id}*\n\n` +
@@ -43,7 +47,8 @@ export class ShowInstanceVastAiTgBot {
       // `🔌 *SSH Port:* ${instance.ssh_port || 'N/A'}\n` +
       `💰 *Price:* $${(instance.dph_total?.toFixed(2)) || '0'}/hour\n` +
       `⏰ *Start at:* ${new Date(Math.round((instance.start_date * 1000)))}\n` +
-      `💸 *Total Cost:* $${((instance.duration || 0) / 3600 * (instance.dph_total || 0)).toFixed(2)}` + `\n` +
+      // `💸 *Total Cost:* $${((instance.duration || 0) / 3600 * (instance.dph_total || 0)).toFixed(2)}` + `\n` +
+      `🔗 *Apps Menu Link:* [appsMenuLink](${appsMenuLink})\n` +
       `🔗 *ComfyUI Link:* [${comfyuiLink}](${comfyuiLink})\n`
 
     ctx.reply(message, { parse_mode: 'Markdown' })

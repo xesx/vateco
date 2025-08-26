@@ -15,7 +15,7 @@ export class SetSearchOfferParamsVastAiTgBot {
     @Inject() private readonly tgbotsrv: AppTelegramBotService,
   ) {
     // Команда, чтобы показать меню
-    this.bot.command('start', (ctx) => this.handleSearchParams(ctx))
+    // this.bot.command('start', (ctx) => this.handleSearchParams(ctx))
     this.bot.action('action:search:params', (ctx) => this.handleSearchParams(ctx))
 
     // Обработка нажатия кнопки "GPU name"
@@ -42,7 +42,7 @@ export class SetSearchOfferParamsVastAiTgBot {
       ctx.session.gpuName = gpuModel
 
       this.tgbotsrv.safeAnswerCallback(ctx)
-      ctx.reply('Selected GPU: ' + gpuModel)
+      // ctx.reply('Selected GPU: ' + gpuModel)
       this.showSearchParamsMenu(ctx)
     })
 
@@ -52,7 +52,7 @@ export class SetSearchOfferParamsVastAiTgBot {
       ctx.session.geolocation = geolocation
 
       this.tgbotsrv.safeAnswerCallback(ctx)
-      ctx.reply('Selected Geolocation: ' + geolocation)
+      // ctx.reply('Selected Geolocation: ' + geolocation)
       this.showSearchParamsMenu(ctx)
     })
   }
@@ -68,7 +68,6 @@ export class SetSearchOfferParamsVastAiTgBot {
       [[`GPU name (${ctx.session.gpuName})`, 'action:search:params:gpu']],
       [[`Geolocation (${ctx.session.geolocation})`, 'action:search:params:geolocation']],
       [[`Start search`, 'action:search:offers']],
-      [['❌ Закрыть', 'action:close']],
     ])
 
     if (ctx.callbackQuery) {

@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { Telegraf } from 'telegraf'
 import { InjectBot } from 'nestjs-telegraf'
-import { Markup } from 'telegraf'
 
 import { VastService } from '@libs/vast'
 
@@ -19,6 +18,7 @@ export class CreateInstanceVastAiTgBot {
     private readonly vastService: VastService,
   ) {
     this.bot.command('create', (ctx) => this.handleCreateVastAiInstance(ctx))
+    this.bot.action('action:instance:create', (ctx) => this.handleCreateVastAiInstance(ctx))
   }
 
   @Step('start')
@@ -36,13 +36,7 @@ export class CreateInstanceVastAiTgBot {
 
     console.log('\x1b[36m', 'result', result, '\x1b[0m');
 
-    ctx.reply('Instance creation initiated. Check your Vast.ai dashboard for details.' + JSON.stringify(result))
-    // if (ctx.callbackQuery) {
-    //   ctx.editMessageText(message, keyboard)
-    // } else {
-    //   ctx.reply(message, keyboard)
-    // }
-    // console.log(JSON.stringify(offers.offers[0], null, 4))
-    // this.showSearchParamsMenu(ctx)
+    ctx.reply('Instance creation initiated.')
+    this.tgbotsrv.showInstanceMenu(ctx)
   }
 }

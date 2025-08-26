@@ -18,6 +18,7 @@ export class DestroyInstanceVastAiTgBot {
     private readonly vastService: VastService,
   ) {
     this.bot.command('destroy', (ctx) => this.handleDestroyVastAiInstance(ctx))
+    this.bot.action('action:instance:destroy', (ctx) => this.handleDestroyVastAiInstance(ctx))
   }
 
   @Step('rent')
@@ -32,5 +33,6 @@ export class DestroyInstanceVastAiTgBot {
     console.log('\x1b[36m', 'result', result, '\x1b[0m');
 
     ctx.reply('Instance destroyed:\n' + JSON.stringify(result))
+    this.tgbotsrv.showSearchParamsMenu(ctx)
   }
 }

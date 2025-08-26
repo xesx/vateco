@@ -31,11 +31,42 @@ export class AppTelegramBotService {
         )
       )
     )
-    // Пример жестко закодированной клавиатуры
-    // return Markup.inlineKeyboard([
-    //   [Markup.button.callback('RTX 3060', 'action:gpuselect:RTX 3060')],
-    //   [Markup.button.callback('RTX 3090', 'action:gpuselect:RTX 3090')],
-    //   [Markup.button.callback('RTX 4090', 'action:gpuselect:RTX 4090')],
-    // ])
+  }
+
+  showSearchParamsMenu(ctx: TelegramContext) {
+    const message = 'Параметры поиска:'
+    const keyboardDescription = [
+      [[`GPU name (${ctx.session.gpuName})`, 'action:search:params:gpu']],
+      [[`Geolocation (${ctx.session.geolocation})`, 'action:search:params:geolocation']],
+      [[`Start search`, 'action:search:offers']],
+    ] as [string, string][][]
+
+    if (ctx.session.offerId) {
+      keyboardDescription.push([[`Create instance`, 'action:instance:create']])
+    }
+
+    const keyboard = this.generateInlineKeyboard(keyboardDescription)
+
+    if (ctx.callbackQuery) {
+      ctx.editMessageText(message, keyboard)
+    } else {
+      ctx.reply(message, keyboard)
+    }
+  }
+
+  showInstanceMenu(ctx: TelegramContext) {
+    const message = 'Instance menu:'
+    const keyboardDescription = [
+      [[`Check instance status`, 'action:instance:show']],
+      [[`Destroy instance`, 'action:instance:destroy']],
+    ] as [string, string][][]
+
+    const keyboard = this.generateInlineKeyboard(keyboardDescription)
+
+    if (ctx.callbackQuery) {
+      ctx.editMessageText(message, keyboard)
+    } else {
+      ctx.reply(message, keyboard)
+    }
   }
 }

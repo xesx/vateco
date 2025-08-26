@@ -4,28 +4,30 @@ import { InjectBot } from 'nestjs-telegraf'
 import { Markup } from 'telegraf'
 
 import { TelegramContext } from '../types'
-import { Step } from '../step.decorator'
+
+import { AppTelegramBotService } from '../app-telegram-bot.service'
+// import { Step } from '../step.decorator'
 
 
 @Injectable()
 export class BaseCommandTgBot {
-  constructor(@InjectBot() private readonly bot: Telegraf<TelegramContext>) {
-    // this.bot.command('start', (ctx) => this.handleStart(ctx))
+  constructor(
+    @InjectBot() private readonly bot: Telegraf<TelegramContext>,
+    private readonly tgbotsrv: AppTelegramBotService,
+  ) {
+    this.bot.command('start', (ctx) => this.handleStart(ctx))
     this.bot.command('help', (ctx) => this.handleHelp(ctx))
     // this.bot.command('next', (ctx) => this.handleNext(ctx))
   }
 
   // @Step('__undefined__', '_test')
-  // private handleStart(ctx: TelegramContext) {
-  //   ctx.session.step = 'start'
-  //   ctx.reply(
-  //     '🚀 Привет! Я — Telegram-бот на NestJS.\n' +
-  //     'Используй /help, чтобы увидеть список команд.',
-  //     {
-  //       parse_mode: 'Markdown',
-  //     },
-  //   )
-  // }
+  private handleStart(ctx: TelegramContext) {
+    if (ctx.session.step === 'start') {
+      this.tgbotsrv.showSearchParamsMenu(ctx)
+    } else if (ctx.session.step === 'rent') {
+      this.tgbotsrv.showInstanceMenu(ctx)
+    }
+  }
 
   private handleHelp(ctx: TelegramContext) {
     ctx.reply(
