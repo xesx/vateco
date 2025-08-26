@@ -9,6 +9,7 @@ import { TelegrafModule } from 'nestjs-telegraf'
 const LocalSession = require('telegraf-session-local') as LocalSessionConstructor
 
 import { AppTelegramBotService } from './app-telegram-bot.service'
+import { SessionTgBotService } from './session.tg-bot.service'
 
 import { VastModule } from '@libs/vast'
 
@@ -50,14 +51,9 @@ import {
           middlewares: [
             session.middleware(),
             (ctx, next) => {
-              ctx.session.step = ctx.session.step || '__undefined__'
-
-              ctx.session.vastAi ??= {}
-              ctx.session.vastAi.instance ??= {}
-              ctx.session.vastAi.searchParams ??= {}
-              ctx.session.vastAi.searchParams.gpu ??= 'RTX 3060'
-              ctx.session.vastAi.searchParams.geolocation ??= '' +
-                ''
+              ctx.session.step ??= 'start'
+              ctx.session.gpuName ??= 'any'
+              ctx.session.geolocation ??= 'any'
 
               return next()
             },
@@ -71,6 +67,7 @@ import {
   controllers: [],
   providers: [
     AppTelegramBotService,
+    SessionTgBotService,
     // order is important, as handlers are executed in the order they are registered
     // HelpCommandTgBot,
     BaseCommandTgBot,

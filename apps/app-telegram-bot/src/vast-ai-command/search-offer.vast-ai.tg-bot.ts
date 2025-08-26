@@ -27,7 +27,7 @@ export class SearchOfferVastAiTgBot {
 
       console.log('\x1b[36m', 'offerId', offerId, '\x1b[0m');
 
-      ctx.session.vastAi.instance.offerId = Number(offerId)
+      ctx.session.offerId = Number(offerId)
 
       this.tgbotsrv.safeAnswerCallback(ctx)
       ctx.reply('Selected offer Id: ' + offerId)
@@ -37,8 +37,8 @@ export class SearchOfferVastAiTgBot {
 
   @Step('start')
   private async handleSearchVastAiOffer(ctx: TelegramContext) {
-    const gpu = ctx.session.vastAi.searchParams.gpu
-    const selectedGeo = ctx.session.vastAi.searchParams.geolocation
+    const gpu = ctx.session.gpuName
+    const selectedGeo = ctx.session.geolocation
 
     let geolocation: string[] | undefined
 

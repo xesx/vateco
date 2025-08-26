@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { Telegraf } from 'telegraf'
 import { InjectBot } from 'nestjs-telegraf'
-import { Markup } from 'telegraf'
 
 import { VastService } from '@libs/vast'
 
@@ -23,11 +22,11 @@ export class DestroyInstanceVastAiTgBot {
 
   @Step('rent')
   private async handleDestroyVastAiInstance(ctx: TelegramContext) {
-    const instanceId = ctx.session.vastAi.instance.id
+    const instanceId = ctx.session.instanceId
     console.log('\x1b[36m', 'instanceId', instanceId, '\x1b[0m');
 
     const result = await this.vastService.destroyInstance({ instanceId })
-    ctx.session.vastAi.instance = {}
+    delete ctx.session.instanceId
     ctx.session.step = 'start'
 
     console.log('\x1b[36m', 'result', result, '\x1b[0m');

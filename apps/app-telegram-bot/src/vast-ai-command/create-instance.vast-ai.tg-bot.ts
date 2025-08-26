@@ -23,7 +23,7 @@ export class CreateInstanceVastAiTgBot {
 
   @Step('start')
   private async handleCreateVastAiInstance(ctx: TelegramContext) {
-    const offerId = ctx.session.vastAi.instance?.offerId
+    const offerId = ctx.session.offerId
 
     if (!offerId) {
       ctx.reply('No instance selected. Use /search to find an instance first.')
@@ -32,7 +32,7 @@ export class CreateInstanceVastAiTgBot {
 
     const result = await this.vastService.createInstance({ offerId })
     ctx.session.step = 'rent'
-    ctx.session.vastAi.instance.id = result.new_contract
+    ctx.session.instanceId = result.new_contract
 
     console.log('\x1b[36m', 'result', result, '\x1b[0m');
 

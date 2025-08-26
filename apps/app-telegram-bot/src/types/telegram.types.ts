@@ -22,14 +22,9 @@ export type VastAiInstance = {
 
 export interface SessionData {
   step?: string
-  userId?: number
-  counter?: number
-  vastAi: {
-    instance: VastAiInstance
-    searchParams: {
-      gpu: string
-      geolocation: string
-      [key: string]: any
-    }
-  }
+  instanceId?: number
+  offerId?: number
+  gpuName: string
+  geolocation: string
+  [key: string]: number | string | boolean | undefined
 }

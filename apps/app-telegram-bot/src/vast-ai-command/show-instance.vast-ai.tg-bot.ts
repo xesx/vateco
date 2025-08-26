@@ -22,7 +22,7 @@ export class ShowInstanceVastAiTgBot {
 
   @Step('rent')
   private async handleShowVastAiInstance(ctx: TelegramContext) {
-    const instanceId = ctx.session.vastAi.instance.id
+    const instanceId = ctx.session.instanceId
     console.log('\x1b[36m', 'instanceId', instanceId, '\x1b[0m');
 
     const result = await this.vastService.showInstance({ instanceId })

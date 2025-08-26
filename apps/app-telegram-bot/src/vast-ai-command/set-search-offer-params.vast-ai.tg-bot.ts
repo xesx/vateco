@@ -39,7 +39,7 @@ export class SetSearchOfferParamsVastAiTgBot {
     // Обработка выбора GPU с использованием регулярного выражения
     this.bot.action(/^action:search:params:gpu:select:(.+)$/, (ctx) => {
       const gpuModel = ctx.match[1] // извлекаем часть после подчеркивания
-      ctx.session.vastAi.searchParams.gpu = gpuModel
+      ctx.session.gpuName = gpuModel
 
       this.tgbotsrv.safeAnswerCallback(ctx)
       ctx.reply('Selected GPU: ' + gpuModel)
@@ -49,7 +49,7 @@ export class SetSearchOfferParamsVastAiTgBot {
     // Обработка выбора геолокации с использованием регулярного выражения
     this.bot.action(/^action:search:params:geolocation:select:(.+)$/, (ctx) => {
       const geolocation = ctx.match[1] // извлекаем часть после подчеркивания
-      ctx.session.vastAi.searchParams.geolocation = geolocation
+      ctx.session.geolocation = geolocation
 
       this.tgbotsrv.safeAnswerCallback(ctx)
       ctx.reply('Selected Geolocation: ' + geolocation)
@@ -65,8 +65,8 @@ export class SetSearchOfferParamsVastAiTgBot {
   private showSearchParamsMenu(ctx: TelegramContext) {
     const message = 'Параметры поиска:'
     const keyboard = this.tgbotsrv.generateInlineKeyboard([
-      [[`GPU name (${ctx.session.vastAi.searchParams.gpu})`, 'action:search:params:gpu']],
-      [[`Geolocation (${ctx.session.vastAi.searchParams.geolocation})`, 'action:search:params:geolocation']],
+      [[`GPU name (${ctx.session.gpuName})`, 'action:search:params:gpu']],
+      [[`Geolocation (${ctx.session.geolocation})`, 'action:search:params:geolocation']],
       [[`Start search`, 'action:search:offers']],
       [['❌ Закрыть', 'action:close']],
     ])
