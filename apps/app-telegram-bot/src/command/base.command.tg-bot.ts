@@ -17,7 +17,6 @@ export class BaseCommandTgBot {
   ) {
     this.bot.command('start', (ctx) => this.handleStart(ctx))
     this.bot.command('help', (ctx) => this.handleHelp(ctx))
-    // this.bot.command('next', (ctx) => this.handleNext(ctx))
   }
 
   // @Step('__undefined__', '_test')
