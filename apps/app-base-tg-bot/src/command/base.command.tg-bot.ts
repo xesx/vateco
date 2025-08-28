@@ -5,7 +5,7 @@ import { Markup } from 'telegraf'
 
 import { TelegramContext } from '../types'
 
-import { AppTelegramBotService } from '../app-telegram-bot.service'
+import { AppBaseTgBotService } from '../app-base-tg-bot.service'
 // import { Step } from '../step.decorator'
 
 
@@ -13,7 +13,7 @@ import { AppTelegramBotService } from '../app-telegram-bot.service'
 export class BaseCommandTgBot {
   constructor(
     @InjectBot() private readonly bot: Telegraf<TelegramContext>,
-    private readonly tgbotsrv: AppTelegramBotService,
+    private readonly tgbotsrv: AppBaseTgBotService,
   ) {
     this.bot.command('start', (ctx) => this.handleStart(ctx))
     this.bot.command('help', (ctx) => this.handleHelp(ctx))

@@ -2,7 +2,7 @@ import { Injectable, Inject } from '@nestjs/common'
 import { Telegraf } from 'telegraf'
 import { InjectBot } from 'nestjs-telegraf'
 
-import { AppTelegramBotService } from '../app-telegram-bot.service'
+import { AppBaseTgBotService } from '../app-base-tg-bot.service'
 
 import { Step } from '../step.decorator'
 
@@ -12,7 +12,7 @@ import { TelegramContext } from '../types'
 export class SetSearchOfferParamsVastAiTgBot {
   constructor(
     @InjectBot() private readonly bot: Telegraf<TelegramContext>,
-    @Inject() private readonly tgbotsrv: AppTelegramBotService,
+    @Inject() private readonly tgbotsrv: AppBaseTgBotService,
   ) {
     // Команда, чтобы показать меню
     // this.bot.command('start', (ctx) => this.handleSearchParams(ctx))

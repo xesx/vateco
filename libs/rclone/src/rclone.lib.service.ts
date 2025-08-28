@@ -24,6 +24,22 @@ export class RcloneLibService {
     // })
   }
 
+  // async getRcloneVersion() {
+  //   try {
+  //     const res = await axios.post(`${BASE_URL}/core/version`, null, {
+  //       headers: {
+  //         // Передаем cookie с токеном
+  //         Cookie: `C.${vastAiInstanceId}_auth_token=${TOKEN}`,
+  //       },
+  //       // Следовать редиректам (аналог -L в curl)
+  //       maxRedirects: 5,
+  //     })
+  //     console.log(res.data)
+  //   } catch (err) {
+  //     console.error("Error:", err)
+  //   }
+  // }
+
   async startCopy({ baseUrl, srcFs, dstFs }): Promise<number> {
     const url = baseUrl + '/jobs/start'
 

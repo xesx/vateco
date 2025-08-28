@@ -3,10 +3,10 @@ import * as assert from 'node:assert'
 import { NestFactory } from '@nestjs/core'
 import { ConfigService } from '@nestjs/config'
 
-import { AppTelegramBotModule } from './app-telegram-bot.module'
+import { AppBaseTgBotModule } from './app-base-tg-bot.module'
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppTelegramBotModule)
+  const app = await NestFactory.create(AppBaseTgBotModule)
 
   const config = app.get(ConfigService)
   const port = config.get<number>('TELEGRAM_BOT_PORT')

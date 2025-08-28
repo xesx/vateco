@@ -51,8 +51,8 @@ export class VastService {
         'verified': { 'eq': true },
         'num_gpus': { 'eq': 1 },
         'gpu_name': { 'eq': gpu },
-        'disk_space': { 'gte': 100 },
-        'allocated_storage': 100,
+        'disk_space': { 'gte': 30 },
+        'allocated_storage': 30,
         'rentable': { 'eq': true },
         'reliability2': { 'gte': 0.9 },
         'duration': { 'gte': 1 },
@@ -85,7 +85,7 @@ export class VastService {
     const path = `/asks/${offerId}/`
 
     const data = {
-      'template_id': 238049,
+      'template_id': 274448,
       'client_id': 'me',
     }
 
@@ -107,6 +107,7 @@ export class VastService {
 
     try {
       const response = await axios.get(this.generateRequestUrl(path), { headers: this.headers })
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       instance = (response?.data?.instances || { actual_status: 'not_found' }) as TVastAiInstanceStatus
     } catch (error) {

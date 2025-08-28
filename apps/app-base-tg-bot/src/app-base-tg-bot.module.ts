@@ -8,7 +8,7 @@ import { TelegrafModule } from 'nestjs-telegraf'
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const LocalSession = require('telegraf-session-local') as LocalSessionConstructor
 
-import { AppTelegramBotService } from './app-telegram-bot.service'
+import { AppBaseTgBotService } from './app-base-tg-bot.service'
 import { SessionTgBotService } from './session.tg-bot.service'
 
 import { VastModule } from '@libs/vast'
@@ -66,7 +66,7 @@ import {
   ],
   controllers: [],
   providers: [
-    AppTelegramBotService,
+    AppBaseTgBotService,
     SessionTgBotService,
     // order is important, as handlers are executed in the order they are registered
     // HelpCommandTgBot,
@@ -83,4 +83,4 @@ import {
   ],
 })
 
-export class AppTelegramBotModule {}
+export class AppBaseTgBotModule {}

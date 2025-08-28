@@ -4,7 +4,7 @@ import { InjectBot } from 'nestjs-telegraf'
 
 import { VastService } from '@libs/vast'
 
-import { AppTelegramBotService } from '../app-telegram-bot.service'
+import { AppBaseTgBotService } from '../app-base-tg-bot.service'
 
 import { Step } from '../step.decorator'
 
@@ -14,7 +14,7 @@ import { TelegramContext } from '../types'
 export class ShowInstanceVastAiTgBot {
   constructor(
     @InjectBot() private readonly bot: Telegraf<TelegramContext>,
-    private readonly tgbotsrv: AppTelegramBotService,
+    private readonly tgbotsrv: AppBaseTgBotService,
     private readonly vastService: VastService,
   ) {
     this.bot.command('show', (ctx) => this.handleShowVastAiInstance(ctx))
@@ -26,7 +26,7 @@ export class ShowInstanceVastAiTgBot {
     const instanceId = ctx.session.instanceId
 
     const instance = await this.vastService.showInstance({ instanceId })
-    console.log('\x1b[36m', 'result', JSON.stringify(instance, null, 2), '\x1b[0m');
+    console.log('\x1b[36m', 'result', JSON.stringify(instance, null, 2), '\x1b[0m')
 
     const comfyuiLink =`http://${instance.public_ipaddr || 'N/A'}:${instance.ports?.['8188/tcp']?.[0]?.HostPort || 'N/A'}` +
       `?token=${instance.jupyter_token || 'N/A'}`
@@ -34,7 +34,7 @@ export class ShowInstanceVastAiTgBot {
     const appsMenuLink =`http://${instance.public_ipaddr || 'N/A'}:${instance.ports?.['1111/tcp']?.[0]?.HostPort || 'N/A'}` +
       `?token=${instance.jupyter_token || 'N/A'}`
 
-    const startDate = new Date(Math.round((instance.start_date * 1000))).toLocaleString()
+    const startDate = new Date(Math.round(((instance.start_date || 0) * 1000))).toLocaleString()
 
     const message = `🖥️ *Instance #${instance.id}*\n\n` +
       `📊 *Status:* ${instance.actual_status || 'unknown'}\n` +

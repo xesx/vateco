@@ -6,7 +6,7 @@ import { TelegramContext } from './types'
 // import { message } from 'telegraf/filters'
 
 @Injectable()
-export class AppTelegramBotService {
+export class AppBaseTgBotService {
   // constructor(
   //   @InjectBot() private readonly bot: Telegraf<TelegramContext>
   // ) {}

@@ -4,7 +4,7 @@ import { InjectBot } from 'nestjs-telegraf'
 
 import { VastService } from '@libs/vast'
 
-import { AppTelegramBotService } from '../app-telegram-bot.service'
+import { AppBaseTgBotService } from '../app-base-tg-bot.service'
 
 import { Step } from '../step.decorator'
 
@@ -14,7 +14,7 @@ import { TelegramContext } from '../types'
 export class DestroyInstanceVastAiTgBot {
   constructor(
     @InjectBot() private readonly bot: Telegraf<TelegramContext>,
-    private readonly tgbotsrv: AppTelegramBotService,
+    private readonly tgbotsrv: AppBaseTgBotService,
     private readonly vastService: VastService,
   ) {
     this.bot.command('destroy', (ctx) => this.handleDestroyVastAiInstance(ctx))
