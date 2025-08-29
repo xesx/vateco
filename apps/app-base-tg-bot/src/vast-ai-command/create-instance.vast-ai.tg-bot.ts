@@ -31,7 +31,7 @@ export class CreateInstanceVastAiTgBot {
     }
 
     const result = await this.vastService.createInstance({ offerId })
-    ctx.session.step = 'rent'
+    ctx.session.step = 'loading'
     ctx.session.instanceId = result.new_contract
 
     console.log('\x1b[36m', 'result', result, '\x1b[0m');

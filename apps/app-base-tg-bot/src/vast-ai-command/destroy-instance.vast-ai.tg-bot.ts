@@ -21,7 +21,7 @@ export class DestroyInstanceVastAiTgBot {
     this.bot.action('action:instance:destroy', (ctx) => this.handleDestroyVastAiInstance(ctx))
   }
 
-  @Step('rent')
+  @Step('loading', 'running')
   private async handleDestroyVastAiInstance(ctx: TelegramContext) {
     const instanceId = ctx.session.instanceId
     console.log('\x1b[36m', 'instanceId', instanceId, '\x1b[0m');

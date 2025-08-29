@@ -21,9 +21,11 @@ export class BaseCommandTgBot {
 
   // @Step('__undefined__', '_test')
   private handleStart(ctx: TelegramContext) {
-    if (ctx.session.step === 'start') {
+    const step = ctx.session.step || '__undefined__'
+
+    if (step === 'start') {
       this.tgbotsrv.showSearchParamsMenu(ctx)
-    } else if (ctx.session.step === 'rent') {
+    } else if (['loading', 'running'].includes(step)) {
       this.tgbotsrv.showInstanceMenu(ctx)
     }
   }

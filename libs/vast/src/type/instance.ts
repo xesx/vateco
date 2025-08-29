@@ -7,6 +7,7 @@ export type TVastAiInstanceStatus = {
   dph_total?: number
   label?: string
   id?: number
+  duration?: number
   image_uuid?: string
   ports?: Record<string, Array<{ HostPort: string }>>
 }

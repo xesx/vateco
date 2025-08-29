@@ -62,6 +62,10 @@ export class AppBaseTgBotService {
       [[`Destroy instance`, 'action:instance:destroy']],
     ] as [string, string][][]
 
+    if (ctx.session.step === 'running') {
+      keyboardDescription.push([[`Select workflow`, 'action:workflow:select']])
+    }
+
     const keyboard = this.generateInlineKeyboard(keyboardDescription)
 
     if (ctx.callbackQuery) {

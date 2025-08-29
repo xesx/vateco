@@ -26,6 +26,8 @@ import {
   DestroyInstanceVastAiTgBot,
 } from './vast-ai-command'
 
+import { SelectWorkflowTgBot } from './workflow-command'
+
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -79,6 +81,8 @@ import {
     CreateInstanceVastAiTgBot,
     ShowInstanceVastAiTgBot,
     DestroyInstanceVastAiTgBot,
+
+    SelectWorkflowTgBot,
 
     CommonHandlerTgBot,
   ],

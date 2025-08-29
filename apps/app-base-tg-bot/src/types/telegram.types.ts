@@ -23,6 +23,10 @@ export type VastAiInstance = {
 export interface SessionData {
   step?: string
   instanceId?: number
+  instanceToken?: string
+  instanceIp?: string
+  instanceComfyuiPort?: string
+  instanceRclonePort?: string
   offerId?: number
   gpuName: string
   geolocation: string
