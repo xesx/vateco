@@ -40,9 +40,10 @@ export class VastService {
     return response?.data
   }
 
-  async importOffers({ gpu, geolocation }: {
+  async importOffers({ gpu, geolocation, inDataCenterOnly }: {
     gpu: string
     geolocation?: string[]
+    inDataCenterOnly: boolean
   }): Promise<any> {
     const path = '/search/asks/'
 
@@ -51,6 +52,7 @@ export class VastService {
         'verified': { 'eq': true },
         'num_gpus': { 'eq': 1 },
         'gpu_name': { 'eq': gpu },
+        'datacenter': inDataCenterOnly ? { 'eq': true } : undefined,
         'disk_space': { 'gte': 30 },
         'allocated_storage': 30,
         'rentable': { 'eq': true },

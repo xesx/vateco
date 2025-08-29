@@ -54,6 +54,7 @@ import {
               ctx.session.step ??= 'start'
               ctx.session.gpuName ??= 'any'
               ctx.session.geolocation ??= 'any'
+              ctx.session.inDataCenterOnly ??= false
 
               return next()
             },

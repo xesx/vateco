@@ -16,6 +16,7 @@ export class SessionTgBotService {
         step: '__undefined__',
         gpuName: 'any',
         geolocation: 'any',
+        inDataCenterOnly: false,
       }
     }
   }

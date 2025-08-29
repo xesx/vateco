@@ -38,6 +38,7 @@ export class AppBaseTgBotService {
     const keyboardDescription = [
       [[`GPU name (${ctx.session.gpuName})`, 'action:search:params:gpu']],
       [[`Geolocation (${ctx.session.geolocation})`, 'action:search:params:geolocation']],
+      [[`In data center only (${ctx.session.inDataCenterOnly})`, 'action:search:params:in-data-center-only']],
       [[`Start search`, 'action:search:offers']],
     ] as [string, string][][]
 

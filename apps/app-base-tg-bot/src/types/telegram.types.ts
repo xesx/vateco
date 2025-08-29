@@ -26,5 +26,6 @@ export interface SessionData {
   offerId?: number
   gpuName: string
   geolocation: string
+  inDataCenterOnly: boolean
   [key: string]: number | string | boolean | undefined
 }

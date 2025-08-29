@@ -39,6 +39,7 @@ export class SearchOfferVastAiTgBot {
   private async handleSearchVastAiOffer(ctx: TelegramContext) {
     const gpu = ctx.session.gpuName
     const selectedGeo = ctx.session.geolocation
+    const inDataCenterOnly = ctx.session.inDataCenterOnly
 
     let geolocation: string[] | undefined
 
@@ -50,7 +51,7 @@ export class SearchOfferVastAiTgBot {
       geolocation = ['US', 'CA']
     }
 
-    const result = await this.vastService.importOffers({ gpu, geolocation })
+    const result = await this.vastService.importOffers({ gpu, geolocation, inDataCenterOnly })
     const offers = result.offers
 
     const message = 'Результаты поиска:'

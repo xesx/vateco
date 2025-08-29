@@ -30,11 +30,17 @@ export class SetSearchOfferParamsVastAiTgBot {
       this.showGeolocationSelectionMenu(ctx)
     })
 
-    // Обработка нажатия кнопки "Закрыть"
-    this.bot.action('action:search:params:close', (ctx) => {
-      this.tgbotsrv.safeAnswerCallback(ctx)
-      // ctx.editMessageText('Меню закрыто.')
+    // Обработка нажатия кнопки "In data center only"
+    this.bot.action('action:search:params:in-data-center-only', (ctx) => {
+      this.tgbotsrv.safeAnswerCallback(ctx) // подтверждаем нажатие
+      this.showInDataCenterOnlySelectionMenu(ctx)
     })
+
+    // // Обработка нажатия кнопки "Закрыть"
+    // this.bot.action('action:search:params:close', (ctx) => {
+    //   this.tgbotsrv.safeAnswerCallback(ctx)
+    //   // ctx.editMessageText('Меню закрыто.')
+    // })
 
     // Обработка выбора GPU с использованием регулярного выражения
     this.bot.action(/^action:search:params:gpu:select:(.+)$/, (ctx) => {
@@ -43,7 +49,7 @@ export class SetSearchOfferParamsVastAiTgBot {
 
       this.tgbotsrv.safeAnswerCallback(ctx)
       // ctx.reply('Selected GPU: ' + gpuModel)
-      this.showSearchParamsMenu(ctx)
+      this.tgbotsrv.showSearchParamsMenu(ctx)
     })
 
     // Обработка выбора геолокации с использованием регулярного выражения
@@ -53,28 +59,21 @@ export class SetSearchOfferParamsVastAiTgBot {
 
       this.tgbotsrv.safeAnswerCallback(ctx)
       // ctx.reply('Selected Geolocation: ' + geolocation)
-      this.showSearchParamsMenu(ctx)
+      this.tgbotsrv.showSearchParamsMenu(ctx)
+    })
+
+    // Обработка выбора флага "In data center only"
+    this.bot.action(/^action:search:params:in-data-center-only:select:(.+)$/, (ctx) => {
+      const inDataCenterOnly = ctx.match[1] === 'true'
+      ctx.session.inDataCenterOnly = inDataCenterOnly
+      this.tgbotsrv.safeAnswerCallback(ctx)
+      this.tgbotsrv.showSearchParamsMenu(ctx)
     })
   }
 
   @Step('start')
   private handleSearchParams(ctx: TelegramContext) {
-    this.showSearchParamsMenu(ctx)
-  }
-
-  private showSearchParamsMenu(ctx: TelegramContext) {
-    const message = 'Параметры поиска:'
-    const keyboard = this.tgbotsrv.generateInlineKeyboard([
-      [[`GPU name (${ctx.session.gpuName})`, 'action:search:params:gpu']],
-      [[`Geolocation (${ctx.session.geolocation})`, 'action:search:params:geolocation']],
-      [[`Start search`, 'action:search:offers']],
-    ])
-
-    if (ctx.callbackQuery) {
-      ctx.editMessageText(message, keyboard)
-    } else {
-      ctx.reply(message, keyboard)
-    }
+    this.tgbotsrv.showSearchParamsMenu(ctx)
   }
 
   private showGpuSelectionMenu(ctx: TelegramContext) {
@@ -84,6 +83,7 @@ export class SetSearchOfferParamsVastAiTgBot {
         [['RTX 3060', 'action:search:params:gpu:select:RTX 3060']],
         [['RTX 3090', 'action:search:params:gpu:select:RTX 3090']],
         [['RTX 4090', 'action:search:params:gpu:select:RTX 4090']],
+        [['RTX 5090', 'action:search:params:gpu:select:RTX 5090']],
       ]),
     )
   }
@@ -163,6 +163,16 @@ export class SetSearchOfferParamsVastAiTgBot {
           ['AE', 'action:search:params:geolocation:select:AE'],
           ['KZ', 'action:search:params:geolocation:select:KZ'],
         ],
+      ]),
+    )
+  }
+
+  private showInDataCenterOnlySelectionMenu(ctx: TelegramContext) {
+    ctx.editMessageText(
+      'In data center only:',
+      this.tgbotsrv.generateInlineKeyboard([
+        [['yes', 'action:search:params:in-data-center-only:select:true']],
+        [['no', 'action:search:params:in-data-center-only:select:false']],
       ]),
     )
   }
