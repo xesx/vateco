@@ -3,6 +3,7 @@ import { Telegraf } from 'telegraf'
 import { InjectBot } from 'nestjs-telegraf'
 
 import { RcloneLibService } from '@libs/rclone'
+import workflow from '@workflow'
 
 import { AppBaseTgBotService } from '../app-base-tg-bot.service'
 
@@ -37,23 +38,23 @@ export class SelectWorkflowTgBot {
       const token = ctx.session.instanceToken
       const instanceId = ctx.session.instanceId
 
-      const files = [
-        "clip/clip_l.safetensors",
-        "clip/t5-v1_1-xxl-encoder-Q4_K_S.gguf",
-        "vae/flux-vae-fp-16.safetensors",
-      ]
+      const wf = workflow['base-flux']
+      const models = wf.models || []
 
-      const item = 'vae/flux-vae-fp-16.safetensors'
+      // const item = 'vae/flux-vae-fp-16.safetensors'
+      for (const model of models) {
+        this.rclonesrv.operationCopyFile({
+          baseUrl: rcloneBaseUrl,
+          headers: { Cookie: `C.${instanceId}_auth_token=${token}` },
+          srcFs: 'ydisk:',
+          srcRemote: `shared/comfyui/models/${model}`,
+          dstFs: '/',
+          dstRemote: `workspace/ComfyUI/models/${model}`,
+        })
+      }
 
-      this.rclonesrv.operationCopyFile({
-        baseUrl: rcloneBaseUrl,
-        headers: { Cookie: `C.${instanceId}_auth_token=${token}` },
-        srcFs: 'ydisk:',
-        srcRemote: `shared/comfyui/models/${item}`,
-        dstFs: '/',
-        dstRemote: `workspace/ComfyUI/models/${item}`,
-      })
-
+      ctx.session.wf = 'base-flux'
+      ctx.session.step = 'loading-workflow'
       ctx.reply('loading start...')
       this.tgbotsrv.safeAnswerCallback(ctx)
 

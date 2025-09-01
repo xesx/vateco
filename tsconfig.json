@@ -17,9 +17,11 @@
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "noFallthroughCasesInSwitch": false,
+    "resolveJsonModule": true,
     "paths": {
       "@libs/vast": ["libs/vast/src"],
-      "@libs/rclone": ["libs/rclone/src"]
+      "@libs/rclone": ["libs/rclone/src"],
+      "@workflow": ["workflow"],
     }
   }
 }
