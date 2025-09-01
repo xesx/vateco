@@ -40,29 +40,28 @@ export class RcloneLibService {
   //   }
   // }
 
-  async startCopy({ baseUrl, srcFs, dstFs }): Promise<number> {
-    const url = baseUrl + '/jobs/start'
+  async operationCopyFile ({ baseUrl, headers, srcFs, srcRemote, dstFs, dstRemote }): Promise<void> {
+    const url = baseUrl + '/operations/copyfile'
 
     const res = await axios.post(
       url,
+      { srcFs, srcRemote, dstFs, dstRemote },
       {
-        command: 'operations/copy',
-        params: { srcFs, dstFs }
+        headers,
+        maxRedirects: 5,
       }
     )
-
-    const jobid = res.data.jobid
-
-    return jobid
   }
 
-  async getJobStatus({ baseUrl, jobId }): Promise<any> {
-    const url = baseUrl + '/jobs/status'
+  async coreStats ({ baseUrl, headers }): Promise<any> {
+    const url = baseUrl + '/core/stats'
 
-    const res = await axios.get(
+    const res = await axios.post(
       url,
+      null,
       {
-        params: { jobid: jobId },
+        headers,
+        maxRedirects: 5,
       }
     )
 

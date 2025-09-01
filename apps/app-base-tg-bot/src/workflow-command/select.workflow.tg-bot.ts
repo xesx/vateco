@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common'
 import { Telegraf } from 'telegraf'
 import { InjectBot } from 'nestjs-telegraf'
 
-import { VastService } from '@libs/vast'
+import { RcloneLibService } from '@libs/rclone'
 
 import { AppBaseTgBotService } from '../app-base-tg-bot.service'
 
@@ -15,6 +15,7 @@ export class SelectWorkflowTgBot {
   constructor(
     @InjectBot() private readonly bot: Telegraf<TelegramContext>,
     private readonly tgbotsrv: AppBaseTgBotService,
+    private readonly rclonesrv: RcloneLibService,
   ) {
     this.bot.action('action:workflow:select', (ctx) => this.handleSelectWorkflow(ctx))
 
@@ -27,19 +28,48 @@ export class SelectWorkflowTgBot {
     this.bot.action(/^action:workflow:select:(.+)$/, (ctx) => {
       const workflowId = ctx.match[1] // извлекаем часть после подчеркивания
 
-      console.log('\x1b[36m', 'workflowId', workflowId, '\x1b[0m');
-
       ctx.session.workflowId = workflowId
 
       this.tgbotsrv.safeAnswerCallback(ctx)
       ctx.reply('workflow start loading... ' + workflowId)
-      // tgbotsrv.showSearchParamsMenu(ctx)
-      // todo start load workflow and models
+
+      const rcloneBaseUrl = `http://${ctx.session.instanceIp}:${ctx.session.instanceRclonePort}`
+      const token = ctx.session.instanceToken
+      const instanceId = ctx.session.instanceId
+
+      const files = [
+        "clip/clip_l.safetensors",
+        "clip/t5-v1_1-xxl-encoder-Q4_K_S.gguf",
+        "vae/flux-vae-fp-16.safetensors",
+      ]
+
+      const item = 'vae/flux-vae-fp-16.safetensors'
+
+      this.rclonesrv.operationCopyFile({
+        baseUrl: rcloneBaseUrl,
+        headers: { Cookie: `C.${instanceId}_auth_token=${token}` },
+        srcFs: 'ydisk:',
+        srcRemote: `shared/comfyui/models/${item}`,
+        dstFs: '/',
+        dstRemote: `workspace/ComfyUI/models/${item}`,
+      })
+
+      ctx.reply('loading start...')
+      this.tgbotsrv.safeAnswerCallback(ctx)
+
+      setTimeout(async () => {
+        const stats = await this.rclonesrv.coreStats({
+          baseUrl: rcloneBaseUrl,
+          headers: { Cookie: `C.${instanceId}_auth_token=${token}` },
+        })
+
+        ctx.reply('stats ' + JSON.stringify(stats, null, 2))
+      }, 1000)
     })
   }
 
   @Step('running')
-  private async handleSelectWorkflow(ctx: TelegramContext) {
+  private handleSelectWorkflow(ctx: TelegramContext) {
     ctx.editMessageText(
       'Выберите рабочий процесс:',
       this.tgbotsrv.generateInlineKeyboard([

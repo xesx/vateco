@@ -37,6 +37,7 @@ export class CreateInstanceVastAiTgBot {
     console.log('\x1b[36m', 'result', result, '\x1b[0m');
 
     ctx.reply('Instance creation initiated.')
+    this.tgbotsrv.safeAnswerCallback(ctx)
     this.tgbotsrv.showInstanceMenu(ctx)
   }
 }

@@ -12,6 +12,7 @@ import { AppBaseTgBotService } from './app-base-tg-bot.service'
 import { SessionTgBotService } from './session.tg-bot.service'
 
 import { VastModule } from '@libs/vast'
+import { RcloneLibModule } from '@libs/rclone'
 
 import { CommonHandlerTgBot } from './handler/common.handler.tg-bot'
 
@@ -66,6 +67,7 @@ import { SelectWorkflowTgBot } from './workflow-command'
       inject: [ConfigService],
     }),
     VastModule,
+    RcloneLibModule,
   ],
   controllers: [],
   providers: [

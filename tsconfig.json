@@ -18,7 +18,8 @@
     "strictBindCallApply": false,
     "noFallthroughCasesInSwitch": false,
     "paths": {
-      "@libs/vast": ["libs/vast/src"]
+      "@libs/vast": ["libs/vast/src"],
+      "@libs/rclone": ["libs/rclone/src"]
     }
   }
 }

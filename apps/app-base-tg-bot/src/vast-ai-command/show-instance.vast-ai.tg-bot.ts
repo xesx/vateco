@@ -60,6 +60,7 @@ export class ShowInstanceVastAiTgBot {
       `🔗 *Apps Menu Link:* [-->>](${appsMenuLink})\n` +
       `🔗 *ComfyUI Link:* [${comfyuiLink}](${comfyuiLink})\n`
 
+    this.tgbotsrv.safeAnswerCallback(ctx)
     ctx.reply(message, { parse_mode: 'Markdown' })
   }
 }
