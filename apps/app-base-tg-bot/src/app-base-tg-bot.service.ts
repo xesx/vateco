@@ -66,6 +66,10 @@ export class AppBaseTgBotService {
       keyboardDescription.push([[`Select workflow`, 'action:workflow:select']])
     }
 
+    if (ctx.session.step === 'loading-workflow') {
+      keyboardDescription.push([[`Workflow status`, 'action:workflow:status']])
+    }
+
     const keyboard = this.generateInlineKeyboard(keyboardDescription)
 
     if (ctx.callbackQuery) {

@@ -31,9 +31,6 @@ export class SelectWorkflowTgBot {
 
       ctx.session.workflowId = workflowId
 
-      this.tgbotsrv.safeAnswerCallback(ctx)
-      ctx.reply('workflow start loading... ' + workflowId)
-
       const rcloneBaseUrl = `http://${ctx.session.instanceIp}:${ctx.session.instanceRclonePort}`
       const token = ctx.session.instanceToken
       const instanceId = ctx.session.instanceId
@@ -55,17 +52,9 @@ export class SelectWorkflowTgBot {
 
       ctx.session.wf = 'base-flux'
       ctx.session.step = 'loading-workflow'
-      ctx.reply('loading start...')
+
+      ctx.reply('workflow start loading... ' + workflowId)
       this.tgbotsrv.safeAnswerCallback(ctx)
-
-      setTimeout(async () => {
-        const stats = await this.rclonesrv.coreStats({
-          baseUrl: rcloneBaseUrl,
-          headers: { Cookie: `C.${instanceId}_auth_token=${token}` },
-        })
-
-        ctx.reply('stats ' + JSON.stringify(stats, null, 2))
-      }, 1000)
     })
   }
 

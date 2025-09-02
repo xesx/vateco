@@ -27,7 +27,10 @@ import {
   DestroyInstanceVastAiTgBot,
 } from './vast-ai-command'
 
-import { SelectWorkflowTgBot } from './workflow-command'
+import {
+  SelectWorkflowTgBot,
+  CheckStatusWorkflowTgBot,
+} from './workflow-command'
 
 @Module({
   imports: [
@@ -85,6 +88,7 @@ import { SelectWorkflowTgBot } from './workflow-command'
     DestroyInstanceVastAiTgBot,
 
     SelectWorkflowTgBot,
+    CheckStatusWorkflowTgBot,
 
     CommonHandlerTgBot,
   ],
