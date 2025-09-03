@@ -20,6 +20,7 @@
     "resolveJsonModule": true,
     "paths": {
       "@libs/vast": ["libs/vast/src"],
+      "@libs/tg-bot": ["libs/tg-bot/src"],
       "@libs/rclone": ["libs/rclone/src"],
       "@workflow": ["workflow"],
     }
