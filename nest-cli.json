@@ -16,6 +16,15 @@
         "tsConfigPath": "apps/app-admin/tsconfig.app.json"
       }
     },
+    "app-cloud-api": {
+      "type": "application",
+      "root": "apps/app-cloud-api",
+      "entryFile": "main",
+      "sourceRoot": "apps/app-cloud-api/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/app-cloud-api/tsconfig.app.json"
+      }
+    },
     "app-base-tg-bot": {
       "type": "application",
       "root": "apps/app-base-tg-bot",
