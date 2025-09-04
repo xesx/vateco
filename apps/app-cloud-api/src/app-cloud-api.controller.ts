@@ -1,17 +1,26 @@
-import { Controller, Get } from '@nestjs/common'
+import { Controller, All } from '@nestjs/common'
 
-import { VastService } from '@libs/vast'
 import { TgBotLibService } from '@libs/tg-bot'
 
 @Controller()
 export class AppCloudApiController {
   constructor(
-    private readonly vastService: VastService,
     private readonly tgBotLibService: TgBotLibService,
   ) {}
 
-  @Get('ping')
-  appCloudPing(): any {
-    return { 'pong': true }
+  @All('ping')
+  appCloudApiPing(): any {
+    return { message: 'Pong!', timestamp: new Date() }
   }
+
+  // @Post('test')
+  // createUser(@Body() data: any) {
+  //   // Здесь обрабатывается тело запроса
+  //   console.log(data)
+  //
+  //   return {
+  //     message: 'test response message',
+  //     data,
+  //   }
+  // }
 }

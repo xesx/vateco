@@ -22,6 +22,7 @@
       "@libs/vast": ["libs/vast/src"],
       "@libs/tg-bot": ["libs/tg-bot/src"],
       "@libs/rclone": ["libs/rclone/src"],
+      "@libs/cloud-api-call": ["libs/cloud-api-call/src"],
       "@workflow": ["workflow"],
     }
   }

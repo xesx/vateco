@@ -35,8 +35,8 @@ export class SelectWorkflowTgBot {
       const token = ctx.session.instanceToken
       const instanceId = ctx.session.instanceId
 
-      const wf = workflow['base-flux']
-      const models = wf.models || []
+      const wf = workflow[workflowId]
+      // const models = wf.models || []
 
       // const item = 'vae/flux-vae-fp-16.safetensors'
       for (const model of models) {
@@ -63,9 +63,9 @@ export class SelectWorkflowTgBot {
     ctx.editMessageText(
       'Выберите рабочий процесс:',
       this.tgbotsrv.generateInlineKeyboard([
-        [[`WF_1`, 'action:workflow:select:1']],
-        [[`WF_2`, 'action:workflow:select:2']],
-        [[`WF_3`, 'action:workflow:select:3']],
+        [[`Base SD 1.5`, 'action:workflow:select:base-sd15']],
+        [[`Base SDXL`, 'action:workflow:select:base-sdxl']],
+        [[`Base Flux`, 'action:workflow:select:base-flux']],
         [[`Back to instance menu`, 'action:workflow:select:back']],
       ]),
     )

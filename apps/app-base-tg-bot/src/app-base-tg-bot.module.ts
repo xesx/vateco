@@ -13,6 +13,7 @@ import { SessionTgBotService } from './session.tg-bot.service'
 
 import { VastModule } from '@libs/vast'
 import { RcloneLibModule } from '@libs/rclone'
+import { CloudApiCallLibService } from '@libs/cloud-api-call'
 
 import { CommonHandlerTgBot } from './handler/common.handler.tg-bot'
 
@@ -70,6 +71,7 @@ import {
       inject: [ConfigService],
     }),
     VastModule,
+    CloudApiCallLibService,
     RcloneLibModule,
   ],
   controllers: [],
