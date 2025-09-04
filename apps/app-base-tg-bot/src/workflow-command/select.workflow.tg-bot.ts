@@ -36,7 +36,7 @@ export class SelectWorkflowTgBot {
       const instanceId = ctx.session.instanceId
 
       const wf = workflow[workflowId]
-      // const models = wf.models || []
+      const models = wf.models || []
 
       // const item = 'vae/flux-vae-fp-16.safetensors'
       for (const model of models) {
