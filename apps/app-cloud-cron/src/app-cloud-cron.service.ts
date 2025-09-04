@@ -5,17 +5,31 @@ import { Cron, CronExpression } from '@nestjs/schedule'
 
 import { Mutex } from './mutex.decorator'
 
+let comfyUiInstalled = false
+
 @Injectable()
 export class CloudCronService {
   private readonly logger = new Logger(CloudCronService.name)
 
   // Каждую секунду
   @Cron('* * * * * *')
-  @Mutex('everySecondJob')
+  @Mutex('installComfyUIJob')
   async handleEverySecond() {
-    this.logger.debug('⚡ Every second cron job executed')
-    await setTimeout(2500) // Симуляция работы
+    if (comfyUiInstalled) {
+      return
+    }
+    
+    // this.logger.debug('⚡ Every second cron job executed')
+    // await setTimeout(2500) // Симуляция работы
   }
+
+  // Каждую секунду
+  // @Cron('* * * * * *')
+  // @Mutex('everySecondJob')
+  // async handleEverySecond() {
+  //   this.logger.debug('⚡ Every second cron job executed')
+  //   await setTimeout(2500) // Симуляция работы
+  // }
 
   // Каждую минуту
   @Cron(CronExpression.EVERY_MINUTE)
