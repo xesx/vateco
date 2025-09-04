@@ -1,5 +1,9 @@
+import { setTimeout } from 'timers/promises'
+
 import { Injectable, Logger } from '@nestjs/common'
 import { Cron, CronExpression } from '@nestjs/schedule'
+
+import { Mutex } from './mutex.decorator'
 
 @Injectable()
 export class CloudCronService {
@@ -7,12 +11,15 @@ export class CloudCronService {
 
   // Каждую секунду
   @Cron('* * * * * *')
-  handleEverySecond() {
+  @Mutex('everySecondJob')
+  async handleEverySecond() {
     this.logger.debug('⚡ Every second cron job executed')
+    await setTimeout(2500) // Симуляция работы
   }
 
   // Каждую минуту
   @Cron(CronExpression.EVERY_MINUTE)
+  @Mutex('everyMinuteJob')
   handleEveryMinute() {
     this.logger.log('🕐 Every minute cron job executed')
 
@@ -25,7 +32,6 @@ export class CloudCronService {
   @Cron('0 */5 * * * *')
   handleEveryFiveMinutes() {
     this.logger.log('🕐 Every 5 minutes cron job executed')
-
     // Здесь можно добавить проверку состояния инстансов
     this.checkInstancesStatus()
   }
