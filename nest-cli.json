@@ -25,6 +25,15 @@
         "tsConfigPath": "apps/app-cloud-api/tsconfig.app.json"
       }
     },
+    "app-cloud-cron": {
+      "type": "application",
+      "root": "apps/app-cloud-cron",
+      "entryFile": "main",
+      "sourceRoot": "apps/app-cloud-cron/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/app-cloud-cron/tsconfig.app.json"
+      }
+    },
     "app-base-tg-bot": {
       "type": "application",
       "root": "apps/app-base-tg-bot",
