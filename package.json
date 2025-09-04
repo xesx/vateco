@@ -16,7 +16,7 @@
     "start:cloud-api:prod": "node dist/apps/app-cloud-api/src/main",
     "start:cloud-cron:dev": "npx nest start app-cloud-cron --watch",
     "start:cloud-cron:debug": "npx nest start app-cloud-cron --debug --watch",
-    "start:cloud-cron:prod": "node dist/apps/app-cloud-cron/main",
+    "start:cloud-cron:prod": "node dist/apps/app-cloud-cron/src/main",
     "start:tg": "nest start app-base-tg-bot --watch",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest",
