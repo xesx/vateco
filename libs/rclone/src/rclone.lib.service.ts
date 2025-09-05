@@ -63,6 +63,8 @@ export class RcloneLibService {
         maxRedirects: 5,
       }
     )
+
+    return res.data
   }
 
   async coreStats ({ baseUrl, headers }): Promise<any> {
