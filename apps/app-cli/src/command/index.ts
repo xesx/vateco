@@ -1,1 +1,2 @@
 export * from './test.cli'
+export * from './install-comfyui-v0.cli'
