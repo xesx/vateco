@@ -19,6 +19,7 @@
     "noFallthroughCasesInSwitch": false,
     "resolveJsonModule": true,
     "paths": {
+      "@libs/h": ["libs/helper/src"],
       "@libs/vast": ["libs/vast/src"],
       "@libs/tg-bot": ["libs/tg-bot/src"],
       "@libs/rclone": ["libs/rclone/src"],

@@ -1,0 +1,23 @@
+// import * as assert from 'node:assert/strict'
+
+import { Injectable } from '@nestjs/common'
+// import { ConfigService } from '@nestjs/config'
+
+@Injectable()
+export class ErrorHelperLibService {
+  parseAxiosError(error: any): string {
+    if (error.response) {
+      // The request was made and the server responded with a status code
+      // that falls out of the range of 2xx
+      return `Error response data: ${JSON.stringify(error.response.data)}, status: ${error.response.status}, headers: ${JSON.stringify(error.response.headers)}`
+    } else if (error.request) {
+      // The request was made but no response was received
+      // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+      // http.ClientRequest in node.js
+      return `Error request: ${error.request}`
+    }
+
+    // Something happened in setting up the request that triggered an Error
+    return `Error message: ${error.message}`
+  }
+}

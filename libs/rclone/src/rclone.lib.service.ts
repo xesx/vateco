@@ -52,12 +52,12 @@ export class RcloneLibService {
     return res.data
   }
 
-  async operationCopyFile ({ baseUrl, headers, srcFs, srcRemote, dstFs, dstRemote }): Promise<void> {
+  async operationCopyFile ({ baseUrl = this.BASE_URL, headers = {}, srcFs, srcRemote, dstFs, dstRemote }): Promise<void> {
     const url = baseUrl + '/operations/copyfile'
 
     const res = await axios.post(
       url,
-      { srcFs, srcRemote, dstFs, dstRemote },
+      { srcFs, srcRemote, dstFs, dstRemote, _async: true },
       {
         headers,
         maxRedirects: 5,
