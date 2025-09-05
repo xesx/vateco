@@ -35,7 +35,6 @@ export class CreateInstanceVastAiTgBot {
       env: {
         'TG_CHAT_ID': '424242424273',
       },
-      onstart: 'export TEST_ENV23=production; echo "Hello, Vast!21312312312"',
     })
 
     ctx.session.step = 'loading'
