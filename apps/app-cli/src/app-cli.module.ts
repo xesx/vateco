@@ -1,7 +1,12 @@
 import { Module } from '@nestjs/common'
 import { ScheduleModule } from '@nestjs/schedule'
 import { ConfigModule } from '@nestjs/config'
+
 import { AppCliService } from './app-cli.service'
+
+import {
+  TestCli
+} from './command'
 
 @Module({
   imports: [
@@ -10,6 +15,6 @@ import { AppCliService } from './app-cli.service'
     }),
     ScheduleModule.forRoot(),
   ],
-  providers: [AppCliService],
+  providers: [AppCliService, TestCli],
 })
 export class AppCliModule {}
