@@ -20,7 +20,7 @@ mkdir -p "${RCLONE_CONFIG_DIR}"
 cat > "${RCLONE_CONFIG_FILE}" <<EOF
 [ydisk]
 type = yandex
-token = {"access_token":"$YANDEX_DISK_ACCESS_TOKEN","token_type":"OAuth","refresh_token":"$YANDEX_DISK_REFRESH_TOKEN","expiry":"2025-04-15T14:11:36.588423+03:00"}
+token = {"access_token":"$YANDEX_DISK_ACCESS_TOKEN","token_type":"OAuth","refresh_token":"$YANDEX_DISK_REFRESH_TOKEN","expiry":"$YANDEX_DISK_TOKEN_EXPIRY"}
 EOF
 
 # Запуск rclone API-сервера без авторизации на порту 5572
@@ -36,7 +36,7 @@ function provisioning_start() {
 
     deploy_app_cloud_api
 
-    node ./dist/apps/app-cli/src/cli.js install-comfyui-v0
+    node ${WORKSPACE}/vateco/dist/apps/app-cli/src/cli.js install-comfyui-v0
 
     printf "\nProvisioning complete:  Application will start now\n\n"
 }
