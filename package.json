@@ -6,7 +6,7 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "build": "nest build",
+    "build": "nest build; chmod +x dist/apps/app-cli/src/cli.js",
     "format": "prettier --write \"apps/**/*.ts\" \"libs/**/*.ts\"",
     "start:admin:dev": "npx nest start app-admin --watch",
     "start:admin:debug": "npx nest start app-admin --debug --watch",
