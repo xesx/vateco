@@ -7,6 +7,8 @@ response=$(curl -s -H "Authorization: Bearer $INFISICAL_TOKEN" "$API_URL")
 
 # Проходим по каждому секрету и экспортируем переменную
 echo "$response" | jq -r '.secrets[] | "export \(.secretKey)=\(.secretValue)"' >> ${WORKSPACE}/onstart.sh
+echo "export TG_CHAT_ID=\"${TG_CHAT_ID}\"" >> ${WORKSPACE}/onstart.sh
+
 echo "$response" | jq -r '.secrets[] | "\(.secretKey)=\(.secretValue)"' > ${WORKSPACE}/vateco/.env
 source ${WORKSPACE}/onstart.sh
 

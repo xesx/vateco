@@ -7,7 +7,7 @@ git clone https://github.com/xesx/vastai-scripts.git
 git clone https://github.com/xesx/vateco.git
 
 # Импортируем секреты из Infisical
-source ./vateco/import-secrets.sh
+source ./vateco/bin/import-secrets.sh
 
 # Packages are installed after nodes so we can fix them...
 
