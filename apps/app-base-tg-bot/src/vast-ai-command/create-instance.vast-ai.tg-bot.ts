@@ -33,7 +33,7 @@ export class CreateInstanceVastAiTgBot {
     const result = await this.vastService.createInstance({
       offerId,
       env: {
-        'TG_CHAT_ID': '424242424273',
+        'TG_CHAT_ID': ctx.chat?.id.toString(),
       },
     })
 

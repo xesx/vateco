@@ -2,12 +2,14 @@ import { Injectable } from '@nestjs/common'
 
 import { ErrorHelperLibService } from '@libs/h'
 import { RcloneLibService } from '@libs/rclone'
+import { TgBotLibService } from '@libs/tg-bot'
 
 @Injectable()
 export class InstallComfyuiV0Cli {
   constructor(
     private readonly hError: ErrorHelperLibService,
     private readonly rclonesrv: RcloneLibService,
+    private readonly tgbotsrv: TgBotLibService,
   ) {}
 
   register(program) {
@@ -32,7 +34,12 @@ export class InstallComfyuiV0Cli {
           console.log('res', res, new Date())
 
           const stats = await this.rclonesrv.coreStats()
-          console.log('stats', stats, new Date())
+          console.log('stats', stats, new Date(), process.env.TG_CHAT_ID)
+
+          await this.tgbotsrv.sendMessage({
+            chatId: process.env.TG_CHAT_ID,
+            text: 'start install comfyui v0',
+          })
         } catch (error) {
           console.error('Error during install-comfyui-v0:', this.hError.parseAxiosError(error))
         }
