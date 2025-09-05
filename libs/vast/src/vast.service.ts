@@ -87,7 +87,7 @@ export class VastService {
     const path = `/asks/${offerId}/`
 
     const data = {
-      'template_id': 276088, // comfyui-api-01-cuda128-py312
+      'template_id': 276510, // comfyui-api-01-cuda128-py312
       'client_id': 'me', // client id
       'env': env,
     }
