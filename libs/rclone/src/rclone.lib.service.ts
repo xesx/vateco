@@ -7,6 +7,7 @@ import axios, { AxiosInstance } from 'axios'
 @Injectable()
 export class RcloneLibService {
   private readonly client: AxiosInstance
+  private readonly BASE_URL = 'http://127.0.0.1:5572'
 
   constructor(
     // private readonly configService: ConfigService
@@ -24,21 +25,32 @@ export class RcloneLibService {
     // })
   }
 
-  // async getRcloneVersion() {
-  //   try {
-  //     const res = await axios.post(`${BASE_URL}/core/version`, null, {
-  //       headers: {
-  //         // Передаем cookie с токеном
-  //         Cookie: `C.${vastAiInstanceId}_auth_token=${TOKEN}`,
-  //       },
-  //       // Следовать редиректам (аналог -L в curl)
-  //       maxRedirects: 5,
-  //     })
-  //     console.log(res.data)
-  //   } catch (err) {
-  //     console.error("Error:", err)
-  //   }
-  // }
+  async getRcloneVersion({ baseUrl = this.BASE_URL, headers = {} } = {}): Promise<any> {
+    const url = baseUrl + '/core/version'
+
+    try {
+      const res = await axios.post(url, null, { headers, maxRedirects: 5 })
+      return res.data
+    } catch (error) {
+      console.error("Error:", error)
+      throw error
+    }
+  }
+
+  async operationsList ({ baseUrl = this.BASE_URL, headers = {} } = {}): Promise<any> {
+    const url = baseUrl + '/operations/list'
+
+    const res = await axios.post(
+      url,
+      { remote: 'shared', fs: 'ydisk:', opt: { recurse: false } },
+      {
+        headers,
+        maxRedirects: 5,
+      }
+    )
+
+    return res.data
+  }
 
   async operationCopyFile ({ baseUrl, headers, srcFs, srcRemote, dstFs, dstRemote }): Promise<void> {
     const url = baseUrl + '/operations/copyfile'
