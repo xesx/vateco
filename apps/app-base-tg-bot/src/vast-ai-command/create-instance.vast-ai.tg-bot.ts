@@ -30,7 +30,13 @@ export class CreateInstanceVastAiTgBot {
       return
     }
 
-    const result = await this.vastService.createInstance({ offerId })
+    const result = await this.vastService.createInstance({
+      offerId,
+      env: {
+        TG_CHAT_ID: '424242424273',
+      }
+    })
+
     ctx.session.step = 'loading'
     ctx.session.instanceId = result.new_contract
 

@@ -83,12 +83,13 @@ export class VastService {
     return response?.data
   }
 
-  async createInstance({ offerId }: { offerId: number }): Promise<any> {
+  async createInstance({ offerId, env }: { offerId: number, env?: any }): Promise<any> {
     const path = `/asks/${offerId}/`
 
     const data = {
       'template_id': 276088, // comfyui-api-01-cuda128-py312
-      'client_id': 'me',
+      'client_id': 'me', // client id
+      'env': env
     }
 
     const response = await axios.put(
