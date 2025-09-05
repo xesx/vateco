@@ -3,7 +3,6 @@
 RCLONE_CONFIG_DIR="${HOME}/.config/rclone"
 RCLONE_CONFIG_FILE="${RCLONE_CONFIG_DIR}/rclone.conf"
 
-git clone https://github.com/xesx/vastai-scripts.git
 git clone https://github.com/xesx/vateco.git
 
 # Импортируем секреты из Infisical
