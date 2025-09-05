@@ -36,7 +36,7 @@ function provisioning_start() {
 
     deploy_app_cloud_api
 
-    vateco-cli install-comfyui-v0
+    node ./dist/apps/app-cli/src/cli.js install-comfyui-v0
 
     printf "\nProvisioning complete:  Application will start now\n\n"
 }
