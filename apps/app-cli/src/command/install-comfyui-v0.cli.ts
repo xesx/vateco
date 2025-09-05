@@ -21,7 +21,7 @@ export class InstallComfyuiV0Cli {
           console.log('\x1b[36m', 'res', version, '\x1b[0m')
 
           const list = await this.rclonesrv.operationsList()
-          console.log('\x1b[36m', 'list', list, '\x1b[0m')
+          console.log('\x1b[36m', 'list', list, new Date(), '\x1b[0m')
 
           const res = await this.rclonesrv.operationCopyFile({
             srcFs: 'ydisk:',
@@ -29,8 +29,10 @@ export class InstallComfyuiV0Cli {
             dstFs: '/',
             dstRemote: `workspace/comfyui-portable-cu128-py312-v0.tar.zst`,
           })
+          console.log('res', res, new Date())
 
-          console.log('res', res)
+          const stats = await this.rclonesrv.coreStats()
+          console.log('stats', stats, new Date())
         } catch (error) {
           console.error('Error during install-comfyui-v0:', this.hError.parseAxiosError(error))
         }

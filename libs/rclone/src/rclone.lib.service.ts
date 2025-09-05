@@ -67,25 +67,10 @@ export class RcloneLibService {
     return res.data
   }
 
-  async coreStats ({ baseUrl, headers }): Promise<any> {
+  async coreStats ({ baseUrl = this.BASE_URL, headers = {} } = {}): Promise<any> {
     const url = baseUrl + '/core/stats'
 
-    const res = await axios.post(
-      url,
-      null,
-      {
-        headers,
-        maxRedirects: 5,
-      }
-    )
-
-    return res.data
-  }
-
-  async getAllJobsStats({ baseUrl }): Promise<any> {
-    const url = baseUrl + '/core/stats'
-
-    const res = await axios.post(url)
+    const res = await axios.post(url, null, { headers, maxRedirects: 5 })
 
     return res.data
   }
