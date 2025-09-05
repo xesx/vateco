@@ -18,7 +18,7 @@ export class TgBotLibService {
     this.baseUrl = `https://api.telegram.org/bot${token}`
   }
 
-  async sendMessage({ chatId, text }: { chatId: number; text: string }) {
+  async sendMessage({ chatId, text }: { chatId: string; text: string }) {
     const url = `${this.baseUrl}/sendMessage`
 
     try {
@@ -31,7 +31,7 @@ export class TgBotLibService {
   }
 
   async sendPhoto({ chatId, photo, caption }: {
-    chatId: number;
+    chatId: string;
     photo: string | Buffer; // URL, file_id или Buffer с изображением
     caption?: string;
   }) {

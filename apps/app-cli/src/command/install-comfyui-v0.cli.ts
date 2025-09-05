@@ -37,7 +37,7 @@ export class InstallComfyuiV0Cli {
           console.log('stats', stats, new Date(), process.env.TG_CHAT_ID)
 
           await this.tgbotsrv.sendMessage({
-            chatId: process.env.TG_CHAT_ID,
+            chatId: String(process.env.TG_CHAT_ID),
             text: 'start install comfyui v0',
           })
         } catch (error) {
