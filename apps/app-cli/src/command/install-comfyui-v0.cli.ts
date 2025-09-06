@@ -43,7 +43,14 @@ export class InstallComfyuiV0Cli {
             text: 'start install comfyui v0....',
           })
 
-          await setTimeout(2000)
+          for (let i = 0; i <= 50; i++) {
+            await this.tgbotsrv.editMessage({
+              chatId: String(process.env.TG_CHAT_ID),
+              messageId: message_id,
+              text: `installing comfyui v0...\n ${'#'.repeat(i)}`,
+            })
+            await setTimeout(200)
+          }
 
           await this.tgbotsrv.editMessage({
             chatId: String(process.env.TG_CHAT_ID),
