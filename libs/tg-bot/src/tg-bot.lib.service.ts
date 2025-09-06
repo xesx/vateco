@@ -23,10 +23,25 @@ export class TgBotLibService {
 
     try {
       const response = await axios.post(url, { chat_id: chatId, text })
-      return response.data
+      return response.data.result.message_id
     } catch (error) {
       console.error('Error sending message:', error.message)
       // throw error;
+    }
+  }
+
+  async editMessage({ chatId, messageId, text }) {
+    const url = `${this.baseUrl}/editMessageText`
+
+    try {
+      const response = await axios.post(url, {
+        chat_id: chatId,
+        message_id: messageId,
+        text,
+      })
+      return response.data
+    } catch (error: any) {
+      console.error('Error editing message:', error.message)
     }
   }
 
