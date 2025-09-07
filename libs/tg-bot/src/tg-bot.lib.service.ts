@@ -30,7 +30,7 @@ export class TgBotLibService {
     }
   }
 
-  async editMessage({ chatId, messageId, text }) {
+  async editMessage({ chatId, messageId, text, parseMode = 'HTML' }) {
     const url = `${this.baseUrl}/editMessageText`
 
     try {
@@ -38,6 +38,7 @@ export class TgBotLibService {
         chat_id: chatId,
         message_id: messageId,
         text,
+        parse_mode: parseMode,
       })
       return response.data
     } catch (error: any) {

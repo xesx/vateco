@@ -2,3 +2,4 @@ export * from './helper.lib.module'
 
 export * from './helper.lib.service'
 export * from './error.helper.lib.service'
+export * from './tar.helper.lib.service'

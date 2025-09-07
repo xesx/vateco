@@ -75,6 +75,14 @@ export class RcloneLibService {
     return res.data
   }
 
+  async coreStatsByJob ({ baseUrl = this.BASE_URL, headers = {}, jobId }): Promise<any> {
+    const url = baseUrl + '/core/stats'
+
+    const res = await axios.post(url, { group: `job/${jobId}` }, { headers, maxRedirects: 5 })
+
+    return res.data
+  }
+
   async getJobStatus({ jobId,  baseUrl = this.BASE_URL, headers = {} }): Promise<any> {
     const url = baseUrl + '/job/status'
 
