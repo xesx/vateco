@@ -5,7 +5,7 @@ import { Injectable } from '@nestjs/common'
 
 @Injectable()
 export class ErrorHelperLibService {
-  parseAxiosError(error: any): string {
+  parseAxiosError(error: any): any {
     if (error.response) {
       // The request was made and the server responded with a status code
       // that falls out of the range of 2xx
@@ -15,9 +15,14 @@ export class ErrorHelperLibService {
       // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
       // http.ClientRequest in node.js
       return `Error request: ${error.request}`
+    } else if (error.isAxiosError) {
+      // Axios error without response (e.g., network error)
+      return `Axios error message: ${error.message}`
+    } else if (error.message) {
+      return `Error message: ${error.message}`
     }
 
     // Something happened in setting up the request that triggered an Error
-    return `Error message: ${error.message}`
+    return error
   }
 }

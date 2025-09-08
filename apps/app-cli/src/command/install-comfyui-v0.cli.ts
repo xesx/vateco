@@ -4,6 +4,7 @@ import { Injectable } from '@nestjs/common'
 import { ErrorHelperLibService, TarHelperLibService } from '@libs/h'
 import { RcloneLibService } from '@libs/rclone'
 import { TgBotLibService } from '@libs/tg-bot'
+import { MessageLibService } from '@libs/message'
 
 @Injectable()
 export class InstallComfyuiV0Cli {
@@ -12,6 +13,7 @@ export class InstallComfyuiV0Cli {
     private readonly htar: TarHelperLibService,
     private readonly rclonesrv: RcloneLibService,
     private readonly tgbotsrv: TgBotLibService,
+    private readonly msgsrv: MessageLibService,
   ) {}
 
   register(program) {
@@ -24,20 +26,18 @@ export class InstallComfyuiV0Cli {
           const workspacePath = String(process.env.WORKSPACE)
           const comfyuiArchivePath = `${workspacePath}/comfyui-portable-cu128-py312-v0.tar.zst`
 
-          console.log('\x1b[36m', 'workspacePath', workspacePath, '\x1b[0m');
+          //  check rclone connection
+          await this.rclonesrv.getRcloneVersion()
 
-          console.log('in install comfyui v0 cli')
-          // const version = await this.rclonesrv.getRcloneVersion()
-          // console.log('\x1b[36m', 'res', version, '\x1b[0m')
-
+          // check rclone remote disk availability
           const list = await this.rclonesrv.operationsList()
-          console.log('\x1b[36m', new Date(), 'list', list, '\x1b[0m')
 
           const comfyuiInstallMessageId = await this.tgbotsrv.sendMessage({
             chatId,
             text: 'start install comfyui v0....',
           })
 
+          // start copy file from ydisk to local disk in async mode
           const copyResponse = await this.rclonesrv.operationCopyFile({
             srcFs: 'ydisk:',
             srcRemote: `shared/comfyui-portable-cu128-py312-v0.tar.zst`,
@@ -47,32 +47,14 @@ export class InstallComfyuiV0Cli {
 
           console.log(new Date(), 'copyResponse', copyResponse)
 
+          const startTime = Date.now()
+
           while (true) {
-            // const commonstats = await this.rclonesrv.coreStats()
-            // console.log(new Date(), 'commonstats', commonstats)
-
             const stats = await this.rclonesrv.coreStatsByJob({ jobId: copyResponse.jobid })
+            // console.log('\x1b[36m', 'stats', stats, '\x1b[0m')
 
-            const totalMb = (stats.totalBytes / (1024 * 1024)).toFixed(2)
-            const transferredMb = (stats.bytes / (1024 * 1024)).toFixed(2)
-            const speedMb = (stats.speed / (1024 * 1024)).toFixed(2)
-            const transferTime = stats.transferTime.toFixed(0)
-
-            console.log(new Date(), 'stats', `${transferredMb} / ${totalMb} MB, speed ${speedMb} MB/s, time ${transferTime} sec`)
-
+            // check job status
             const jobStatus = await this.rclonesrv.getJobStatus({ jobId: copyResponse.jobid })
-            // console.log('\x1b[36m', new Date(), 'jobStatus', jobStatus, '\x1b[0m');
-            // jobStatus {
-            //   duration: 0.366459875,
-            //     endTime: '2025-09-07T20:04:08.008949+03:00',
-            //     error: '',
-            //     finished: true,
-            //     group: 'job/785',
-            //     id: 785,
-            //     output: {},
-            //   startTime: '2025-09-07T20:04:07.64249+03:00',
-            //     success: true
-            // }
 
             if (jobStatus.error.length > 0) {
               await this.tgbotsrv.editMessage({
@@ -87,18 +69,21 @@ export class InstallComfyuiV0Cli {
               break
             }
 
+            const [jobStats] = stats.transferring || []
+
             await this.tgbotsrv.editMessage({
               chatId,
               messageId: comfyuiInstallMessageId,
-              text: `<pre>
-Downloading ComfyUI...
-
-[${'+'.repeat(Math.floor((stats.bytes / stats.totalBytes) * 30)).padEnd(30, '·')}]
-${transferredMb} / ${totalMb} MB (${((stats.bytes / stats.totalBytes) * 100).toFixed(1)}%)
-
-Speed: ${speedMb} MB/s
-Time:  ${transferTime} sec
-</pre>`,
+              text: this.msgsrv.generateMessage({
+                type: 'download-comfyui-v0',
+                data: {
+                  transferredBytes: jobStats?.bytes,
+                  totalBytes: jobStats?.size,
+                  speedInBytes: jobStats?.speed,
+                  transferTimeInSec: (Date.now() - startTime) / 1000,
+                  etaInSec: jobStats?.eta,
+                },
+              })
             })
 
             await setTimeout(1500)
@@ -121,10 +106,9 @@ Time:  ${transferTime} sec
             messageId: comfyuiInstallMessageId,
             text: 'comfyui v0 installed',
           })
-
-          // console.log('\x1b[36m', new Date(), 'message_id', comfyuiInstallMessageId, '\x1b[0m')
         } catch (error) {
           console.error('Error during install-comfyui-v0:', this.herror.parseAxiosError(error))
+          console.log(error.stack)
         }
 
 

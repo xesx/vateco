@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
 
+import { MessagesLibModule } from '@libs/message'
 import { HelperLibModule } from '@libs/h'
 import { RcloneLibModule } from '@libs/rclone'
 import { TgBotLibModule } from '@libs/tg-bot'
@@ -18,6 +19,7 @@ import {
       isGlobal: true,
     }),
     HelperLibModule,
+    MessagesLibModule,
     RcloneLibModule,
     TgBotLibModule,
   ],
