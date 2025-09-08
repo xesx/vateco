@@ -8,19 +8,23 @@ import { ConfigService } from '@nestjs/config'
 @Injectable()
 export class ComfyUiLibService {
   private readonly logger = new Logger(ComfyUiLibService.name)
+  private readonly comfyuiDir: string
 
   constructor(private readonly configService: ConfigService) {
+    const workspace = this.configService.get<string>('WORKSPACE')
+    this.comfyuiDir = `${workspace}/ComfyUI`
   }
 
   async startComfyUI(): Promise<void> {
+    const comfyPath = this.comfyuiDir
+    const pythonPath = `${comfyPath}/venv/bin/python`
+
     return new Promise((resolve, reject) => {
       pm2.connect((err) => {
         if (err) {
           this.logger.error('Ошибка подключения к pm2', err)
           return reject(err)
         }
-
-        const comfyPath = this.configService.get<string>('COMFYUI_PATH') ?? '/path/to/ComfyUI'
 
         pm2.start(
           {

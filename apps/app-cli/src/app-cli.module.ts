@@ -12,6 +12,7 @@ import { AppCliService } from './app-cli.service'
 import {
   TestCli,
   InstallComfyuiV0Cli,
+  StartComfyuiCli,
 } from './command'
 
 @Module({
@@ -29,6 +30,7 @@ import {
     AppCliService,
     TestCli,
     InstallComfyuiV0Cli,
+    StartComfyuiCli,
   ],
 })
 export class AppCliModule {}

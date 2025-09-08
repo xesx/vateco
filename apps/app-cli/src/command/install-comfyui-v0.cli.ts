@@ -108,9 +108,8 @@ export class InstallComfyuiV0Cli {
           }
 
           // start unpapack
-          await this.tgbotsrv.editMessage({
+          await this.tgbotsrv.sendMessage({
             chatId,
-            messageId: comfyuiDownloadingMessageId,
             text: this.msgsrv.generateMessage({
               type: 'code',
               data: { message: 'Unpacking ComfyUI...' },
@@ -123,9 +122,8 @@ export class InstallComfyuiV0Cli {
           })
 
           // --disable-auto-launch --port 18188 --enable-cors-header
-          await this.tgbotsrv.editMessage({
+          await this.tgbotsrv.sendMessage({
             chatId,
-            messageId: comfyuiDownloadingMessageId,
             text: this.msgsrv.generateMessage({
               type: 'code',
               data: { message: 'ComfyUI installed!' },
