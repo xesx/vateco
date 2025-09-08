@@ -25,12 +25,12 @@ export class ComfyUiLibService {
           this.logger.error('Ошибка подключения к pm2', err)
           return reject(err)
         }
-
+        // /workspace/ComfyUI/venv/bin/python /workspace/ComfyUI/main.py --disable-auto-launch --port 18188 --enable-cors-header
         pm2.start(
           {
             name: 'comfyui',
             cwd: comfyPath,
-            script: './venv/bin/python',
+            script: pythonPath,
             args: ['main.py', '--disable-auto-launch', '--port 18188', '--enable-cors-header'],
           },
           (err) => {

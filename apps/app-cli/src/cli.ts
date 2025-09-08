@@ -6,7 +6,7 @@ import { AppCliService } from './app-cli.service'
 
 async function bootstrap() {
   const app = await NestFactory.createApplicationContext(AppCliModule, {
-    logger: ['error'],
+    logger: ['debug'],
   })
 
   const service = app.get(AppCliService)
