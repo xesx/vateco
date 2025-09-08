@@ -6,6 +6,7 @@ import { ErrorHelperLibService, TarHelperLibService } from '@libs/h'
 import { RcloneLibService } from '@libs/rclone'
 import { TgBotLibService } from '@libs/tg-bot'
 import { MessageLibService } from '@libs/message'
+import { ComfyUiLibService } from '@libs/comfy-ui'
 
 @Injectable()
 export class InstallComfyuiV0Cli {
@@ -15,6 +16,7 @@ export class InstallComfyuiV0Cli {
     private readonly rclonesrv: RcloneLibService,
     private readonly tgbotsrv: TgBotLibService,
     private readonly msgsrv: MessageLibService,
+    private readonly comfyuisrv: ComfyUiLibService,
   ) {}
 
   register(program) {
@@ -33,13 +35,7 @@ export class InstallComfyuiV0Cli {
           // check rclone remote disk availability
           const list = await this.rclonesrv.operationsList()
 
-          await this.tgbotsrv.sendMessage({
-            chatId,
-            text: this.msgsrv.generateMessage({
-              type: 'code',
-              data: { message: 'Starting download ComfyUI...' },
-            }),
-          })
+          await this.tgbotsrv.sendMessage({ chatId, text: this.msgsrv.genCodeMessage('Starting download ComfyUI...') })
 
           const comfyuiDownloadingMessageId = await this.tgbotsrv.sendMessage({
             chatId,
@@ -107,28 +103,18 @@ export class InstallComfyuiV0Cli {
             await setTimeout(1500)
           }
 
-          // start unpapack
-          await this.tgbotsrv.sendMessage({
-            chatId,
-            text: this.msgsrv.generateMessage({
-              type: 'code',
-              data: { message: 'Unpacking ComfyUI...' },
-            }),
-          })
-
+          // unpack comfyui
+          await this.tgbotsrv.sendMessage({ chatId, text: this.msgsrv.genCodeMessage('Unpacking ComfyUI...') })
           await this.htar.extractTarZst({
             filePath: comfyuiArchivePath,
             destPath: workspacePath,
           })
+          await this.tgbotsrv.sendMessage({ chatId, text: this.msgsrv.genCodeMessage('ComfyUI installed!') })
 
-          // --disable-auto-launch --port 18188 --enable-cors-header
-          await this.tgbotsrv.sendMessage({
-            chatId,
-            text: this.msgsrv.generateMessage({
-              type: 'code',
-              data: { message: 'ComfyUI installed!' },
-            }),
-          })
+          // start comfyui
+          await this.tgbotsrv.sendMessage({ chatId, text: this.msgsrv.genCodeMessage('ComfyUI starting') })
+          await this.comfyuisrv.startComfyUI()
+          await this.tgbotsrv.sendMessage({ chatId, text: this.msgsrv.genCodeMessage('ComfyUI started!') })
         } catch (error) {
           console.error('Error during install-comfyui-v0:', this.herror.parseAxiosError(error))
           console.log(error.stack)

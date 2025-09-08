@@ -19,4 +19,11 @@ export class MessageLibService {
     return template(data)
   }
 
+  genCodeMessage(message: string) {
+    return this.generateMessage({
+      type: 'code',
+      data: { message },
+    })
+  }
+
 }
