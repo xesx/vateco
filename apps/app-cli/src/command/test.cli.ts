@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common'
 import { ErrorHelperLibService, TarHelperLibService } from '@libs/h'
 import { RcloneLibService } from '@libs/rclone'
 import { MessageLibService } from '@libs/message'
+import { ComfyUiLibService } from '@libs/comfy-ui'
 
 @Injectable()
 export class TestCli {
@@ -11,6 +12,7 @@ export class TestCli {
     private readonly htar: TarHelperLibService,
     private readonly rclonesrv: RcloneLibService,
     private readonly msgsrv: MessageLibService,
+    private readonly comfyuisrv: ComfyUiLibService,
   ) {}
 
   register(program) {

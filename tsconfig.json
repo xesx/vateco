@@ -25,6 +25,7 @@
       "@libs/tg-bot": ["libs/tg-bot/src"],
       "@libs/rclone": ["libs/rclone/src"],
       "@libs/cloud-api-call": ["libs/cloud-api-call/src"],
+      "@libs/comfy-ui": ["libs/comfy-ui/src"],
       "@workflow": ["workflow"],
     }
   }
