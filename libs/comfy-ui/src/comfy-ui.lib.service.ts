@@ -31,7 +31,7 @@ export class ComfyUiLibService {
             name: 'comfyui',
             cwd: comfyPath,
             script: pythonPath,
-            args: ['main.py', '--disable-auto-launch', '--port 18188', '--enable-cors-header'],
+            args: ['main.py', '--disable-auto-launch', '--port', '18188', '--enable-cors-header'],
           },
           (err) => {
             pm2.disconnect()
