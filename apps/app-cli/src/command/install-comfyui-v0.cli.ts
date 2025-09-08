@@ -24,7 +24,7 @@ export class InstallComfyuiV0Cli {
         try {
           const chatId = String(process.env.TG_CHAT_ID)
           const workspacePath = String(process.env.WORKSPACE)
-          const comfyuiArchivePath = `${workspacePath}/comfyui-portable-cu128-py312-v0.tar.zst`
+          const comfyuiArchivePath = `${workspacePath}/${process.env.COMFY_UI_ARCHIVE_FILE}`
 
           //  check rclone connection
           await this.rclonesrv.getRcloneVersion()
@@ -32,15 +32,32 @@ export class InstallComfyuiV0Cli {
           // check rclone remote disk availability
           const list = await this.rclonesrv.operationsList()
 
-          const comfyuiInstallMessageId = await this.tgbotsrv.sendMessage({
+          await this.tgbotsrv.sendMessage({
             chatId,
-            text: 'start install comfyui v0....',
+            text: this.msgsrv.generateMessage({
+              type: 'code',
+              data: { message: 'Starting download ComfyUI...' },
+            }),
+          })
+
+          const comfyuiDownloadingMessageId = await this.tgbotsrv.sendMessage({
+            chatId,
+            text: this.msgsrv.generateMessage({
+              type: 'download-comfyui-v0',
+              data: {
+                transferredBytes: 0,
+                totalBytes: 0,
+                speedInBytes: 0,
+                transferTimeInSec: 0,
+                etaInSec: 0,
+              },
+            }),
           })
 
           // start copy file from ydisk to local disk in async mode
           const copyResponse = await this.rclonesrv.operationCopyFile({
             srcFs: 'ydisk:',
-            srcRemote: `shared/comfyui-portable-cu128-py312-v0.tar.zst`,
+            srcRemote: `shared/${process.env.COMFY_UI_ARCHIVE_FILE}`,
             dstFs: '/',
             dstRemote: comfyuiArchivePath,
           })
@@ -59,7 +76,7 @@ export class InstallComfyuiV0Cli {
             if (jobStatus.error.length > 0) {
               await this.tgbotsrv.editMessage({
                 chatId,
-                messageId: comfyuiInstallMessageId,
+                messageId: comfyuiDownloadingMessageId,
                 text: `Error during downloading comfyui: ${jobStatus.error}`,
               })
               break
@@ -73,7 +90,7 @@ export class InstallComfyuiV0Cli {
 
             await this.tgbotsrv.editMessage({
               chatId,
-              messageId: comfyuiInstallMessageId,
+              messageId: comfyuiDownloadingMessageId,
               text: this.msgsrv.generateMessage({
                 type: 'download-comfyui-v0',
                 data: {
@@ -92,8 +109,11 @@ export class InstallComfyuiV0Cli {
           // start unpapack
           await this.tgbotsrv.editMessage({
             chatId,
-            messageId: comfyuiInstallMessageId,
-            text: `start unpack comfyui...`,
+            messageId: comfyuiDownloadingMessageId,
+            text: this.msgsrv.generateMessage({
+              type: 'code',
+              data: { message: 'Unpacking ComfyUI...' },
+            }),
           })
 
           await this.htar.extractTarZst({
@@ -101,10 +121,14 @@ export class InstallComfyuiV0Cli {
             destPath: workspacePath,
           })
 
+          // --disable-auto-launch --port 18188 --enable-cors-header
           await this.tgbotsrv.editMessage({
             chatId,
-            messageId: comfyuiInstallMessageId,
-            text: 'comfyui v0 installed',
+            messageId: comfyuiDownloadingMessageId,
+            text: this.msgsrv.generateMessage({
+              type: 'code',
+              data: { message: 'ComfyUI installed!' },
+            }),
           })
         } catch (error) {
           console.error('Error during install-comfyui-v0:', this.herror.parseAxiosError(error))

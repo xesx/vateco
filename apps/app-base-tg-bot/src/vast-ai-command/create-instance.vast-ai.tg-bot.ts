@@ -34,6 +34,7 @@ export class CreateInstanceVastAiTgBot {
       offerId,
       env: {
         'TG_CHAT_ID': ctx.chat?.id.toString(),
+        'COMFY_UI_ARCHIVE_FILE': 'comfyui-portable-cu128-py312-v0.tar.zst',
       },
     })
 

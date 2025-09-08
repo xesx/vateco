@@ -18,11 +18,11 @@ export class TgBotLibService {
     this.baseUrl = `https://api.telegram.org/bot${token}`
   }
 
-  async sendMessage({ chatId, text }: { chatId: string; text: string }) {
+  async sendMessage({ chatId, text, parseMode = 'HTML' }) {
     const url = `${this.baseUrl}/sendMessage`
 
     try {
-      const response = await axios.post(url, { chat_id: chatId, text })
+      const response = await axios.post(url, { chat_id: chatId, text, parse_mode: parseMode, })
       return response.data.result.message_id
     } catch (error) {
       console.error('Error sending message:', error.message)
