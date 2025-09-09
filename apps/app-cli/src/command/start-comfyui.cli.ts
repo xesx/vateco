@@ -12,7 +12,7 @@ export class StartComfyuiCli {
     private readonly htar: TarHelperLibService,
     private readonly rclonesrv: RcloneLibService,
     private readonly msgsrv: MessageLibService,
-    private readonly comfyuisrv: ComfyUiLibService,
+    private readonly comfyuilib: ComfyUiLibService,
   ) {}
 
   register(program) {
@@ -20,7 +20,7 @@ export class StartComfyuiCli {
       .command('start-comfyui')
       .description('start comfyui')
       .action(async () => {
-        await this.comfyuisrv.startComfyUI()
+        await this.comfyuilib.startComfyUI()
       })
   }
 }

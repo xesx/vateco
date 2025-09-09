@@ -12,7 +12,7 @@ export class TestCli {
     private readonly htar: TarHelperLibService,
     private readonly rclonesrv: RcloneLibService,
     private readonly msgsrv: MessageLibService,
-    private readonly comfyuisrv: ComfyUiLibService,
+    private readonly comfyuilib: ComfyUiLibService,
   ) {}
 
   register(program) {

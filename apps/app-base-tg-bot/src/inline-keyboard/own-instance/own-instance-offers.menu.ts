@@ -2,20 +2,19 @@
 
 export function ownInstanceOffersMenu(offers: any[]): [string, string][][] {
   const keyboard = offers.map(o => {
-    return [
-      [
-        `${o?.num_gpus}x ${o.gpu_name}`,
-        (o.geolocation?.split(',')?.[1] || o.geolocation || 'N/A')?.trim?.(),
-        o.dph_total.toFixed(2) + '$',
-        `cuda ${o.cuda_max_good} `,
-        `[${o.reliability2?.toFixed?.(2)}]`
-      ].join(' '),
-      `action:search:offers:select:${o.id}`
-    ]
-  }).concat([
-    ['🔄 Refresh', 'action:search:offers'],
-    ['⬅️ Back', 'action:search:params']
-  ])
+    const gpuInfo = `${o?.num_gpus}x ${o.gpu_name}`
+    const geolocation = (o.geolocation?.split(',')?.[1] || o.geolocation || 'N/A')?.trim?.()
+    const dhp = o.dph_total?.toFixed(2) + '$'
+    const cuda = `cuda ${o.cuda_max_good} `
+    const reliability2 = o.reliability2?.toFixed(2) || 'N/A'
 
-  return keyboard
+    const offerDescription = [gpuInfo, geolocation, dhp, cuda, reliability2].join(' ')
+
+    return [[offerDescription, `act:own-instance:offer:${o.id}`]]
+  }).concat([[
+    ['⬅️ Back', 'act:own-instance'],
+    ['🔄 Refresh', 'act:own-instance:search-offers'],
+  ]])
+
+  return keyboard as [string, string][][]
 }

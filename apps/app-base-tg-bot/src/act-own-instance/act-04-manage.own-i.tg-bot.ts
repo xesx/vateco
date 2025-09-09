@@ -2,32 +2,30 @@ import { Injectable } from '@nestjs/common'
 import { Telegraf } from 'telegraf'
 import { InjectBot } from 'nestjs-telegraf'
 
-import { VastLibService } from '@libs/vast'
-
 import { AppBaseTgBotService } from '../app-base-tg-bot.service'
 import { TgBotLibService } from '@libs/tg-bot'
-
-import { Step } from '../step.decorator'
+import { VastLibService } from '@libs/vast'
+import { MessageLibService } from '@libs/message'
 
 import { TelegramContext } from '../types'
 
 @Injectable()
-export class ShowInstanceVastAiTgBot {
+export class Act04ManageOwnITgBot {
   constructor(
     @InjectBot() private readonly bot: Telegraf<TelegramContext>,
     private readonly tgbotsrv: AppBaseTgBotService,
     private readonly tgbotlib: TgBotLibService,
-    private readonly vastService: VastLibService,
+    private readonly vastlib: VastLibService,
+    private readonly msglib: MessageLibService,
   ) {
-    this.bot.command('show', (ctx) => this.handleShowVastAiInstance(ctx))
-    this.bot.action('action:instance:show', (ctx) => this.handleShowVastAiInstance(ctx))
+    this.bot.action('act:own-instance:destroy', (ctx) => this.handleActOwnInstanceDestroy(ctx))
+    this.bot.action('act:own-instance:status', (ctx) => this.handleActOwnInstanceStatus(ctx))
   }
 
-  @Step('loading', 'running')
-  private async handleShowVastAiInstance(ctx: TelegramContext) {
+  private async handleActOwnInstanceStatus(ctx: TelegramContext) {
     const instanceId = ctx.session.instanceId
 
-    const instance = await this.vastService.showInstance({ instanceId })
+    const instance = await this.vastlib.showInstance({ instanceId })
     console.log('\x1b[36m', 'result', JSON.stringify(instance, null, 2), '\x1b[0m')
 
     const token = instance.jupyter_token || 'N/A'
@@ -64,5 +62,17 @@ export class ShowInstanceVastAiTgBot {
 
     this.tgbotlib.safeAnswerCallback(ctx)
     ctx.reply(message, { parse_mode: 'Markdown' })
+  }
+
+  private async handleActOwnInstanceDestroy(ctx: TelegramContext) {
+    const instanceId = ctx.session.instanceId
+
+    const result = await this.vastlib.destroyInstance({ instanceId })
+    delete ctx.session.instanceId
+    ctx.session.step = 'start'
+
+    ctx.reply('Instance destroyed:\n' + JSON.stringify(result))
+    this.tgbotlib.safeAnswerCallback(ctx)
+    this.tgbotsrv.showInstanceSearchParamsMenu(ctx)
   }
 }

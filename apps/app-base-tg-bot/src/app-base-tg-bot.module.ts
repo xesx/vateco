@@ -23,15 +23,11 @@ import { BaseCommandTgBot } from './command/base.command.tg-bot'
 import { TestCommandTgBot } from './command/test.command.tg-bot'
 
 import {
-  SearchOfferVastAiTgBot,
-  CreateInstanceVastAiTgBot,
-  ShowInstanceVastAiTgBot,
-  DestroyInstanceVastAiTgBot,
-} from './vast-ai-command'
-
-import {
   Act01SetSearchParamsOwnITgBot,
-} from './own-instance'
+  Act02SearchOffersOwnITgBot,
+  Act03CreateOwnITgBot,
+  Act04ManageOwnITgBot,
+} from './act-own-instance'
 
 import {
   SelectWorkflowTgBot,
@@ -92,11 +88,9 @@ import {
     TestCommandTgBot,
 
     Act01SetSearchParamsOwnITgBot,
-
-    SearchOfferVastAiTgBot,
-    CreateInstanceVastAiTgBot,
-    ShowInstanceVastAiTgBot,
-    DestroyInstanceVastAiTgBot,
+    Act02SearchOffersOwnITgBot,
+    Act03CreateOwnITgBot,
+    Act04ManageOwnITgBot,
 
     SelectWorkflowTgBot,
     CheckStatusWorkflowTgBot,

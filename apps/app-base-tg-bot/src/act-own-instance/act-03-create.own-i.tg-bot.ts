@@ -2,29 +2,24 @@ import { Injectable } from '@nestjs/common'
 import { Telegraf } from 'telegraf'
 import { InjectBot } from 'nestjs-telegraf'
 
-import { VastLibService } from '@libs/vast'
-
 import { AppBaseTgBotService } from '../app-base-tg-bot.service'
 import { TgBotLibService } from '@libs/tg-bot'
-
-import { Step } from '../step.decorator'
+import { VastLibService } from '@libs/vast'
 
 import { TelegramContext } from '../types'
 
 @Injectable()
-export class CreateInstanceVastAiTgBot {
+export class Act03CreateOwnITgBot {
   constructor(
     @InjectBot() private readonly bot: Telegraf<TelegramContext>,
     private readonly tgbotsrv: AppBaseTgBotService,
     private readonly tgbotlib: TgBotLibService,
     private readonly vastlib: VastLibService,
   ) {
-    this.bot.command('create', (ctx) => this.handleCreateVastAiInstance(ctx))
-    this.bot.action('action:instance:create', (ctx) => this.handleCreateVastAiInstance(ctx))
+    this.bot.action('act:own-instance:create', (ctx) => this.handleActOwnInstanceCreate(ctx))
   }
 
-  @Step('start')
-  private async handleCreateVastAiInstance(ctx: TelegramContext) {
+  private async handleActOwnInstanceCreate(ctx: TelegramContext) {
     const offerId = ctx.session.offerId
 
     if (!offerId) {

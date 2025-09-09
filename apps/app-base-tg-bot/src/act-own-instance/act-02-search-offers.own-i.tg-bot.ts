@@ -13,7 +13,7 @@ import {
 } from '../inline-keyboard'
 
 @Injectable()
-export class Act01SetSearchParamsOwnITgBot {
+export class Act02SearchOffersOwnITgBot {
   constructor(
     @InjectBot() private readonly bot: Telegraf<TelegramContext>,
     private readonly tgbotsrv: AppBaseTgBotService,

@@ -1,1 +1,0 @@
-export * from './act-01-set-search-params.own-i.tg-bot'

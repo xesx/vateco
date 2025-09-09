@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
 
-import { VastModule } from '@libs/vast'
+import { VastLibModule } from '@libs/vast'
 import { TgBotLibModule } from '@libs/tg-bot'
 
 import { AppCloudApiController } from './app-cloud-api.controller'
@@ -12,7 +12,7 @@ import { AppCloudApiController } from './app-cloud-api.controller'
       isGlobal: true,
       envFilePath: ['.env'],
     }),
-    VastModule,
+    VastLibModule,
     TgBotLibModule,
   ],
   controllers: [AppCloudApiController],

@@ -13,10 +13,10 @@ export class InstallComfyuiV0Cli {
   constructor(
     private readonly herror: ErrorHelperLibService,
     private readonly htar: TarHelperLibService,
-    private readonly rclonesrv: RcloneLibService,
-    private readonly tgbotsrv: TgBotLibService,
-    private readonly msgsrv: MessageLibService,
-    private readonly comfyuisrv: ComfyUiLibService,
+    private readonly rclonelib: RcloneLibService,
+    private readonly tgbotlib: TgBotLibService,
+    private readonly msglib: MessageLibService,
+    private readonly comfyuilib: ComfyUiLibService,
   ) {}
 
   register(program) {
@@ -30,16 +30,16 @@ export class InstallComfyuiV0Cli {
           const comfyuiArchivePath = `${workspacePath}/${process.env.COMFY_UI_ARCHIVE_FILE}`
 
           //  check rclone connection
-          await this.rclonesrv.getRcloneVersion()
+          await this.rclonelib.getRcloneVersion()
 
           // check rclone remote disk availability
-          const list = await this.rclonesrv.operationsList()
+          const list = await this.rclonelib.operationsList()
 
-          await this.tgbotsrv.sendMessage({ chatId, text: this.msgsrv.genCodeMessage('Starting download ComfyUI...') })
+          await this.tgbotlib.sendMessage({ chatId, text: this.msglib.genCodeMessage('Starting download ComfyUI...') })
 
-          const comfyuiDownloadingMessageId = await this.tgbotsrv.sendMessage({
+          const comfyuiDownloadingMessageId = await this.tgbotlib.sendMessage({
             chatId,
-            text: this.msgsrv.generateMessage({
+            text: this.msglib.generateMessage({
               type: 'download-comfyui-v0',
               data: {
                 transferredBytes: 0,
@@ -52,7 +52,7 @@ export class InstallComfyuiV0Cli {
           })
 
           // start copy file from ydisk to local disk in async mode
-          const copyResponse = await this.rclonesrv.operationCopyFile({
+          const copyResponse = await this.rclonelib.operationCopyFile({
             srcFs: 'ydisk:',
             srcRemote: `shared/${process.env.COMFY_UI_ARCHIVE_FILE}`,
             dstFs: '/',
@@ -64,14 +64,14 @@ export class InstallComfyuiV0Cli {
           const startTime = Date.now()
 
           while (true) {
-            const stats = await this.rclonesrv.coreStatsByJob({ jobId: copyResponse.jobid })
+            const stats = await this.rclonelib.coreStatsByJob({ jobId: copyResponse.jobid })
             // console.log('\x1b[36m', 'stats', stats, '\x1b[0m')
 
             // check job status
-            const jobStatus = await this.rclonesrv.getJobStatus({ jobId: copyResponse.jobid })
+            const jobStatus = await this.rclonelib.getJobStatus({ jobId: copyResponse.jobid })
 
             if (jobStatus.error.length > 0) {
-              await this.tgbotsrv.editMessage({
+              await this.tgbotlib.editMessage({
                 chatId,
                 messageId: comfyuiDownloadingMessageId,
                 text: `Error during downloading comfyui: ${jobStatus.error}`,
@@ -85,10 +85,10 @@ export class InstallComfyuiV0Cli {
 
             const [jobStats] = stats.transferring || []
 
-            await this.tgbotsrv.editMessage({
+            await this.tgbotlib.editMessage({
               chatId,
               messageId: comfyuiDownloadingMessageId,
-              text: this.msgsrv.generateMessage({
+              text: this.msglib.generateMessage({
                 type: 'download-comfyui-v0',
                 data: {
                   transferredBytes: jobStats?.bytes,
@@ -104,24 +104,21 @@ export class InstallComfyuiV0Cli {
           }
 
           // unpack comfyui
-          await this.tgbotsrv.sendMessage({ chatId, text: this.msgsrv.genCodeMessage('Unpacking ComfyUI...') })
+          await this.tgbotlib.sendMessage({ chatId, text: this.msglib.genCodeMessage('Unpacking ComfyUI...') })
           await this.htar.extractTarZst({
             filePath: comfyuiArchivePath,
             destPath: workspacePath,
           })
-          await this.tgbotsrv.sendMessage({ chatId, text: this.msgsrv.genCodeMessage('ComfyUI installed!') })
+          await this.tgbotlib.sendMessage({ chatId, text: this.msglib.genCodeMessage('ComfyUI installed!') })
 
           // start comfyui
-          await this.tgbotsrv.sendMessage({ chatId, text: this.msgsrv.genCodeMessage('ComfyUI starting') })
-          await this.comfyuisrv.startComfyUI()
-          await this.tgbotsrv.sendMessage({ chatId, text: this.msgsrv.genCodeMessage('ComfyUI started!') })
+          await this.tgbotlib.sendMessage({ chatId, text: this.msglib.genCodeMessage('ComfyUI starting') })
+          await this.comfyuilib.startComfyUI()
+          await this.tgbotlib.sendMessage({ chatId, text: this.msglib.genCodeMessage('ComfyUI started!') })
         } catch (error) {
           console.error('Error during install-comfyui-v0:', this.herror.parseAxiosError(error))
           console.log(error.stack)
         }
-
-
-
       })
   }
 }
