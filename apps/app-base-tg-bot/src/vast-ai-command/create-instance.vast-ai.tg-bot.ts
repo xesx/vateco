@@ -2,9 +2,10 @@ import { Injectable } from '@nestjs/common'
 import { Telegraf } from 'telegraf'
 import { InjectBot } from 'nestjs-telegraf'
 
-import { VastService } from '@libs/vast'
+import { VastLibService } from '@libs/vast'
 
 import { AppBaseTgBotService } from '../app-base-tg-bot.service'
+import { TgBotLibService } from '@libs/tg-bot'
 
 import { Step } from '../step.decorator'
 
@@ -15,7 +16,8 @@ export class CreateInstanceVastAiTgBot {
   constructor(
     @InjectBot() private readonly bot: Telegraf<TelegramContext>,
     private readonly tgbotsrv: AppBaseTgBotService,
-    private readonly vastService: VastService,
+    private readonly tgbotlib: TgBotLibService,
+    private readonly vastlib: VastLibService,
   ) {
     this.bot.command('create', (ctx) => this.handleCreateVastAiInstance(ctx))
     this.bot.action('action:instance:create', (ctx) => this.handleCreateVastAiInstance(ctx))
@@ -30,7 +32,7 @@ export class CreateInstanceVastAiTgBot {
       return
     }
 
-    const result = await this.vastService.createInstance({
+    const result = await this.vastlib.createInstance({
       offerId,
       env: {
         'TG_CHAT_ID': ctx.chat?.id.toString(),
@@ -41,10 +43,8 @@ export class CreateInstanceVastAiTgBot {
     ctx.session.step = 'loading'
     ctx.session.instanceId = result.new_contract
 
-    console.log('\x1b[36m', 'result', result, '\x1b[0m');
-
     ctx.reply('Instance creation initiated.')
-    this.tgbotsrv.safeAnswerCallback(ctx)
-    this.tgbotsrv.showInstanceMenu(ctx)
+    this.tgbotlib.safeAnswerCallback(ctx)
+    this.tgbotsrv.showInstanceManageMenu(ctx)
   }
 }

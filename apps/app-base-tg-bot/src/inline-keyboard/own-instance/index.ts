@@ -1,0 +1,6 @@
+export * from './own-instance-search-params.menu'
+export * from './own-instance-manage.menu'
+export * from './own-instance-gpu.menu'
+export * from './own-instance-geolocation.menu'
+export * from './own-instance-in-data-center-only.menu'
+export * from './own-instance-offers.menu'

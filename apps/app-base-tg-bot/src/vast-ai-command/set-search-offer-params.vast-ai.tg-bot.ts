@@ -1,10 +1,9 @@
-import { Injectable, Inject } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { Telegraf } from 'telegraf'
 import { InjectBot } from 'nestjs-telegraf'
 
 import { AppBaseTgBotService } from '../app-base-tg-bot.service'
-
-import { Step } from '../step.decorator'
+import { TgBotLibService } from '@libs/tg-bot'
 
 import { TelegramContext } from '../types'
 
@@ -12,44 +11,25 @@ import { TelegramContext } from '../types'
 export class SetSearchOfferParamsVastAiTgBot {
   constructor(
     @InjectBot() private readonly bot: Telegraf<TelegramContext>,
-    @Inject() private readonly tgbotsrv: AppBaseTgBotService,
+    private readonly tgbotsrv: AppBaseTgBotService,
+    private readonly tgbotlib: TgBotLibService,
   ) {
-    // Команда, чтобы показать меню
-    // this.bot.command('start', (ctx) => this.handleSearchParams(ctx))
-    this.bot.action('action:search:params', (ctx) => this.handleSearchParams(ctx))
+    // Команда, чтобы показать меню параметров поиска
+    this.bot.action('act:own-instance', (ctx) => this.handleActOwnInstance(ctx))
+    this.bot.action('act:own-instance:search-params', (ctx) => this.handleActOwnInstanceSearchParams(ctx))
+    this.bot.action('act:own-instance:search-params:gpu', (ctx) => this.handleActOwnInstanceSearchParamsGpu(ctx))
+    this.bot.action('act:own-instance:search-params:geolocation', (ctx) => this.handleActOwnInstanceSearchParamsGeolocation(ctx))
+    this.bot.action('act:own-instance:search-params:in-data-center-only', (ctx) => this.handleActOwnInstanceSearchParamsInDataCenterOnly(ctx))
 
-    // Обработка нажатия кнопки "GPU name"
-    this.bot.action('action:search:params:gpu', (ctx) => {
-      this.tgbotsrv.safeAnswerCallback(ctx) // подтверждаем нажатие
-      this.showGpuSelectionMenu(ctx)
-    })
-
-    // Обработка нажатия кнопки "Geolocation"
-    this.bot.action('action:search:params:geolocation', (ctx) => {
-      this.tgbotsrv.safeAnswerCallback(ctx) // подтверждаем нажатие
-      this.showGeolocationSelectionMenu(ctx)
-    })
-
-    // Обработка нажатия кнопки "In data center only"
-    this.bot.action('action:search:params:in-data-center-only', (ctx) => {
-      this.tgbotsrv.safeAnswerCallback(ctx) // подтверждаем нажатие
-      this.showInDataCenterOnlySelectionMenu(ctx)
-    })
-
-    // // Обработка нажатия кнопки "Закрыть"
-    // this.bot.action('action:search:params:close', (ctx) => {
-    //   this.tgbotsrv.safeAnswerCallback(ctx)
-    //   // ctx.editMessageText('Меню закрыто.')
-    // })
+    // ----------------------------
 
     // Обработка выбора GPU с использованием регулярного выражения
     this.bot.action(/^action:search:params:gpu:select:(.+)$/, (ctx) => {
       const gpuModel = ctx.match[1] // извлекаем часть после подчеркивания
       ctx.session.gpuName = gpuModel
 
-      this.tgbotsrv.safeAnswerCallback(ctx)
-      // ctx.reply('Selected GPU: ' + gpuModel)
-      this.tgbotsrv.showSearchParamsMenu(ctx)
+      this.tgbotlib.safeAnswerCallback(ctx)
+      this.tgbotsrv.showInstanceSearchParamsMenu(ctx)
     })
 
     // Обработка выбора геолокации с использованием регулярного выражения
@@ -57,29 +37,50 @@ export class SetSearchOfferParamsVastAiTgBot {
       const geolocation = ctx.match[1] // извлекаем часть после подчеркивания
       ctx.session.geolocation = geolocation
 
-      this.tgbotsrv.safeAnswerCallback(ctx)
-      // ctx.reply('Selected Geolocation: ' + geolocation)
-      this.tgbotsrv.showSearchParamsMenu(ctx)
+      this.tgbotlib.safeAnswerCallback(ctx)
+      this.tgbotsrv.showInstanceSearchParamsMenu(ctx)
     })
 
     // Обработка выбора флага "In data center only"
     this.bot.action(/^action:search:params:in-data-center-only:select:(.+)$/, (ctx) => {
       const inDataCenterOnly = ctx.match[1] === 'true'
       ctx.session.inDataCenterOnly = inDataCenterOnly
-      this.tgbotsrv.safeAnswerCallback(ctx)
-      this.tgbotsrv.showSearchParamsMenu(ctx)
+      this.tgbotlib.safeAnswerCallback(ctx)
+      this.tgbotsrv.showInstanceSearchParamsMenu(ctx)
     })
   }
 
-  @Step('start')
-  private handleSearchParams(ctx: TelegramContext) {
-    this.tgbotsrv.showSearchParamsMenu(ctx)
+  private handleActOwnInstance(ctx: TelegramContext) {
+    this.tgbotlib.safeAnswerCallback(ctx)
+    this.tgbotsrv.showInstanceSearchParamsMenu(ctx)
   }
+
+  private handleActOwnInstanceSearchParams(ctx: TelegramContext) {
+    this.tgbotlib.safeAnswerCallback(ctx)
+    this.tgbotsrv.showInstanceSearchParamsMenu(ctx)
+  }
+
+  private handleActOwnInstanceSearchParamsGpu(ctx: TelegramContext) {
+    this.tgbotlib.safeAnswerCallback(ctx)
+    this.showGpuSelectionMenu(ctx)
+  }
+
+  private handleActOwnInstanceSearchParamsGeolocation(ctx: TelegramContext) {
+    this.tgbotlib.safeAnswerCallback(ctx)
+    this.showGeolocationSelectionMenu(ctx)
+  }
+
+  private handleActOwnInstanceSearchParamsInDataCenterOnly(ctx: TelegramContext) {
+    this.tgbotlib.safeAnswerCallback(ctx)
+    this.showInDataCenterOnlySelectionMenu(ctx)
+  }
+
+  //- --------------------------------
 
   private showGpuSelectionMenu(ctx: TelegramContext) {
     ctx.editMessageText(
       'Select GPU:',
-      this.tgbotsrv.generateInlineKeyboard([
+      this.tgbotlib.generateInlineKeyboard([
         [['RTX 3060', 'action:search:params:gpu:select:RTX 3060']],
         [['RTX 3090', 'action:search:params:gpu:select:RTX 3090']],
         [['RTX 4090', 'action:search:params:gpu:select:RTX 4090']],
@@ -88,10 +89,20 @@ export class SetSearchOfferParamsVastAiTgBot {
     )
   }
 
+  private showInDataCenterOnlySelectionMenu(ctx: TelegramContext) {
+    ctx.editMessageText(
+      'In data center only:',
+      this.tgbotlib.generateInlineKeyboard([
+        [['yes', 'action:search:params:in-data-center-only:select:true']],
+        [['no', 'action:search:params:in-data-center-only:select:false']],
+      ]),
+    )
+  }
+
   private showGeolocationSelectionMenu(ctx: TelegramContext) {
     ctx.editMessageText(
       'Select Geolocation:',
-      this.tgbotsrv.generateInlineKeyboard([
+      this.tgbotlib.generateInlineKeyboard([
         [['ALL WORLD', 'action:search:params:geolocation:select:any']],
         [['Europe', 'action:search:params:geolocation:select:europe']],
         [
@@ -163,16 +174,6 @@ export class SetSearchOfferParamsVastAiTgBot {
           ['AE', 'action:search:params:geolocation:select:AE'],
           ['KZ', 'action:search:params:geolocation:select:KZ'],
         ],
-      ]),
-    )
-  }
-
-  private showInDataCenterOnlySelectionMenu(ctx: TelegramContext) {
-    ctx.editMessageText(
-      'In data center only:',
-      this.tgbotsrv.generateInlineKeyboard([
-        [['yes', 'action:search:params:in-data-center-only:select:true']],
-        [['no', 'action:search:params:in-data-center-only:select:false']],
       ]),
     )
   }

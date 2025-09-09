@@ -2,9 +2,10 @@ import { Injectable } from '@nestjs/common'
 import { Telegraf } from 'telegraf'
 import { InjectBot } from 'nestjs-telegraf'
 
-import { VastService } from '@libs/vast'
+import { VastLibService } from '@libs/vast'
 
 import { AppBaseTgBotService } from '../app-base-tg-bot.service'
+import { TgBotLibService } from '@libs/tg-bot'
 
 import { Step } from '../step.decorator'
 
@@ -15,7 +16,8 @@ export class ShowInstanceVastAiTgBot {
   constructor(
     @InjectBot() private readonly bot: Telegraf<TelegramContext>,
     private readonly tgbotsrv: AppBaseTgBotService,
-    private readonly vastService: VastService,
+    private readonly tgbotlib: TgBotLibService,
+    private readonly vastService: VastLibService,
   ) {
     this.bot.command('show', (ctx) => this.handleShowVastAiInstance(ctx))
     this.bot.action('action:instance:show', (ctx) => this.handleShowVastAiInstance(ctx))
@@ -60,7 +62,7 @@ export class ShowInstanceVastAiTgBot {
       `🔗 *Apps Menu Link:* [-->>](${appsMenuLink})\n` +
       `🔗 *ComfyUI Link:* [${comfyuiLink}](${comfyuiLink})\n`
 
-    this.tgbotsrv.safeAnswerCallback(ctx)
+    this.tgbotlib.safeAnswerCallback(ctx)
     ctx.reply(message, { parse_mode: 'Markdown' })
   }
 }

@@ -3,6 +3,8 @@ import { Telegraf } from 'telegraf'
 import { InjectBot } from 'nestjs-telegraf'
 
 import { RcloneLibService } from '@libs/rclone'
+import { TgBotLibService } from '@libs/tg-bot'
+
 import workflow from '@workflow'
 
 import { AppBaseTgBotService } from '../app-base-tg-bot.service'
@@ -16,13 +18,14 @@ export class SelectWorkflowTgBot {
   constructor(
     @InjectBot() private readonly bot: Telegraf<TelegramContext>,
     private readonly tgbotsrv: AppBaseTgBotService,
+    private readonly tgbotlib: TgBotLibService,
     private readonly rclonesrv: RcloneLibService,
   ) {
     this.bot.action('action:workflow:select', (ctx) => this.handleSelectWorkflow(ctx))
 
     this.bot.action('action:workflow:select:back', (ctx) => {
-      this.tgbotsrv.safeAnswerCallback(ctx)
-      this.tgbotsrv.showInstanceMenu(ctx)
+      this.tgbotlib.safeAnswerCallback(ctx)
+      this.tgbotsrv.showInstanceManageMenu(ctx)
     })
 
     // Обработка выбора инстанса
@@ -54,7 +57,7 @@ export class SelectWorkflowTgBot {
       ctx.session.step = 'loading-workflow'
 
       ctx.reply('workflow start loading... ' + workflowId)
-      this.tgbotsrv.safeAnswerCallback(ctx)
+      this.tgbotlib.safeAnswerCallback(ctx)
     })
   }
 
@@ -62,7 +65,7 @@ export class SelectWorkflowTgBot {
   private handleSelectWorkflow(ctx: TelegramContext) {
     ctx.editMessageText(
       'Выберите рабочий процесс:',
-      this.tgbotsrv.generateInlineKeyboard([
+      this.tgbotlib.generateInlineKeyboard([
         [[`Base SD 1.5`, 'action:workflow:select:base-sd15']],
         [[`Base SDXL`, 'action:workflow:select:base-sdxl']],
         [[`Base Flux`, 'action:workflow:select:base-flux']],

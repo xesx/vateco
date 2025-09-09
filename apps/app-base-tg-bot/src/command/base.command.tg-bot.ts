@@ -1,13 +1,11 @@
 import { Injectable } from '@nestjs/common'
 import { Telegraf } from 'telegraf'
 import { InjectBot } from 'nestjs-telegraf'
-import { Markup } from 'telegraf'
+// import { Markup } from 'telegraf'
 
 import { TelegramContext } from '../types'
 
 import { AppBaseTgBotService } from '../app-base-tg-bot.service'
-// import { Step } from '../step.decorator'
-
 
 @Injectable()
 export class BaseCommandTgBot {
@@ -17,40 +15,33 @@ export class BaseCommandTgBot {
   ) {
     this.bot.command('start', (ctx) => this.handleStart(ctx))
     this.bot.command('help', (ctx) => this.handleHelp(ctx))
+
+    bot.use(async (ctx, next) => {
+      if (ctx.callbackQuery) {
+        console.log('🔥 Middleware for action:', ctx.callbackQuery)
+      }
+
+      return await next()
+    })
   }
 
-  // @Step('__undefined__', '_test')
   private handleStart(ctx: TelegramContext) {
     const step = ctx.session.step || '__undefined__'
 
     if (step === 'start') {
-      this.tgbotsrv.showSearchParamsMenu(ctx)
+      this.tgbotsrv.showMainMenu(ctx)
     } else if (['loading', 'running'].includes(step)) {
-      this.tgbotsrv.showInstanceMenu(ctx)
+      this.tgbotsrv.showInstanceManageMenu(ctx)
     }
   }
 
   private handleHelp(ctx: TelegramContext) {
     ctx.reply(
-      '*Доступные команды:*\n' +
-      '/start — начать диалог\n' +
-      '/help — это сообщение\n' +
-      '/searchparams\n' +
-      '/search\n' +
-      '/create\n' +
-      '/show\n' +
-      '/destroy\n' +
-      '/test — показать меню',
+      '/start — начать диалог',
       {
         parse_mode: 'Markdown',
-        ...Markup.removeKeyboard(),
+        // ...Markup.removeKeyboard(),
       },
     )
   }
-
-  // @Step('started', 'processing')
-  // private handleNext(ctx: TelegramContext) {
-  //   ctx.session.step = 'completed'
-  //   ctx.reply('✅ Следующий шаг выполнен.')
-  // }
 }

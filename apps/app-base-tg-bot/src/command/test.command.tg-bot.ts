@@ -3,13 +3,13 @@ import { Context, Telegraf } from 'telegraf'
 import { InjectBot } from 'nestjs-telegraf'
 import { Markup } from 'telegraf'
 
-import { VastService } from '@libs/vast'
+import { VastLibService } from '@libs/vast'
 
 @Injectable()
 export class TestCommandTgBot {
   constructor(
     @InjectBot() private readonly bot: Telegraf<Context>,
-    private readonly vastService: VastService,
+    private readonly vastlib: VastLibService,
   ) {
     this.bot.command('test', (ctx) => {
 

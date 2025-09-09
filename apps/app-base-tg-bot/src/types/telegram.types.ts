@@ -2,6 +2,7 @@ import { Context } from 'telegraf'
 
 export interface TelegramContext extends Context {
   session: SessionData
+  match?: RegExpMatchArray
 }
 
 export interface BotCommand {

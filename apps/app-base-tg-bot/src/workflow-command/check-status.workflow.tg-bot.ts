@@ -22,7 +22,7 @@ export class CheckStatusWorkflowTgBot {
 
     // this.bot.action('action:workflow:select:back', (ctx) => {
     //   this.tgbotsrv.safeAnswerCallback(ctx)
-    //   this.tgbotsrv.showInstanceMenu(ctx)
+    //   this.tgbotsrv.showInstanceManageMenu(ctx)
     // })
   }
 

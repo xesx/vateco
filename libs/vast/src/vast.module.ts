@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common'
 
-import { VastService } from './vast.service'
+import { VastLibService } from './vast.service'
 
 @Module({
-  providers: [VastService],
-  exports: [VastService],
+  providers: [VastLibService],
+  exports: [VastLibService],
 })
-export class VastModule {}
+export class VastLibModule {}

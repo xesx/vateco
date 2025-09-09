@@ -1,13 +1,11 @@
 import { Injectable } from '@nestjs/common'
 import { Telegraf } from 'telegraf'
 import { InjectBot } from 'nestjs-telegraf'
-import { Markup } from 'telegraf'
 
-import { VastService } from '@libs/vast'
+import { VastLibService } from '@libs/vast'
 
 import { AppBaseTgBotService } from '../app-base-tg-bot.service'
-
-import { Step } from '../step.decorator'
+import { TgBotLibService } from '@libs/tg-bot'
 
 import { TelegramContext } from '../types'
 
@@ -16,30 +14,29 @@ export class SearchOfferVastAiTgBot {
   constructor(
     @InjectBot() private readonly bot: Telegraf<TelegramContext>,
     private readonly tgbotsrv: AppBaseTgBotService,
-    private readonly vastService: VastService,
+    private readonly tgbotlib: TgBotLibService,
+    private readonly vastlib: VastLibService,
   ) {
-    this.bot.command('search', (ctx) => this.handleSearchVastAiOffer(ctx))
     this.bot.action('action:search:offers', (ctx) => this.handleSearchVastAiOffer(ctx))
 
     // Обработка выбора инстанса
     this.bot.action(/^action:search:offers:select:(.+)$/, (ctx) => {
       const offerId = ctx.match[1] // извлекаем часть после подчеркивания
 
-      console.log('\x1b[36m', 'offerId', offerId, '\x1b[0m');
-
       ctx.session.offerId = Number(offerId)
 
-      this.tgbotsrv.safeAnswerCallback(ctx)
-      // ctx.reply('Selected offer Id: ' + offerId)
-      tgbotsrv.showSearchParamsMenu(ctx)
+      this.tgbotlib.safeAnswerCallback(ctx)
+
+      this.tgbotsrv.showInstanceSearchParamsMenu(ctx)
     })
   }
 
-  @Step('start')
   private async handleSearchVastAiOffer(ctx: TelegramContext) {
     const gpu = ctx.session.gpuName
     const selectedGeo = ctx.session.geolocation
     const inDataCenterOnly = ctx.session.inDataCenterOnly
+
+    console.log('\x1b[36m', 'in handleSearchVastAiOffer', '\x1b[0m')
 
     let geolocation: string[] | undefined
 
@@ -51,13 +48,13 @@ export class SearchOfferVastAiTgBot {
       geolocation = ['US', 'CA']
     }
 
-    const result = await this.vastService.importOffers({ gpu, geolocation, inDataCenterOnly })
+    const result = await this.vastlib.importOffers({ gpu, geolocation, inDataCenterOnly })
     const offers = result.offers
 
     const message = 'Результаты поиска:'
-    const keyboard = Markup.inlineKeyboard(
+    const keyboard = this.tgbotlib.generateInlineKeyboard(
       offers.map(o => {
-        return [Markup.button.callback(
+        return [
           [
             `${o?.num_gpus}x ${o.gpu_name}`,
             (o.geolocation?.split(',')?.[1] || o.geolocation || 'N/A')?.trim?.(),
@@ -65,14 +62,17 @@ export class SearchOfferVastAiTgBot {
             `cuda ${o.cuda_max_good} `,
             `[${o.reliability2?.toFixed?.(2)}]`
           ].join(' '),
-          `action:search:offers:select:${o.id}`)
+          `action:search:offers:select:${o.id}`
         ]
       }).concat([
-        [Markup.button.callback('🔄 Refresh', 'action:search:offers')],
-        [Markup.button.callback('⬅️ Back', 'action:search:params')]
+        ['🔄 Refresh', 'action:search:offers'],
+        ['⬅️ Back', 'action:search:params']
       ])
     )
 
+
+    // await this.tgbotlib.sendInlineKeyboard({ chatId: ctx.chat.id, keyboard })
+    this.tgbotlib.safeAnswerCallback(ctx)
     if (ctx.callbackQuery) {
       ctx.editMessageText(message, keyboard)
     } else {

@@ -4,6 +4,9 @@ import { ConfigService } from '@nestjs/config'
 import * as FormData from 'form-data'
 import axios from 'axios'
 
+import { Markup } from 'telegraf'
+import { Context } from 'telegraf'
+
 @Injectable()
 export class TgBotLibService {
   private readonly baseUrl: string
@@ -18,11 +21,52 @@ export class TgBotLibService {
     this.baseUrl = `https://api.telegram.org/bot${token}`
   }
 
+  reply (ctx: Context, message: string, keyboard?: any) {
+    if (ctx.callbackQuery) {
+      ctx.editMessageText(message, keyboard)
+    } else {
+      ctx.reply(message, keyboard)
+    }
+  }
+
+  safeAnswerCallback(ctx: Context, text?: string) {
+    try {
+      ctx.answerCbQuery(text)
+    } catch (error) {
+      // Игнорируем ошибки timeout для answerCbQuery
+      if (!error.message?.includes('query is too old')) {
+        console.error('AnswerCbQuery error:', error)
+      }
+    }
+  }
+
+  generateInlineKeyboard (options: [string, string][][]){
+    return Markup.inlineKeyboard(
+      options.map(row =>
+        row.map(([label, action]) =>
+          Markup.button.callback(label, action)
+        )
+      )
+    )
+  }
+
   async sendMessage({ chatId, text, parseMode = 'HTML' }) {
     const url = `${this.baseUrl}/sendMessage`
 
     try {
       const response = await axios.post(url, { chat_id: chatId, text, parse_mode: parseMode, })
+      return response.data.result.message_id
+    } catch (error) {
+      console.error('Error sending message:', error.message)
+      // throw error;
+    }
+  }
+
+  async sendInlineKeyboard({ chatId, keyboard }) {
+    const url = `${this.baseUrl}/sendMessage`
+
+    try {
+      const response = await axios.post(url, { chat_id: chatId, ...keyboard })
       return response.data.result.message_id
     } catch (error) {
       console.error('Error sending message:', error.message)

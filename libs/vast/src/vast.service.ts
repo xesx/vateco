@@ -8,7 +8,7 @@ import { ConfigService } from '@nestjs/config'
 import type { TVastAiInstanceStatus } from './type'
 
 @Injectable()
-export class VastService {
+export class VastLibService {
   private readonly baseUrl = 'https://console.vast.ai/api/v0'
   private readonly apiKey: string
 

@@ -11,7 +11,9 @@ const LocalSession = require('telegraf-session-local') as LocalSessionConstructo
 import { AppBaseTgBotService } from './app-base-tg-bot.service'
 import { SessionTgBotService } from './session.tg-bot.service'
 
-import { VastModule } from '@libs/vast'
+import { TgBotLibModule } from '@libs/tg-bot'
+import { MessagesLibModule } from '@libs/message'
+import { VastLibModule } from '@libs/vast'
 import { RcloneLibModule } from '@libs/rclone'
 import { CloudApiCallLibModule } from '@libs/cloud-api-call'
 
@@ -21,12 +23,15 @@ import { BaseCommandTgBot } from './command/base.command.tg-bot'
 import { TestCommandTgBot } from './command/test.command.tg-bot'
 
 import {
-  SetSearchOfferParamsVastAiTgBot,
   SearchOfferVastAiTgBot,
   CreateInstanceVastAiTgBot,
   ShowInstanceVastAiTgBot,
   DestroyInstanceVastAiTgBot,
 } from './vast-ai-command'
+
+import {
+  Act01SetSearchParamsOwnITgBot,
+} from './own-instance'
 
 import {
   SelectWorkflowTgBot,
@@ -58,6 +63,7 @@ import {
           middlewares: [
             session.middleware(),
             (ctx, next) => {
+              ctx.session.lastTimestamp = Date.now()
               ctx.session.step ??= 'start'
               ctx.session.gpuName ??= 'any'
               ctx.session.geolocation ??= 'any'
@@ -70,7 +76,9 @@ import {
       },
       inject: [ConfigService],
     }),
-    VastModule,
+    TgBotLibModule,
+    MessagesLibModule,
+    VastLibModule,
     CloudApiCallLibModule,
     RcloneLibModule,
   ],
@@ -83,7 +91,8 @@ import {
     BaseCommandTgBot,
     TestCommandTgBot,
 
-    SetSearchOfferParamsVastAiTgBot,
+    Act01SetSearchParamsOwnITgBot,
+
     SearchOfferVastAiTgBot,
     CreateInstanceVastAiTgBot,
     ShowInstanceVastAiTgBot,
