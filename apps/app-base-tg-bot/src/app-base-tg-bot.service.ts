@@ -41,8 +41,8 @@ export class AppBaseTgBotService {
     this.tgbotlib.reply(ctx, message, keyboard)
   }
 
-  showInstanceManageMenu(ctx: TelegramContext) {
-    const message = 'Manage instance:'
+  showInstanceManageMenu(ctx: TelegramContext, extraMessage?: string) {
+    const message = extraMessage ? `${extraMessage}\nManage instance:`: 'Manage instance:'
     const keyboard = this.tgbotlib.generateInlineKeyboard(ownInstanceManageMenu(ctx))
 
     this.tgbotlib.reply(ctx, message, keyboard)

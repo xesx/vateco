@@ -1,12 +1,12 @@
 import { Controller, Get } from '@nestjs/common'
 
-import { VastService } from '@libs/vast'
+import { VastLibService } from '@libs/vast'
 import { TgBotLibService } from '@libs/tg-bot'
 
 @Controller()
 export class AppAdminController {
   constructor(
-    private readonly vastService: VastService,
+    private readonly vastlib: VastLibService,
     private readonly tgBotLibService: TgBotLibService,
   ) {}
 

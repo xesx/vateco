@@ -19,17 +19,12 @@ export class SelectWorkflowTgBot {
     @InjectBot() private readonly bot: Telegraf<TelegramContext>,
     private readonly tgbotsrv: AppBaseTgBotService,
     private readonly tgbotlib: TgBotLibService,
-    private readonly rclonesrv: RcloneLibService,
+    private readonly rclonelib: RcloneLibService,
   ) {
     this.bot.action('act:own-instance:workflow', (ctx) => this.handleSelectWorkflow(ctx))
 
-    this.bot.action('action:workflow:select:back', (ctx) => {
-      this.tgbotlib.safeAnswerCallback(ctx)
-      this.tgbotsrv.showInstanceManageMenu(ctx)
-    })
-
     // Обработка выбора инстанса
-    this.bot.action(/^action:workflow:select:(.+)$/, (ctx) => {
+    this.bot.action(/^act:own-instance:workflow(.+)$/, (ctx) => {
       const workflowId = ctx.match[1] // извлекаем часть после подчеркивания
 
       ctx.session.workflowId = workflowId
@@ -43,7 +38,7 @@ export class SelectWorkflowTgBot {
 
       // const item = 'vae/flux-vae-fp-16.safetensors'
       for (const model of models) {
-        this.rclonesrv.operationCopyFile({
+        this.rclonelib.operationCopyFile({
           baseUrl: rcloneBaseUrl,
           headers: { Cookie: `C.${instanceId}_auth_token=${token}` },
           srcFs: 'ydisk:',

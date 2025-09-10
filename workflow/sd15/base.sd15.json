@@ -31,7 +31,7 @@
   },
   "4": {
     "inputs": {
-      "ckpt_name": "SD1.5/AOM3A3_orangemixs.safetensors"
+      "ckpt_name": "SD1.5/juggernaut_reborn.safetensors"
     },
     "class_type": "CheckpointLoaderSimple",
     "_meta": {

@@ -16,7 +16,7 @@ export class CheckStatusWorkflowTgBot {
   constructor(
     @InjectBot() private readonly bot: Telegraf<TelegramContext>,
     private readonly tgbotsrv: AppBaseTgBotService,
-    private readonly rclonesrv: RcloneLibService,
+    private readonly rclonelib: RcloneLibService,
   ) {
     this.bot.action('action:workflow:status', (ctx) => this.handleCheckStatusWorkflow(ctx))
 
@@ -32,7 +32,7 @@ export class CheckStatusWorkflowTgBot {
     const token = ctx.session.instanceToken
     const instanceId = ctx.session.instanceId
 
-    const stats = await this.rclonesrv.coreStats({
+    const stats = await this.rclonelib.coreStats({
       baseUrl: rcloneBaseUrl,
       headers: { Cookie: `C.${instanceId}_auth_token=${token}` },
     })

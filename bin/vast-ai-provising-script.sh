@@ -11,6 +11,7 @@ source ./vateco/bin/import-secrets.sh
 # Packages are installed after nodes so we can fix them...
 
 APT_PACKAGES=(
+    "fzf"
 )
 
 # Make rclone config
@@ -29,9 +30,6 @@ function provisioning_start() {
     printf "\n##############################################\n#                                            #\n#          Provisioning container            #\n#                                            #\n#         This will take some time           #\n#                                            #\n# Your container will be ready on completion #\n#                                            #\n##############################################\n\n"
 
     provisioning_get_apt_packages
-
-#    rclone config reconnect ydisk:
-#    rclone copy -P ydisk:comfyui-link-source/user /workspace/ComfyUI/user
 
     deploy_app_cloud_api
 

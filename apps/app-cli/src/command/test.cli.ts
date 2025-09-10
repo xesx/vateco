@@ -10,7 +10,7 @@ export class TestCli {
   constructor(
     private readonly herror: ErrorHelperLibService,
     private readonly htar: TarHelperLibService,
-    private readonly rclonesrv: RcloneLibService,
+    private readonly rclonelib: RcloneLibService,
     private readonly msgsrv: MessageLibService,
     private readonly comfyuilib: ComfyUiLibService,
   ) {}
