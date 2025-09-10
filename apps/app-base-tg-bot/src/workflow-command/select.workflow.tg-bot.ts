@@ -21,7 +21,7 @@ export class SelectWorkflowTgBot {
     private readonly tgbotlib: TgBotLibService,
     private readonly rclonesrv: RcloneLibService,
   ) {
-    this.bot.action('action:workflow:select', (ctx) => this.handleSelectWorkflow(ctx))
+    this.bot.action('act:own-instance:workflow', (ctx) => this.handleSelectWorkflow(ctx))
 
     this.bot.action('action:workflow:select:back', (ctx) => {
       this.tgbotlib.safeAnswerCallback(ctx)
@@ -66,10 +66,10 @@ export class SelectWorkflowTgBot {
     ctx.editMessageText(
       'Выберите рабочий процесс:',
       this.tgbotlib.generateInlineKeyboard([
-        [[`Base SD 1.5`, 'action:workflow:select:base-sd15']],
-        [[`Base SDXL`, 'action:workflow:select:base-sdxl']],
-        [[`Base Flux`, 'action:workflow:select:base-flux']],
-        [[`Back to instance menu`, 'action:workflow:select:back']],
+        [[`Base SD 1.5`, 'act:own-instance:workflow:base-sd15']],
+        [[`Base SDXL`, 'act:own-instance:base-sdxl']],
+        [[`Base Flux`, 'act:own-instance:base-flux']],
+        [[`Back to instance menu`, 'act:own-instance:create']],
       ]),
     )
   }

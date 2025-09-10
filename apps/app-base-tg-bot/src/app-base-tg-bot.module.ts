@@ -9,7 +9,6 @@ import { TelegrafModule } from 'nestjs-telegraf'
 const LocalSession = require('telegraf-session-local') as LocalSessionConstructor
 
 import { AppBaseTgBotService } from './app-base-tg-bot.service'
-import { SessionTgBotService } from './session.tg-bot.service'
 
 import { TgBotLibModule } from '@libs/tg-bot'
 import { MessagesLibModule } from '@libs/message'
@@ -23,6 +22,7 @@ import { BaseCommandTgBot } from './command/base.command.tg-bot'
 import { TestCommandTgBot } from './command/test.command.tg-bot'
 
 import {
+  Act00MwareOwnITgBot,
   Act01SetSearchParamsOwnITgBot,
   Act02SearchOffersOwnITgBot,
   Act03CreateOwnITgBot,
@@ -60,6 +60,7 @@ import {
             session.middleware(),
             (ctx, next) => {
               ctx.session.lastTimestamp = Date.now()
+              ctx.session.chatId ??= ctx.chat?.id || -1
               ctx.session.step ??= 'start'
               ctx.session.gpuName ??= 'any'
               ctx.session.geolocation ??= 'any'
@@ -81,12 +82,12 @@ import {
   controllers: [],
   providers: [
     AppBaseTgBotService,
-    SessionTgBotService,
     // order is important, as handlers are executed in the order they are registered
     // HelpCommandTgBot,
     BaseCommandTgBot,
     TestCommandTgBot,
 
+    Act00MwareOwnITgBot,
     Act01SetSearchParamsOwnITgBot,
     Act02SearchOffersOwnITgBot,
     Act03CreateOwnITgBot,
@@ -95,7 +96,7 @@ import {
     SelectWorkflowTgBot,
     CheckStatusWorkflowTgBot,
 
-    CommonHandlerTgBot,
+    // CommonHandlerTgBot,
   ],
 })
 

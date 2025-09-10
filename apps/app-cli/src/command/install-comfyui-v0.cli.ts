@@ -115,6 +115,18 @@ export class InstallComfyuiV0Cli {
           await this.tgbotlib.sendMessage({ chatId, text: this.msglib.genCodeMessage('ComfyUI starting') })
           await this.comfyuilib.startComfyUI()
           await this.tgbotlib.sendMessage({ chatId, text: this.msglib.genCodeMessage('ComfyUI started!') })
+
+          const keyboardDescription = [
+            [[`Check instance status`, 'act:own-instance:status']],
+            [[`Destroy instance`, 'act:own-instance:destroy']],
+            [[`Select workflow`, 'act:own-instance:workflow']]
+          ] as [string, string][][]
+
+          await this.tgbotlib.sendInlineKeyboard({
+            chatId,
+            text: 'Manage instance:',
+            keyboard: this.tgbotlib.generateInlineKeyboard(keyboardDescription),
+          })
         } catch (error) {
           console.error('Error during install-comfyui-v0:', this.herror.parseAxiosError(error))
           console.log(error.stack)

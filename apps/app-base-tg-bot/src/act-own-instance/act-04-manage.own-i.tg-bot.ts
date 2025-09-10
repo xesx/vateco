@@ -18,15 +18,20 @@ export class Act04ManageOwnITgBot {
     private readonly vastlib: VastLibService,
     private readonly msglib: MessageLibService,
   ) {
-    this.bot.action('act:own-instance:destroy', (ctx) => this.handleActOwnInstanceDestroy(ctx))
     this.bot.action('act:own-instance:status', (ctx) => this.handleActOwnInstanceStatus(ctx))
+    this.bot.action('act:own-instance:destroy', (ctx) => this.handleActOwnInstanceDestroy(ctx))
   }
 
   private async handleActOwnInstanceStatus(ctx: TelegramContext) {
+    const step = ctx.session.step || '__undefined__'
     const instanceId = ctx.session.instanceId
 
+    if (!['loading', 'running'].includes(step)) {
+      ctx.deleteMessage()
+      return
+    }
+
     const instance = await this.vastlib.showInstance({ instanceId })
-    console.log('\x1b[36m', 'result', JSON.stringify(instance, null, 2), '\x1b[0m')
 
     const token = instance.jupyter_token || 'N/A'
     const ipAddress = instance.public_ipaddr || 'N/A'
@@ -50,6 +55,7 @@ export class Act04ManageOwnITgBot {
 
     const message = `🖥️ *Instance #${instance.id}*\n\n` +
       `📊 *Status:* ${instance.actual_status || 'unknown'}\n` +
+      `📊 *State:* ${instance.cur_state || 'unknown'}\n` +
       `🏷️ *Label:* ${instance.label || 'No label'}\n` +
       `💾 *Image:* ${instance.image_uuid || 'N/A'}\n` +
       `🌐 *Host:* ${instance.public_ipaddr || 'N/A'}\n` +
@@ -61,7 +67,11 @@ export class Act04ManageOwnITgBot {
       `🔗 *ComfyUI Link:* [${comfyuiLink}](${comfyuiLink})\n`
 
     this.tgbotlib.safeAnswerCallback(ctx)
-    ctx.reply(message, { parse_mode: 'Markdown' })
+    const keyboard = this.tgbotlib.generateInlineKeyboard([
+      [[`⬅️ Back`, 'act:own-instance:create'], [`🔄 Refresh`, 'act:own-instance:status']],
+    ])
+
+    this.tgbotlib.reply(ctx, message, { parse_mode: 'Markdown', ...keyboard })
   }
 
   private async handleActOwnInstanceDestroy(ctx: TelegramContext) {
@@ -71,8 +81,9 @@ export class Act04ManageOwnITgBot {
     delete ctx.session.instanceId
     ctx.session.step = 'start'
 
-    ctx.reply('Instance destroyed:\n' + JSON.stringify(result))
     this.tgbotlib.safeAnswerCallback(ctx)
-    this.tgbotsrv.showInstanceSearchParamsMenu(ctx)
+
+    const extraMessage = 'Instance destroyed:\n' + JSON.stringify(result)
+    this.tgbotsrv.showInstanceSearchParamsMenu(ctx, extraMessage)
   }
 }

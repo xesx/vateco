@@ -14,15 +14,17 @@ export class BaseCommandTgBot {
     private readonly tgbotsrv: AppBaseTgBotService,
   ) {
     this.bot.command('start', (ctx) => this.handleStart(ctx))
+    this.bot.action('act:main-menu', (ctx) => this.handleStart(ctx))
+
     this.bot.command('help', (ctx) => this.handleHelp(ctx))
 
-    bot.use(async (ctx, next) => {
-      if (ctx.callbackQuery) {
-        console.log('🔥 Middleware for action:', ctx.callbackQuery)
-      }
-
-      return await next()
-    })
+    // bot.use(async (ctx, next) => {
+    //   if (ctx.callbackQuery) {
+    //     console.log('🔥 Middleware for action:', ctx.callbackQuery)
+    //   }
+    //
+    //   return await next()
+    // })
   }
 
   private handleStart(ctx: TelegramContext) {

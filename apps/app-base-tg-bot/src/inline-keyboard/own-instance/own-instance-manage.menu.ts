@@ -2,8 +2,8 @@ import { TelegramContext } from '../../types'
 
 export function ownInstanceManageMenu(ctx: TelegramContext): [string, string][][] {
   const keyboardDescription = [
-    [[`Check instance status`, 'action:instance:show']],
-    [[`Destroy instance`, 'action:instance:destroy']],
+    [[`Check instance status`, 'act:own-instance:status']],
+    [[`Destroy instance`, 'act:own-instance:destroy']],
   ] as [string, string][][]
 
   if (ctx.session.step === 'running') {

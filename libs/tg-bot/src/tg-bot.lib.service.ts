@@ -21,11 +21,11 @@ export class TgBotLibService {
     this.baseUrl = `https://api.telegram.org/bot${token}`
   }
 
-  reply (ctx: Context, message: string, keyboard?: any) {
+  reply (ctx: Context, message: string, extra?: any) {
     if (ctx.callbackQuery) {
-      ctx.editMessageText(message, keyboard)
+      ctx.editMessageText(message, extra)
     } else {
-      ctx.reply(message, keyboard)
+      ctx.reply(message, extra)
     }
   }
 
@@ -50,26 +50,56 @@ export class TgBotLibService {
     )
   }
 
+  generateReplyOneTimeKeyboard (options: string[][]){
+    return Markup.keyboard(options)
+      .resize()   // подгоняет под экран
+      .oneTime()  // спрячется после выбора
+  }
+
   async sendMessage({ chatId, text, parseMode = 'HTML' }) {
     const url = `${this.baseUrl}/sendMessage`
 
     try {
-      const response = await axios.post(url, { chat_id: chatId, text, parse_mode: parseMode, })
+      const response = await axios.post(url, { 'chat_id': chatId, text, parse_mode: parseMode, })
       return response.data.result.message_id
     } catch (error) {
-      console.error('Error sending message:', error.message)
+      console.error('tgbotlib_sendMessage_13 Error sending message:', error.message)
       // throw error;
     }
   }
 
-  async sendInlineKeyboard({ chatId, keyboard }) {
+  async removeMessage({ chatId, messageId }) {
+    const url = `${this.baseUrl}/deleteMessage`
+
+    try {
+      const response = await axios.post(url, { 'chat_id': chatId, message_id: messageId })
+      return response.data
+    } catch (error) {
+      console.error('tgbotlib_removeMessage_13 Error removing message:', error.message)
+      // throw error;
+    }
+  }
+
+  async sendReplyOneTimeKeyboard({ chatId, keyboard,  text = '⤵' }) {
     const url = `${this.baseUrl}/sendMessage`
 
     try {
-      const response = await axios.post(url, { chat_id: chatId, ...keyboard })
+      const response = await axios.post(url, { 'chat_id': chatId, text, ...keyboard })
       return response.data.result.message_id
     } catch (error) {
-      console.error('Error sending message:', error.message)
+      console.error('tgbotlib_sendReplyOneTimeKeyboard_13 Error sending message:', error)
+      // throw error;
+    }
+  }
+
+  async sendInlineKeyboard({ chatId, text, keyboard }) {
+    const url = `${this.baseUrl}/sendMessage`
+
+    try {
+      const response = await axios.post(url, { chat_id: chatId, text,  ...keyboard })
+      return response.data.result.message_id
+    } catch (error) {
+      console.error('tgbotlib_sendInlineKeyboard_13 Error sending message:', error.message)
       // throw error;
     }
   }

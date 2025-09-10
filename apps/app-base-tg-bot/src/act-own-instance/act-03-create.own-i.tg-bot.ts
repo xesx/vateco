@@ -20,25 +20,28 @@ export class Act03CreateOwnITgBot {
   }
 
   private async handleActOwnInstanceCreate(ctx: TelegramContext) {
+    const step = ctx.session.step
     const offerId = ctx.session.offerId
+    const instanceId = ctx.session.instanceId
 
-    if (!offerId) {
-      ctx.reply('No instance selected. Use /search to find an instance first.')
-      return
+    if (!instanceId) {
+      if (!offerId || step !== 'start') {
+        ctx.reply('Error way', { offerId, step } as any)
+        return
+      }
+
+      const result = await this.vastlib.createInstance({
+        offerId,
+        env: {
+          'TG_CHAT_ID': ctx.chat?.id.toString(),
+          'COMFY_UI_ARCHIVE_FILE': 'comfyui-portable-cu128-py312-v0.tar.zst',
+        },
+      })
+
+      ctx.session.step = 'loading'
+      ctx.session.instanceId = result.new_contract
     }
 
-    const result = await this.vastlib.createInstance({
-      offerId,
-      env: {
-        'TG_CHAT_ID': ctx.chat?.id.toString(),
-        'COMFY_UI_ARCHIVE_FILE': 'comfyui-portable-cu128-py312-v0.tar.zst',
-      },
-    })
-
-    ctx.session.step = 'loading'
-    ctx.session.instanceId = result.new_contract
-
-    ctx.reply('Instance creation initiated.')
     this.tgbotlib.safeAnswerCallback(ctx)
     this.tgbotsrv.showInstanceManageMenu(ctx)
   }

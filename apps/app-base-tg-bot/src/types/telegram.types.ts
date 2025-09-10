@@ -22,6 +22,7 @@ export type VastAiInstance = {
 }
 
 export interface SessionData {
+  chatId: number
   step?: string
   instanceId?: number
   instanceToken?: string

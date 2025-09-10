@@ -6,11 +6,12 @@ export function ownInstanceSearchParamsMenu(ctx: TelegramContext): [string, stri
     [[`Geolocation (${ctx.session.geolocation})`, 'act:own-instance:search-params:geolocation']],
     [[`In data center only (${ctx.session.inDataCenterOnly})`, 'act:own-instance:search-params:in-data-center-only']],
     [[`Start search`, 'act:own-instance:search-offers']],
+    [[`⬅️ Back`, 'act:main-menu']],
   ] as [string, string][][]
 
-  if (ctx.session.offerId) {
-    keyboardDescription.push([[`Create instance`, 'act:own-instance:create']])
-  }
+  // if (ctx.session.offerId) {
+  //   keyboardDescription.push([[`Create instance`, 'act:own-instance:create']])
+  // }
 
   return keyboardDescription
 }

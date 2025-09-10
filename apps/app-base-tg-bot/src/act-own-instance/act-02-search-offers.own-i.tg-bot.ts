@@ -56,6 +56,6 @@ export class Act02SearchOffersOwnITgBot {
     ctx.session.offerId = Number(offerId)
 
     this.tgbotlib.safeAnswerCallback(ctx)
-    this.tgbotsrv.showInstanceSearchParamsMenu(ctx)
+    this.tgbotsrv.showInstanceCreateMenu(ctx)
   }
 }

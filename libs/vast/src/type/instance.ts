@@ -1,5 +1,6 @@
 export type TVastAiInstanceStatus = {
   actual_status: string
+  cur_state?: string
   public_ipaddr?: string
   jupyter_token?: string
   gpu_name?: string
