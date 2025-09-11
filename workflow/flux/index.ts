@@ -1,5 +1,5 @@
-import base from './base.flux.json'
+import * as base from './base.flux.json'
 
 export default {
-  ['base-flux']: base,
+  ['base.flux']: base,
 }

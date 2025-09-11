@@ -3,11 +3,15 @@ import * as fs from 'fs'
 import { Injectable } from '@nestjs/common'
 
 import Handlebars from 'handlebars'
+import { packageDirectorySync } from 'pkg-dir'
+
+const rootDir = packageDirectorySync()
+const templateDir = `${rootDir}/message-template`
 
 @Injectable()
 export class MessageLibService {
   generateMessage({ type, data }: { type: string, data: any }) {
-    const templatePath = `${__dirname}/template/${type}.hbs`
+    const templatePath = `${templateDir}/${type}.hbs`
 
     if (!fs.existsSync(templatePath)) {
       throw new Error(`Template file not found: ${templatePath}`)
@@ -23,6 +27,13 @@ export class MessageLibService {
     return this.generateMessage({
       type: 'code',
       data: { message },
+    })
+  }
+
+  genDownloadMessage({ name, totalBytes = 0, transferredBytes= 0, speedInBytes = 0, transferTimeInSec = 0, etaInSec = 0 }) {
+    return this.generateMessage({
+      type: 'download',
+      data: { name, totalBytes, transferredBytes, speedInBytes, transferTimeInSec, etaInSec },
     })
   }
 

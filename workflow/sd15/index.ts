@@ -1,5 +1,5 @@
-import base from './base.sd15.json'
+import * as base from './base.sd15.json'
 
 export default {
-  ['base-sd15']: base,
+  ['base.sd15']: base,
 }

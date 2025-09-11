@@ -35,72 +35,29 @@ export class InstallComfyuiV0Cli {
           // check rclone remote disk availability
           const list = await this.rclonelib.operationsList()
 
-          await this.tgbotlib.sendMessage({ chatId, text: this.msglib.genCodeMessage('Starting download ComfyUI...') })
-
-          const comfyuiDownloadingMessageId = await this.tgbotlib.sendMessage({
-            chatId,
-            text: this.msglib.generateMessage({
-              type: 'download-comfyui-v0',
-              data: {
-                transferredBytes: 0,
-                totalBytes: 0,
-                speedInBytes: 0,
-                transferTimeInSec: 0,
-                etaInSec: 0,
-              },
-            }),
-          })
-
           // start copy file from ydisk to local disk in async mode
-          const copyResponse = await this.rclonelib.operationCopyFile({
-            srcFs: 'ydisk:',
-            srcRemote: `shared/${process.env.COMFY_UI_ARCHIVE_FILE}`,
-            dstFs: '/',
-            dstRemote: comfyuiArchivePath,
-          })
+          let message = this.msglib.genDownloadMessage({ name: 'ComfyUI archive' })
+          const downloadingMessageId = await this.tgbotlib.sendMessage({ chatId, text: message })
 
-          console.log(new Date(), 'copyResponse', copyResponse)
-
+          const srcFs = 'ydisk:'
+          const srcRemote = `shared/${process.env.COMFY_UI_ARCHIVE_FILE}`
+          const dstFs = '/'
+          const dstRemote = comfyuiArchivePath
           const startTime = Date.now()
 
-          while (true) {
-            const stats = await this.rclonelib.coreStatsByJob({ jobId: copyResponse.jobid })
-            // console.log('\x1b[36m', 'stats', stats, '\x1b[0m')
 
-            // check job status
-            const jobStatus = await this.rclonelib.getJobStatus({ jobId: copyResponse.jobid })
-
-            if (jobStatus.error.length > 0) {
-              await this.tgbotlib.editMessage({
-                chatId,
-                messageId: comfyuiDownloadingMessageId,
-                text: `Error during downloading comfyui: ${jobStatus.error}`,
-              })
-              break
-            }
-
-            if (jobStatus.finished) {
-              break
-            }
-
-            const [jobStats] = stats.transferring || []
-
-            await this.tgbotlib.editMessage({
-              chatId,
-              messageId: comfyuiDownloadingMessageId,
-              text: this.msglib.generateMessage({
-                type: 'download-comfyui-v0',
-                data: {
-                  transferredBytes: jobStats?.bytes,
-                  totalBytes: jobStats?.size,
-                  speedInBytes: jobStats?.speed,
-                  transferTimeInSec: (Date.now() - startTime) / 1000,
-                  etaInSec: jobStats?.eta,
-                },
-              })
+          for await (const jobStats of this.rclonelib.loadFileGenerator({ srcFs, srcRemote, dstFs, dstRemote })) {
+            message = this.msglib.genDownloadMessage({
+              name: process.env.COMFY_UI_ARCHIVE_FILE,
+              totalBytes: jobStats?.size,
+              transferredBytes: jobStats?.bytes,
+              speedInBytes: jobStats?.speed,
+              transferTimeInSec: (Date.now() - startTime) / 1000,
+              etaInSec: jobStats?.eta,
             })
 
-            await setTimeout(1500)
+            await this.tgbotlib.editMessage({ chatId, messageId: downloadingMessageId, text: message })
+            await setTimeout(3000)
           }
 
           // unpack comfyui

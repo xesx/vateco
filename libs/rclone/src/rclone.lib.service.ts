@@ -91,33 +91,23 @@ export class RcloneLibService {
     return res.data
   }
 
-  /**
-   * Пример: ждем завершения задачи с прогрессом
-   */
-  // async waitForCompletion(jobid: number, intervalMs = 5000): Promise<any> {
-  //   return new Promise((resolve, reject) => {
-  //     const timer = setInterval(async () => {
-  //       try {
-  //         const status = await this.getJobStatus(jobid)
-  //         const stats = await this.getAllJobsStats()
-  //
-  //         if (status.finished) {
-  //           clearInterval(timer)
-  //           this.logger.log(`✅ Job ${jobid} finished`)
-  //           resolve(status)
-  //         } else {
-  //           const { bytes, speed, eta } = stats
-  //           this.logger.log(
-  //             `⏳ Job ${jobid}: ${bytes} bytes copied, ${Math.round(
-  //               speed / 1024 / 1024,
-  //             )} MB/s, ETA: ${eta}s`,
-  //           )
-  //         }
-  //       } catch (err) {
-  //         clearInterval(timer)
-  //         reject(err)
-  //       }
-  //     }, intervalMs)
-  //   })
-  // }
+  async *loadFileGenerator ({ srcFs, srcRemote, dstFs, dstRemote, baseUrl = this.BASE_URL, headers = {} }) {
+    const copyResponse = await this.operationCopyFile({ srcFs, srcRemote, dstFs, dstRemote })
+
+    while (true) {
+      const stats = await this.coreStatsByJob({ jobId: copyResponse.jobid })
+      const jobStatus = await this.getJobStatus({ jobId: copyResponse.jobid })
+
+      if (jobStatus.error.length > 0) {
+        throw new Error(jobStatus.error.join(', '))
+      }
+
+      const [jobStats] = stats.transferring || []
+      yield jobStats
+
+      if (jobStatus.finished) {
+        return true
+      }
+    }
+  }
 }

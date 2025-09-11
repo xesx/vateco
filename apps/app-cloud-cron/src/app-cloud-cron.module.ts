@@ -5,6 +5,7 @@ import { ConfigModule } from '@nestjs/config'
 import { RcloneLibModule } from '@libs/rclone'
 import { TgBotLibModule } from '@libs/tg-bot'
 import { MessagesLibModule } from '@libs/message'
+import * as lib from '@lib'
 
 import { CloudCronService } from './app-cloud-cron.service'
 
@@ -17,6 +18,7 @@ import { CloudCronService } from './app-cloud-cron.service'
     RcloneLibModule,
     TgBotLibModule,
     MessagesLibModule,
+    lib.WorkflowLibModule
   ],
   providers: [CloudCronService],
 })

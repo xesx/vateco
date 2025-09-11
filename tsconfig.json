@@ -19,6 +19,7 @@
     "noFallthroughCasesInSwitch": false,
     "resolveJsonModule": true,
     "paths": {
+      "@lib": ["libs"],
       "@libs/h": ["libs/helper/src"],
       "@libs/message": ["libs/message/src"],
       "@libs/vast": ["libs/vast/src"],
@@ -27,6 +28,7 @@
       "@libs/cloud-api-call": ["libs/cloud-api-call/src"],
       "@libs/comfy-ui": ["libs/comfy-ui/src"],
       "@workflow": ["workflow"],
+      "@kb": ["keyboard"]
     }
   }
 }

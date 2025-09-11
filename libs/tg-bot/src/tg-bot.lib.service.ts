@@ -61,10 +61,10 @@ export class TgBotLibService {
 
     try {
       const response = await axios.post(url, { 'chat_id': chatId, text, parse_mode: parseMode, })
-      return response.data.result.message_id
+      return response.data?.result?.message_id
     } catch (error) {
       console.error('tgbotlib_sendMessage_13 Error sending message:', error.message)
-      // throw error;
+      // throw error
     }
   }
 

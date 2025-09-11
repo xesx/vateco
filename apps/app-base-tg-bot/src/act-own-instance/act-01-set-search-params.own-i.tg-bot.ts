@@ -11,7 +11,7 @@ import {
   OWN_INSTANCE_GPU_MENU,
   OWN_INSTANCE_GEOLOCATION_MENU,
   OWN_INSTANCE_IN_DATA_CENTER_ONLY_MENU,
-} from '../inline-keyboard'
+} from '@kb'
 
 @Injectable()
 export class Act01SetSearchParamsOwnITgBot {

@@ -1,7 +1,7 @@
-import flux from './flux'
 import sd15 from './sd15'
+import flux from './flux'
 
 export default {
-  ...flux,
   ...sd15,
+  ...flux,
 }

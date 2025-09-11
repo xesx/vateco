@@ -10,7 +10,7 @@ import { TelegramContext } from '../types'
 
 import {
   ownInstanceOffersMenu
-} from '../inline-keyboard'
+} from '@kb'
 
 @Injectable()
 export class Act02SearchOffersOwnITgBot {

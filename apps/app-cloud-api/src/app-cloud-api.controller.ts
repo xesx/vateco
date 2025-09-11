@@ -44,6 +44,11 @@ export class AppCloudApiController {
     console.log(`appCloudApiWorkflowLoad_99 Workflow "${body.workflowId}" added in ${filePath}`)
   }
 
+  @Post('workflow/run')
+  appCloudApiWorkflowRun(@Body() body: { workflowId: string, workflowParams: Record<string, any> }): any {
+    // generate image with workflowId and workflowParams as text
+  }
+
   // @Post('test')
   // createUser(@Body() data: any) {
   //   // Здесь обрабатывается тело запроса

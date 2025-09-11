@@ -33,5 +33,7 @@ export interface SessionData {
   gpuName: string
   geolocation: string
   inDataCenterOnly: boolean
-  [key: string]: number | string | boolean | undefined
+  workflowId?: string
+  workflowParams: Record<string, string | number | boolean>
+  [key: string]: any
 }

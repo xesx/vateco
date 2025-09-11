@@ -16,23 +16,14 @@ import { VastLibModule } from '@libs/vast'
 import { RcloneLibModule } from '@libs/rclone'
 import { CloudApiCallLibModule } from '@libs/cloud-api-call'
 
-import { CommonHandlerTgBot } from './handler/common.handler.tg-bot'
+import * as lib from '@lib'
+
+// import { CommonHandlerTgBot } from './handler/common.handler.tg-bot'
 
 import { BaseCommandTgBot } from './command/base.command.tg-bot'
 import { TestCommandTgBot } from './command/test.command.tg-bot'
 
-import {
-  Act00MwareOwnITgBot,
-  Act01SetSearchParamsOwnITgBot,
-  Act02SearchOffersOwnITgBot,
-  Act03CreateOwnITgBot,
-  Act04ManageOwnITgBot,
-} from './act-own-instance'
-
-import {
-  SelectWorkflowTgBot,
-  CheckStatusWorkflowTgBot,
-} from './workflow-command'
+import * as owni from './act-own-instance'
 
 @Module({
   imports: [
@@ -66,6 +57,8 @@ import {
               ctx.session.geolocation ??= 'any'
               ctx.session.inDataCenterOnly ??= false
 
+              ctx.session.workflowParams ??= {}
+
               return next()
             },
           ],
@@ -78,6 +71,7 @@ import {
     VastLibModule,
     CloudApiCallLibModule,
     RcloneLibModule,
+    lib.WorkflowLibModule
   ],
   controllers: [],
   providers: [
@@ -87,14 +81,12 @@ import {
     BaseCommandTgBot,
     TestCommandTgBot,
 
-    Act00MwareOwnITgBot,
-    Act01SetSearchParamsOwnITgBot,
-    Act02SearchOffersOwnITgBot,
-    Act03CreateOwnITgBot,
-    Act04ManageOwnITgBot,
-
-    SelectWorkflowTgBot,
-    CheckStatusWorkflowTgBot,
+    owni.Act00MwareOwnITgBot,
+    owni.Act01SetSearchParamsOwnITgBot,
+    owni.Act02SearchOffersOwnITgBot,
+    owni.Act03CreateOwnITgBot,
+    owni.Act04ManageOwnITgBot,
+    owni.Act10WorkflowsOwnITgBot
 
     // CommonHandlerTgBot,
   ],
