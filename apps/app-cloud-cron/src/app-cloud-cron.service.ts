@@ -45,7 +45,7 @@ export class CloudCronService {
 
   // Every 1 seconds
   @Cron('*/1 * * * * *')
-  @Mutex('checkOutputJob')
+  @Mutex('handleCheckOutputJob')
   async handleCheckOutputJob() {
     const { log } = this
     const chatId = String(process.env.TG_CHAT_ID)
@@ -85,7 +85,7 @@ export class CloudCronService {
 
   // Every 2 seconds
   @Cron('*/2 * * * * *')
-  @Mutex('runWorkflowJob')
+  @Mutex('handleRunWorkflowJob')
   async handleRunWorkflowJob() {
     const { log } = this
     const chatId = String(process.env.TG_CHAT_ID)
@@ -145,7 +145,7 @@ export class CloudCronService {
 
   // Every 2 seconds
   @Cron('*/2 * * * * *')
-  @Mutex('loadWorkflowJob')
+  @Mutex('handleLoadWorkflowJob')
   async handleLoadWorkflowJob() {
     const { log } = this
     const chatId = String(process.env.TG_CHAT_ID)

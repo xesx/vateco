@@ -2,9 +2,9 @@ import { Injectable } from '@nestjs/common'
 import { Telegraf } from 'telegraf'
 import { InjectBot } from 'nestjs-telegraf'
 
-import { AppBaseTgBotService } from '../app-base-tg-bot.service'
-import { TgBotLibService } from '@libs/tg-bot'
+import * as lib from '@lib'
 
+import { AppBaseTgBotService } from '../app-base-tg-bot.service'
 import { TelegramContext } from '../types'
 
 import {
@@ -18,7 +18,7 @@ export class Act01SetSearchParamsOwnITgBot {
   constructor(
     @InjectBot() private readonly bot: Telegraf<TelegramContext>,
     private readonly tgbotsrv: AppBaseTgBotService,
-    private readonly tgbotlib: TgBotLibService,
+    private readonly tgbotlib: lib.TgBotLibService,
   ) {
     this.bot.action('act:own-instance', (ctx) => this.handleActOwnInstance(ctx))
     this.bot.action('act:own-instance:search-params', (ctx) => this.handleActOwnInstanceSearchParams(ctx))

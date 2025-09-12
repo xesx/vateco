@@ -13,8 +13,8 @@ export function workflowRunMenu({ workflowParams, prefixAction, backAction }: TA
 
     return [[name + `(${value})`, `${prefixAction}:workflow-param:${name}`]]
   }).concat([[
-    ['⬅️ Generate', `${prefixAction}:workflow-run`],
     ['⬅️ Back', backAction],
+    ['🚀 Generate', `${prefixAction}:workflow-run`],
   ]])
 
   return keyboard as [string, string][][]

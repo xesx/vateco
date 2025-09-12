@@ -8,20 +8,10 @@ import { TelegrafModule } from 'nestjs-telegraf'
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const LocalSession = require('telegraf-session-local') as LocalSessionConstructor
 
-import { AppBaseTgBotService } from './app-base-tg-bot.service'
-
-import { TgBotLibModule } from '@libs/tg-bot'
-import { MessagesLibModule } from '@libs/message'
-import { VastLibModule } from '@libs/vast'
-import { RcloneLibModule } from '@libs/rclone'
-import { CloudApiCallLibModule } from '@libs/cloud-api-call'
-
 import * as lib from '@lib'
 
-// import { CommonHandlerTgBot } from './handler/common.handler.tg-bot'
-
+import { AppBaseTgBotService } from './app-base-tg-bot.service'
 import { BaseCommandTgBot } from './command/base.command.tg-bot'
-import { TestCommandTgBot } from './command/test.command.tg-bot'
 
 import * as owni from './act-own-instance'
 
@@ -66,20 +56,18 @@ import * as owni from './act-own-instance'
       },
       inject: [ConfigService],
     }),
-    TgBotLibModule,
-    MessagesLibModule,
-    VastLibModule,
-    CloudApiCallLibModule,
-    RcloneLibModule,
+    lib.TgBotLibModule,
+    lib.MessagesLibModule,
+    lib.VastLibModule,
+    lib.CloudApiCallLibModule,
+    lib.RcloneLibModule,
     lib.WorkflowLibModule
   ],
   controllers: [],
   providers: [
     AppBaseTgBotService,
     // order is important, as handlers are executed in the order they are registered
-    // HelpCommandTgBot,
     BaseCommandTgBot,
-    TestCommandTgBot,
 
     owni.Act00MwareOwnITgBot,
     owni.Act01SetSearchParamsOwnITgBot,

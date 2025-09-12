@@ -4,14 +4,9 @@ import { Telegraf } from 'telegraf'
 import { InjectBot } from 'nestjs-telegraf'
 import { message } from 'telegraf/filters'
 
-import { AppBaseTgBotService } from '../app-base-tg-bot.service'
-import { TgBotLibService } from '@libs/tg-bot'
-import { VastLibService } from '@libs/vast'
-import { MessageLibService } from '@libs/message'
-import { CloudApiCallLibService } from '@libs/cloud-api-call'
-
 import * as lib from '@lib'
-import { workflowRunMenu } from '@kb'
+
+import { AppBaseTgBotService } from '../app-base-tg-bot.service'
 
 import { TelegramContext } from '../types'
 
@@ -24,10 +19,8 @@ export class Act10WorkflowsOwnITgBot {
   constructor(
     @InjectBot() private readonly bot: Telegraf<TelegramContext>,
     private readonly tgbotsrv: AppBaseTgBotService,
-    private readonly tgbotlib: TgBotLibService,
-    private readonly cloudapilib: CloudApiCallLibService,
-    private readonly vastlib: VastLibService,
-    private readonly msglib: MessageLibService,
+    private readonly tgbotlib: lib.TgBotLibService,
+    private readonly cloudapilib: lib.CloudApiCallLibService,
     private readonly wflib: lib.WorkflowLibService,
   ) {
     this.bot.action('act:own-instance:workflow', (ctx) => this.handleActOwnInstanceWorkflow(ctx))
