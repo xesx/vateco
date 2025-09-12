@@ -29,6 +29,7 @@ export interface SessionData {
   instanceIp?: string
   instanceComfyuiPort?: string
   instanceRclonePort?: string
+  instanceApiPort?: string
   offerId?: number
   gpuName: string
   geolocation: string

@@ -37,11 +37,13 @@ export class Act04ManageOwnITgBot {
     const ipAddress = instance.public_ipaddr || 'N/A'
     const comfyuiPort = instance.ports?.['8188/tcp']?.[0]?.HostPort || 'N/A'
     const rclonePort = instance.ports?.['5572/tcp']?.[0]?.HostPort || 'N/A'
+    const instanceApiPort = instance.ports?.['3042/tcp']?.[0]?.HostPort || 'N/A'
 
     ctx.session.instanceToken = instance.jupyter_token || 'N/A'
     ctx.session.instanceIp = ipAddress
     ctx.session.instanceComfyuiPort = comfyuiPort
     ctx.session.instanceRclonePort = rclonePort
+    ctx.session.instanceApiPort = instanceApiPort
 
     if (instance.actual_status === 'running') {
       ctx.session.step = 'running'

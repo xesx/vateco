@@ -40,6 +40,8 @@ export class Act03CreateOwnITgBot {
 
       ctx.session.step = 'loading'
       ctx.session.instanceId = result.new_contract
+    } else {
+      // ctx.session.step = 'running'
     }
 
     this.tgbotlib.safeAnswerCallback(ctx)

@@ -5,11 +5,7 @@ export function ownInstanceManageMenu(step?: string): [string, string][][] {
   ] as [string, string][][]
 
   if (step === 'running') {
-    keyboardDescription.push([[`Select workflow`, 'action:workflow:select']])
-  }
-
-  if (step === 'loading-workflow') {
-    keyboardDescription.push([[`Workflow status`, 'action:workflow:status']])
+    keyboardDescription.push([[`Select workflow`, 'act:own-instance:workflow']])
   }
 
   return keyboardDescription

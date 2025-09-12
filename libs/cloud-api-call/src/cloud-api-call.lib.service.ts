@@ -39,6 +39,6 @@ export class CloudApiCallLibService {
 
   async vastAiWorkflowRun ({ baseUrl, instanceId, token, workflowId, workflowParams }): Promise<any> {
     const url = baseUrl + '/workflow/run'
-    return await this.vastAiRequest({ url, instanceId, token, data: { workflowId, workflowParams } })
+    return await this.vastAiRequest({ url, instanceId, token, data: { id: workflowId, params: workflowParams, count: 2 } })
   }
 }

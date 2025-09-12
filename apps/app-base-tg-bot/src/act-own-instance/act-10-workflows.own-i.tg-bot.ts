@@ -53,14 +53,15 @@ export class Act10WorkflowsOwnITgBot {
     const workflowId = ctx.session.workflowId
 
     await this.cloudapilib.vastAiWorkflowRun({
-      baseUrl: `http://${ctx.session.instanceIp}:3042`,
+      baseUrl: `http://${ctx.session.instanceIp}:${ctx.session.instanceApiPort}`,
       instanceId: ctx.session.instanceId,
       token: ctx.session.instanceToken,
       workflowId,
       workflowParams: ctx.session.workflowParams,
     })
 
-    this.tgbotsrv.showWorkflowRunMenu(ctx)
+    this.tgbotlib.safeAnswerCallback(ctx)
+    // this.tgbotsrv.showWorkflowRunMenu(ctx)
   }
 
   private handleActOwnInstanceWorkflowParamInput(ctx) {
@@ -128,7 +129,7 @@ export class Act10WorkflowsOwnITgBot {
     })
 
     await this.cloudapilib.vastAiWorkflowLoad({
-      baseUrl: `http://${ctx.session.instanceIp}:3042`,
+      baseUrl: `http://${ctx.session.instanceIp}:${ctx.session.instanceApiPort}`,
       instanceId: ctx.session.instanceId,
       token: ctx.session.instanceToken,
       workflowId

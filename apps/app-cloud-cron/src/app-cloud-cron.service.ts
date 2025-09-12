@@ -23,6 +23,7 @@ const loadedWorkflows = new Set<string>()
 export class CloudCronService {
   private readonly WORKSPACE: string
   private readonly GENERATE_TASKS_DIR: string
+  private readonly OUTPUT_DIR: string
 
   private readonly log = new Logger(CloudCronService.name)
 
@@ -37,8 +38,49 @@ export class CloudCronService {
   ) {
     this.WORKSPACE = this.configService.get<string>('WORKSPACE') || '/workspace'
     this.GENERATE_TASKS_DIR = `${this.WORKSPACE}/generate_tasks`
+    this.OUTPUT_DIR = `${this.WORKSPACE}/ComfyUI/output`
 
     fs.mkdirSync(this.GENERATE_TASKS_DIR, { recursive: true })
+  }
+
+  // Every 1 seconds
+  @Cron('*/1 * * * * *')
+  @Mutex('checkOutputJob')
+  async handleCheckOutputJob() {
+    const { log } = this
+    const chatId = String(process.env.TG_CHAT_ID)
+
+    const images = fs.readdirSync(this.OUTPUT_DIR)
+      .filter(file => /\.(png|jpg|jpeg|gif|bmp|webp)$/i.test(file))
+
+    for (const image of images) {
+      const imagePath = join(this.OUTPUT_DIR, image)
+      const stats = fs.statSync(imagePath)
+      const fileSizeInBytes = stats.size
+
+      log.log(`handleCheckOutputJob_123 Found image: ${image}, size: ${fileSizeInBytes} bytes`)
+
+      if (fileSizeInBytes === 0) {
+        fs.unlinkSync(imagePath)
+        log.log(`handleCheckOutputJob_126 Deleted zero-size image: ${image}`)
+        continue
+      }
+
+      const buffer = fs.readFileSync(imagePath)
+
+      // const maxSize = 5 * 1024 * 1024 // 5MB
+      // if (buffer.length > maxSize) {
+      //   log.log(`handleCheckOutputJob_131 Image ${image} is too large (${buffer.length} bytes), skipping upload.`)
+      //   continue
+      // }
+
+      log.log(`handleCheckOutputJob_137 Sending image ${image} to Telegram chat ${chatId}`)
+      await this.tgbotlib.sendPhoto({ chatId, photo: buffer })
+
+      fs.unlinkSync(imagePath)
+      log.log(`handleCheckOutputJob_135 Deleted image after reading: ${image}`)
+    }
+
   }
 
   // Every 2 seconds

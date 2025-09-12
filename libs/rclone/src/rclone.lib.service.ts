@@ -101,12 +101,12 @@ export class RcloneLibService {
         throw new Error(jobStatus.error.join(', '))
       }
 
-      const [jobStats] = stats.transferring || []
-      yield jobStats
-
       if (jobStatus.finished) {
         return true
       }
+
+      const [jobStats] = stats.transferring || []
+      yield jobStats
     }
   }
 }
