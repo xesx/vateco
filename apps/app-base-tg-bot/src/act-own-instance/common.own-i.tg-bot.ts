@@ -20,6 +20,7 @@ export class CommonOwnITgBot {
     @InjectBot() private readonly bot: Telegraf<OwnInstanceContext>,
     private readonly tgbotlib: lib.TgBotLibService,
   ) {
+    this.bot.action('act:own-instance', (ctx) => this.showInstanceSearchParamsMenu(ctx))
     this.bot.action(/^act:own-instance(.*)$/, (ctx, next) => this.initSessionOwnInstance(ctx, next))
     this.bot.command('start', (ctx, next) => this.handleCommandOwnInstance(ctx, next))
     this.bot.command('menu', (ctx, next) => this.handleCommandOwnInstance(ctx, next))
@@ -44,9 +45,9 @@ export class CommonOwnITgBot {
   private async initSessionOwnInstance(ctx: OwnInstanceContext, next: () => Promise<void>) {
     ctx.session.way = 'own-instance'
 
-    ctx.session.gpuName ??= 'any'
+    ctx.session.gpu ??= 'any'
     ctx.session.geolocation ??= 'any'
-    ctx.session.inDataCenterOnly ??= false
+    ctx.session.inDataCenterOnly ??= 'false'
     ctx.session.workflowParams ??= {}
 
     return await next()

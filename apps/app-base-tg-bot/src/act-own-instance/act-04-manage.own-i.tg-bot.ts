@@ -15,6 +15,7 @@ export class Act04ManageOwnITgBot {
     private readonly tgbotlib: lib.TgBotLibService,
     private readonly vastlib: lib.VastLibService,
   ) {
+    this.bot.action('act:own-instance:manage', (ctx) => this.common.showInstanceManageMenu(ctx))
     this.bot.action('act:own-instance:status', (ctx) => this.handleActOwnInstanceStatus(ctx))
     this.bot.action('act:own-instance:destroy', (ctx) => this.handleActOwnInstanceDestroy(ctx))
   }
@@ -67,7 +68,7 @@ export class Act04ManageOwnITgBot {
 
     this.tgbotlib.safeAnswerCallback(ctx)
     const keyboard = this.tgbotlib.generateInlineKeyboard([
-      [[`⬅️ Back`, 'act:own-instance:create'], [`🔄 Refresh`, 'act:own-instance:status']],
+      [[`⬅️ Back`, 'act:own-instance:manage'], [`🔄 Refresh`, 'act:own-instance:status']],
     ])
 
     this.tgbotlib.reply(ctx, message, { parse_mode: 'Markdown', ...keyboard })

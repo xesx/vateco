@@ -1,21 +1,17 @@
 type TArgs = {
-  gpuName?: string
+  gpu?: string
   geolocation?: string
-  inDataCenterOnly?: boolean
+  inDataCenterOnly?: string
 }
 
-export function ownInstanceSearchParamsMenu({ gpuName, geolocation, inDataCenterOnly }: TArgs): [string, string][][] {
+export function ownInstanceSearchParamsMenu({ gpu, geolocation, inDataCenterOnly }: TArgs): [string, string][][] {
   const keyboardDescription = [
-    [[`GPU name (${(gpuName || 'N/A')})`, 'act:own-instance:search-params:gpu']],
+    [[`GPU name (${(gpu || 'N/A')})`, 'act:own-instance:search-params:gpu']],
     [[`Geolocation (${(geolocation || 'N/A')})`, 'act:own-instance:search-params:geolocation']],
-    [[`In data center only (${(inDataCenterOnly || 'N/A')})`, 'act:own-instance:search-params:in-data-center-only']],
+    [[`In data center only (${(inDataCenterOnly || 'N/A')})`, 'act:own-instance:search-params:inDataCenterOnly']],
     [[`Start search`, 'act:own-instance:search-offers']],
     [[`⬅️ Back`, 'act:main-menu']],
   ] as [string, string][][]
-
-  // if (ctx.session.offerId) {
-  //   keyboardDescription.push([[`Create instance`, 'act:own-instance:create']])
-  // }
 
   return keyboardDescription
 }

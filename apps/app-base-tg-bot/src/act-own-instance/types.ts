@@ -2,7 +2,10 @@ import { Context } from 'telegraf'
 
 export interface OwnInstanceContext extends Context {
   session: SessionData
-  match?: RegExpMatchArray
+}
+
+export interface OwnInstanceMatchContext extends OwnInstanceContext {
+  match: RegExpMatchArray
 }
 
 export interface SessionData {
@@ -15,9 +18,9 @@ export interface SessionData {
   instanceRclonePort?: string
   instanceApiPort?: string
   offerId?: number
-  gpuName: string
+  gpu: string
   geolocation: string
-  inDataCenterOnly: boolean
+  inDataCenterOnly: string
   workflowId?: string
   workflowParams: Record<string, string | number | boolean>
   [key: string]: any

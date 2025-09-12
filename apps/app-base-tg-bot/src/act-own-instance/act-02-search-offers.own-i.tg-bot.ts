@@ -5,7 +5,7 @@ import { InjectBot } from 'nestjs-telegraf'
 import * as lib from '@lib'
 
 import { CommonOwnITgBot } from './common.own-i.tg-bot'
-import { OwnInstanceContext } from './types'
+import { OwnInstanceContext, OwnInstanceMatchContext } from './types'
 
 import {
   ownInstanceOffersMenu
@@ -24,9 +24,9 @@ export class Act02SearchOffersOwnITgBot {
   }
 
   private async handleActOwnInstanceSearchOffers(ctx: OwnInstanceContext) {
-    const gpu = ctx.session.gpuName
+    const gpu = ctx.session.gpu
     const selectedGeo = ctx.session.geolocation
-    const inDataCenterOnly = ctx.session.inDataCenterOnly
+    const inDataCenterOnly = ctx.session.inDataCenterOnly === 'true'
 
     let geolocation: string[] | undefined
 
@@ -49,8 +49,8 @@ export class Act02SearchOffersOwnITgBot {
     this.tgbotlib.reply(ctx, message, keyboard)
   }
 
-  private handleActOwnInstanceOfferSelect(ctx: OwnInstanceContext) {
-    const offerId = ctx.match?.[1]
+  private handleActOwnInstanceOfferSelect(ctx: OwnInstanceMatchContext) {
+    const offerId = ctx.match[1]
 
     ctx.session.offerId = Number(offerId)
 

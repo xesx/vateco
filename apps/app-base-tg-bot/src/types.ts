@@ -15,7 +15,7 @@ export interface SessionData {
   instanceRclonePort?: string
   instanceApiPort?: string
   offerId?: number
-  gpuName: string
+  gpu: string
   geolocation: string
   inDataCenterOnly: boolean
   workflowId?: string

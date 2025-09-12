@@ -21,29 +21,23 @@ export class Act03CreateOwnITgBot {
   private async handleActOwnInstanceCreate(ctx: OwnInstanceContext) {
     const step = ctx.session.step
     const offerId = ctx.session.offerId
-    const instanceId = ctx.session.instanceId
 
-    if (!instanceId) {
-      if (!offerId || step !== 'start') {
-        ctx.reply('Error way', { offerId, step } as any)
-        return
-      }
-
-      const result = await this.vastlib.createInstance({
-        offerId,
-        env: {
-          'TG_CHAT_ID': ctx.chat?.id.toString(),
-          'COMFY_UI_ARCHIVE_FILE': 'comfyui-portable-cu128-py312-v0.tar.zst',
-        },
-      })
-
-      ctx.session.step = 'loading'
-      ctx.session.instanceId = result.new_contract
-    } else {
-      // ctx.session.step = 'running'
+    if (!offerId || step !== 'start') {
+      ctx.reply('Error way', { offerId, step } as any)
+      return
     }
 
-    this.tgbotlib.safeAnswerCallback(ctx)
+    const result = await this.vastlib.createInstance({
+      offerId,
+      env: {
+        'TG_CHAT_ID': ctx.chat?.id.toString(),
+        'COMFY_UI_ARCHIVE_FILE': 'comfyui-portable-cu128-py312-v0.tar.zst', // todo: make it configurable
+      },
+    })
+
+    ctx.session.step = 'loading'
+    ctx.session.instanceId = result.new_contract
+
     this.common.showInstanceManageMenu(ctx)
   }
 }

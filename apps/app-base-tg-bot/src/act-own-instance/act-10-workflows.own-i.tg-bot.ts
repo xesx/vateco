@@ -7,7 +7,7 @@ import { message } from 'telegraf/filters'
 import * as lib from '@lib'
 
 import { CommonOwnITgBot } from './common.own-i.tg-bot'
-import { OwnInstanceContext } from './types'
+import { OwnInstanceContext, OwnInstanceMatchContext } from './types'
 
 import {
   ownInstanceWorkflowsMenu
@@ -60,7 +60,7 @@ export class Act10WorkflowsOwnITgBot {
     this.common.showWorkflowRunMenu(ctx)
   }
 
-  private handleActOwnInstanceWorkflowParam(ctx: OwnInstanceContext) {
+  private handleActOwnInstanceWorkflowParam(ctx: OwnInstanceMatchContext) {
     const workflowId = ctx.session.workflowId
 
     if (!workflowId) {
@@ -68,7 +68,7 @@ export class Act10WorkflowsOwnITgBot {
       return
     }
 
-    const paramName: string = ctx.match?.[1] || '__undefined__'
+    const paramName: string = ctx.match[1] || '__undefined__'
     const wf = this.wflib.getWorkflow(workflowId)
     const wfParam = wf?.params[paramName]
     const currentValue = ctx.session.workflowParams[paramName]
@@ -102,7 +102,7 @@ export class Act10WorkflowsOwnITgBot {
     this.tgbotlib.reply(ctx, message, { parse_mode: 'Markdown', ...keyboard })
   }
 
-  private async handleActOwnInstanceWorkflowSelect(ctx: OwnInstanceContext) {
+  private async handleActOwnInstanceWorkflowSelect(ctx: OwnInstanceMatchContext) {
     const step = ctx.session.step || '__undefined__'
 
     if (!['running'].includes(step)) {
@@ -110,7 +110,7 @@ export class Act10WorkflowsOwnITgBot {
       return
     }
 
-    const workflowId = ctx.match?.[1] || '__undefined__'
+    const workflowId = ctx.match[1] || '__undefined__'
     ctx.session.workflowId = workflowId
 
     const wf = this.wflib.getWorkflow(workflowId)
