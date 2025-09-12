@@ -8,16 +8,16 @@
   "scripts": {
     "build": "./build.sh",
     "format": "prettier --write \"apps/**/*.ts\" \"libs/**/*.ts\"",
+
     "start:admin:dev": "npx nest start app-admin --watch",
-    "start:admin:debug": "npx nest start app-admin --debug --watch",
-    "start:admin:prod": "node dist/apps/app-admin/src/main",
     "start:cloud-api:dev": "npx nest start app-cloud-api --watch",
-    "start:cloud-api:debug": "npx nest start app-cloud-api --debug --watch",
-    "start:cloud-api:prod": "node dist/apps/app-cloud-api/src/main",
     "start:cloud-cron:dev": "npx nest start app-cloud-cron --watch",
-    "start:cloud-cron:debug": "npx nest start app-cloud-cron --debug --watch",
-    "start:cloud-cron:prod": "node dist/apps/app-cloud-cron/src/main",
     "start:tg": "nest start app-base-tg-bot --watch",
+
+    "start:cloud:prod": "npx pm2 start ecosystem.config.js --only cloud-api,cloud-cron",
+    "start:admin:prod": "npx pm2 start ecosystem.config.js --only admin",
+    "start:tg:prod": "npx pm2 start ecosystem.config.js --only tg-bot",
+
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest",
     "test:watch": "jest --watch",

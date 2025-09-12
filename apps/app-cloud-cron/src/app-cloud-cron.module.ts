@@ -18,7 +18,9 @@ import { CloudCronService } from './app-cloud-cron.service'
     RcloneLibModule,
     TgBotLibModule,
     MessagesLibModule,
-    lib.WorkflowLibModule
+    lib.HelperLibModule,
+    lib.WorkflowLibModule,
+    lib.ComfyUiLibModule
   ],
   providers: [CloudCronService],
 })

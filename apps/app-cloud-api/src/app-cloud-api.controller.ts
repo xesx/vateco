@@ -2,14 +2,24 @@ import * as fs from 'fs'
 import { join } from 'path'
 
 import { Controller, All, Post, Body } from '@nestjs/common'
+import { ConfigService } from '@nestjs/config'
 
 import { TgBotLibService } from '@libs/tg-bot'
 
 @Controller()
 export class AppCloudApiController {
+  private readonly WORKSPACE: string
+  private readonly GENERATE_TASKS_DIR: string
+
   constructor(
     private readonly tgBotLibService: TgBotLibService,
-  ) {}
+    private readonly configService: ConfigService,
+  ) {
+    this.WORKSPACE = this.configService.get<string>('WORKSPACE') || '/workspace'
+    this.GENERATE_TASKS_DIR = `${this.WORKSPACE}/generate_tasks`
+
+    fs.mkdirSync(this.GENERATE_TASKS_DIR, { recursive: true })
+  }
 
   @All('ping')
   appCloudApiPing(): any {
@@ -18,8 +28,7 @@ export class AppCloudApiController {
 
   @Post('workflow/load')
   appCloudApiWorkflowLoad(@Body() body: { workflowId: string }): any {
-    const dir = process.env.WORKSPACE || '/workspace'
-    const filePath = join(dir, 'load.json')
+    const filePath = join(this.WORKSPACE, 'load.json')
 
     let data: string[] = []
 
@@ -45,18 +54,18 @@ export class AppCloudApiController {
   }
 
   @Post('workflow/run')
-  appCloudApiWorkflowRun(@Body() body: { workflowId: string, workflowParams: Record<string, any> }): any {
-    // generate image with workflowId and workflowParams as text
-  }
+  appCloudApiWorkflowRun(@Body() body: { id: string, count?: number, params: Record<string, any> }): any {
+    const now = Date.now()
+    const filePath = join(this.GENERATE_TASKS_DIR, `${now}_${body.id}.json`)
 
-  // @Post('test')
-  // createUser(@Body() data: any) {
-  //   // Здесь обрабатывается тело запроса
-  //   console.log(data)
-  //
-  //   return {
-  //     message: 'test response message',
-  //     data,
-  //   }
-  // }
+    const content = {
+      count: body.count || 1,
+      workflowId: body.id,
+      workflowParams: body.params,
+    }
+
+    fs.writeFileSync(filePath, JSON.stringify(content), "utf8")
+
+    console.log(`appCloudApiWorkflowRun_99 Workflow run task for "${body.id}" added in ${filePath}`)
+  }
 }

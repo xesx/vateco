@@ -1,5 +1,6 @@
 // import * as assert from 'node:assert/strict'
 import * as pm2 from 'pm2'
+import axios from 'axios'
 
 import { Injectable, Logger } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
@@ -10,9 +11,13 @@ export class ComfyUiLibService {
   private readonly logger = new Logger(ComfyUiLibService.name)
   private readonly comfyuiDir: string
 
+  private readonly COMFY_UI_URL: string
+
   constructor(private readonly configService: ConfigService) {
     const workspace = this.configService.get<string>('WORKSPACE')
     this.comfyuiDir = `${workspace}/ComfyUI`
+
+    this.COMFY_UI_URL = 'http://localhost:18188'
   }
 
   async startComfyUI(): Promise<void> {
@@ -47,4 +52,15 @@ export class ComfyUiLibService {
     })
   }
 
+  async prompt(workflow: any): Promise<any> {
+    const url = this.COMFY_UI_URL + '/prompt'
+
+    try {
+      const res = await axios.post(url, { prompt: workflow })
+      return res.data
+    } catch (error) {
+      console.log('ComfyUiLibService_prompt_13')
+      throw error
+    }
+  }
 }

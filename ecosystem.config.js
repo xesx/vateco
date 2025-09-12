@@ -1,0 +1,40 @@
+module.exports = {
+  apps: [
+    {
+      name: "admin",
+      script: "dist/apps/app-admin/src/main.js",
+      instances: 1,
+      exec_mode: "fork",
+      env: {
+        ENV: "prod",
+      }
+    },
+    {
+      name: "cloud-api",
+      script: "dist/apps/app-cloud-api/src/main.js",
+      instances: 1,
+      exec_mode: "fork",
+      env: {
+        ENV: "prod",
+      }
+    },
+    {
+      name: "cloud-cron",
+      script: "dist/apps/app-cloud-cron/src/main.js",
+      instances: 1, // cron лучше в одном экземпляре
+      exec_mode: "fork",
+      env: {
+        ENV: "prod"
+      }
+    },
+    {
+      name: "tg-bot",
+      script: "dist/apps/app-base-tg-bot/src/main.js",
+      instances: 1,
+      exec_mode: "fork",
+      env: {
+        ENV: "prod"
+      }
+    }
+  ]
+}

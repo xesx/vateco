@@ -2,11 +2,10 @@
 
 import { Injectable } from '@nestjs/common'
 // import { ConfigService } from '@nestjs/config'
-import axios, { AxiosInstance } from 'axios'
+import axios from 'axios'
 
 @Injectable()
 export class RcloneLibService {
-  private readonly client: AxiosInstance
   private readonly BASE_URL = 'http://127.0.0.1:5572'
 
   constructor(

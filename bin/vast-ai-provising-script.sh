@@ -55,13 +55,9 @@ deploy_app_cloud_api() {
 
     # Сборка проекта
     npm run build
-    npm link
 
-    # Запуск приложения cloud-app-api
-    nohup npm run start:cloud-api:prod > cloud-app-api.log 2>&1 &
-
-    # Запуск приложения cloud-app-cron
-    nohup npm run start:cloud-cron:prod > cloud-app-cron.log 2>&1 &
+    # Запуск приложения cloud-app-api и cloud-app-cron в pm2
+    npm run start:cloud:prod
 
     cd ${WORKSPACE}
 }

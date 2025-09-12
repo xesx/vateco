@@ -19,12 +19,20 @@
         "SD1.5/lyriel_v16.safetensors"
       ],
       "default": "SD1.5/juggernaut_reborn.safetensors"
+    },
+    "seed": {
+      "type": "enum",
+      "options": [
+        "random",
+        "fixed"
+      ],
+      "default": "random"
     }
   },
   "schema": {
     "3": {
       "inputs": {
-        "seed": 202576127498762,
+        "seed": "{{seed}}",
         "steps": 20,
         "cfg": 8,
         "sampler_name": "euler",
