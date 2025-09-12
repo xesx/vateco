@@ -4,14 +4,14 @@ import { InjectBot } from 'nestjs-telegraf'
 
 import * as lib from '@lib'
 
-import { AppBaseTgBotService } from '../app-base-tg-bot.service'
-import { TelegramContext } from '../types'
+import { CommonOwnITgBot } from './common.own-i.tg-bot'
+import { OwnInstanceContext } from './types'
 
 @Injectable()
 export class Act04ManageOwnITgBot {
   constructor(
-    @InjectBot() private readonly bot: Telegraf<TelegramContext>,
-    private readonly tgbotsrv: AppBaseTgBotService,
+    @InjectBot() private readonly bot: Telegraf<OwnInstanceContext>,
+    private readonly common: CommonOwnITgBot,
     private readonly tgbotlib: lib.TgBotLibService,
     private readonly vastlib: lib.VastLibService,
   ) {
@@ -19,7 +19,7 @@ export class Act04ManageOwnITgBot {
     this.bot.action('act:own-instance:destroy', (ctx) => this.handleActOwnInstanceDestroy(ctx))
   }
 
-  private async handleActOwnInstanceStatus(ctx: TelegramContext) {
+  private async handleActOwnInstanceStatus(ctx: OwnInstanceContext) {
     const step = ctx.session.step || '__undefined__'
     const instanceId = ctx.session.instanceId
 
@@ -73,7 +73,7 @@ export class Act04ManageOwnITgBot {
     this.tgbotlib.reply(ctx, message, { parse_mode: 'Markdown', ...keyboard })
   }
 
-  private async handleActOwnInstanceDestroy(ctx: TelegramContext) {
+  private async handleActOwnInstanceDestroy(ctx: OwnInstanceContext) {
     const instanceId = ctx.session.instanceId
 
     const result = await this.vastlib.destroyInstance({ instanceId })
@@ -83,6 +83,6 @@ export class Act04ManageOwnITgBot {
     this.tgbotlib.safeAnswerCallback(ctx)
 
     const extraMessage = 'Instance destroyed:\n' + JSON.stringify(result)
-    this.tgbotsrv.showInstanceSearchParamsMenu(ctx, extraMessage)
+    this.common.showInstanceSearchParamsMenu(ctx, extraMessage)
   }
 }

@@ -1,4 +1,3 @@
-// import { TelegramContext } from '../../types'
 import workflow from '@workflow'
 
 export function ownInstanceWorkflowsMenu(): [string, string][][] {

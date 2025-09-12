@@ -4,8 +4,8 @@ import { InjectBot } from 'nestjs-telegraf'
 
 import * as lib from '@lib'
 
-import { AppBaseTgBotService } from '../app-base-tg-bot.service'
-import { TelegramContext } from '../types'
+import { CommonOwnITgBot } from './common.own-i.tg-bot'
+import { OwnInstanceContext } from './types'
 
 import {
   ownInstanceOffersMenu
@@ -14,8 +14,8 @@ import {
 @Injectable()
 export class Act02SearchOffersOwnITgBot {
   constructor(
-    @InjectBot() private readonly bot: Telegraf<TelegramContext>,
-    private readonly tgbotsrv: AppBaseTgBotService,
+    @InjectBot() private readonly bot: Telegraf<OwnInstanceContext>,
+    private readonly common: CommonOwnITgBot,
     private readonly tgbotlib: lib.TgBotLibService,
     private readonly vastlib: lib.VastLibService,
   ) {
@@ -23,7 +23,7 @@ export class Act02SearchOffersOwnITgBot {
     this.bot.action(/^act:own-instance:offer:(.+)$/, (ctx) => this.handleActOwnInstanceOfferSelect(ctx))
   }
 
-  private async handleActOwnInstanceSearchOffers(ctx: TelegramContext) {
+  private async handleActOwnInstanceSearchOffers(ctx: OwnInstanceContext) {
     const gpu = ctx.session.gpuName
     const selectedGeo = ctx.session.geolocation
     const inDataCenterOnly = ctx.session.inDataCenterOnly
@@ -49,12 +49,12 @@ export class Act02SearchOffersOwnITgBot {
     this.tgbotlib.reply(ctx, message, keyboard)
   }
 
-  private handleActOwnInstanceOfferSelect(ctx: TelegramContext) {
+  private handleActOwnInstanceOfferSelect(ctx: OwnInstanceContext) {
     const offerId = ctx.match?.[1]
 
     ctx.session.offerId = Number(offerId)
 
     this.tgbotlib.safeAnswerCallback(ctx)
-    this.tgbotsrv.showInstanceCreateMenu(ctx)
+    this.common.showInstanceCreateMenu(ctx)
   }
 }

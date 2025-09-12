@@ -4,21 +4,21 @@ import { InjectBot } from 'nestjs-telegraf'
 
 import * as lib from '@lib'
 
-import { AppBaseTgBotService } from '../app-base-tg-bot.service'
-import { TelegramContext } from '../types'
+import { CommonOwnITgBot } from './common.own-i.tg-bot'
+import { OwnInstanceContext } from './types'
 
 @Injectable()
 export class Act03CreateOwnITgBot {
   constructor(
-    @InjectBot() private readonly bot: Telegraf<TelegramContext>,
-    private readonly tgbotsrv: AppBaseTgBotService,
+    @InjectBot() private readonly bot: Telegraf<OwnInstanceContext>,
+    private readonly common: CommonOwnITgBot,
     private readonly tgbotlib: lib.TgBotLibService,
     private readonly vastlib: lib.VastLibService,
   ) {
     this.bot.action('act:own-instance:create', (ctx) => this.handleActOwnInstanceCreate(ctx))
   }
 
-  private async handleActOwnInstanceCreate(ctx: TelegramContext) {
+  private async handleActOwnInstanceCreate(ctx: OwnInstanceContext) {
     const step = ctx.session.step
     const offerId = ctx.session.offerId
     const instanceId = ctx.session.instanceId
@@ -44,6 +44,6 @@ export class Act03CreateOwnITgBot {
     }
 
     this.tgbotlib.safeAnswerCallback(ctx)
-    this.tgbotsrv.showInstanceManageMenu(ctx)
+    this.common.showInstanceManageMenu(ctx)
   }
 }

@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { Telegraf } from 'telegraf'
 import { InjectBot } from 'nestjs-telegraf'
-// import { Markup } from 'telegraf'
 
 import { TelegramContext } from '../types'
 
@@ -13,37 +12,26 @@ export class BaseCommandTgBot {
     @InjectBot() private readonly bot: Telegraf<TelegramContext>,
     private readonly tgbotsrv: AppBaseTgBotService,
   ) {
+    bot.use(async (ctx, next) => {
+      this.initSession(ctx)
+      return await next()
+    })
+
     this.bot.command('start', (ctx) => this.handleStart(ctx))
+    this.bot.command('menu', (ctx) => this.handleStart(ctx))
     this.bot.action('act:main-menu', (ctx) => this.handleStart(ctx))
-
-    this.bot.command('help', (ctx) => this.handleHelp(ctx))
-
-    // bot.use(async (ctx, next) => {
-    //   if (ctx.callbackQuery) {
-    //     console.log('🔥 Middleware for action:', ctx.callbackQuery)
-    //   }
-    //
-    //   return await next()
-    // })
   }
 
+  private initSession(ctx: TelegramContext) {
+    ctx.session.lastTimestamp = Date.now()
+    ctx.session.chatId ??= ctx.chat?.id || -1
+    ctx.session.step ??= 'start'
+  }
   private handleStart(ctx: TelegramContext) {
     const step = ctx.session.step || '__undefined__'
 
     if (step === 'start') {
       this.tgbotsrv.showMainMenu(ctx)
-    } else if (['loading', 'running'].includes(step)) {
-      this.tgbotsrv.showInstanceManageMenu(ctx)
     }
-  }
-
-  private handleHelp(ctx: TelegramContext) {
-    ctx.reply(
-      '/start — начать диалог',
-      {
-        parse_mode: 'Markdown',
-        // ...Markup.removeKeyboard(),
-      },
-    )
   }
 }

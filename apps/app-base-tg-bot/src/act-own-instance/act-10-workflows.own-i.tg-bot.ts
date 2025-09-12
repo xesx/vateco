@@ -6,9 +6,8 @@ import { message } from 'telegraf/filters'
 
 import * as lib from '@lib'
 
-import { AppBaseTgBotService } from '../app-base-tg-bot.service'
-
-import { TelegramContext } from '../types'
+import { CommonOwnITgBot } from './common.own-i.tg-bot'
+import { OwnInstanceContext } from './types'
 
 import {
   ownInstanceWorkflowsMenu
@@ -17,8 +16,8 @@ import {
 @Injectable()
 export class Act10WorkflowsOwnITgBot {
   constructor(
-    @InjectBot() private readonly bot: Telegraf<TelegramContext>,
-    private readonly tgbotsrv: AppBaseTgBotService,
+    @InjectBot() private readonly bot: Telegraf<OwnInstanceContext>,
+    private readonly common: CommonOwnITgBot,
     private readonly tgbotlib: lib.TgBotLibService,
     private readonly cloudapilib: lib.CloudApiCallLibService,
     private readonly wflib: lib.WorkflowLibService,
@@ -42,7 +41,7 @@ export class Act10WorkflowsOwnITgBot {
     })
   }
 
-  private async handleActOwnInstanceWorkflowRun(ctx: TelegramContext) {
+  private async handleActOwnInstanceWorkflowRun(ctx: OwnInstanceContext) {
     const workflowId = ctx.session.workflowId
 
     await this.cloudapilib.vastAiWorkflowRun({
@@ -54,14 +53,14 @@ export class Act10WorkflowsOwnITgBot {
     })
 
     this.tgbotlib.safeAnswerCallback(ctx)
-    // this.tgbotsrv.showWorkflowRunMenu(ctx)
+    // this.common.showWorkflowRunMenu(ctx)
   }
 
   private handleActOwnInstanceWorkflowParamInput(ctx) {
-    this.tgbotsrv.showWorkflowRunMenu(ctx)
+    this.common.showWorkflowRunMenu(ctx)
   }
 
-  private handleActOwnInstanceWorkflowParam(ctx: TelegramContext) {
+  private handleActOwnInstanceWorkflowParam(ctx: OwnInstanceContext) {
     const workflowId = ctx.session.workflowId
 
     if (!workflowId) {
@@ -94,7 +93,7 @@ export class Act10WorkflowsOwnITgBot {
     // this.tgbotlib.reply(ctx, message, { parse_mode: 'Markdown', ...keyboard })
   }
 
-  private handleActOwnInstanceWorkflow(ctx: TelegramContext) {
+  private handleActOwnInstanceWorkflow(ctx: OwnInstanceContext) {
     this.tgbotlib.safeAnswerCallback(ctx)
 
     const message = '*Select workflow*'
@@ -103,7 +102,7 @@ export class Act10WorkflowsOwnITgBot {
     this.tgbotlib.reply(ctx, message, { parse_mode: 'Markdown', ...keyboard })
   }
 
-  private async handleActOwnInstanceWorkflowSelect(ctx: TelegramContext) {
+  private async handleActOwnInstanceWorkflowSelect(ctx: OwnInstanceContext) {
     const step = ctx.session.step || '__undefined__'
 
     if (!['running'].includes(step)) {
@@ -129,6 +128,6 @@ export class Act10WorkflowsOwnITgBot {
     })
 
     this.tgbotlib.safeAnswerCallback(ctx)
-    this.tgbotsrv.showInstanceManageMenu(ctx, `Workflow ${workflowId} start loading...`)
+    this.common.showInstanceManageMenu(ctx, `Workflow ${workflowId} start loading...`)
   }
 }

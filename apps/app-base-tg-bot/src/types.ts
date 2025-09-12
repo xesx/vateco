@@ -5,22 +5,6 @@ export interface TelegramContext extends Context {
   match?: RegExpMatchArray
 }
 
-export interface BotCommand {
-  command: string
-  description: string
-}
-
-export interface CallbackData {
-  action: string
-  data?: any
-}
-
-export type VastAiInstance = {
-  id?: number
-  offerId?: number
-  [key: string]: any
-}
-
 export interface SessionData {
   chatId: number
   step?: string

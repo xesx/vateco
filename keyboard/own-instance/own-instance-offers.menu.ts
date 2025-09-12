@@ -1,5 +1,3 @@
-// import { TelegramContext } from '../../types'
-
 export function ownInstanceOffersMenu(offers: any[]): [string, string][][] {
   const keyboard = offers.map(o => {
     const gpuInfo = `${o?.num_gpus}x ${o.gpu_name}`
