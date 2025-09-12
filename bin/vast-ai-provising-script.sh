@@ -31,7 +31,7 @@ function provisioning_start() {
 
     provisioning_get_apt_packages
 
-    deploy_app_cloud_api
+    deploy_cloud_apps
 
     node ${WORKSPACE}/vateco/dist/apps/app-cli/src/cli.js install-comfyui-v0 > ${WORKSPACE}/install-comfyui-v0.log 2>&1
 
@@ -44,7 +44,7 @@ function provisioning_get_apt_packages() {
     fi
 }
 
-deploy_app_cloud_api() {
+deploy_cloud_apps() {
     cd ${WORKSPACE}/vateco
 
     source /opt/nvm/nvm.sh

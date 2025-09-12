@@ -5,6 +5,13 @@ import { RcloneLibService } from '@libs/rclone'
 import { MessageLibService } from '@libs/message'
 import { ComfyUiLibService } from '@libs/comfy-ui'
 
+import { packageDirectorySync } from 'pkg-dir'
+
+const rootDir = packageDirectorySync()
+const templateDir = `${rootDir}/message-template`
+
+console.log('\x1b[36m', 'templateDir', templateDir, '\x1b[0m')
+
 @Injectable()
 export class TestCli {
   constructor(

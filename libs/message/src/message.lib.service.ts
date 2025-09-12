@@ -12,6 +12,7 @@ const templateDir = `${rootDir}/message-template`
 export class MessageLibService {
   generateMessage({ type, data }: { type: string, data: any }) {
     const templatePath = `${templateDir}/${type}.hbs`
+    console.log('----->>>>>>>>>>>> templatePath:', templatePath)
 
     if (!fs.existsSync(templatePath)) {
       throw new Error(`Template file not found: ${templatePath}`)
