@@ -103,14 +103,14 @@ export class Act10WorkflowsOwnITgBot {
   }
 
   private async handleActOwnInstanceWorkflowSelect(ctx: OwnInstanceMatchContext) {
-    const step = ctx.session.step || '__undefined__'
+    const step = ctx.session.step
 
     if (!['running'].includes(step)) {
       ctx.deleteMessage()
       return
     }
 
-    const workflowId = ctx.match[1] || '__undefined__'
+    const [workflowId] = ctx.match
     ctx.session.workflowId = workflowId
 
     const wf = this.wflib.getWorkflow(workflowId)

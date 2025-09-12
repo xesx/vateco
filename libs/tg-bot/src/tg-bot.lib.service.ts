@@ -4,8 +4,9 @@ import { ConfigService } from '@nestjs/config'
 import * as FormData from 'form-data'
 import axios from 'axios'
 
-import { Markup } from 'telegraf'
-import { Context } from 'telegraf'
+import { Context, Markup } from 'telegraf'
+
+import { TSendInlineKeyboardArgs } from './types'
 
 @Injectable()
 export class TgBotLibService {
@@ -92,7 +93,7 @@ export class TgBotLibService {
     }
   }
 
-  async sendInlineKeyboard({ chatId, text, keyboard }) {
+  async sendInlineKeyboard({ chatId, text, keyboard }: TSendInlineKeyboardArgs): Promise<string> {
     const url = `${this.baseUrl}/sendMessage`
 
     try {
@@ -100,7 +101,7 @@ export class TgBotLibService {
       return response.data.result.message_id
     } catch (error) {
       console.error('tgbotlib_sendInlineKeyboard_13 Error sending message:', error.message)
-      // throw error;
+      throw error
     }
   }
 
