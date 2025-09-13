@@ -93,14 +93,13 @@ export class TgBotLibService {
     }
   }
 
-  async sendInlineKeyboard({ chatId, text, keyboard }: TSendInlineKeyboardArgs): Promise<string> {
+  async sendInlineKeyboard({ chatId, text, keyboard }: TSendInlineKeyboardArgs): Promise<void> {
     const url = `${this.baseUrl}/sendMessage`
 
     try {
-      const response = await axios.post(url, { chat_id: chatId, text,  ...keyboard })
-      return response.data.result.message_id
+      await axios.post(url, { chat_id: chatId, text,  ...keyboard })
     } catch (error) {
-      console.error('tgbotlib_sendInlineKeyboard_13 Error sending message:', error.message)
+      console.log('tgbotlib_sendInlineKeyboard_13 Error sending message:', error)
       throw error
     }
   }

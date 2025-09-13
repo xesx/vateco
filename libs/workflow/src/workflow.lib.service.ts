@@ -7,8 +7,7 @@ import workflowMap from '@workflow'
 @Injectable()
 export class WorkflowLibService {
   getWorkflow(id: string): TWorkflow {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const workflow: TWorkflow = workflowMap[id]
+    const workflow = workflowMap[id]
 
     if (!workflow) {
       throw new Error(`Workflow ${id} not found`)
