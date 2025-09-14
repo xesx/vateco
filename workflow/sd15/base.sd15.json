@@ -4,6 +4,10 @@
     "checkpoints/SD1.5/lyriel_v16.safetensors"
   ],
   "params": {
+    "__count__": {
+      "type": "number",
+      "default": 1
+    },
     "positivePrompt": {
       "type": "string",
       "default": "green-purple cupcake with big eyes"
@@ -13,16 +17,16 @@
       "default": "low quality, watermark"
     },
     "model": {
-      "type": "enum",
-      "options": [
+      "type": "string",
+      "enum": [
         "SD1.5/juggernaut_reborn.safetensors",
         "SD1.5/lyriel_v16.safetensors"
       ],
       "default": "SD1.5/juggernaut_reborn.safetensors"
     },
     "seed": {
-      "type": "enum",
-      "options": [
+      "type": "string",
+      "enum": [
         "random",
         "fixed"
       ],

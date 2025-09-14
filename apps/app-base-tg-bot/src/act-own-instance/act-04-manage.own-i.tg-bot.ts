@@ -4,6 +4,10 @@ import { InjectBot } from 'nestjs-telegraf'
 
 import * as lib from '@lib'
 
+import {
+  ownInstanceWorkflowSelectMenu
+} from '@kb'
+
 import { CommonOwnITgBot } from './common.own-i.tg-bot'
 import { OwnInstanceContext } from './types'
 
@@ -18,6 +22,7 @@ export class Act04ManageOwnITgBot {
     this.bot.action('act:own-instance:manage', (ctx) => this.common.showInstanceManageMenu(ctx))
     this.bot.action('act:own-instance:status', (ctx) => this.handleActOwnInstanceStatus(ctx))
     this.bot.action('act:own-instance:destroy', (ctx) => this.handleActOwnInstanceDestroy(ctx))
+    this.bot.action('act:own-instance:workflow', (ctx) => this.handleActOwnInstanceWorkflow(ctx))
   }
 
   private async handleActOwnInstanceStatus(ctx: OwnInstanceContext) {
@@ -85,5 +90,14 @@ export class Act04ManageOwnITgBot {
 
     const extraMessage = 'Instance destroyed:\n' + JSON.stringify(result)
     this.common.showInstanceSearchParamsMenu(ctx, extraMessage)
+  }
+
+  private handleActOwnInstanceWorkflow (ctx: OwnInstanceContext) {
+    this.tgbotlib.safeAnswerCallback(ctx)
+
+    const message = '*Select workflow*'
+    const keyboard = this.tgbotlib.generateInlineKeyboard(ownInstanceWorkflowSelectMenu())
+
+    this.tgbotlib.reply(ctx, message, { parse_mode: 'Markdown', ...keyboard })
   }
 }

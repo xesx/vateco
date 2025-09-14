@@ -27,6 +27,7 @@ export class CommonOwnITgBot {
   }
 
   private handleCommandOwnInstance(ctx: OwnInstanceContext, next: () => Promise<void>) {
+    console.log('\x1b[36m', 'ctx.session', ctx.session, '\x1b[0m');
     if (ctx.session.way !== 'own-instance') {
       return next()
     }
@@ -36,7 +37,11 @@ export class CommonOwnITgBot {
     if (step === 'start') {
       this.showInstanceSearchParamsMenu(ctx)
     } else if (['loading', 'running'].includes(step)) {
-      this.showInstanceManageMenu(ctx)
+      if (ctx.session.workflowId) {
+        this.showWorkflowRunMenu(ctx)
+      } else {
+        this.showInstanceManageMenu(ctx)
+      }
     } else {
       this.showInstanceSearchParamsMenu(ctx)
     }
@@ -82,6 +87,7 @@ export class CommonOwnITgBot {
   showWorkflowRunMenu(ctx: OwnInstanceContext) {
     const message = `Workflow ${ctx.session.workflowId}`
     const keyboard = this.tgbotlib.generateInlineKeyboard(workflowRunMenu({
+      workflowId: ctx.session.workflowId || '',
       workflowParams: ctx.session.workflowParams,
       prefixAction: `act:own-instance`,
       backAction: 'act:own-instance:workflow'

@@ -1,73 +1,31 @@
+import { GEOLOCATION } from '../../const'
+
+function mapper (geoKey: string) {
+  let description = geoKey
+
+  if (GEOLOCATION[geoKey]) {
+    description = GEOLOCATION[geoKey].flag
+  }
+
+  return [description, `act:own-instance:search-params:geolocation:${geoKey}`]
+}
+
 export const OWN_INSTANCE_GEOLOCATION_MENU = [
-  [['ALL WORLD', 'act:own-instance:search-params:geolocation:any']],
-  [['Europe', 'act:own-instance:search-params:geolocation:europe']],
-  [
-    ['RU', 'act:own-instance:search-params:geolocation:RU'],
-    ['SE', 'act:own-instance:search-params:geolocation:SE'],
-    ['GB', 'act:own-instance:search-params:geolocation:GB'],
-    ['PL', 'act:own-instance:search-params:geolocation:PL'],
-    ['PT', 'act:own-instance:search-params:geolocation:PT'],
-    ['SI', 'act:own-instance:search-params:geolocation:SI'],
-    ['DE', 'act:own-instance:search-params:geolocation:DE'],
-    ['IT', 'act:own-instance:search-params:geolocation:IT'],
-  ],
-  [
-    ['LT', 'act:own-instance:search-params:geolocation:LT'],
-    ['GR', 'act:own-instance:search-params:geolocation:GR'],
-    ['FI', 'act:own-instance:search-params:geolocation:FI'],
-    ['IS', 'act:own-instance:search-params:geolocation:IS'],
-    ['AT', 'act:own-instance:search-params:geolocation:AT'],
-    ['FR', 'act:own-instance:search-params:geolocation:FR'],
-    ['RO', 'act:own-instance:search-params:geolocation:RO'],
-    ['MD', 'act:own-instance:search-params:geolocation:MD'],
-  ],
-  [
-    ['HU', 'act:own-instance:search-params:geolocation:HU'],
-    ['NO', 'act:own-instance:search-params:geolocation:NO'],
-    ['MK', 'act:own-instance:search-params:geolocation:MK'],
-    ['BG', 'act:own-instance:search-params:geolocation:BG'],
-    ['ES', 'act:own-instance:search-params:geolocation:ES'],
-  ],
-  [
-    ['CH', 'act:own-instance:search-params:geolocation:CH'],
-    ['HR', 'act:own-instance:search-params:geolocation:HR'],
-    ['NL', 'act:own-instance:search-params:geolocation:NL'],
-    ['CZ', 'act:own-instance:search-params:geolocation:CZ'],
-    ['EE', 'act:own-instance:search-params:geolocation:EE'],
-  ],
-  [['North America', 'act:own-instance:search-params:geolocation:north-america']],
-  [
-    ['US', 'act:own-instance:search-params:geolocation:US'],
-    ['CA', 'act:own-instance:search-params:geolocation:CA'],
-  ],
-  [['South America', 'act:own-instance:search-params:geolocation:south-america']],
-  [
-    ['BR', 'act:own-instance:search-params:geolocation:BR'],
-    ['AR', 'act:own-instance:search-params:geolocation:AR'],
-    ['CL', 'act:own-instance:search-params:geolocation:CL'],
-  ],
-  [['Asia', 'act:own-instance:search-params:geolocation:asia']],
-  [
-    ['CN', 'act:own-instance:search-params:geolocation:CN'],
-    ['JP', 'act:own-instance:search-params:geolocation:JP'],
-    ['KR', 'act:own-instance:search-params:geolocation:KR'],
-    ['ID', 'act:own-instance:search-params:geolocation:ID'],
-    ['IN', 'act:own-instance:search-params:geolocation:IN'],
-    ['HK', 'act:own-instance:search-params:geolocation:HK'],
-    ['MY', 'act:own-instance:search-params:geolocation:MY'],
-  ],
-  [
-    ['IL', 'act:own-instance:search-params:geolocation:IL'],
-    ['TH', 'act:own-instance:search-params:geolocation:TH'],
-    ['QA', 'act:own-instance:search-params:geolocation:QA'],
-    ['TR', 'act:own-instance:search-params:geolocation:TR'],
-    ['VN', 'act:own-instance:search-params:geolocation:VN'],
-  ],
-  [
-    ['TW', 'act:own-instance:search-params:geolocation:TW'],
-    ['OM', 'act:own-instance:search-params:geolocation:OM'],
-    ['SG', 'act:own-instance:search-params:geolocation:SG'],
-    ['AE', 'act:own-instance:search-params:geolocation:AE'],
-    ['KZ', 'act:own-instance:search-params:geolocation:KZ'],
-  ],
+  [mapper('any')],
+  [mapper('europe')],
+  ['RU', 'SE', 'GB', 'PL', 'PT', 'SI', 'DE', 'IT'].map(mapper),
+  ['LT', 'GR', 'FI', 'IS', 'AT', 'FR', 'RO', 'MD'].map(mapper),
+  ['HU', 'NO', 'MK', 'BG', 'ES'].map(mapper),
+  ['CH', 'HR', 'NL', 'CZ', 'EE'].map(mapper),
+
+  [mapper('north-america')],
+  ['US', 'CA'].map(mapper),
+
+  [mapper('south-america')],
+  ['BR', 'AR', 'CL'].map(mapper),
+
+  [mapper('asia')],
+  ['CN', 'JP', 'KR', 'ID', 'IN', 'HK', 'MY'].map(mapper),
+  ['IL', 'TH', 'QA', 'TR', 'VN'].map(mapper),
+  ['TW', 'OM', 'SG', 'AE', 'KZ'].map(mapper),
 ] as [string, string][][]

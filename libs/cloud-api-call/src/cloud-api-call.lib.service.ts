@@ -17,9 +17,10 @@ export class CloudApiCallLibService {
           maxRedirects: 5
         })
 
+      console.log('vastAiRequest_90 response:', url, { status: res.status, data: res.data })
       return res.data
     } catch (error) {
-      console.error('Error in vastAiRequest:', error)
+      console.log('vastAiRequest_91 Error:', url, error)
       // throw error
     }
   }
@@ -37,8 +38,8 @@ export class CloudApiCallLibService {
     return await this.vastAiRequest({ url, instanceId, token, data: { workflowId } })
   }
 
-  async vastAiWorkflowRun ({ baseUrl, instanceId, token, workflowId, workflowParams }): Promise<any> {
+  async vastAiWorkflowRun ({ baseUrl, instanceId, token, workflowId, count, workflowParams }): Promise<any> {
     const url = baseUrl + '/workflow/run'
-    return await this.vastAiRequest({ url, instanceId, token, data: { id: workflowId, params: workflowParams, count: 2 } })
+    return await this.vastAiRequest({ url, instanceId, token, data: { id: workflowId, params: workflowParams, count } })
   }
 }

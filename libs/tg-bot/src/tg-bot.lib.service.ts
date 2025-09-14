@@ -30,9 +30,11 @@ export class TgBotLibService {
     }
   }
 
-  safeAnswerCallback(ctx: Context, text?: string) {
+  safeAnswerCallback (ctx: Context, text?: string) {
     try {
-      ctx.answerCbQuery(text)
+      if (ctx.callbackQuery) {
+        return ctx.answerCbQuery(text)
+      }
     } catch (error) {
       // Игнорируем ошибки timeout для answerCbQuery
       if (!error.message?.includes('query is too old')) {

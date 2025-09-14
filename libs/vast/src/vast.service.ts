@@ -58,7 +58,7 @@ export class VastLibService {
         'rentable': { 'eq': true },
         'reliability2': { 'gte': 0.9 },
         'duration': { 'gte': 1 },
-        'cuda_max_good': { 'gte': 12.4 },
+        'cuda_max_good': { 'gte': 12.8 },
         'direct_port_count': { 'gte': 2 },
         'geolocation': geolocation ? { 'in': geolocation } : undefined,
         'static_ip': { 'eq': true },

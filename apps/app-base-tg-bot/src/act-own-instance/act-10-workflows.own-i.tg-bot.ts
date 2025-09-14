@@ -9,10 +9,6 @@ import * as lib from '@lib'
 import { CommonOwnITgBot } from './common.own-i.tg-bot'
 import { OwnInstanceContext, OwnInstanceMatchContext } from './types'
 
-import {
-  ownInstanceWorkflowsMenu
-} from '@kb'
-
 @Injectable()
 export class Act10WorkflowsOwnITgBot {
   constructor(
@@ -21,19 +17,32 @@ export class Act10WorkflowsOwnITgBot {
     private readonly tgbotlib: lib.TgBotLibService,
     private readonly cloudapilib: lib.CloudApiCallLibService,
     private readonly wflib: lib.WorkflowLibService,
+    private readonly msglib: lib.MessageLibService,
   ) {
-    this.bot.action('act:own-instance:workflow', (ctx) => this.handleActOwnInstanceWorkflow(ctx))
-    this.bot.action(/^act:own-instance:workflow:(.+)$/, (ctx) => this.handleActOwnInstanceWorkflowSelect(ctx))
-    this.bot.action(/^act:own-instance:workflow-param:(.+)$/, (ctx) => this.handleActOwnInstanceWorkflowParam(ctx))
-    this.bot.action(/act:own-instance:workflow-run/, (ctx) => this.handleActOwnInstanceWorkflowRun(ctx))
+    this.bot.action(/^act:own-instance:workflow:([^:]+)$/, (ctx) => this.handleActOwnInstanceWorkflowSelect(ctx))
+    this.bot.action(/^act:own-instance:workflow:([^:]+):param:(.+)$/, (ctx) => this.handleActOwnInstanceWorkflowParam(ctx))
+    this.bot.action(/^act:own-instance:workflow:([^:]+):run$/, (ctx) => this.handleActOwnInstanceWorkflowRun(ctx))
 
     this.bot.on(message('text'), async (ctx, next) => {
+      if (ctx.session.way !== 'own-instance') {
+        return next()
+      }
+
       const message = ctx.message.text
+        .replace(/\r\n/g, '\n')     // Windows → Unix переносы
+        .replace(/\n+/g, ' ')       // убираем лишние переводы строк
+        .replace(/\s+/g, ' ')       // схлопываем все пробелы/табы
+        .trim()
 
       if (ctx.session.inputWaiting?.startsWith('act:own-instance:workflow-param:')) {
         const paramName = ctx.session.inputWaiting.replace('act:own-instance:workflow-param:', '')
         ctx.session.inputWaiting = null
         ctx.session.workflowParams[paramName] = message
+        return this.handleActOwnInstanceWorkflowParamInput(ctx)
+      }
+
+      if (ctx.session.workflowParams?.positivePrompt) {
+        ctx.session.workflowParams.positivePrompt = message
         return this.handleActOwnInstanceWorkflowParamInput(ctx)
       }
 
@@ -48,12 +57,12 @@ export class Act10WorkflowsOwnITgBot {
       baseUrl: `http://${ctx.session.instanceIp}:${ctx.session.instanceApiPort}`,
       instanceId: ctx.session.instanceId,
       token: ctx.session.instanceToken,
+      count: ctx.session.workflowParams.__count__ || 1,
       workflowId,
       workflowParams: ctx.session.workflowParams,
     })
 
     this.tgbotlib.safeAnswerCallback(ctx)
-    // this.common.showWorkflowRunMenu(ctx)
   }
 
   private handleActOwnInstanceWorkflowParamInput(ctx) {
@@ -61,60 +70,69 @@ export class Act10WorkflowsOwnITgBot {
   }
 
   private handleActOwnInstanceWorkflowParam(ctx: OwnInstanceMatchContext) {
-    const workflowId = ctx.session.workflowId
+    const [,workflowId, param] = ctx.match
+    const [paramName, value] = param.split(':')
 
-    if (!workflowId) {
-      ctx.deleteMessage()
-      return
-    }
-
-    const paramName: string = ctx.match[1] || '__undefined__'
-    const wf = this.wflib.getWorkflow(workflowId)
-    const wfParam = wf?.params[paramName]
+    const workflow = this.wflib.getWorkflow(workflowId)
+    const wfParam = workflow?.params[paramName]
     const currentValue = ctx.session.workflowParams[paramName]
 
-    // if (!wfParam) {
-    //   ctx.deleteMessage()
-    //   return
-    // }
+    if (value) {
+      if (wfParam.enum) {
+        ctx.session.workflowParams[paramName] = wfParam.enum[value]
+      } else {
+        ctx.session.workflowParams[paramName] = value
+      }
 
-    if (wfParam.type === 'string') {
-      ctx.session.inputWaiting = `act:own-instance:workflow-param:${paramName}`
-      this.tgbotlib.safeAnswerCallback(ctx)
-      this.tgbotlib.reply(ctx, `Enter value for parameter *${paramName}*\nCurrent value *${currentValue}*` , { parse_mode: 'Markdown' })
+      if (wfParam.type === 'number') {
+        ctx.session.workflowParams[paramName] = Number(ctx.session.workflowParams[paramName])
+      }
+
+      this.common.showWorkflowRunMenu(ctx)
       return
     }
 
-    // this.tgbotlib.safeAnswerCallback(ctx)
-    //
-    // const message = '*Select workflow*'
-    // const keyboard = this.tgbotlib.generateInlineKeyboard(ownInstanceWorkflowsMenu())
-    //
-    // this.tgbotlib.reply(ctx, message, { parse_mode: 'Markdown', ...keyboard })
-  }
+    if (wfParam.enum) {
+      const message = `Set parameter *"${paramName}"*\nCurrent value: *"${currentValue}"*`
+      const enumOptions: [string, string][][] = wfParam.enum
+        .map((value, i) => [[value, `act:own-instance:workflow:${workflowId}:param:${paramName}:${i}`]])
+      enumOptions.push([['Back', `act:own-instance:workflow:${workflowId}:run`]])
 
-  private handleActOwnInstanceWorkflow(ctx: OwnInstanceContext) {
-    this.tgbotlib.safeAnswerCallback(ctx)
+      const keyboard = this.tgbotlib.generateInlineKeyboard(enumOptions)
+      this.tgbotlib.reply(ctx, message, keyboard)
+      return
+    }
 
-    const message = '*Select workflow*'
-    const keyboard = this.tgbotlib.generateInlineKeyboard(ownInstanceWorkflowsMenu())
+    if (wfParam.type === 'string' || wfParam.type === 'number') {
+      ctx.session.inputWaiting = `act:own-instance:workflow-param:${paramName}`
+      this.tgbotlib.safeAnswerCallback(ctx)
 
-    this.tgbotlib.reply(ctx, message, { parse_mode: 'Markdown', ...keyboard })
+      const message = this.msglib.genCodeMessage(String(currentValue))
+      this.tgbotlib.reply(ctx, message , { parse_mode: 'HTML' })
+      // this.tgbotlib.reply(ctx, `Enter value for parameter *"${paramName}"*\nCurrent value: *"${currentValue}"*` , { parse_mode: 'Markdown' })
+      return
+    }
   }
 
   private async handleActOwnInstanceWorkflowSelect(ctx: OwnInstanceMatchContext) {
     const step = ctx.session.step
 
-    if (!['running'].includes(step)) {
+    if (!['running', 'loading'].includes(step)) {
       ctx.deleteMessage()
       return
     }
 
-    const [workflowId] = ctx.match
+    const [,workflowId] = ctx.match
+
+    if (workflowId === ctx.session.workflowId) {
+      this.common.showWorkflowRunMenu(ctx)
+      return
+    }
+
     ctx.session.workflowId = workflowId
 
-    const wf = this.wflib.getWorkflow(workflowId)
-    const workflowParams = wf.params
+    const workflow = this.wflib.getWorkflow(workflowId)
+    const workflowParams = workflow.params
 
     Object.entries(workflowParams).forEach(([name, props]) => {
       ctx.session.workflowParams[name] = ctx.session.workflowParams[name] || props?.default
@@ -127,7 +145,6 @@ export class Act10WorkflowsOwnITgBot {
       workflowId
     })
 
-    this.tgbotlib.safeAnswerCallback(ctx)
-    this.common.showInstanceManageMenu(ctx, `Workflow ${workflowId} start loading...`)
+    this.common.showWorkflowRunMenu(ctx)
   }
 }

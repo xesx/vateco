@@ -33,7 +33,7 @@ export class Act02SearchOffersOwnITgBot {
     if (selectedGeo.length === 2) {
       geolocation = [selectedGeo]
     } else if (selectedGeo === 'europe') {
-      geolocation = ['RU', 'SE', 'GB', 'PL', 'PT', 'SI', 'DE', 'IT']
+      geolocation = ['RU', 'SE', 'GB', 'PL', 'PT', 'SI', 'DE', 'IT', 'LT', 'GR', 'FI', 'IS', 'AT', 'FR', 'RO', 'MD', 'HU', 'NO', 'MK', 'BG', 'ES', 'CH', 'HR', 'NL', 'CZ', 'EE']
     } else if (selectedGeo === 'north-america') {
       geolocation = ['US', 'CA']
     }
