@@ -15,7 +15,7 @@ export class Act03CreateOwnITgBot {
     private readonly tgbotlib: lib.TgBotLibService,
     private readonly vastlib: lib.VastLibService,
   ) {
-    this.bot.action('act:own-instance:create', (ctx) => this.handleActOwnInstanceCreate(ctx))
+    this.bot.action('act:own-i:create', (ctx) => this.handleActOwnInstanceCreate(ctx))
   }
 
   private async handleActOwnInstanceCreate(ctx: OwnInstanceContext) {

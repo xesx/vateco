@@ -7,7 +7,7 @@ function mapper (geoKey: string) {
     description = GEOLOCATION[geoKey].flag
   }
 
-  return [description, `act:own-instance:search-params:geolocation:${geoKey}`]
+  return [description, `act:own-i:search-params:geolocation:${geoKey}`]
 }
 
 export const OWN_INSTANCE_GEOLOCATION_MENU = [

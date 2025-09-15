@@ -1,5 +1,5 @@
 function mapper (gpu: string) {
-  return [gpu, `act:own-instance:search-params:gpu:${gpu}`]
+  return [gpu, `act:own-i:search-params:gpu:${gpu}`]
 }
 
 export const OWN_INSTANCE_GPU_MENU = [

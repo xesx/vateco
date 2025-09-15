@@ -19,8 +19,8 @@ export class Act02SearchOffersOwnITgBot {
     private readonly tgbotlib: lib.TgBotLibService,
     private readonly vastlib: lib.VastLibService,
   ) {
-    this.bot.action('act:own-instance:search-offers', (ctx) => this.handleActOwnInstanceSearchOffers(ctx))
-    this.bot.action(/^act:own-instance:offer:(.+)$/, (ctx) => this.handleActOwnInstanceOfferSelect(ctx))
+    this.bot.action('act:own-i:search-offers', (ctx) => this.handleActOwnInstanceSearchOffers(ctx))
+    this.bot.action(/^act:own-i:offer:(.+)$/, (ctx) => this.handleActOwnInstanceOfferSelect(ctx))
   }
 
   private async handleActOwnInstanceSearchOffers(ctx: OwnInstanceContext) {

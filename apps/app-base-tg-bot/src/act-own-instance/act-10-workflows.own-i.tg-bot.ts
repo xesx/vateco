@@ -19,9 +19,9 @@ export class Act10WorkflowsOwnITgBot {
     private readonly wflib: lib.WorkflowLibService,
     private readonly msglib: lib.MessageLibService,
   ) {
-    this.bot.action(/^act:own-instance:workflow:([^:]+)$/, (ctx) => this.handleActOwnInstanceWorkflowSelect(ctx))
-    this.bot.action(/^act:own-instance:workflow:([^:]+):param:(.+)$/, (ctx) => this.handleActOwnInstanceWorkflowParam(ctx))
-    this.bot.action(/^act:own-instance:workflow:([^:]+):run$/, (ctx) => this.handleActOwnInstanceWorkflowRun(ctx))
+    this.bot.action(/^act:own-i:workflow:([^:]+)$/, (ctx) => this.handleActOwnInstanceWorkflowSelect(ctx))
+    this.bot.action(/^act:own-i:workflow:([^:]+):param:(.+)$/, (ctx) => this.handleActOwnInstanceWorkflowParam(ctx))
+    this.bot.action(/^act:own-i:workflow:([^:]+):run$/, (ctx) => this.handleActOwnInstanceWorkflowRun(ctx))
 
     this.bot.on(message('text'), async (ctx, next) => {
       if (ctx.session.way !== 'own-instance') {
@@ -34,8 +34,8 @@ export class Act10WorkflowsOwnITgBot {
         .replace(/\s+/g, ' ')       // схлопываем все пробелы/табы
         .trim()
 
-      if (ctx.session.inputWaiting?.startsWith('act:own-instance:workflow-param:')) {
-        const paramName = ctx.session.inputWaiting.replace('act:own-instance:workflow-param:', '')
+      if (ctx.session.inputWaiting?.startsWith('act:own-i:workflow-param:')) {
+        const paramName = ctx.session.inputWaiting.replace('act:own-i:workflow-param:', '')
         ctx.session.inputWaiting = null
         ctx.session.workflowParams[paramName] = message
         return this.handleActOwnInstanceWorkflowParamInput(ctx)
@@ -95,8 +95,8 @@ export class Act10WorkflowsOwnITgBot {
     if (wfParam.enum) {
       const message = `Set parameter *"${paramName}"*\nCurrent value: *"${currentValue}"*`
       const enumOptions: [string, string][][] = wfParam.enum
-        .map((value, i) => [[value, `act:own-instance:workflow:${workflowId}:param:${paramName}:${i}`]])
-      enumOptions.push([['Back', `act:own-instance:workflow:${workflowId}:run`]])
+        .map((value, i) => [[value, `act:own-i:workflow:${workflowId}:param:${paramName}:${i}`]])
+      enumOptions.push([['Back', `act:own-i:workflow:${workflowId}:run`]])
 
       const keyboard = this.tgbotlib.generateInlineKeyboard(enumOptions)
       this.tgbotlib.reply(ctx, message, keyboard)
@@ -104,7 +104,7 @@ export class Act10WorkflowsOwnITgBot {
     }
 
     if (wfParam.type === 'string' || wfParam.type === 'number') {
-      ctx.session.inputWaiting = `act:own-instance:workflow-param:${paramName}`
+      ctx.session.inputWaiting = `act:own-i:workflow-param:${paramName}`
       this.tgbotlib.safeAnswerCallback(ctx)
 
       const message = this.msglib.genCodeMessage(String(currentValue))

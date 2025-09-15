@@ -26,7 +26,7 @@ export class Act01SetSearchParamsOwnITgBot {
     private readonly common: CommonOwnITgBot,
     private readonly tgbotlib: lib.TgBotLibService,
   ) {
-    this.bot.action(/act:own-instance:search-params:(.+)$/, (ctx) => this.handleActOwnInstanceSearchParamsMatch(ctx))
+    this.bot.action(/act:own-i:search-params:(.+)$/, (ctx) => this.handleActOwnInstanceSearchParamsMatch(ctx))
   }
 
   private handleActOwnInstanceSearchParamsMatch(ctx: OwnInstanceMatchContext) {

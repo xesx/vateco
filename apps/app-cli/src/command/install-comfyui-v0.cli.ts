@@ -74,9 +74,9 @@ export class InstallComfyuiV0Cli {
           await this.tgbotlib.sendMessage({ chatId, text: this.msglib.genCodeMessage('ComfyUI started!') })
 
           const keyboardDescription = [
-            [[`Check instance status`, 'act:own-instance:status']],
-            [[`Destroy instance`, 'act:own-instance:destroy']],
-            [[`Select workflow`, 'act:own-instance:workflow']]
+            [[`Check instance status`, 'act:own-i:status']],
+            [[`Destroy instance`, 'act:own-i:destroy']],
+            [[`Select workflow`, 'act:own-i:workflow']]
           ] as [string, string][][]
 
           await this.tgbotlib.sendInlineKeyboard({

@@ -1,7 +1,7 @@
 export function ownInstanceCreateMenu(offerId): [string, string][][] {
   const keyboardDescription = [
-    [[`🛠️ Create instance (${offerId})`, 'act:own-instance:create']],
-    [[`⬅️ Back`, 'act:own-instance']],
+    [[`🛠️ Create instance (${offerId})`, 'act:own-i:create']],
+    [[`⬅️ Back`, 'act:own-i']],
   ] as [string, string][][]
 
   return keyboardDescription
