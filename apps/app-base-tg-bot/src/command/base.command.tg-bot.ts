@@ -1,6 +1,9 @@
 import { Injectable } from '@nestjs/common'
 import { Telegraf } from 'telegraf'
 import { InjectBot } from 'nestjs-telegraf'
+import { session } from 'telegraf'
+
+import * as lib from '@lib'
 
 import { TelegramContext } from '../types'
 
@@ -11,7 +14,10 @@ export class BaseCommandTgBot {
   constructor(
     @InjectBot() private readonly bot: Telegraf<TelegramContext>,
     private readonly tgbotsrv: AppBaseTgBotService,
+    prismaStore: lib.TgBotSessionStorePrismaLibService,
   ) {
+    bot.use(session({ store: prismaStore }))
+
     bot.use(async (ctx, next) => {
       this.initSession(ctx)
       return await next()
@@ -23,9 +29,13 @@ export class BaseCommandTgBot {
   }
 
   private initSession(ctx: TelegramContext) {
+    ctx.session ??= {
+      lastTimestamp: Date.now(),
+      chatId: ctx.chat?.id || -1,
+      step: 'start',
+    }
+
     ctx.session.lastTimestamp = Date.now()
-    ctx.session.chatId ??= ctx.chat?.id || -1
-    ctx.session.step ??= 'start'
   }
   private handleStart(ctx: TelegramContext, next) {
     const step = ctx.session.step || '__undefined__'

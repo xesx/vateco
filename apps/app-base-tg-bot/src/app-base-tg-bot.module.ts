@@ -1,10 +1,9 @@
 import { Module } from '@nestjs/common'
 import { ConfigModule, ConfigService } from '@nestjs/config'
+// import { Postgres } from "@telegraf/session/pg"
 
 import { TelegrafModule } from 'nestjs-telegraf'
-
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-const LocalSession = require('telegraf-session-local')
+// import { session } from 'telegraf'
 
 import * as lib from '@lib'
 
@@ -19,23 +18,32 @@ import * as owni from './act-own-instance'
       isGlobal: true, // чтобы не импортировать в каждом модуле
       envFilePath: ['.env'], // можно указать разные файлы для dev/prod
     }),
+    lib.PrismaLibModule,
     // Настройка Telegraf с использованием ConfigService
     TelegrafModule.forRootAsync({
-      imports: [ConfigModule],
-      useFactory: (configService: ConfigService) => {
+      imports: [ConfigModule, lib.PrismaLibModule],
+      useFactory: (
+        configService: ConfigService,
+        // prismaStore: lib.TgBotSessionStorePrismaLibService,
+      ) => {
         const token = configService.get<string>('TELEGRAM_BOT_TOKEN')
 
         if (!token) {
           throw new Error('TELEGRAM_BOT_TOKEN is not defined in .env')
         }
 
-        const session = new LocalSession({
-          database: 'session.tg-bot.json', // путь к файлу базы данных сессий
-        })
+        // const store = Postgres({
+        //   host: configService.get<string>('PG_HOST'),
+        //   port: configService.get<number>('PG_PORT'),
+        //   database: configService.get<string>('PG_DATABASE'),
+        //   user: configService.get<string>('PG_USER'),
+        //   password: configService.get<string>('PG_PASSWORD'),
+        // })
+        // const pool: Pool = (prisma as any)._engine?.pool
 
         return {
           token,
-          middlewares: [session.middleware()],
+          // middlewares: [session({ store: prismaStore })],
         }
       },
       inject: [ConfigService],

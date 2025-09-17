@@ -8,17 +8,6 @@ export interface TelegramContext extends Context {
 export interface SessionData {
   chatId: number
   step?: string
-  instanceId?: number
-  instanceToken?: string
-  instanceIp?: string
-  instanceComfyuiPort?: string
-  instanceRclonePort?: string
-  instanceApiPort?: string
-  offerId?: number
-  gpu: string
-  geolocation: string
-  inDataCenterOnly: boolean
-  workflowId?: string
-  workflowParams: Record<string, string | number | boolean>
+  lastTimestamp: number
   [key: string]: any
 }
