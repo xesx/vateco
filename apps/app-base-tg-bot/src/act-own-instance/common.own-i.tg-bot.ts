@@ -27,7 +27,6 @@ export class CommonOwnITgBot {
   }
 
   private handleCommandOwnInstance(ctx: OwnInstanceContext, next: () => Promise<void>) {
-    console.log('\x1b[36m', 'ctx.session', ctx.session, '\x1b[0m');
     if (ctx.session.way !== 'own-instance') {
       return next()
     }
@@ -58,8 +57,8 @@ export class CommonOwnITgBot {
     return await next()
   }
 
-  showInstanceSearchParamsMenu(ctx: OwnInstanceContext, extraMessage?: string) {
-    const message = extraMessage ? `${extraMessage}\nSearch parameters:`: 'Search parameters:'
+  showInstanceSearchParamsMenu (ctx: OwnInstanceContext) {
+    const message = 'Search parameters:'
     const keyboard = this.tgbotlib.generateInlineKeyboard(ownInstanceSearchParamsMenu(ctx.session))
 
     this.tgbotlib.safeAnswerCallback(ctx)

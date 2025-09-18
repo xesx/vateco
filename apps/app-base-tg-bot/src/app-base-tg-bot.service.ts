@@ -1,7 +1,9 @@
 import { Injectable } from '@nestjs/common'
 import { Context } from 'telegraf'
 
-import { TgBotLibService } from '@libs/tg-bot'
+import { TAppBaseTgBotContext } from './types'
+
+import * as lib from '@lib'
 
 import {
   MAIN_MENU,
@@ -10,7 +12,7 @@ import {
 @Injectable()
 export class AppBaseTgBotService {
   constructor(
-    private readonly tgbotlib: TgBotLibService,
+    private readonly tgbotlib: lib.TgBotLibService,
   ) {}
 
   showMainMenu(ctx: Context) {
@@ -18,5 +20,13 @@ export class AppBaseTgBotService {
     const keyboard = this.tgbotlib.generateInlineKeyboard(MAIN_MENU)
 
     this.tgbotlib.reply(ctx, message, keyboard)
+  }
+
+  resetSession(ctx: TAppBaseTgBotContext) {
+    ctx.session = {
+      lastTimestamp: Date.now(),
+      chatId: ctx.session.chatId,
+      step: 'start',
+    }
   }
 }

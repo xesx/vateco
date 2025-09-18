@@ -1,9 +1,7 @@
 import { Module } from '@nestjs/common'
 import { ConfigModule, ConfigService } from '@nestjs/config'
-// import { Postgres } from "@telegraf/session/pg"
 
 import { TelegrafModule } from 'nestjs-telegraf'
-// import { session } from 'telegraf'
 
 import * as lib from '@lib'
 
@@ -24,7 +22,6 @@ import * as owni from './act-own-instance'
       imports: [ConfigModule, lib.PrismaLibModule],
       useFactory: (
         configService: ConfigService,
-        // prismaStore: lib.TgBotSessionStorePrismaLibService,
       ) => {
         const token = configService.get<string>('TELEGRAM_BOT_TOKEN')
 
@@ -32,19 +29,7 @@ import * as owni from './act-own-instance'
           throw new Error('TELEGRAM_BOT_TOKEN is not defined in .env')
         }
 
-        // const store = Postgres({
-        //   host: configService.get<string>('PG_HOST'),
-        //   port: configService.get<number>('PG_PORT'),
-        //   database: configService.get<string>('PG_DATABASE'),
-        //   user: configService.get<string>('PG_USER'),
-        //   password: configService.get<string>('PG_PASSWORD'),
-        // })
-        // const pool: Pool = (prisma as any)._engine?.pool
-
-        return {
-          token,
-          // middlewares: [session({ store: prismaStore })],
-        }
+        return { token }
       },
       inject: [ConfigService],
     }),

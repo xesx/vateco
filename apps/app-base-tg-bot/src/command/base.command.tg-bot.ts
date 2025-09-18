@@ -5,14 +5,14 @@ import { session } from 'telegraf'
 
 import * as lib from '@lib'
 
-import { TelegramContext } from '../types'
+import { TAppBaseTgBotContext } from '../types'
 
 import { AppBaseTgBotService } from '../app-base-tg-bot.service'
 
 @Injectable()
 export class BaseCommandTgBot {
   constructor(
-    @InjectBot() private readonly bot: Telegraf<TelegramContext>,
+    @InjectBot() private readonly bot: Telegraf<TAppBaseTgBotContext>,
     private readonly tgbotsrv: AppBaseTgBotService,
     prismaStore: lib.TgBotSessionStorePrismaLibService,
   ) {
@@ -28,7 +28,7 @@ export class BaseCommandTgBot {
     this.bot.action('act:main-menu', (ctx, next) => this.handleStart(ctx, next))
   }
 
-  private initSession(ctx: TelegramContext) {
+  private initSession(ctx: TAppBaseTgBotContext) {
     ctx.session ??= {
       lastTimestamp: Date.now(),
       chatId: ctx.chat?.id || -1,
@@ -37,7 +37,7 @@ export class BaseCommandTgBot {
 
     ctx.session.lastTimestamp = Date.now()
   }
-  private handleStart(ctx: TelegramContext, next) {
+  private handleStart(ctx: TAppBaseTgBotContext, next) {
     const step = ctx.session.step || '__undefined__'
 
     if (step === 'start') {

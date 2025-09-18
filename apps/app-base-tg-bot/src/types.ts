@@ -1,6 +1,6 @@
 import { Context } from 'telegraf'
 
-export interface TelegramContext extends Context {
+export interface TAppBaseTgBotContext extends Context {
   session: SessionData
   match?: RegExpMatchArray
 }

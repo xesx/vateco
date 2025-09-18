@@ -89,7 +89,7 @@ export class Act04ManageOwnITgBot {
     this.tgbotlib.safeAnswerCallback(ctx)
 
     const extraMessage = 'Instance destroyed:\n' + JSON.stringify(result)
-    this.common.showInstanceSearchParamsMenu(ctx, extraMessage)
+    this.common.showInstanceSearchParamsMenu(ctx)
   }
 
   private handleActOwnInstanceWorkflow (ctx: OwnInstanceContext) {
