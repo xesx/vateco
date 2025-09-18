@@ -1,8 +1,7 @@
 import { Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
 
-import { VastLibModule } from '@libs/vast'
-import { TgBotLibModule } from '@libs/tg-bot'
+import * as lib from '@lib'
 
 import { AppAdminController } from './app-admin.controller'
 
@@ -12,8 +11,10 @@ import { AppAdminController } from './app-admin.controller'
       isGlobal: true, // чтобы не импортировать в каждом модуле
       envFilePath: ['.env'], // можно указать разные файлы для dev/prod
     }),
-    VastLibModule,
-    TgBotLibModule,
+    lib.RunpodLibModule,
+    lib.VastLibModule,
+    lib.TgBotLibModule,
+    lib.WorkflowLibModule,
   ],
   controllers: [AppAdminController],
   providers: [],

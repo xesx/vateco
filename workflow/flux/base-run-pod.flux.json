@@ -1,6 +1,5 @@
 {
-  "models": [
-  ],
+  "models": [],
   "params": {
     "positivePrompt": {
       "type": "string",
@@ -55,19 +54,6 @@
       "class_type": "VAEDecode",
       "_meta": {
         "title": "VAE Decode"
-      }
-    },
-    "9": {
-      "inputs": {
-        "filename_prefix": "ComfyUI",
-        "images": [
-          "8",
-          0
-        ]
-      },
-      "class_type": "SaveImage",
-      "_meta": {
-        "title": "Save Image"
       }
     },
     "27": {

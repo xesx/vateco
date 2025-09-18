@@ -1,13 +1,15 @@
-import { Controller, Get } from '@nestjs/common'
+import { Controller, Get, Res } from '@nestjs/common'
+import { Response } from 'express'
 
-import { VastLibService } from '@libs/vast'
-import { TgBotLibService } from '@libs/tg-bot'
+import * as lib from '@lib'
 
 @Controller()
 export class AppAdminController {
   constructor(
-    private readonly vastlib: VastLibService,
-    private readonly tgBotLibService: TgBotLibService,
+    private readonly vastlib: lib.VastLibService,
+    private readonly tgBotLibService: lib.TgBotLibService,
+    private readonly runpod: lib.RunpodLibService,
+    private readonly wf: lib.WorkflowLibService,
   ) {}
 
   @Get('vast/search/offers')
@@ -27,5 +29,20 @@ export class AppAdminController {
       photo: 'https://avatars.githubusercontent.com/u/9919?s=200&v=4',
       caption: 'Test photo from TgBotLibService',
     })
+  }
+
+  @Get('runpod/run-sync')
+  async runpodRunSync (@Res() res: Response): Promise<any> {
+    const workflow = this.wf.getWorkflow('runpod-example').schema
+
+    const data = await this.runpod.runSync({ workflow })
+
+    const base64Data = data.output.images?.[0].data
+    // console.log('\x1b[36m', 'base64Data', base64Data, '\x1b[0m')
+    const imgBuffer = Buffer.from(base64Data, 'base64')
+
+    res.setHeader('Content-Type', 'image/png')
+    res.setHeader('Content-Length', imgBuffer.length)
+    res.end(imgBuffer)
   }
 }
