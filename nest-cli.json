@@ -14,6 +14,24 @@
   },
   "monorepo": true,
   "projects": {
+    "app-base-tg-bot": {
+      "type": "application",
+      "root": "apps/app-base-tg-bot",
+      "entryFile": "main",
+      "sourceRoot": "apps/app-base-tg-bot/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/app-base-tg-bot/tsconfig.app.json"
+      }
+    },
+    "app-cron": {
+      "type": "application",
+      "root": "apps/app-cron",
+      "entryFile": "main",
+      "sourceRoot": "apps/app-cron/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/app-cron/tsconfig.app.json"
+      }
+    },
     "app-admin": {
       "type": "application",
       "root": "apps/app-admin",
@@ -39,15 +57,6 @@
       "sourceRoot": "apps/app-cloud-cron/src",
       "compilerOptions": {
         "tsConfigPath": "apps/app-cloud-cron/tsconfig.app.json"
-      }
-    },
-    "app-base-tg-bot": {
-      "type": "application",
-      "root": "apps/app-base-tg-bot",
-      "entryFile": "main",
-      "sourceRoot": "apps/app-base-tg-bot/src",
-      "compilerOptions": {
-        "tsConfigPath": "apps/app-base-tg-bot/tsconfig.app.json"
       }
     }
   }
