@@ -1,4 +1,4 @@
-export * from './own-instance-search-params.menu'
+export * from './own-instance-offer-params.menu'
 export * from './own-instance-manage.menu'
 export * from './own-instance-gpu.menu'
 export * from './own-instance-geolocation.menu'

@@ -8,7 +8,7 @@ import * as lib from '@lib'
 import { AppBaseTgBotService } from './app-base-tg-bot.service'
 import { BaseCommandTgBot } from './command/base.command.tg-bot'
 
-import * as owni from './act-own-instance'
+import * as owni from './way-own-instance'
 
 @Module({
   imports: [
@@ -46,12 +46,9 @@ import * as owni from './act-own-instance'
     // order is important, as handlers are executed in the order they are registered
     BaseCommandTgBot,
 
-    owni.CommonOwnITgBot,
-    owni.Act01SetSearchParamsOwnITgBot,
-    owni.Act02SearchOffersOwnITgBot,
-    owni.Act03CreateOwnITgBot,
-    owni.Act04ManageOwnITgBot,
-    owni.Act10WorkflowsOwnITgBot
+    owni.WayOwnITgBot,
+    owni.HandleOwnITgBot,
+    owni.ViewOwnITgBot,
 
     // CommonHandlerTgBot,
   ],

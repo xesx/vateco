@@ -24,7 +24,6 @@ export class BaseCommandTgBot {
     })
 
     this.bot.command('start', (ctx, next) => this.handleStart(ctx, next))
-    this.bot.command('menu', (ctx, next) => this.handleStart(ctx, next))
     this.bot.action('act:main-menu', (ctx, next) => this.handleStart(ctx, next))
   }
 
