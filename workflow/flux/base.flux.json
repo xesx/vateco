@@ -1,4 +1,5 @@
 {
+  "tags": ["flux", "own-instance"],
   "models": [
     "clip/clip_l.safetensors",
     "clip/t5-v1_1-xxl-encoder-Q4_K_S.gguf",

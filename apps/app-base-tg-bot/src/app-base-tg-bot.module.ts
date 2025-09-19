@@ -9,6 +9,7 @@ import { AppBaseTgBotService } from './app-base-tg-bot.service'
 import { BaseCommandTgBot } from './command/base.command.tg-bot'
 
 import * as owni from './way-own-instance'
+import * as rpwf from './way-runpod-workflow'
 
 @Module({
   imports: [
@@ -38,7 +39,10 @@ import * as owni from './way-own-instance'
     lib.VastLibModule,
     lib.CloudApiCallLibModule,
     lib.RcloneLibModule,
-    lib.WorkflowLibModule
+    lib.WorkflowLibModule,
+    lib.RunpodLibModule,
+
+    lib.HelperLibModule,
   ],
   controllers: [],
   providers: [
@@ -49,6 +53,10 @@ import * as owni from './way-own-instance'
     owni.WayOwnITgBot,
     owni.HandleOwnITgBot,
     owni.ViewOwnITgBot,
+
+    rpwf.WayOwnITgBot,
+    rpwf.HandleRunpodWfTgBot,
+    rpwf.ViewRunpodWfTgBot,
 
     // CommonHandlerTgBot,
   ],

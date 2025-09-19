@@ -1,4 +1,5 @@
 {
+  "tags": ["sd1.5", "own-instance"],
   "models": [
     "checkpoints/SD1.5/juggernaut_reborn.safetensors",
     "checkpoints/SD1.5/lyriel_v16.safetensors"
