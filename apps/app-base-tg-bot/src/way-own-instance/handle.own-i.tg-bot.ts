@@ -6,6 +6,7 @@ import { OwnInstanceContext, OwnInstanceMatchContext } from './types'
 import { ViewOwnITgBot } from './view.own-i.tg-bot'
 
 import * as kb from '@kb'
+import { GEOLOCATION } from '@const'
 
 @Injectable()
 export class HandleOwnITgBot {
@@ -87,12 +88,12 @@ export class HandleOwnITgBot {
 
     let geolocation: string[] | undefined
 
-    if (selectedGeo.length === 2) {
+    if (GEOLOCATION[selectedGeo]) {
       geolocation = [selectedGeo]
-    } else if (selectedGeo === 'europe') {
-      geolocation = ['RU', 'SE', 'GB', 'PL', 'PT', 'SI', 'DE', 'IT', 'LT', 'GR', 'FI', 'IS', 'AT', 'FR', 'RO', 'MD', 'HU', 'NO', 'MK', 'BG', 'ES', 'CH', 'HR', 'NL', 'CZ', 'EE']
-    } else if (selectedGeo === 'north-america') {
-      geolocation = ['US', 'CA']
+    } else {
+      geolocation = Object.entries(GEOLOCATION)
+        .filter(([,value]) => value.region === selectedGeo)
+        .map(([key]) => key)
     }
 
     const result = await this.vastlib.importOffers({ gpu, geolocation, inDataCenterOnly })
@@ -151,38 +152,29 @@ export class HandleOwnITgBot {
 
     const token = instance.jupyter_token || 'N/A'
     const ipAddress = instance.public_ipaddr || 'N/A'
-    const comfyuiPort = instance.ports?.['8188/tcp']?.[0]?.HostPort || 'N/A'
-    const rclonePort = instance.ports?.['5572/tcp']?.[0]?.HostPort || 'N/A'
     const instanceApiPort = instance.ports?.['3042/tcp']?.[0]?.HostPort || 'N/A'
+    const instanceAppPort = instance.ports?.['1111/tcp']?.[0]?.HostPort
 
     ctx.session.instanceToken = instance.jupyter_token || 'N/A'
     ctx.session.instanceIp = ipAddress
-    ctx.session.instanceComfyuiPort = comfyuiPort
-    ctx.session.instanceRclonePort = rclonePort
     ctx.session.instanceApiPort = instanceApiPort
+    ctx.session.instanceApiUrl = `http://${ipAddress}:${instanceApiPort}`
 
     if (instance.actual_status === 'running') {
       ctx.session.step = 'running'
     }
 
-    const comfyuiLink =`http://${ipAddress}:${comfyuiPort}?token=${token}`
-    const appsMenuLink =`http://${ipAddress}:${instance.ports?.['1111/tcp']?.[0]?.HostPort || 'N/A'}` +
-      `?token=${token}`
+    const appsMenuLink = instanceAppPort && `http://${ipAddress}:${instanceAppPort}?token=${token}`
 
     const startDate = new Date(Math.round(((instance.start_date || 0) * 1000))).toLocaleString()
 
     const message = `🖥️ *Instance #${instance.id}*\n\n` +
       `📊 *Status:* ${instance.actual_status || 'unknown'}\n` +
       `📊 *State:* ${instance.cur_state || 'unknown'}\n` +
-      `🏷️ *Label:* ${instance.label || 'No label'}\n` +
-      `💾 *Image:* ${instance.image_uuid || 'N/A'}\n` +
-      `🌐 *Host:* ${instance.public_ipaddr || 'N/A'}\n` +
       `🖥️ *GPU:* ${instance.gpu_name || 'N/A'}\n` +
       `💰 *Price:* $${(instance.dph_total?.toFixed(2)) || '0'}/hour\n` +
       `⏰ *Start at:* ${startDate}\n (duration: ${instance.duration})` +
-      // `💸 *Total Cost:* $${((instance.duration || 0) / 3600 * (instance.dph_total || 0)).toFixed(2)}` + `\n` +
-      `🔗 *Apps Menu Link:* [-->>](${appsMenuLink})\n` +
-      `🔗 *ComfyUI Link:* [${comfyuiLink}](${comfyuiLink})\n`
+      `🔗 *Apps Menu Link:* [-->>](${appsMenuLink})\n`
 
     this.tgbotlib.safeAnswerCallback(ctx)
     const keyboard = this.tgbotlib.generateInlineKeyboard([
@@ -199,6 +191,7 @@ export class HandleOwnITgBot {
     delete ctx.session.instanceId
     ctx.session.step = 'start'
 
+    ctx.sendMessage('Instance destroyed\n' + JSON.stringify(result))
     this.tgbotlib.safeAnswerCallback(ctx)
 
     this.view.showInstanceSearchParamsMenu(ctx)

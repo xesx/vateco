@@ -9,5 +9,5 @@ export interface SessionData {
   chatId: number
   step?: string
   lastTimestamp: number
-  [key: string]: any
+  // [key: string]: any
 }
