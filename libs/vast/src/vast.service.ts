@@ -83,12 +83,12 @@ export class VastLibService {
     return response?.data
   }
 
-  async createInstance({ offerId, env }: any): Promise<any> {
+  async createInstance({ offerId, clientId, env }: any): Promise<any> {
     const path = `/asks/${offerId}/`
 
     const data = {
       'template_id': 276510, // comfyui-api-01-cuda128-py312
-      'client_id': 'me', // client id
+      'client_id': clientId, // client id
       'env': env,
     }
 

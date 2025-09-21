@@ -17,6 +17,7 @@ export class HandleOwnITgBot {
     private readonly cloudapilib: lib.CloudApiCallLibService,
     private readonly wflib: lib.WorkflowLibService,
     private readonly msglib: lib.MessageLibService,
+    private readonly herr: lib.ErrorHelperLibService,
   ) {}
 
   commandStart (ctx: OwnInstanceContext, next: () => Promise<void>) {
@@ -127,6 +128,7 @@ export class HandleOwnITgBot {
 
     const result = await this.vastlib.createInstance({
       offerId,
+      clientId: 'base_' + ctx.session.chatId,
       env: {
         'TG_CHAT_ID': ctx.chat?.id.toString(),
         'COMFY_UI_ARCHIVE_FILE': 'comfyui-portable-cu128-py312-v0.tar.zst', // todo: make it configurable
@@ -168,13 +170,13 @@ export class HandleOwnITgBot {
 
     const startDate = new Date(Math.round(((instance.start_date || 0) * 1000))).toLocaleString()
 
-    const message = `🖥️ *Instance #${instance.id}*\n\n` +
-      `📊 *Status:* ${instance.actual_status || 'unknown'}\n` +
-      `📊 *State:* ${instance.cur_state || 'unknown'}\n` +
-      `🖥️ *GPU:* ${instance.gpu_name || 'N/A'}\n` +
-      `💰 *Price:* $${(instance.dph_total?.toFixed(2)) || '0'}/hour\n` +
-      `⏰ *Start at:* ${startDate}\n (duration: ${instance.duration})` +
-      `🔗 *Apps Menu Link:* [-->>](${appsMenuLink})\n`
+    const message = `🖥️ *Instance #${instance.id}*\n`
+      + `\n📊 *Status:* ${instance.actual_status || 'unknown'}`
+      + `\n📊 *State:* ${instance.cur_state || 'unknown'}`
+      + `\n🖥️ *GPU:* ${instance.gpu_name || 'N/A'}`
+      + `\n💰 *Price:* $${(instance.dph_total?.toFixed(2)) || '0'}/hour`
+      + `\n⏰ *Start at:* ${startDate}\n (duration: ${instance.duration})`
+      + (appsMenuLink ? `\n🔗 *Apps Menu Link:* [-->>](${appsMenuLink})`: '')
 
     this.tgbotlib.safeAnswerCallback(ctx)
     const keyboard = this.tgbotlib.generateInlineKeyboard([
@@ -187,11 +189,24 @@ export class HandleOwnITgBot {
   async actionInstanceDestroy (ctx: OwnInstanceContext) {
     const instanceId = ctx.session.instanceId
 
-    const result = await this.vastlib.destroyInstance({ instanceId })
+    try {
+      const result = await this.vastlib.destroyInstance({ instanceId })
+      console.log('HandleOwnITgBot_actionInstanceDestroy_10', result)
+    } catch (error) {
+      console.log('HandleOwnITgBot_actionInstanceDestroy_13', this.herr.parseAxiosError(error))
+
+      if (error.response?.data?.error === 'no_such_instance') {
+        console.log('HandleOwnITgBot_actionInstanceDestroy_31 Instance already destroyed')
+      } else {
+        console.log('HandleOwnITgBot_actionInstanceDestroy_37 Unexpected error on destroy instance')
+        return
+      }
+    }
+
     delete ctx.session.instanceId
     ctx.session.step = 'start'
 
-    ctx.sendMessage('Instance destroyed\n' + JSON.stringify(result))
+    ctx.sendMessage('Instance destroyed')
     this.tgbotlib.safeAnswerCallback(ctx)
 
     this.view.showInstanceSearchParamsMenu(ctx)
