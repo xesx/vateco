@@ -1,11 +1,7 @@
 import { Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
 
-import { MessagesLibModule } from '@libs/message'
-import { HelperLibModule } from '@libs/h'
-import { RcloneLibModule } from '@libs/rclone'
-import { TgBotLibModule } from '@libs/tg-bot'
-import { ComfyUiLibModule } from '@libs/comfy-ui'
+import * as lib from '@lib'
 
 import { AppCliService } from './app-cli.service'
 
@@ -20,11 +16,12 @@ import {
     ConfigModule.forRoot({
       isGlobal: true,
     }),
-    HelperLibModule,
-    MessagesLibModule,
-    RcloneLibModule,
-    TgBotLibModule,
-    ComfyUiLibModule,
+    lib.HelperLibModule,
+    lib.MessagesLibModule,
+    lib.RcloneLibModule,
+    lib.TgBotLibModule,
+    lib.ComfyUiLibModule,
+    lib.HuggingfaceLibModule,
   ],
   providers: [
     AppCliService,
