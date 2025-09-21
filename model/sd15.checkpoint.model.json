@@ -1,0 +1,14 @@
+{
+  "juggernaut_reborn.safetensors": {
+    "comfyUiDir": "checkpoints/SD1.5",
+    "huggingfaceLink": {
+      "KamCastle/jugg": "juggernaut_reborn.safetensors"
+    }
+  },
+  "lyriel_v16.safetensors": {
+    "comfyUiDir": "checkpoints/SD1.5",
+    "huggingfaceLink": {
+      "danbrown/checkpoints": "lyriel_v16.safetensors"
+    }
+  }
+}
