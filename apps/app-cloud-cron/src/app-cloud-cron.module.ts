@@ -21,7 +21,8 @@ import * as job from './job'
     MessagesLibModule,
     lib.HelperLibModule,
     lib.WorkflowLibModule,
-    lib.ComfyUiLibModule
+    lib.ComfyUiLibModule,
+    lib.HuggingfaceLibModule,
   ],
   providers: [
     CloudCronService,
