@@ -26,13 +26,14 @@ export class InstallComfyuiV0Cli {
           const workspacePath = String(process.env.WORKSPACE)
           const comfyuiArchivePath = `${workspacePath}/${process.env.COMFY_UI_ARCHIVE_FILE}`
 
-          await this.tgbotlib.sendMessage({ chatId, text: this.msglib.genCodeMessage('Downlanding ComfyUI...') })
+          // await this.tgbotlib.sendMessage({ chatId, text: this.msglib.genCodeMessage('Downloading ComfyUI...') })
           await this.hflib.downloadHFWithProgress(
             'alalarty/models2',
             process.env.COMFY_UI_ARCHIVE_FILE,
             workspacePath
           )
 
+          return
           // unpack comfyui
           await this.tgbotlib.sendMessage({ chatId, text: this.msglib.genCodeMessage('Unpacking ComfyUI...') })
           await this.htar.extractTarZst({

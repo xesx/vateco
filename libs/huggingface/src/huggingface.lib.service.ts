@@ -26,7 +26,7 @@ export class HuggingfaceLibService {
         repo,
         filename,
         '--local-dir',
-        outDir
+        outDir,
       ], { env })
 
       child.stdout.setEncoding('utf8')
@@ -34,11 +34,13 @@ export class HuggingfaceLibService {
 
       child.stdout.on('data', (data) => {
         const str = data.toString()
+        console.log('hf download:', str)
         emitter.emit('progress', str)
       })
 
       child.stderr.on('data', (data) => {
         const str = data.toString()
+        console.log('hf error:', str)
         emitter.emit('errorLog', str)
       })
 

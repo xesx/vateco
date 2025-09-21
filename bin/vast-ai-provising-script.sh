@@ -9,9 +9,13 @@ git clone https://github.com/xesx/vateco.git
 source ./vateco/bin/import-secrets.sh
 
 # Packages are installed after nodes so we can fix them...
-
 APT_PACKAGES=(
     "fzf"
+)
+
+PIP_PACKAGES=(
+    "huggingface_hub[cli]"
+    "hf_transfer"
 )
 
 # Make rclone config
@@ -30,6 +34,7 @@ function provisioning_start() {
     printf "\n##############################################\n#                                            #\n#          Provisioning container            #\n#                                            #\n#         This will take some time           #\n#                                            #\n# Your container will be ready on completion #\n#                                            #\n##############################################\n\n"
 
     provisioning_get_apt_packages
+    provisioning_get_pip_packages
 
     deploy_cloud_apps
 
@@ -42,6 +47,13 @@ function provisioning_start() {
 function provisioning_get_apt_packages() {
     if [[ -n $APT_PACKAGES ]]; then
             sudo apt install "${APT_PACKAGES[@]}"
+    fi
+}
+
+function provisioning_get_pip_packages() {
+    if [[ -n $PIP_PACKAGES ]]; then
+            # shellcheck disable=SC2068
+            pip install --no-cache-dir ${PIP_PACKAGES[@]}
     fi
 }
 
