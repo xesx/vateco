@@ -131,7 +131,7 @@ export class HandleOwnITgBot {
       clientId: 'base_' + ctx.session.chatId,
       env: {
         'TG_CHAT_ID': ctx.chat?.id.toString(),
-        'COMFY_UI_ARCHIVE_FILE': 'comfyui-portable-cu128-py312-v0.tar.zst', // todo: make it configurable
+        'COMFY_UI_ARCHIVE_FILE': 'comfyui-cu128-py312-insightface-v1.tar.zst', // todo: make it configurable
       },
     })
 
@@ -175,7 +175,7 @@ export class HandleOwnITgBot {
       + `\n📊 *State:* ${instance.cur_state || 'unknown'}`
       + `\n🖥️ *GPU:* ${instance.gpu_name || 'N/A'}`
       + `\n💰 *Price:* $${(instance.dph_total?.toFixed(2)) || '0'}/hour`
-      + `\n⏰ *Start at:* ${startDate}\n (duration: ${instance.duration})`
+      + `\n⏰ *Start at:* ${startDate}\n (duration: ${((instance.duration ?? 0) / 3600).toFixed(2)} hrs)`
       + (appsMenuLink ? `\n🔗 *Apps Menu Link:* [-->>](${appsMenuLink})`: '')
 
     this.tgbotlib.safeAnswerCallback(ctx)

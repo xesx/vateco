@@ -5,16 +5,15 @@ import { join } from 'path'
 import { Injectable, Logger } from '@nestjs/common'
 
 import * as lib from '@lib'
-import modelMap from '@model'
 
 const loadedWorkflows = new Set<string>()
 
 @Injectable()
-export class WorkflowLoadCronJob {
-  private readonly l = new Logger(WorkflowLoadCronJob.name)
+export class WorkflowLoadYdiskCronJob {
+  private readonly l = new Logger(WorkflowLoadYdiskCronJob.name)
 
   constructor(
-    private readonly hflib: lib.HuggingfaceLibService,
+    private readonly rclonelib: lib.RcloneLibService,
     private readonly tgbotlib: lib.TgBotLibService,
     private readonly msglib: lib.MessageLibService,
     private readonly wflib: lib.WorkflowLibService,
@@ -48,32 +47,35 @@ export class WorkflowLoadCronJob {
       const workflow = this.wflib.getWorkflow(workflowId)
       const models = workflow?.models
 
-      for (const modelName of models) {
-        const model = modelMap[modelName]
-        const dstDir = `${WORKSPACE}/ComfyUI/models/${model.comfyUiDir}`
-        const fullFileName = `${dstDir}/${modelName}`
+      for (const model of models) {
+        const srcFs = 'ydisk:'
+        const srcRemote = `shared/comfyui/models/${model}`
+        const dstFs = '/'
+        const dstRemote = `${WORKSPACE}/ComfyUI/models/${model}`
 
-        if (fs.existsSync(fullFileName)) {
+        if (fs.existsSync(dstRemote)) {
           l.log(`Model ${model} already exists, skipping download`)
           continue
         }
 
-        let message = this.msglib.genCodeMessage(`Downloading "${modelName}"...`)
-        const messageId = await this.tgbotlib.sendMessage({ chatId: TG_CHAT_ID, text: message })
+        const startTime = Date.now()
 
-        const [repo] = Object.keys(model.huggingfaceLink)
+        let message = this.msglib.genDownloadMessage({ name: `Model ${model}` })
+        const downloadingMessageId = await this.tgbotlib.sendMessage({ chatId: TG_CHAT_ID, text: message })
 
-        await this.hflib.download({
-          repo,
-          filename: model.huggingfaceLink[repo],
-          dir: dstDir,
-        })
-        fs.renameSync(`${dstDir}/${model.huggingfaceLink[repo]}`, fullFileName)
+        for await (const jobStats of this.rclonelib.loadFileGenerator({ srcFs, srcRemote, dstFs, dstRemote })) {
+          message = this.msglib.genDownloadMessage({
+            name: `Model ${model}`,
+            totalBytes: jobStats?.size,
+            transferredBytes: jobStats?.bytes,
+            speedInBytes: jobStats?.speed,
+            transferTimeInSec: (Date.now() - startTime) / 1000,
+            etaInSec: jobStats?.eta,
+          })
 
-        message = this.msglib.genCodeMessage(`Download "${modelName}" complete`)
-        await this.tgbotlib.editMessage({ chatId: TG_CHAT_ID, messageId, text: message })
-
-        await setTimeout(1000) // ???
+          await this.tgbotlib.editMessage({ chatId: TG_CHAT_ID, messageId: downloadingMessageId, text: message })
+          await setTimeout(3000)
+        }
       }
 
       await this.tgbotlib.sendMessage({

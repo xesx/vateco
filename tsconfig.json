@@ -28,6 +28,7 @@
       "@libs/cloud-api-call": ["libs/cloud-api-call/src"],
       "@libs/comfy-ui": ["libs/comfy-ui/src"],
       "@workflow": ["workflow"],
+      "@model": ["model"],
       "@kb": ["keyboard"],
       "@const": ["const"]
     }

@@ -1,0 +1,14 @@
+{
+  "clip_l.safetensors": {
+    "comfyUiDir": "clip",
+    "huggingfaceLink": {
+      "alalarty/models2": "clip_l.safetensors"
+    }
+  },
+  "t5xxl_fp8.safetensors": {
+    "comfyUiDir": "clip",
+    "huggingfaceLink": {
+      "alalarty/models2": "t5xxl_fp8.safetensors"
+    }
+  }
+}

@@ -15,32 +15,26 @@ export class HuggingfaceLibService {
   ) {
   }
 
-  async downloadHFWithProgress (repo, filename, outDir) {
+  async download ({ repo = 'alalarty/models2', filename, dir }) {
     const emitter = new EventEmitter()
 
     const env = { ...process.env, HF_HUB_ENABLE_HF_TRANSFER: '1' }
 
     await new Promise((resolve, reject) => {
-      const child = spawn('hf', [
-        'download',
-        repo,
-        filename,
-        '--local-dir',
-        outDir,
-      ], { env })
+      const child = spawn('hf', ['download', repo, filename, '--local-dir', dir], { env })
 
       child.stdout.setEncoding('utf8')
       child.stderr.setEncoding('utf8')
 
       child.stdout.on('data', (data) => {
         const str = data.toString()
-        console.log('hf download:', str)
+        console.log('huggingfaceLib_download_20 hf download:', str)
         emitter.emit('progress', str)
       })
 
       child.stderr.on('data', (data) => {
         const str = data.toString()
-        console.log('hf error:', str)
+        console.log('huggingfaceLib_download_30 hf error:', str)
         emitter.emit('errorLog', str)
       })
 
@@ -49,7 +43,7 @@ export class HuggingfaceLibService {
           emitter.emit('done')
           resolve(true)
         } else {
-          const error = new Error(`hf download exited with code ${code}`)
+          const error = new Error(`huggingfaceLib_download_87 hf download exited with code ${code}`)
           emitter.emit('error', error)
           reject(error)
         }

@@ -1,0 +1,30 @@
+{
+  "flux1-dev-fp8.safetensors": {
+    "comfyUiDir": "diffusion_models",
+    "huggingfaceLink": {
+      "Kijai/flux-fp8": "flux1-dev-fp8-e4m3fn.safetensors",
+      "alalarty/models2": "flux1-dev-fp8.safetensors",
+      "XLabs-AI/flux-dev-fp8": "flux-dev-fp8.safetensors"
+    }
+  },
+  "pulid_flux_v0.9.1.safetensors": {
+    "comfyUiDir": "pulid",
+    "huggingfaceLink": {
+      "alalarty/models2": "pulid_flux_v0.9.1.safetensors",
+      "guozinan/PuLID": "pulid_flux_v0.9.1.safetensors"
+    }
+  },
+  "hyper-flux.1-dev-8steps-lora.safetensors": {
+    "comfyUiDir": "loras",
+    "huggingfaceLink": {
+      "alalarty/models2": "hyper-flux.1-dev-8steps-lora.safetensors"
+    }
+  },
+  "flux-vae.safetensors": {
+    "comfyUiDir": "vae",
+    "huggingfaceLink": {
+      "alalarty/models2": "flux-vae.safetensors",
+      "Kijai/flux-fp8": "flux-vae-bf16.safetensors"
+    }
+  }
+}
