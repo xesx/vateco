@@ -3,6 +3,7 @@
 import { Injectable } from '@nestjs/common'
 
 import * as lib from '@lib'
+import * as kb from '@kb'
 
 @Injectable()
 export class InstallComfyuiV0Cli {
@@ -26,14 +27,13 @@ export class InstallComfyuiV0Cli {
           const workspacePath = String(process.env.WORKSPACE)
           const comfyuiArchivePath = `${workspacePath}/${process.env.COMFY_UI_ARCHIVE_FILE}`
 
-          // await this.tgbotlib.sendMessage({ chatId, text: this.msglib.genCodeMessage('Downloading ComfyUI...') })
+          await this.tgbotlib.sendMessage({ chatId, text: this.msglib.genCodeMessage('Downloading ComfyUI...') })
           await this.hflib.downloadHFWithProgress(
             'alalarty/models2',
             process.env.COMFY_UI_ARCHIVE_FILE,
             workspacePath
           )
 
-          return
           // unpack comfyui
           await this.tgbotlib.sendMessage({ chatId, text: this.msglib.genCodeMessage('Unpacking ComfyUI...') })
           await this.htar.extractTarZst({
@@ -45,17 +45,9 @@ export class InstallComfyuiV0Cli {
           await this.tgbotlib.sendMessage({ chatId, text: this.msglib.genCodeMessage('ComfyUI starting') })
           await this.comfyuilib.startComfyUI()
 
-          const keyboardDescription = [
-            [[`Check instance status`, 'act:own-i:status']],
-            [[`Destroy instance`, 'act:own-i:destroy']],
-            [[`Select workflow`, 'act:own-i:workflow']]
-          ] as [string, string][][]
-
-          await this.tgbotlib.sendInlineKeyboard({
-            chatId,
-            text: 'Manage instance:',
-            keyboard: this.tgbotlib.generateInlineKeyboard(keyboardDescription),
-          })
+          const keyboard = this.tgbotlib.generateInlineKeyboard(kb.ownInstanceManageMenu('running'))
+          const text = 'Manage your ComfyUI instance:'
+          await this.tgbotlib.sendInlineKeyboard({ chatId, text, keyboard })
         } catch (error) {
           console.error('Error during install-comfyui-v0:', this.herror.parseAxiosError(error))
           console.log(error.stack)
