@@ -1,8 +1,8 @@
 {
-  "tags": ["sd1.5", "own-instance"],
+  "tags": ["sdxl", "own-instance"],
   "models": [
-    "juggernaut_reborn.safetensors",
-    "lyriel_v16.safetensors"
+    "juggernautXL_juggXIByRundiffusion.safetensors",
+    "lustifySDXLNSFW_endgameDMD2.safetensors"
   ],
   "params": {
     "__count__": {
@@ -20,10 +20,10 @@
     "model": {
       "type": "string",
       "enum": [
-        "SD1.5/juggernaut_reborn.safetensors",
-        "SD1.5/lyriel_v16.safetensors"
+        "SDXL/juggernautXL_juggXIByRundiffusion.safetensors",
+        "SDXL/lustifySDXLNSFW_endgameDMD2.safetensors"
       ],
-      "default": "SD1.5/juggernaut_reborn.safetensors"
+      "default": "SDXL/juggernautXL_juggXIByRundiffusion.safetensors"
     },
     "seed": {
       "type": "string",
@@ -76,8 +76,8 @@
     },
     "5": {
       "inputs": {
-        "width": 512,
-        "height": 512,
+        "width": 768,
+        "height": 768,
         "batch_size": 1
       },
       "class_type": "EmptyLatentImage",
