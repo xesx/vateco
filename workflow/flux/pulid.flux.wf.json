@@ -148,7 +148,7 @@
     },
     "176": {
       "inputs": {
-        "filename_prefix": "ComfyUI",
+        "filename_prefix": "pulid.flux.wf",
         "images": [
           "307",
           0
@@ -240,7 +240,10 @@
     },
     "306": {
       "inputs": {
-        "seed": "{{seed}}",
+        "seed": [
+          "308",
+          0
+        ],
         "steps": 8,
         "cfg": 1,
         "sampler_name": "euler",
@@ -282,6 +285,15 @@
       "class_type": "VAEDecode",
       "_meta": {
         "title": "VAE Decode"
+      }
+    },
+    "308": {
+      "inputs": {
+        "seed": "{{seed}}"
+      },
+      "class_type": "Seed (rgthree)",
+      "_meta": {
+        "title": "Seed (rgthree)"
       }
     }
   }
