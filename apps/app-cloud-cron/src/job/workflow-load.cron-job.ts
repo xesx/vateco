@@ -67,7 +67,7 @@ export class WorkflowLoadCronJob {
         message = this.msglib.genCodeMessage(`Download "${modelName}" complete`)
         await this.tgbotlib.editMessage({ chatId: TG_CHAT_ID, messageId, text: message })
 
-        await setTimeout(1000) // ???
+        // await setTimeout(1000) // ???
       }
 
       await this.tgbotlib.sendMessage({

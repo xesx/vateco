@@ -19,7 +19,7 @@ export class WayOwnITgBot {
     this.bot.on(message('photo'), (ctx, next) => this.handle.photo(ctx, next))
 
     this.bot.action('act:own-i', (ctx) => this.view.showInstanceSearchParamsMenu(ctx))
-    this.bot.action(/^act:own-i(.*)$/, (ctx, next) => this.initSessionOwnInstance(ctx, next))
+    this.bot.action(/^act:own-i(.*)$/, (ctx, next) => this.initSession(ctx, next))
 
     this.bot.action(/act:own-i:offer-params:(.+)$/, (ctx) => this.handle.actionSetSearchOfferParams(ctx))
     this.bot.action('act:own-i:search-offers', (ctx) => this.handle.actionSearchOffers(ctx))
@@ -37,7 +37,7 @@ export class WayOwnITgBot {
     this.bot.action(/^act:own-i:workflow:([^:]+):run$/, (ctx) => this.handle.actionWorkflowRun(ctx))
   }
 
-  private async initSessionOwnInstance(ctx: OwnInstanceContext, next: () => Promise<void>) {
+  private async initSession (ctx: OwnInstanceContext, next: () => Promise<void>) {
     ctx.session.way = 'own-instance'
 
     ctx.session.gpu ??= 'any'

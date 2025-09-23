@@ -32,13 +32,13 @@ export class RunpodLibService {
     const path = '/runsync'
     const data = { input: { workflow } }
 
-    console.time('log_time_mark_runSync')
+    const startTime = Date.now()
     const response = await axios.post(
       this.generateRequestUrl(path),
       data,
       { headers: this.headers }
     )
-    console.timeEnd('log_time_mark_runSync')
+    console.log('RunpodLibService_runSync_99 time:', (Date.now() - startTime) / 1000, 's')
 
     return response?.data
   }

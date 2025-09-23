@@ -16,7 +16,7 @@ export class WorkflowLibService {
     return workflow
   }
 
-  genSeed(): number {
+  genSeed (): number {
     // Генерируем случайный seed
     const seed = Math.floor(Math.random() * 4294967296) // 0..2^32-1
 

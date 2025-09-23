@@ -24,7 +24,7 @@ export class BaseCommandTgBot {
     })
 
     this.bot.command('start', (ctx, next) => this.handleStart(ctx, next))
-    this.bot.action('act:main-menu', (ctx, next) => this.handleStart(ctx, next))
+    this.bot.action('act:main-menu', (ctx) => this.tgbotsrv.showMainMenu(ctx))
   }
 
   private initSession(ctx: TAppBaseTgBotContext) {

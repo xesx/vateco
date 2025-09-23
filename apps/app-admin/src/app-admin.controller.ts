@@ -38,7 +38,6 @@ export class AppAdminController {
     const data = await this.runpod.runSync({ workflow })
 
     const base64Data = data.output.images?.[0].data
-    // console.log('\x1b[36m', 'base64Data', base64Data, '\x1b[0m')
     const imgBuffer = Buffer.from(base64Data, 'base64')
 
     res.setHeader('Content-Type', 'image/png')

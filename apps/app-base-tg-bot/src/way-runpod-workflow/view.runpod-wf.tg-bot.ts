@@ -15,6 +15,8 @@ export class ViewRunpodWfTgBot {
   showWorkflowMenu (ctx: RunpodWfContext) {
     this.tgbotlib.safeAnswerCallback(ctx)
 
+    delete ctx.session.workflowId
+
     const message = '*Select workflow*'
     const keyboard = this.tgbotlib.generateInlineKeyboard(kb.workflowMenu({
       tags: ["runpod"],
