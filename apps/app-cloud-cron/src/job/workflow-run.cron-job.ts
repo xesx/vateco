@@ -23,6 +23,11 @@ export class WorkflowRunCronJob {
   async handle({ GENERATE_TASKS_DIR }) {
     const { l } = this
 
+    if (!fs.existsSync(GENERATE_TASKS_DIR)) {
+      l.log(`handleRunWorkflowJob_11 Generate tasks directory does not exist: ${GENERATE_TASKS_DIR}`)
+      return
+    }
+
     const tasks = fs.readdirSync(GENERATE_TASKS_DIR)
       .filter(file => file.endsWith('.json'))
       .sort()

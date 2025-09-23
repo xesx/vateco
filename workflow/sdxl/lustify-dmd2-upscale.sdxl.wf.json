@@ -1,0 +1,207 @@
+{
+  "tags": ["sdxl", "own-instance"],
+  "models": [
+    "lustifySDXLNSFW_endgameDMD2.safetensors"
+  ],
+  "params": {
+    "__count__": {
+      "type": "number",
+      "default": 1
+    },
+    "seed": {
+      "type": "string",
+      "enum": ["random", "fixed"],
+      "default": "random"
+    },
+    "seedFixedValue": {
+      "type": "number",
+      "default": 42
+    },
+    "image": {
+      "type": "string",
+      "default": "start-image.jpg"
+    },
+    "positivePrompt": {
+      "type": "string",
+      "default": "green-purple cupcake with big eyes"
+    },
+    "negativePrompt": {
+      "type": "string",
+      "default": "low quality, watermark"
+    }
+  },
+  "schema": {
+    "56": {
+      "inputs": {
+        "stop_at_clip_layer": -2,
+        "clip": [
+          "78",
+          1
+        ]
+      },
+      "class_type": "CLIPSetLastLayer",
+      "_meta": {
+        "title": "CLIP SKIP"
+      }
+    },
+    "78": {
+      "inputs": {
+        "ckpt_name": "SDXL/lustifySDXLNSFW_endgameDMD2.safetensors"
+      },
+      "class_type": "CheckpointLoaderSimple",
+      "_meta": {
+        "title": "Load Checkpoint"
+      }
+    },
+    "212": {
+      "inputs": {
+        "text": "{{positivePrompt}}",
+        "speak_and_recognation": {
+          "__value__": [
+            false,
+            true
+          ]
+        },
+        "clip": [
+          "56",
+          0
+        ]
+      },
+      "class_type": "CLIPTextEncode",
+      "_meta": {
+        "title": "Positive"
+      }
+    },
+    "272": {
+      "inputs": {
+        "text": "{{negativePrompt}}",
+        "speak_and_recognation": {
+          "__value__": [
+            false,
+            true
+          ]
+        },
+        "clip": [
+          "56",
+          0
+        ]
+      },
+      "class_type": "CLIPTextEncode",
+      "_meta": {
+        "title": "Negative"
+      }
+    },
+    "439": {
+      "inputs": {
+        "pixels": [
+          "447",
+          0
+        ],
+        "vae": [
+          "78",
+          2
+        ]
+      },
+      "class_type": "VAEEncode",
+      "_meta": {
+        "title": "VAE Encode"
+      }
+    },
+    "440": {
+      "inputs": {
+        "seed": [
+          "555",
+          0
+        ],
+        "steps": 8,
+        "cfg": 1.2,
+        "sampler_name": "lcm",
+        "scheduler": "normal",
+        "denoise": 0.35,
+        "model": [
+          "78",
+          0
+        ],
+        "positive": [
+          "212",
+          0
+        ],
+        "negative": [
+          "272",
+          0
+        ],
+        "latent_image": [
+          "439",
+          0
+        ]
+      },
+      "class_type": "KSampler",
+      "_meta": {
+        "title": "KSampler"
+      }
+    },
+    "441": {
+      "inputs": {
+        "samples": [
+          "440",
+          0
+        ],
+        "vae": [
+          "78",
+          2
+        ]
+      },
+      "class_type": "VAEDecode",
+      "_meta": {
+        "title": "VAE Decode"
+      }
+    },
+    "447": {
+      "inputs": {
+        "upscale_method": "bicubic",
+        "width": 1400,
+        "height": 0,
+        "crop": "disabled",
+        "image": [
+          "554",
+          0
+        ]
+      },
+      "class_type": "ImageScale",
+      "_meta": {
+        "title": "Upscale Image"
+      }
+    },
+    "553": {
+      "inputs": {
+        "filename_prefix": "lustify-dmd2-upscale.sdxl.wf",
+        "images": [
+          "441",
+          0
+        ]
+      },
+      "class_type": "SaveImage",
+      "_meta": {
+        "title": "Save Image"
+      }
+    },
+    "554": {
+      "inputs": {
+        "image": "{{image}}"
+      },
+      "class_type": "LoadImage",
+      "_meta": {
+        "title": "Load Image"
+      }
+    },
+    "555": {
+      "inputs": {
+        "seed": "{{seed}}"
+      },
+      "class_type": "Seed (rgthree)",
+      "_meta": {
+        "title": "Seed (rgthree)"
+      }
+    }
+  }
+}

@@ -1,3 +1,6 @@
+import axios from 'axios'
+import * as FormData from 'form-data'
+
 import { Injectable } from '@nestjs/common'
 
 import * as lib from '@lib'
@@ -57,6 +60,53 @@ export class HandleOwnITgBot {
 
       if (ctx.session.workflowParams?.positivePrompt) {
         ctx.session.workflowParams.positivePrompt = message
+        return this.actionWorkflowRun(ctx)
+        // return this.view.showWorkflowRunMenu(ctx)
+      }
+    }
+
+    return next()
+  }
+
+  async photo (ctx, next) {
+    if (ctx.session.way === 'own-instance') {
+      const photos = ctx.message.photo
+      const bestPhoto = photos.at(-1) // самое большое фото
+      const fileId = bestPhoto.file_id
+
+      const fileLink = await ctx.telegram.getFileLink(fileId)
+      console.log("Ссылка на фото:", fileLink.href)
+
+      // Качаем фото с Telegram
+      const tgRes = await axios.get(fileLink.href, { responseType: 'stream' })
+
+      // Оборачиваем в FormData
+      const form = new FormData()
+      form.append('file', tgRes.data, { filename: `${fileId}.jpg`, contentType: 'image/jpeg' })
+
+      // Отправляем на API NestJS
+      const res = await this.cloudapilib.vastAiUploadInputImage({
+        baseUrl: ctx.session.instanceApiUrl,
+        instanceId: ctx.session.instanceId,
+        token: ctx.session.instanceToken,
+        form
+      })
+
+      console.log("Файл успешно отправлен на API:", res)
+
+      const filename = res.filename || 'N/A'
+
+      // сохраним путь в сессии
+      if (ctx.session.inputWaiting?.startsWith('act:own-i:workflow-param:')) {
+        const paramName = ctx.session.inputWaiting.replace('act:own-i:workflow-param:', '')
+        ctx.session.inputWaiting = null
+        ctx.session.workflowParams[paramName] = filename
+        return this.view.showWorkflowRunMenu(ctx)
+      }
+
+      if (ctx.session.workflowParams?.image) {
+        ctx.session.workflowParams.image = filename
+        // return this.actionWorkflowRun(ctx)
         return this.view.showWorkflowRunMenu(ctx)
       }
     }
@@ -175,7 +225,7 @@ export class HandleOwnITgBot {
       + `\n📊 *State:* ${instance.cur_state || 'unknown'}`
       + `\n🖥️ *GPU:* ${instance.gpu_name || 'N/A'}`
       + `\n💰 *Price:* $${(instance.dph_total?.toFixed(2)) || '0'}/hour`
-      + `\n⏰ *Start at:* ${startDate}\n (duration: ${((instance.duration ?? 0) / 3600).toFixed(2)} hrs)`
+      + `\n⏰ *Start at:* ${startDate}\n (duration: ${((instance.duration ?? 0) / (1000 * 60 * 60)).toFixed(2)} hrs)`
       + (appsMenuLink ? `\n🔗 *Apps Menu Link:* [-->>](${appsMenuLink})`: '')
 
     this.tgbotlib.safeAnswerCallback(ctx)

@@ -7,13 +7,13 @@ import axios, { AxiosInstance } from 'axios'
 @Injectable()
 export class CloudApiCallLibService {
   private readonly client: AxiosInstance
-  async vastAiRequest ({ url, data = {}, instanceId, token }): Promise<any> {
+  async vastAiRequest ({ url, data = {}, instanceId, token, headers = {} }): Promise<any> {
     try {
       const res = await axios.post(
         url,
         data,
         {
-          headers: { Cookie: `C.${instanceId}_auth_token=${token}` },
+          headers: { ...headers, Cookie: `C.${instanceId}_auth_token=${token}` },
           maxRedirects: 5
         })
 
@@ -41,5 +41,10 @@ export class CloudApiCallLibService {
   async vastAiWorkflowRun ({ baseUrl, instanceId, token, workflowId, count, workflowParams }): Promise<any> {
     const url = baseUrl + '/workflow/run'
     return await this.vastAiRequest({ url, instanceId, token, data: { id: workflowId, params: workflowParams, count } })
+  }
+
+  async vastAiUploadInputImage ({ baseUrl, instanceId, token, form }): Promise<any> {
+    const url = baseUrl + '/file/upload'
+    return await this.vastAiRequest({ url, instanceId, token, data: form, headers: form.getHeaders() })
   }
 }

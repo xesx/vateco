@@ -16,6 +16,7 @@ export class WayOwnITgBot {
     this.bot.command('start', (ctx, next) => this.handle.commandStart(ctx, next))
 
     this.bot.on(message('text'), (ctx, next) => this.handle.textMessage(ctx, next))
+    this.bot.on(message('photo'), (ctx, next) => this.handle.photo(ctx, next))
 
     this.bot.action('act:own-i', (ctx) => this.view.showInstanceSearchParamsMenu(ctx))
     this.bot.action(/^act:own-i(.*)$/, (ctx, next) => this.initSessionOwnInstance(ctx, next))

@@ -7,8 +7,6 @@ import { Injectable, Logger } from '@nestjs/common'
 import * as lib from '@lib'
 import modelMap from '@model'
 
-const loadedWorkflows = new Set<string>()
-
 @Injectable()
 export class WorkflowLoadCronJob {
   private readonly l = new Logger(WorkflowLoadCronJob.name)
@@ -41,10 +39,6 @@ export class WorkflowLoadCronJob {
     l.log(`🕐 Load workflow cron job executed, found "${workflowIds.join(',')}" workflows to load`)
 
     for (const workflowId of workflowIds) {
-      if (loadedWorkflows.has(workflowId)) {
-        continue
-      }
-
       const workflow = this.wflib.getWorkflow(workflowId)
       const models = workflow?.models
 
@@ -80,8 +74,6 @@ export class WorkflowLoadCronJob {
         chatId: TG_CHAT_ID,
         text: this.msglib.genCodeMessage(`Workflow ${workflowId} loaded!`),
       })
-
-      loadedWorkflows.add(workflowId)
     }
   }
 }

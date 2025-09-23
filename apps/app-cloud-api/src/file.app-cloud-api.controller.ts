@@ -7,9 +7,9 @@ import {
 } from '@nestjs/common'
 import { FileInterceptor } from '@nestjs/platform-express'
 
-@Controller('file')
+@Controller()
 export class FileAppCloudApiController {
-  @Post('upload')
+  @Post('file/upload')
   @UseInterceptors(FileInterceptor('file')) // ✅ Без параметров — настройки берутся из MulterModule
   appCloudApiFileUpload(@UploadedFile() file?: Express.Multer.File) {
     if (!file) {

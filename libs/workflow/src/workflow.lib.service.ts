@@ -36,9 +36,13 @@ export class WorkflowLibService {
         const re = new RegExp(`"{{${key}}}"`, 'g')
 
         if (value === 'random') {
-          compiled = compiled.replace(re, String(this.genSeed()))
+          // compiled = compiled.replace(re, String(this.genSeed()))
+          compiled = compiled.replace(re, '-1') // comfyui random seed rgfree node required
+        } else if (value === 'fixed') {
+          const seedFixedValue = workflowParams['seedFixedValue'] || 42
+          compiled = compiled.replace(re, seedFixedValue)
         } else {
-          compiled = compiled.replace(re, '42')  // todo
+          compiled = compiled.replace(re, String(value))
         }
       } else {
         const re = new RegExp(`{{${key}}}`, 'g')

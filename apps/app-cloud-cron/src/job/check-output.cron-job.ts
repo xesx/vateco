@@ -16,6 +16,11 @@ export class CheckOutputCronJob {
   async handle({ OUTPUT_DIR, TG_CHAT_ID }) {
     const { l } = this
 
+    if (!fs.existsSync(OUTPUT_DIR)) {
+      l.log(`handleCheckOutputJob_17 Output directory does not exist: ${OUTPUT_DIR}`)
+      return
+    }
+
     const images = fs.readdirSync(OUTPUT_DIR)
       .filter(file => /\.(png|jpg|jpeg|gif|bmp|webp)$/i.test(file))
 
@@ -24,11 +29,11 @@ export class CheckOutputCronJob {
       const stats = fs.statSync(imagePath)
       const fileSizeInBytes = stats.size
 
-      l.log(`handleCheckOutputJob_123 Found image: ${image}, size: ${fileSizeInBytes} bytes`)
+      l.log(`handleCheckOutputJob_30 Found image: ${image}, size: ${fileSizeInBytes} bytes`)
 
       if (fileSizeInBytes === 0) {
         fs.unlinkSync(imagePath)
-        l.warn(`handleCheckOutputJob_126 Deleted zero-size image: ${image}`)
+        l.warn(`handleCheckOutputJob_37 Deleted zero-size image: ${image}`)
         continue
       }
 
@@ -40,11 +45,11 @@ export class CheckOutputCronJob {
       //   continue
       // }
 
-      l.log(`handleCheckOutputJob_137 Sending image ${image} to Telegram chat ${TG_CHAT_ID}`)
+      l.log(`handleCheckOutputJob_45 Sending image ${image} to Telegram chat ${TG_CHAT_ID}`)
       await this.tgbotlib.sendPhoto({ chatId: TG_CHAT_ID, photo: buffer })
 
       fs.unlinkSync(imagePath)
-      l.log(`handleCheckOutputJob_135 Deleted image after reading: ${image}`)
+      l.log(`handleCheckOutputJob_99 Deleted image after reading: ${image}`)
     }
   }
 }

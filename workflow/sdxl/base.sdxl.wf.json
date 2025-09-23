@@ -1,8 +1,7 @@
 {
   "tags": ["sdxl", "own-instance"],
   "models": [
-    "juggernautXL_juggXIByRundiffusion.safetensors",
-    "lustifySDXLNSFW_endgameDMD2.safetensors"
+    "juggernautXL_juggXIByRundiffusion.safetensors"
   ],
   "params": {
     "__count__": {
@@ -16,14 +15,6 @@
     "negativePrompt": {
       "type": "string",
       "default": "low quality, watermark"
-    },
-    "model": {
-      "type": "string",
-      "enum": [
-        "SDXL/juggernautXL_juggXIByRundiffusion.safetensors",
-        "SDXL/lustifySDXLNSFW_endgameDMD2.safetensors"
-      ],
-      "default": "SDXL/juggernautXL_juggXIByRundiffusion.safetensors"
     },
     "seed": {
       "type": "string",
@@ -67,7 +58,7 @@
     },
     "4": {
       "inputs": {
-        "ckpt_name": "{{model}}"
+        "ckpt_name": "SDXL/juggernautXL_juggXIByRundiffusion.safetensors"
       },
       "class_type": "CheckpointLoaderSimple",
       "_meta": {
