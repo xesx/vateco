@@ -24,6 +24,10 @@ export class CheckOutputCronJob {
     const images = fs.readdirSync(OUTPUT_DIR)
       .filter(file => /\.(png|jpg|jpeg|gif|bmp|webp)$/i.test(file))
 
+    if (images.length === 0) {
+      return
+    }
+
     for (const image of images) {
       const imagePath = join(OUTPUT_DIR, image)
       const stats = fs.statSync(imagePath)
