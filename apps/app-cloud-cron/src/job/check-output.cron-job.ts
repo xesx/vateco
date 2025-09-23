@@ -51,5 +51,12 @@ export class CheckOutputCronJob {
       fs.unlinkSync(imagePath)
       l.log(`handleCheckOutputJob_99 Deleted image after reading: ${image}`)
     }
+
+    const replyKeyboard = this.tgbotlib.generateReplyOneTimeKeyboard ([['🚀 Generate']])
+    await this.tgbotlib.sendReplyOneTimeKeyboard({
+      chatId: TG_CHAT_ID,
+      keyboard: replyKeyboard,
+      text: 'Generation completed! What would you like more? ⤵',
+    })
   }
 }

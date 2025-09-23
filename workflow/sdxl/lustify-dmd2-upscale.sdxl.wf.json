@@ -19,7 +19,7 @@
     },
     "image": {
       "type": "string",
-      "default": "start-image.jpg"
+      "default": "start-image.png"
     },
     "positivePrompt": {
       "type": "string",

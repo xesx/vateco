@@ -18,9 +18,11 @@ export class WorkflowRunCronJob {
   constructor(
     private readonly comfyuilib: lib.ComfyUiLibService,
     private readonly wflib: lib.WorkflowLibService,
+    private readonly msglib: lib.MessageLibService,
+    private readonly tgbotlib: lib.TgBotLibService,
   ) {}
 
-  async handle({ GENERATE_TASKS_DIR }) {
+  async handle({ GENERATE_TASKS_DIR, TG_CHAT_ID }) {
     const { l } = this
 
     if (!fs.existsSync(GENERATE_TASKS_DIR)) {
@@ -56,6 +58,9 @@ export class WorkflowRunCronJob {
         l.warn(`❌ Workflow ${workflowId} not found`)
         continue
       }
+
+      const message = this.msglib.genCodeMessage('Generation in pogress...')
+      this.tgbotlib.sendMessage({ chatId: TG_CHAT_ID, text: message })
 
       for (let i = 0; i < count; i++) {
         l.log(`🔄 Running workflow ${workflowId}, iteration ${i + 1} of ${count}`)
