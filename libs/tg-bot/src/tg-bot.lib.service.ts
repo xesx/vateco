@@ -24,7 +24,15 @@ export class TgBotLibService {
 
   reply (ctx: Context, message: string, extra?: any) {
     if (ctx.callbackQuery) {
-      ctx.editMessageText(message, extra)
+      try {
+        ctx.editMessageText(message, extra)
+      } catch (e: any) {
+        if (e.description?.includes("message is not modified")) {
+          // ничего не делаем
+        } else {
+          throw e
+        }
+      }
     } else {
       ctx.reply(message, extra)
     }

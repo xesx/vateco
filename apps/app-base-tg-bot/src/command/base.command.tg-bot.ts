@@ -19,6 +19,14 @@ export class BaseCommandTgBot {
     bot.use(session({ store: prismaStore }))
 
     bot.use(async (ctx, next) => {
+      // @ts-ignore
+      const username = ctx.chat?.username
+
+      // todo: remove this in production
+      if (!['alexxxalart', 'alexxxiy'].includes(username)) {
+        return ctx.reply('Access denied. You are not authorized to use this bot.')
+      }
+
       this.initSession(ctx)
       return await next()
     })
