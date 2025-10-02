@@ -2,16 +2,25 @@ import { Injectable } from '@nestjs/common'
 
 import type { TWorkflow } from './type'
 
-import workflowMap from '@workflow'
+import workflowInfo from '@workflow'
 
 @Injectable()
 export class WorkflowLibService {
   getWorkflow(id: string): TWorkflow {
-    const workflow = workflowMap[id]
+    const workflow = workflowInfo.schema[id]
 
     if (!workflow) {
       throw new Error(`Workflow ${id} not found`)
     }
+
+    Object.keys(workflow.params || {}).forEach((key) => {
+      if (workflowInfo.param[key]) {
+        workflow.params[key] = {
+          ...workflowInfo.param[key],
+          ...workflow.params[key],
+        }
+      }
+    })
 
     return workflow
   }
@@ -24,30 +33,63 @@ export class WorkflowLibService {
     return seed >>> 0
   }
 
-  compileWorkflow ({ workflowId, workflowParams }) {
-    const workflow = this.getWorkflow(workflowId)
+  compileWorkflow ({ id, params = {} }) {
+    const compiledParams = this.compileWorkflowParams({ id, params })
+    const compiledSchema = this.compileWorkflowSchema({ id, params: compiledParams })
+
+    return compiledSchema
+  }
+
+  compileWorkflowParams ({ id, params = {} }) {
+    const workflow = this.getWorkflow(id)
+    const compiledParams = {}
+
+    // 2 passes to allow params to depend on each other
+    for (let i = 0; i < 2; i++) {
+      for (const key in workflow.params) {
+        console.log('\x1b[36m', 'key', key, '\x1b[0m')
+        const paramInfo = workflowInfo.param[key]
+        const rawValue = params[key] ?? workflow.params[key]?.value ?? paramInfo?.default
+
+        if (paramInfo?.compile) {
+          compiledParams[key] = paramInfo?.compile({ ...params, [key]: rawValue })
+        } else {
+          compiledParams[key] = rawValue
+        }
+
+        // TODO: validate param type
+      }
+
+      params = compiledParams
+    }
+
+    return compiledParams
+  }
+
+  compileWorkflowSchema ({ id, params = {} }) {
+    const workflow = this.getWorkflow(id)
     const schema = workflow.schema
 
     let compiled = JSON.stringify(schema)
 
-    // replace {{key}} with value from workflowParams
-    for (const [key, value] of Object.entries(workflowParams || {})) {
-      if (key === 'seed') {
-        const re = new RegExp(`"{{${key}}}"`, 'g')
+    const re = new RegExp(`{{([a-zA-Z0-9]+)}}`, 'gm')
+    const matches = compiled.matchAll(re)
 
-        if (value === 'random') {
-          // compiled = compiled.replace(re, String(this.genSeed()))
-          compiled = compiled.replace(re, '-1') // comfyui random seed rgfree node required
-        } else if (value === 'fixed') {
-          const seedFixedValue = workflowParams['seedFixedValue'] || 42
-          compiled = compiled.replace(re, seedFixedValue)
-        } else {
-          compiled = compiled.replace(re, String(value))
-        }
-      } else {
-        const re = new RegExp(`{{${key}}}`, 'g')
-        compiled = compiled.replace(re, String(value))
+    for (const match of matches) {
+      const key = match[1]
+      let re = new RegExp(`{{${key}}}`, 'g')
+
+      const value = params[key] ?? workflowInfo.param[key]?.default
+
+      if (value === undefined) {
+        throw new Error(`WorkflowLibService_compileWorkflow_13 Parameter <<${key}>> is required`)
       }
+
+      if (typeof value !== 'string') {
+        re = new RegExp(`"{{${key}}}"`, 'g')
+      }
+
+      compiled = compiled.replace(re, String(value))
     }
 
     return JSON.parse(compiled)

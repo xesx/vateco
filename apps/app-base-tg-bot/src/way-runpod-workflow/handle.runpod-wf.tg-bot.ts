@@ -74,7 +74,7 @@ export class HandleRunpodWfTgBot {
       workflowParams.seed = this.wflib.genSeed()
     }
 
-    const workflow = this.wflib.compileWorkflow({ workflowId, workflowParams })
+    const workflow = this.wflib.compileWorkflow({ id: workflowId, params: workflowParams })
 
     this.tgbotlib.safeAnswerCallback(ctx)
     ctx.reply('Generating image, please wait... ⏳')

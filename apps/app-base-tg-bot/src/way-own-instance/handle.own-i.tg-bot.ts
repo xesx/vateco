@@ -296,10 +296,6 @@ export class HandleOwnITgBot {
         ctx.session.workflowParams[paramName] = value
       }
 
-      if (wfParam.type === 'number') {
-        ctx.session.workflowParams[paramName] = Number(ctx.session.workflowParams[paramName])
-      }
-
       this.view.showWorkflowRunMenu(ctx)
       return
     }

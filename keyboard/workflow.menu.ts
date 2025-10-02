@@ -1,7 +1,7 @@
-import workflow from '@workflow'
+import workflowInfo from '@workflow'
 
 export function workflowMenu ({ tags, prefixAction, backAction }): [string, string][][] {
-  const keyboard = Object.entries(workflow)
+  const keyboard = Object.entries(workflowInfo.schema)
     .filter(([, value]) => {
       if (!tags || tags.length === 0) return true
       if (!value.tags) return false

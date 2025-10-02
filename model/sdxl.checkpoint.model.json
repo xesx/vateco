@@ -1,12 +1,12 @@
 {
   "juggernautXL_juggXIByRundiffusion.safetensors": {
-    "comfyUiDir": "checkpoints/SDXL",
+    "comfyUiDir": "checkpoints",
     "huggingfaceLink": {
       "JCTN/Juggernaut": "juggernaut_reborn.safetensors"
     }
   },
   "lustifySDXLNSFW_endgameDMD2.safetensors": {
-    "comfyUiDir": "checkpoints/SDXL",
+    "comfyUiDir": "checkpoints",
     "huggingfaceLink": {
       "alalarty/models2": "lustifySDXLNSFW_endgameDMD2.safetensors"
     }

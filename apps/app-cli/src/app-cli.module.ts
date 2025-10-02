@@ -5,11 +5,7 @@ import * as lib from '@lib'
 
 import { AppCliService } from './app-cli.service'
 
-import {
-  TestCli,
-  InstallComfyuiV0Cli,
-  StartComfyuiCli,
-} from './command'
+import * as command from './command'
 
 @Module({
   imports: [
@@ -22,12 +18,11 @@ import {
     lib.TgBotLibModule,
     lib.ComfyUiLibModule,
     lib.HuggingfaceLibModule,
+    lib.WorkflowLibModule,
   ],
   providers: [
     AppCliService,
-    TestCli,
-    InstallComfyuiV0Cli,
-    StartComfyuiCli,
+    ...Object.values(command),
   ],
 })
 export class AppCliModule {}

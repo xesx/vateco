@@ -28,22 +28,22 @@ export class TestCli {
       .description('Сказать привет')
       .action((name) => {
         console.log(`Привет, ${name}!`)
-        console.log('----->>>>>>>>>> model', model)
+        // console.log('----->>>>>>>>>> model', model)
 
-        const data = {
-          transferredBytes: 120000000,
-          totalBytes: 1200000000,
-          // percentage: 24,
-          speedInBytes: 1230000,
-          transferTimeInSec: 143,
-        }
-
-        const message = this.msgsrv.generateMessage({
-          type: 'download-comfyui-v0',
-          data,
-        })
-
-        console.log('\x1b[36m', 'message', message, '\x1b[0m')
+        // const data = {
+        //   transferredBytes: 120000000,
+        //   totalBytes: 1200000000,
+        //   // percentage: 24,
+        //   speedInBytes: 1230000,
+        //   transferTimeInSec: 143,
+        // }
+        //
+        // const message = this.msgsrv.generateMessage({
+        //   type: 'download-comfyui-v0',
+        //   data,
+        // })
+        //
+        // console.log('\x1b[36m', 'message', message, '\x1b[0m')
       })
   }
 }

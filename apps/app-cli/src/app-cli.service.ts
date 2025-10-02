@@ -1,18 +1,15 @@
 import { Injectable } from '@nestjs/common'
 import { Command } from 'commander'
 
-import {
-  TestCli,
-  InstallComfyuiV0Cli,
-  StartComfyuiCli,
-} from './command'
+import * as command from './command'
 
 @Injectable()
 export class AppCliService {
   constructor(
-    private readonly test: TestCli,
-    private readonly installComfyuiV0: InstallComfyuiV0Cli,
-    private readonly startComfyui: StartComfyuiCli,
+    private readonly _cli01: command.TestCli,
+    private readonly _cli02: command.InstallComfyuiV0Cli,
+    private readonly _cli03: command.StartComfyuiCli,
+    private readonly _cli04: command.WfCompileCli,
   ) {}
 
   async run(argv: string[]) {
@@ -23,10 +20,15 @@ export class AppCliService {
       .description('CLI на NestJS')
       .version('1.0.0')
 
+    Object.keys(this).forEach(key => {
+      if (key.startsWith('_cli') && typeof this[key]?.register === 'function') {
+        this[key].register(program)
+      }
+    })
     // регистрируем команды
-    this.test.register(program)
-    this.installComfyuiV0.register(program)
-    this.startComfyui.register(program)
+    // this.test.register(program)
+    // this.installComfyuiV0.register(program)
+    // this.startComfyui.register(program)
 
     // program
     //   .command('hello <name>')
