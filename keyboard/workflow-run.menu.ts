@@ -1,32 +1,23 @@
-import workflowInfo from '@workflow'
-
 type TArgs = {
-  workflowId: string
-  workflowParams: {
+  workflow: any
+  workflowUserParams: {
     [key: string]: string | number | boolean
   }
   backAction: string
   prefixAction: string
 }
 
-export function workflowRunMenu({ workflowId, workflowParams, prefixAction, backAction }: TArgs): [string, string][][] {
-  const wfExtraParams = workflowInfo.schema[workflowId]?.params
-
-  const keyboard = Object.entries(workflowParams)
-    .filter(([name]) => {
-      if (wfExtraParams[name].user) {
-        return this
-      }
-    })
+export function workflowRunMenu ({ workflow, workflowUserParams, prefixAction, backAction }: TArgs): [string, string][][] {
+  const keyboard = Object.entries(workflowUserParams)
     .map(([name, value]) => {
       // truncate value if too long
       value = String(value).length > 15 ? String(value).slice(0, 13) + '...' : String(value)
 
-      return [[wfExtraParams[name].label + `(${value})`, `${prefixAction}:workflow:${workflowId}:param:${name}`]]
+      return [[workflow.params[name].label + `(${value})`, `${prefixAction}:workflow:${workflow.id}:param:${name}`]]
     })
     .concat([[
       ['⬅️ Back', backAction],
-      ['🚀 Generate', `${prefixAction}:workflow:${workflowId}:run`],
+      ['🚀 Generate', `${prefixAction}:workflow:${workflow.id}:run`],
     ]])
 
   return keyboard as [string, string][][]

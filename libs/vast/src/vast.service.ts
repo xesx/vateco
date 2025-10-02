@@ -60,7 +60,7 @@ export class VastLibService {
         'duration': { 'gte': 1 },
         'cuda_max_good': { 'gte': 12.8 },
         'direct_port_count': { 'gte': 2 },
-        'geolocation': geolocation ? { 'in': geolocation } : undefined,
+        'geolocation': geolocation && geolocation.length ? { 'in': geolocation } : undefined,
         'static_ip': { 'eq': true },
         'inet_down_cost': { 'lte': 0.01 },
         'inet_up_cost': { 'lte': 0.01 },
@@ -71,6 +71,8 @@ export class VastLibService {
         'limit': 20,
       }
     }
+
+    console.log('\x1b[36m', 'data', data, geolocation, '\x1b[0m')
 
     const response = await axios.put(
       this.generateRequestUrl(path),

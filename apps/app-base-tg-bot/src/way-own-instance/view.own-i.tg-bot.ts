@@ -10,6 +10,7 @@ import * as kb from '@kb'
 export class ViewOwnITgBot {
   constructor(
     private readonly tgbotlib: lib.TgBotLibService,
+    private readonly wflib: lib.WorkflowLibService,
   ) {}
 
   showInstanceSearchParamsMenu (ctx: OwnInstanceContext) {
@@ -47,11 +48,17 @@ export class ViewOwnITgBot {
     this.tgbotlib.reply(ctx, message, { parse_mode: 'Markdown', ...keyboard })
   }
 
-  showWorkflowRunMenu(ctx: OwnInstanceContext) {
+  showWorkflowRunMenu (ctx: OwnInstanceContext) {
+    if (!ctx.session.workflowId) {
+      throw new Error('Workflow ID not set in session')
+    }
+
+    const workflow = this.wflib.getWorkflow(ctx.session.workflowId)
+
     const message = `Workflow ${ctx.session.workflowId}`
     const keyboard = this.tgbotlib.generateInlineKeyboard(kb.workflowRunMenu({
-      workflowId: ctx.session.workflowId || '',
-      workflowParams: ctx.session.workflowParams,
+      workflow,
+      workflowUserParams: ctx.session.workflowParams,
       prefixAction: `act:own-i`,
       backAction: 'act:own-i:workflow'
     }))

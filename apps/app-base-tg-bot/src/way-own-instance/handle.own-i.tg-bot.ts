@@ -229,7 +229,8 @@ export class HandleOwnITgBot {
       + `\n📊 *State:* ${instance.cur_state || 'unknown'}`
       + `\n🖥️ *GPU:* ${instance.gpu_name || 'N/A'}`
       + `\n💰 *Price:* $${(instance.dph_total?.toFixed(2)) || '0'}/hour`
-      + `\n⏰ *Start at:* ${startDate}\n (duration: ${((instance.duration ?? 0) / (1000 * 60 * 60)).toFixed(2)} hrs)`
+      + `\n⏰ *Start at:* ${startDate}\n (duration: ${((Date.now() / 1000 - (instance.start_date || 0)) / 60 / 60).toFixed(2)} hrs)`
+      + `\n⏰ *Remaining:* ${((instance.duration ?? 0) / (60 * 60 * 24)).toFixed(2)} days)`
       + (appsMenuLink ? `\n🔗 *Apps Menu Link:* [-->>](${appsMenuLink})`: '')
 
     this.tgbotlib.safeAnswerCallback(ctx)
@@ -332,19 +333,24 @@ export class HandleOwnITgBot {
 
     const [,workflowId] = ctx.match
 
+    const workflow = this.wflib.getWorkflow(workflowId)
+    const params = workflow.params
+
+    Object.entries(params).forEach(([name, props]) => {
+      if (props.user !== true) {
+        return
+      }
+
+      // установим значение по умолчанию, если параметр не задан
+      ctx.session.workflowParams[name] = ctx.session.workflowParams[name] || props?.default
+    })
+
     if (workflowId === ctx.session.workflowId) {
       this.view.showWorkflowRunMenu(ctx)
       return
     }
 
     ctx.session.workflowId = workflowId
-
-    const workflow = this.wflib.getWorkflow(workflowId)
-    const params = workflow.params
-
-    Object.entries(params).forEach(([name, props]) => {
-      ctx.session.workflowParams[name] = ctx.session.workflowParams[name] || props?.default
-    })
 
     await this.cloudapilib.vastAiWorkflowLoad({
       baseUrl: `http://${ctx.session.instanceIp}:${ctx.session.instanceApiPort}`,

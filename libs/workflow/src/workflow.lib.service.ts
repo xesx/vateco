@@ -7,7 +7,8 @@ import workflowInfo from '@workflow'
 @Injectable()
 export class WorkflowLibService {
   getWorkflow(id: string): TWorkflow {
-    const workflow = workflowInfo.schema[id]
+    const workflow = Object.values(workflowInfo.schema)
+      .find((wf) => wf.id === id)
 
     if (!workflow) {
       throw new Error(`Workflow ${id} not found`)
@@ -23,6 +24,11 @@ export class WorkflowLibService {
     })
 
     return workflow
+  }
+
+  findWorkflowsByTags ({ tags = [] }: { tags: string[]}): TWorkflow[] {
+    return Object.values(workflowInfo.schema)
+      .filter((wf) => tags.every(tag => wf.tags.includes(tag)))
   }
 
   genSeed (): number {

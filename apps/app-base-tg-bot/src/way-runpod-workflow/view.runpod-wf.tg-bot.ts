@@ -10,6 +10,7 @@ import * as kb from '@kb'
 export class ViewRunpodWfTgBot {
   constructor(
     private readonly tgbotlib: lib.TgBotLibService,
+    private readonly wflib: lib.WorkflowLibService,
   ) {}
 
   showWorkflowMenu (ctx: RunpodWfContext) {
@@ -19,7 +20,7 @@ export class ViewRunpodWfTgBot {
 
     const message = '*Select workflow*'
     const keyboard = this.tgbotlib.generateInlineKeyboard(kb.workflowMenu({
-      tags: ["runpod"],
+      workflows: this.wflib.findWorkflowsByTags({ tags: ['runpod'] }),
       prefixAction: 'act:rp-wf',
       backAction: 'act:main-menu'
     }))
@@ -27,11 +28,11 @@ export class ViewRunpodWfTgBot {
     this.tgbotlib.reply(ctx, message, { parse_mode: 'Markdown', ...keyboard })
   }
 
-  showWorkflowRunMenu(ctx: RunpodWfContext) {
+  showWorkflowRunMenu (ctx: RunpodWfContext) {
     const message = `Workflow ${ctx.session.workflowId}`
     const keyboard = this.tgbotlib.generateInlineKeyboard(kb.workflowRunMenu({
-      workflowId: ctx.session.workflowId || '',
-      workflowParams: ctx.session.workflowParams,
+      workflow,
+      workflowUserParams: ctx.session.workflowParams,
       prefixAction: `act:rp-wf`,
       backAction: 'act:rp-wf:workflow'
     }))
