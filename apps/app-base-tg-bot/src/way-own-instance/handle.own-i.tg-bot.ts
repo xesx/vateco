@@ -340,9 +340,9 @@ export class HandleOwnITgBot {
     ctx.session.workflowId = workflowId
 
     const workflow = this.wflib.getWorkflow(workflowId)
-    const workflowParams = workflow.params
+    const params = workflow.params
 
-    Object.entries(workflowParams).forEach(([name, props]) => {
+    Object.entries(params).forEach(([name, props]) => {
       ctx.session.workflowParams[name] = ctx.session.workflowParams[name] || props?.default
     })
 

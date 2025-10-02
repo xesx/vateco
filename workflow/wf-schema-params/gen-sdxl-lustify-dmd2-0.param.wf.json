@@ -1,0 +1,13 @@
+{
+  "tags": ["sdxl", "own-instance"],
+  "schema": "base-gen-00",
+  "models": ["lustifySDXLNSFW_endgameDMD2.safetensors"],
+  "params": {
+    "model": { "value": "lustifySDXLNSFW_endgameDMD2.safetensors", "user": false},
+    "count": { "value": 1, "user": true },
+    "seedType": { "value": "random", "user": false },
+    "positivePrompt": { "user": true, "value": "green-purple cupcake with big eyes" },
+    "sampler": { "value": "euler", "user": true },
+    "scheduler": { "value": "normal", "user": true }
+  }
+}
