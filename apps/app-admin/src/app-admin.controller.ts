@@ -33,7 +33,7 @@ export class AppAdminController {
 
   @Get('runpod/run-sync')
   async runpodRunSync (@Res() res: Response): Promise<any> {
-    const workflow = this.wf.getWorkflow('base.flux.runpod').schema
+    const workflow = this.wf.getWorkflow('base.flux.runpod').template
 
     const data = await this.runpod.runSync({ workflow })
 
