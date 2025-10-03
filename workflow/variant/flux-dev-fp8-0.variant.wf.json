@@ -1,0 +1,24 @@
+{
+  "name": "flux-dev-fp8-0",
+  "id": "100",
+  "tags": ["flux", "own-instance"],
+  "schema": "base-gen-flux",
+  "models": [
+    "flux1-dev-fp8.safetensors",
+    "clip_l.safetensors",
+    "t5xxl_fp8.safetensors",
+    "flux-vae.safetensors",
+    "hyper-flux.1-dev-8steps-lora.safetensors"
+  ],
+  "params": {
+    "model": { "value": "flux1-dev-fp8.safetensors", "user": false },
+    "generationNumber": {},
+    "filenamePrefix": { "value": "flux_" },
+    "seedType": { "value": "random" },
+    "width": { "value": 1024 },
+    "height": { "value": 1024 },
+    "positivePrompt": { "value": "green-purple cupcake with big eyes" },
+    "sampler": { "value": "euler" },
+    "scheduler": { "value": "normal" }
+  }
+}

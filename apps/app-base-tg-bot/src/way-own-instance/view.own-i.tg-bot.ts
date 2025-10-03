@@ -13,7 +13,7 @@ export class ViewOwnITgBot {
     private readonly wflib: lib.WorkflowLibService,
   ) {}
 
-  showInstanceSearchParamsMenu (ctx: OwnInstanceContext) {
+  showOfferParamsMenu (ctx: OwnInstanceContext) {
     const message = 'Search parameters:'
     const keyboard = this.tgbotlib.generateInlineKeyboard(kb.ownInstanceOfferParamsMenu(ctx.session))
 
@@ -31,15 +31,15 @@ export class ViewOwnITgBot {
     this.tgbotlib.reply(ctx, message, keyboard)
   }
 
-  showInstanceManageMenu(ctx: OwnInstanceContext, extraMessage?: string) {
-    const message = extraMessage ? `${extraMessage}\nManage instance:`: 'Manage instance:'
+  showInstanceManageMenu (ctx: OwnInstanceContext) {
+    const message = 'Manage instance:'
     const keyboard = this.tgbotlib.generateInlineKeyboard(kb.ownInstanceManageMenu(ctx.session.step))
 
     this.tgbotlib.safeAnswerCallback(ctx)
     this.tgbotlib.reply(ctx, message, keyboard)
   }
 
-  showWorkflowsMenu (ctx: OwnInstanceContext) {
+  showWorkflowVariants (ctx: OwnInstanceContext) {
     this.tgbotlib.safeAnswerCallback(ctx)
 
     delete ctx.session.workflowId
@@ -48,7 +48,7 @@ export class ViewOwnITgBot {
     const keyboard = this.tgbotlib.generateInlineKeyboard(kb.workflowsMenu({
       workflows: this.wflib.findWorkflowsByTags({ tags: ['own-instance'] }),
       prefixAction: 'act:own-i',
-      backAction: 'act:own-i:manage'
+      backAction: 'act:own-i:instance:manage'
     }))
 
     this.tgbotlib.removeReplyKeyboard(ctx)
@@ -67,7 +67,7 @@ export class ViewOwnITgBot {
       workflow,
       workflowUserParams: ctx.session.workflowParams,
       prefixAction: `act:own-i`,
-      backAction: 'act:own-i:workflow'
+      backAction: 'act:own-i:wf:variants'
     }))
 
     this.tgbotlib.safeAnswerCallback(ctx)

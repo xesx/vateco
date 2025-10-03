@@ -28,7 +28,7 @@ export class HandleRunpodWfTgBot {
       return this.view.showWorkflowRunMenu(ctx)
     }
 
-    this.view.showWorkflowsMenu(ctx)
+    this.view.showWorkflowVariants(ctx)
   }
 
   textMessage (ctx, next) {
@@ -123,8 +123,8 @@ export class HandleRunpodWfTgBot {
     if (wfParam.enum) {
       const message = `Set parameter *"${paramName}"*\nCurrent value: *"${currentValue}"*`
       const enumOptions: [string, string][][] = wfParam.enum
-        .map((value, i) => [[value, `act:own-i:workflow:${workflowId}:param:${paramName}:${i}`]])
-      enumOptions.push([['Back', `act:own-i:workflow:${workflowId}:run`]])
+        .map((value, i) => [[value, `act:own-i:wf:${workflowId}:param:${paramName}:${i}`]])
+      enumOptions.push([['Back', `act:own-i:wf:${workflowId}:run`]])
 
       const keyboard = this.tgbotlib.generateInlineKeyboard(enumOptions)
       this.tgbotlib.reply(ctx, message, keyboard)
@@ -132,7 +132,7 @@ export class HandleRunpodWfTgBot {
     }
 
     if (wfParam.type === 'string' || wfParam.type === 'number') {
-      ctx.session.inputWaiting = `act:own-i:workflow-param:${paramName}`
+      ctx.session.inputWaiting = paramName
       this.tgbotlib.safeAnswerCallback(ctx)
 
       const message = this.msglib.genCodeMessage(String(currentValue))

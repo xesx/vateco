@@ -14,11 +14,11 @@ export function workflowRunMenu ({ workflow, workflowUserParams, prefixAction, b
       // truncate value if too long
       value = String(value).length > 15 ? String(value).slice(0, 13) + '...' : String(value)
 
-      return [[workflow.params[name].label + `(${value})`, `${prefixAction}:workflow:${workflow.id}:param:${name}`]]
+      return [[workflow.params[name].label + `(${value})`, `${prefixAction}:wf:${workflow.id}:param:${name}`]]
     })
     .concat([[
       ['⬅️ Back', backAction],
-      ['🚀 Generate', `${prefixAction}:workflow:${workflow.id}:run`],
+      ['🚀 Generate', `${prefixAction}:wf:${workflow.id}:run`],
     ]])
 
   return keyboard as [string, string][][]

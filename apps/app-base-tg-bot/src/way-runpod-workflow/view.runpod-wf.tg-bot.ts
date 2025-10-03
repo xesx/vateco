@@ -13,7 +13,7 @@ export class ViewRunpodWfTgBot {
     private readonly wflib: lib.WorkflowLibService,
   ) {}
 
-  showWorkflowsMenu (ctx: RunpodWfContext) {
+  showWorkflowVariants (ctx: RunpodWfContext) {
     this.tgbotlib.safeAnswerCallback(ctx)
 
     delete ctx.session.workflowId
@@ -40,7 +40,7 @@ export class ViewRunpodWfTgBot {
       workflow,
       workflowUserParams: ctx.session.workflowParams,
       prefixAction: `act:rp-wf`,
-      backAction: 'act:rp-wf:workflow'
+      backAction: 'act:rp-wf:wf:variants'
     }))
 
     this.tgbotlib.safeAnswerCallback(ctx)

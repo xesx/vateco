@@ -31,7 +31,7 @@ export class HandleOwnITgBot {
     const step = ctx.session.step
 
     if (step === 'start') {
-      this.view.showInstanceSearchParamsMenu(ctx)
+      this.view.showOfferParamsMenu(ctx)
     } else if (['loading', 'running'].includes(step)) {
       if (ctx.session.workflowId) {
         this.view.showWorkflowRunMenu(ctx)
@@ -39,7 +39,7 @@ export class HandleOwnITgBot {
         this.view.showInstanceManageMenu(ctx)
       }
     } else {
-      this.view.showInstanceSearchParamsMenu(ctx)
+      this.view.showOfferParamsMenu(ctx)
     }
   }
 
@@ -55,10 +55,12 @@ export class HandleOwnITgBot {
         return this.actionWorkflowRun(ctx)
       }
 
-      if (ctx.session.inputWaiting?.startsWith('act:own-i:workflow-param:')) {
-        const paramName = ctx.session.inputWaiting.replace('act:own-i:workflow-param:', '')
-        ctx.session.inputWaiting = null
+      if (ctx.session.inputWaiting) {
+        const paramName = ctx.session.inputWaiting
         ctx.session.workflowParams[paramName] = message
+
+        delete ctx.session.inputWaiting
+
         return this.view.showWorkflowRunMenu(ctx)
       }
 
@@ -100,11 +102,12 @@ export class HandleOwnITgBot {
 
       const filename = res.filename || 'N/A'
 
-      // сохраним путь в сессии
-      if (ctx.session.inputWaiting?.startsWith('act:own-i:workflow-param:')) {
-        const paramName = ctx.session.inputWaiting.replace('act:own-i:workflow-param:', '')
-        ctx.session.inputWaiting = null
+      if (ctx.session.inputWaiting) {
+        const paramName = ctx.session.inputWaiting
         ctx.session.workflowParams[paramName] = filename
+
+        delete ctx.session.inputWaiting
+
         return this.view.showWorkflowRunMenu(ctx)
       }
 
@@ -118,6 +121,11 @@ export class HandleOwnITgBot {
     return next()
   }
 
+  actionOffer (ctx: OwnInstanceContext) {
+    ctx.session.workflowParams = {}
+    this.view.showOfferParamsMenu(ctx)
+  }
+
   actionSetSearchOfferParams(ctx: OwnInstanceMatchContext) {
     const [name, value] = ctx.match[1].split(':')
 
@@ -129,7 +137,7 @@ export class HandleOwnITgBot {
 
     if (value) {
       ctx.session[name] = value
-      this.view.showInstanceSearchParamsMenu(ctx)
+      this.view.showOfferParamsMenu(ctx)
     } else {
       ctx.editMessageText(`Select "${name}":`, this.tgbotlib.generateInlineKeyboard(menuMap[name]))
       this.tgbotlib.safeAnswerCallback(ctx)
@@ -154,7 +162,7 @@ export class HandleOwnITgBot {
     const result = await this.vastlib.importOffers({ gpu, geolocation, inDataCenterOnly })
     const offers = result.offers
 
-    const message = 'Результаты поиска:'
+    const message = 'Search results:'
     const keyboard = this.tgbotlib.generateInlineKeyboard(kb.ownInstanceOffersMenu(offers))
 
 
@@ -235,7 +243,7 @@ export class HandleOwnITgBot {
 
     this.tgbotlib.safeAnswerCallback(ctx)
     const keyboard = this.tgbotlib.generateInlineKeyboard([
-      [[`⬅️ Back`, 'act:own-i:manage'], [`🔄 Refresh`, 'act:own-i:status']],
+      [[`⬅️ Back`, 'act:own-i:instance:manage'], [`🔄 Refresh`, 'act:own-i:instance:status']],
     ])
 
     this.tgbotlib.reply(ctx, message, { parse_mode: 'Markdown', ...keyboard })
@@ -264,7 +272,7 @@ export class HandleOwnITgBot {
     ctx.sendMessage('Instance destroyed')
     this.tgbotlib.safeAnswerCallback(ctx)
 
-    this.view.showInstanceSearchParamsMenu(ctx)
+    this.view.showOfferParamsMenu(ctx)
   }
 
   async actionWorkflowRun (ctx: OwnInstanceContext) {
@@ -304,8 +312,8 @@ export class HandleOwnITgBot {
     if (wfParam.enum) {
       const message = `Set parameter *"${paramName}"*\nCurrent value: *"${currentValue}"*`
       const enumOptions: [string, string][][] = wfParam.enum
-        .map((value, i) => [[value, `act:own-i:workflow:${workflowId}:param:${paramName}:${i}`]])
-      enumOptions.push([['Back', `act:own-i:workflow:${workflowId}`]])
+        .map((value, i) => [[value, `act:own-i:wf:${workflowId}:param:${paramName}:${i}`]])
+      enumOptions.push([['Back', `act:own-i:wf:${workflowId}`]])
 
       const keyboard = this.tgbotlib.generateInlineKeyboard(enumOptions)
       this.tgbotlib.reply(ctx, message, keyboard)
@@ -313,7 +321,7 @@ export class HandleOwnITgBot {
     }
 
     if (wfParam.type === 'string' || ['integer', 'number'].includes(wfParam.type)) {
-      ctx.session.inputWaiting = `act:own-i:workflow-param:${paramName}`
+      ctx.session.inputWaiting = paramName
       this.tgbotlib.safeAnswerCallback(ctx)
 
       const message = this.msglib.genCodeMessage(String(currentValue))

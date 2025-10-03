@@ -22,15 +22,14 @@ export class TgBotLibService {
     this.baseUrl = `https://api.telegram.org/bot${token}`
   }
 
-  reply (ctx: Context, message: string, extra?: any) {
+  async reply (ctx: Context, message: string, extra?: any) {
     try {
       if (ctx.callbackQuery) {
-        ctx.editMessageText(message, extra)
+        await ctx.editMessageText(message, extra)
       } else {
-        ctx.reply(message, extra)
+        await ctx.reply(message, extra)
       }
     } catch (e: any) {
-      console.log('\x1b[36m', '--->>>>>e', e, '\x1b[0m')
       if (e.description?.includes("message is not modified")) {
         // ничего не делаем
       } else {
@@ -51,15 +50,15 @@ export class TgBotLibService {
     ctx.deleteMessage(message.message_id)
   }
 
-  safeAnswerCallback (ctx: Context, text?: string) {
+  async safeAnswerCallback (ctx: Context, text?: string) {
     try {
       if (ctx.callbackQuery) {
-        return ctx.answerCbQuery(text)
+        return await ctx.answerCbQuery(text)
       }
     } catch (error) {
       // Игнорируем ошибки timeout для answerCbQuery
       if (!error.message?.includes('query is too old')) {
-        console.error('AnswerCbQuery error:', error)
+        console.log('safeAnswerCallback_13 AnswerCbQuery error:', error)
       }
     }
   }

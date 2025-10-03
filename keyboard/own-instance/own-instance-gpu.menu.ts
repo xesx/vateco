@@ -1,5 +1,5 @@
 function mapper (gpu: string) {
-  return [gpu, `act:own-i:offer-params:gpu:${gpu}`]
+  return [gpu, `act:own-i:offer:params:gpu:${gpu}`]
 }
 
 export const OWN_INSTANCE_GPU_MENU = [
