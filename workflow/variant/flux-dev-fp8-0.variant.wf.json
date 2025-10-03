@@ -22,6 +22,6 @@
     "height": { "value": 1024 },
     "positivePrompt": { "value": "green-purple cupcake with big eyes" },
     "sampler": { "value": "euler" },
-    "scheduler": { "value": "normal" }
+    "scheduler": { "value": "simple" }
   }
 }

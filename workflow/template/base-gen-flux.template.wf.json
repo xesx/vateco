@@ -7,12 +7,7 @@
       "lora_1": {
         "on": "{{loraEnabled1}}",
         "lora": "{{lora1}}",
-        "strength": 1
-      },
-      "lora_2": {
-        "on": "{{loraEnabled2}}",
-        "lora": "{{lora2}}",
-        "strength": 1
+        "strength": 0.13
       },
       "➕ Add Lora": "",
       "model": [
@@ -31,7 +26,7 @@
   },
   "17": {
     "inputs": {
-      "vae_name": "flux-vae-fp-16.safetensors"
+      "vae_name": "flux-vae.safetensors"
     },
     "class_type": "VAELoader",
     "_meta": {
@@ -59,12 +54,6 @@
         0
       ],
       "guidance": 3.5,
-      "speak_and_recognation": {
-        "__value__": [
-          false,
-          true
-        ]
-      },
       "clip": [
         "16",
         1
@@ -78,12 +67,10 @@
   "22": {
     "inputs": {
       "text": "",
-      "speak_and_recognation": {
-        "__value__": [
-          false,
-          true
-        ]
-      }
+      "clip": [
+        "16",
+        1
+      ]
     },
     "class_type": "CLIPTextEncode",
     "_meta": {
@@ -92,7 +79,7 @@
   },
   "24": {
     "inputs": {
-      "filename_prefix": "{{filenamePrefix}}",
+      "filename_prefix": "ComfyUI",
       "images": [
         "37",
         0
@@ -106,7 +93,7 @@
   "36": {
     "inputs": {
       "seed": "{{seedValue}}",
-      "steps": 20,
+      "steps": 8,
       "cfg": 1,
       "sampler_name": "{{sampler}}",
       "scheduler": "{{scheduler}}",
@@ -120,11 +107,11 @@
         0
       ],
       "negative": [
-        "55",
+        "22",
         0
       ],
       "latent_image": [
-        "56",
+        "54",
         0
       ]
     },
@@ -137,6 +124,10 @@
     "inputs": {
       "samples": [
         "36",
+        0
+      ],
+      "vae": [
+        "17",
         0
       ]
     },
@@ -159,13 +150,7 @@
   },
   "53": {
     "inputs": {
-      "value": "{{positivePrompt}}",
-      "speak_and_recognation": {
-        "__value__": [
-          false,
-          true
-        ]
-      }
+      "value": "{{positivePrompt}}"
     },
     "class_type": "PrimitiveStringMultiline",
     "_meta": {
@@ -173,30 +158,6 @@
     }
   },
   "54": {
-    "inputs": {
-      "value": ""
-    },
-    "class_type": "PrimitiveString",
-    "_meta": {
-      "title": "String"
-    }
-  },
-  "55": {
-    "inputs": {
-      "text": "",
-      "speak_and_recognation": {
-        "__value__": [
-          false,
-          true
-        ]
-      }
-    },
-    "class_type": "CLIPTextEncode",
-    "_meta": {
-      "title": "CLIP Text Encode (Prompt)"
-    }
-  },
-  "56": {
     "inputs": {
       "width": "{{width}}",
       "height": "{{height}}",
