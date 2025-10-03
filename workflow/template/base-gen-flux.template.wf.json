@@ -5,13 +5,13 @@
         "type": "PowerLoraLoaderHeaderWidget"
       },
       "lora_1": {
-        "on": true,
-        "lora": "hyper-flux.1-dev-8steps-lora.safetensors",
+        "on": "{{loraEnabled1}}",
+        "lora": "{{lora1}}",
         "strength": 1
       },
       "lora_2": {
-        "on": false,
-        "lora": "badhands.safetensors",
+        "on": "{{loraEnabled2}}",
+        "lora": "{{lora2}}",
         "strength": 1
       },
       "➕ Add Lora": "",
@@ -40,7 +40,7 @@
   },
   "19": {
     "inputs": {
-      "unet_name": "flux1-dev-fp8-e4m3fn.safetensors/flux1-dev-fp8-e4m3fn.safetensors",
+      "unet_name": "{{model}}",
       "weight_dtype": "default"
     },
     "class_type": "UNETLoader",
@@ -92,7 +92,7 @@
   },
   "24": {
     "inputs": {
-      "filename_prefix": "ComfyUI",
+      "filename_prefix": "{{filenamePrefix}}",
       "images": [
         "37",
         0
@@ -105,11 +105,11 @@
   },
   "36": {
     "inputs": {
-      "seed": 751934929212303,
+      "seed": "{{seedValue}}",
       "steps": 20,
       "cfg": 1,
-      "sampler_name": "euler",
-      "scheduler": "simple",
+      "sampler_name": "{{sampler}}",
+      "scheduler": "{{scheduler}}",
       "denoise": 1,
       "model": [
         "16",
@@ -147,8 +147,8 @@
   },
   "52": {
     "inputs": {
-      "clip_name1": null,
-      "clip_name2": null,
+      "clip_name1": "clip_l.safetensors",
+      "clip_name2": "t5xxl_fp8.safetensors",
       "type": "flux",
       "device": "default"
     },
@@ -159,7 +159,7 @@
   },
   "53": {
     "inputs": {
-      "value": "positive prompt!!!",
+      "value": "{{positivePrompt}}",
       "speak_and_recognation": {
         "__value__": [
           false,
@@ -198,8 +198,8 @@
   },
   "56": {
     "inputs": {
-      "width": 1024,
-      "height": 1024,
+      "width": "{{width}}",
+      "height": "{{height}}",
       "batch_size": 1
     },
     "class_type": "EmptyLatentImage",

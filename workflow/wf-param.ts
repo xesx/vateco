@@ -1,11 +1,22 @@
-const params = {
+type TParam = {
+  type: 'string' | 'integer' | 'boolean'
+  default?: string | number | boolean
+  description: string
+  label: string
+  enum?: string[]
+  multiple?: number
+  compile?: (params: Record<string, any>) => any
+}
+
+const params: Record<string, TParam> = {
   _example: {
     'type': 'integer',
     'default': 42,
     'description': 'Some description of the parameter',
     'label': 'Some Parameter',
-    'compile': ({ params, extra }) => {
-      return params._example || extra.defaultValue || 42
+    'multiple': 0,
+    'compile': ({ params }) => {
+      return params._example || 42
     },
   },
   filenamePrefix: {
@@ -26,15 +37,24 @@ const params = {
     'description': 'image name or URL',
     'label': 'Image',
   },
+  lora: {
+    'type': 'string',
+    'description': 'The LoRa to use for generation',
+    'label': 'Lora',
+    'multiple': 5,
+  },
+  loraEnable: {
+    'type': 'boolean',
+    'description': 'Is LoRa enabled for generation',
+    'default': false,
+    'label': 'Lora enabled',
+    'multiple': 5,
+  },
   model: {
     'type': 'string',
     'description': 'The model to use for generation',
     'label': 'Model',
-  },
-  model2: {
-    'type': 'string',
-    'description': 'The model to use for generation',
-    'label': 'Model 2',
+    'multiple': 5,
   },
   negativePrompt: {
     'type': 'string',
@@ -118,5 +138,13 @@ const params = {
     },
   },
 }
+
+Object.entries(params).forEach(([key, param]) => {
+  if (param.multiple) {
+    for (let i = 1; i < param.multiple; i++) {
+      params[`${key}${i + 1}`] = { ...param, label: `${param.label} ${i + 1}`, multiple: 0 }
+    }
+  }
+})
 
 export default params

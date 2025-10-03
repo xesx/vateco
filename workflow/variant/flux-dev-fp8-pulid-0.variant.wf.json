@@ -12,8 +12,9 @@
     "pulid_flux_v0.9.1.safetensors"
   ],
   "params": {
-    "model": { "value": "flux1-dev-fp8.safetensors", "user": false },
-    "model2": { "value": "pulid_flux_v0.9.1.safetensors", "user": false },
+    "model": { "user": false, "value": "flux1-dev-fp8.safetensors" },
+    "model2": { "user": false, "value": "pulid_flux_v0.9.1.safetensors" },
+
     "generationNumber": {},
     "image": {},
     "filenamePrefix": { "value": "flux-pulid_" },
