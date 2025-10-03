@@ -18,9 +18,11 @@ export class ViewRunpodWfTgBot {
 
     delete ctx.session.workflowId
 
+    const workflows = this.wflib.findWorkflowsByTags({ tags: ['runpod'] })
+
     const message = '*Select workflow*'
     const keyboard = this.tgbotlib.generateInlineKeyboard(kb.workflowsMenu({
-      workflows: this.wflib.findWorkflowsByTags({ tags: ['runpod'] }),
+      workflows,
       prefixAction: 'act:rp-wf',
       backAction: 'act:main-menu'
     }))

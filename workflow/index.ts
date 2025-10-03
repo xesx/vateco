@@ -33,10 +33,29 @@ wfVariantFiles.forEach(file => {
 
   content.template = wfTemplate[content.template]
 
-  const name = basename(file).replace('.variant.wf.json', '')
-  wfVariant[name] = content
-})
+  // const name = basename(file).replace('.variant.wf.json', '')
+  if (wfVariant[content.id]) {
+    console.log('\x1b[33m', `Duplicate workflow variant id: ${content.id} in file ${file}`, '\x1b[0m')
+    return
+  }
 
+  const re = new RegExp(`{{([a-zA-Z0-9]+)}}`, 'gm')
+  const matches = JSON.stringify(content.template).matchAll(re)
+
+  for (const match of matches) {
+    const key = match[1]
+
+    if (!content.params[key]){
+      if (!wfParam[key].default) {
+        throw new Error(`Parameter <<${key}>> in workflow ${content.id} has no default value and is not defined in params`)
+      }
+
+      content.params[key] = { user: false, value: wfParam[key].default }
+    }
+  }
+
+  wfVariant[content.id] = content
+})
 
 export default {
   variant: wfVariant,

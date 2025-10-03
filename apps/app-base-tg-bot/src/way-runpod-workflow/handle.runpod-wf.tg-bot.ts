@@ -43,10 +43,12 @@ export class HandleRunpodWfTgBot {
         return this.actionWorkflowRun(ctx)
       }
 
-      if (ctx.session.inputWaiting?.startsWith('act:rp-wf:workflow-param:')) {
-        const paramName = ctx.session.inputWaiting.replace('act:rp-wf:workflow-param:', '')
-        ctx.session.inputWaiting = null
+      if (ctx.session.inputWaiting) {
+        const paramName = ctx.session.inputWaiting
         ctx.session.workflowParams[paramName] = message
+
+        delete ctx.session.inputWaiting
+
         return this.view.showWorkflowRunMenu(ctx)
       }
 
@@ -69,30 +71,30 @@ export class HandleRunpodWfTgBot {
     }
 
     const workflowParams =  structuredClone(ctx.session.workflowParams)
-
-    if (workflowParams.seed && workflowParams.seed === 'random') {
-      workflowParams.seed = this.wflib.genSeed()
-    }
-
-    const workflow = this.wflib.compileWorkflow({ id: workflowId, params: workflowParams })
+    const generationNumber = Number(workflowParams.generationNumber) || 1
 
     this.tgbotlib.safeAnswerCallback(ctx)
     ctx.reply('Generating image, please wait... ⏳')
 
     let data: any
 
-    try {
-      data = await this.runpodlib.runSync({ workflow })
-    } catch (error) {
-      console.log('Error in runpodlib.runSync:', this.h.herr.parseAxiosError(error))
-      ctx.reply('Error generating image. Please try again later.')
-      return
+    for (let i = 0; i < generationNumber; i++) {
+      const workflow = this.wflib.compileWorkflow({ id: workflowId, params: workflowParams })
+
+      try {
+        data = await this.runpodlib.runSync({ workflow })
+      } catch (error) {
+        console.log('Error in runpodlib.runSync:', this.h.herr.parseAxiosError(error))
+        ctx.reply('Error generating image. Please try again later.')
+        return
+      }
+
+      const base64Data = data.output.images?.[0].data
+      const imgBuffer = Buffer.from(base64Data, 'base64')
+
+      await ctx.sendPhoto({ source: imgBuffer, filename: 'image' }, { caption: 'Here is your generated image.' })
     }
 
-    const base64Data = data.output.images?.[0].data
-    const imgBuffer = Buffer.from(base64Data, 'base64')
-
-    ctx.sendPhoto({ source: imgBuffer, filename: 'image' }, { caption: 'Here is your generated image.' })
     const replyKeyboard = this.tgbotlib.generateReplyOneTimeKeyboard([['🚀 Generate']])
     ctx.sendMessage('Generation completed! What would you like more? ⤵', replyKeyboard)
   }
@@ -112,7 +114,7 @@ export class HandleRunpodWfTgBot {
         ctx.session.workflowParams[paramName] = value
       }
 
-      if (wfParam.type === 'number') {
+      if (['integer', 'number'].includes(wfParam.type)) {
         ctx.session.workflowParams[paramName] = Number(ctx.session.workflowParams[paramName])
       }
 
@@ -131,7 +133,7 @@ export class HandleRunpodWfTgBot {
       return
     }
 
-    if (wfParam.type === 'string' || wfParam.type === 'number') {
+    if (wfParam.type === 'string' || ['integer', 'number'].includes(wfParam.type)) {
       ctx.session.inputWaiting = paramName
       this.tgbotlib.safeAnswerCallback(ctx)
 
@@ -148,16 +150,17 @@ export class HandleRunpodWfTgBot {
     ctx.session.step = 'generating'
 
     const workflow = this.wflib.getWorkflow(workflowId)
-    const workflowParams = workflow.params
+    const params = workflow.params
 
-    Object.entries(workflowParams).forEach(([name, props]) => {
-      ctx.session.workflowParams[name] = ctx.session.workflowParams[name] || props?.default
-    })
+    ctx.session.workflowParams = {}
 
-    Object.keys(ctx.session.workflowParams).forEach((name) => {
-      if (!workflowParams[name]) {
-        delete ctx.session.workflowParams[name]
+    Object.entries(params).forEach(([name, props]) => {
+      if (props.user === false) {
+        return
       }
+
+      // установим значение по умолчанию, если параметр не задан
+      ctx.session.workflowParams[name] = ctx.session.workflowParams[name] || props?.value || props?.default
     })
 
     this.view.showWorkflowRunMenu(ctx)

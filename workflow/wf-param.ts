@@ -117,7 +117,6 @@ const params: Record<string, TParam> = {
         width = Math.round(width / 8) * 8
       }
 
-      console.log('\x1b[36m', 'width', width, '\x1b[0m')
       return width
     },
   },

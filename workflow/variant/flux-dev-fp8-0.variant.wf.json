@@ -2,7 +2,7 @@
   "name": "flux-dev-fp8-0",
   "id": "100",
   "tags": ["flux", "own-instance"],
-  "template": "base-gen-flux",
+  "template": "gen-flux-with-lora",
   "models": [
     "flux1-dev-fp8.safetensors",
     "clip_l.safetensors",
@@ -11,12 +11,12 @@
     "hyper-flux.1-dev-8steps-lora.safetensors"
   ],
   "params": {
-    "model": { "value": "flux1-dev-fp8.safetensors", "user": false },
-    "lora1": { "value": "hyper-flux.1-dev-8steps-lora.safetensors", "user": false },
-    "loraEnabled1": { "value": true, "user": false },
+    "model": { "user": false, "value": "flux1-dev-fp8.safetensors" },
+    "lora1": { "user": false, "value": "hyper-flux.1-dev-8steps-lora.safetensors" },
+    "loraEnabled1": { "user": false, "value": true },
+    "filenamePrefix": { "user": false, "value": "flux_" },
 
     "generationNumber": {},
-    "filenamePrefix": { "value": "flux_" },
     "seedType": { "value": "random" },
     "width": { "value": 1024 },
     "height": { "value": 1024 },

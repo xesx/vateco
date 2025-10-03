@@ -7,8 +7,7 @@ import workflowInfo from '../../../workflow'
 @Injectable()
 export class WorkflowLibService {
   getWorkflow(id: string): TWorkflow {
-    const workflow = Object.values(workflowInfo.variant)
-      .find((wf) => wf.id === id)
+    const workflow = workflowInfo.variant[id.toString()]
 
     if (!workflow) {
       throw new Error(`Workflow ${id} not found`)
