@@ -53,7 +53,6 @@ export class WorkflowLibService {
     // 2 passes to allow params to depend on each other
     for (let i = 0; i < 2; i++) {
       for (const key in workflow.params) {
-        console.log('\x1b[36m', 'key', key, '\x1b[0m')
         const paramInfo = workflowInfo.param[key]
         const rawValue = params[key] ?? workflow.params[key]?.value ?? paramInfo?.default
 
@@ -74,9 +73,9 @@ export class WorkflowLibService {
 
   compileWorkflowSchema ({ id, params = {} }) {
     const workflow = this.getWorkflow(id)
-    const schema = workflow.schema
+    const template = workflow.template
 
-    let compiled = JSON.stringify(schema)
+    let compiled = JSON.stringify(template)
 
     const re = new RegExp(`{{([a-zA-Z0-9]+)}}`, 'gm')
     const matches = compiled.matchAll(re)

@@ -2,7 +2,7 @@
   "name": "flux-dev-fp8-0",
   "id": "100",
   "tags": ["flux", "own-instance"],
-  "schema": "base-gen-flux",
+  "template": "base-gen-flux",
   "models": [
     "flux1-dev-fp8.safetensors",
     "clip_l.safetensors",

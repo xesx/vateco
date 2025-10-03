@@ -2,7 +2,7 @@
   "name": "sdxl-lustify-dmd2-0",
   "id": "2",
   "tags": ["sdxl", "own-instance"],
-  "schema": "base-gen-00",
+  "template": "base-gen-00",
   "models": ["lustifySDXLNSFW_endgameDMD2.safetensors"],
   "params": {
     "model": { "value": "lustifySDXLNSFW_endgameDMD2.safetensors", "user": false},

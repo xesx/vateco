@@ -2,7 +2,7 @@ export type TWorkflow = {
   models: string[]
   name: string
   params: Record<string, TWorkflowParam>
-  schema: Record<string, any>
+  template: Record<string, any>
 }
 
 export type TWorkflowParamCommon = {

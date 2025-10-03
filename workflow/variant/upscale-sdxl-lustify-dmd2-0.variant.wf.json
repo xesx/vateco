@@ -2,7 +2,7 @@
   "name": "upscale-sdxl-lustify-dmd2-0",
   "id": "3",
   "tags": ["sdxl", "own-instance"],
-  "schema": "base-upscale-00",
+  "template": "base-upscale-00",
   "models": ["lustifySDXLNSFW_endgameDMD2.safetensors"],
   "params": {
     "model": { "value": "lustifySDXLNSFW_endgameDMD2.safetensors", "user": false},
