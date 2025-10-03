@@ -9,6 +9,7 @@ type TArgs = {
 
 export function workflowRunMenu ({ workflow, workflowUserParams, prefixAction, backAction }: TArgs): [string, string][][] {
   const keyboard = Object.entries(workflowUserParams)
+    .filter(([name]) => !!workflow.params[name])
     .map(([name, value]) => {
       // truncate value if too long
       value = String(value).length > 15 ? String(value).slice(0, 13) + '...' : String(value)
