@@ -10,13 +10,9 @@ import { ComfyUiLibService } from '@libs/comfy-ui'
 // const rootDir = packageDirectorySync()
 // const templateDir = `${rootDir}/message-template`
 
-import model from '@model'
-
 @Injectable()
 export class TestCli {
   constructor(
-    private readonly herror: ErrorHelperLibService,
-    private readonly htar: TarHelperLibService,
     private readonly rclonelib: RcloneLibService,
     private readonly msgsrv: MessageLibService,
     private readonly comfyuilib: ComfyUiLibService,

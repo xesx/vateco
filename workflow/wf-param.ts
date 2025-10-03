@@ -76,10 +76,12 @@ const params = {
     'label': 'Seed Value',
     'compile': (params) => {
       if (params.seedType === 'random') {
-        return Math.floor(Math.random() * 4294967296) // 0..2^32-1
+        const seed = Math.floor(Math.random() * 4294967296) // 0..2^32-1
+        return seed >>> 0
       }
 
-      return Math.abs(parseInt(params.seedValue, 10)) || 42
+      const seed = Math.abs(parseInt(params.seedValue, 10)) || 42
+      return seed >>> 0
     },
   },
   width: {

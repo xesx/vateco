@@ -8,9 +8,7 @@ import * as kb from '@kb'
 @Injectable()
 export class InstallComfyuiV0Cli {
   constructor(
-    private readonly herror: lib.ErrorHelperLibService,
-    private readonly htar: lib.TarHelperLibService,
-    private readonly rclonelib: lib.RcloneLibService,
+    private readonly h: lib.HelperLibService,
     private readonly hflib: lib.HuggingfaceLibService,
     private readonly tgbotlib: lib.TgBotLibService,
     private readonly msglib: lib.MessageLibService,
@@ -35,7 +33,7 @@ export class InstallComfyuiV0Cli {
 
           // unpack comfyui
           await this.tgbotlib.sendMessage({ chatId, text: this.msglib.genCodeMessage('Unpacking ComfyUI...') })
-          await this.htar.extractTarZst({
+          await this.h.htar.extractTarZst({
             filePath: comfyuiArchivePath,
             destPath: workspacePath,
           })
@@ -48,7 +46,7 @@ export class InstallComfyuiV0Cli {
           const text = 'Manage your ComfyUI instance:'
           await this.tgbotlib.sendInlineKeyboard({ chatId, text, keyboard })
         } catch (error) {
-          console.error('Error during install-comfyui-v0:', this.herror.parseAxiosError(error))
+          console.error('Error during install-comfyui-v0:', this.h.herr.parseAxiosError(error))
           console.log(error.stack)
         }
       })

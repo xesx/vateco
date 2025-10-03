@@ -16,7 +16,7 @@ export class HandleRunpodWfTgBot {
     private readonly runpodlib: lib.RunpodLibService,
     private readonly wflib: lib.WorkflowLibService,
     private readonly msglib: lib.MessageLibService,
-    private readonly herr: lib.ErrorHelperLibService,
+    private readonly h: lib.HelperLibService,
   ) {}
 
   commandStart (ctx: RunpodWfContext, next: () => Promise<void>) {
@@ -84,7 +84,7 @@ export class HandleRunpodWfTgBot {
     try {
       data = await this.runpodlib.runSync({ workflow })
     } catch (error) {
-      console.log('Error in runpodlib.runSync:', this.herr.parseAxiosError(error))
+      console.log('Error in runpodlib.runSync:', this.h.herr.parseAxiosError(error))
       ctx.reply('Error generating image. Please try again later.')
       return
     }

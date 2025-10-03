@@ -14,11 +14,15 @@ export class AppBaseTgBotService {
     private readonly tgbotlib: lib.TgBotLibService,
   ) {}
 
-  showMainMenu(ctx: TAppBaseTgBotContext) {
+  actionMainMenu (ctx: TAppBaseTgBotContext) {
+    this.tgbotlib.safeAnswerCallback(ctx)
+    this.resetSession(ctx)
+    this.showMainMenu(ctx)
+  }
+
+  showMainMenu (ctx: TAppBaseTgBotContext) {
     const message = 'Main menu:'
     const keyboard = this.tgbotlib.generateInlineKeyboard(MAIN_MENU)
-
-    ctx.session.step = 'start'
     this.tgbotlib.reply(ctx, message, keyboard)
   }
 

@@ -33,7 +33,7 @@ export class BaseCommandTgBot {
     })
 
     this.bot.command('start', (ctx, next) => this.handleStart(ctx, next))
-    this.bot.action('act:main-menu', (ctx) => this.tgbotsrv.showMainMenu(ctx))
+    this.bot.action('act:main-menu', (ctx) => this.tgbotsrv.actionMainMenu(ctx))
   }
 
   private initSession(ctx: TAppBaseTgBotContext) {
@@ -45,6 +45,7 @@ export class BaseCommandTgBot {
 
     ctx.session.lastTimestamp = Date.now()
   }
+
   private handleStart(ctx: TAppBaseTgBotContext, next) {
     const step = ctx.session.step || '__undefined__'
 

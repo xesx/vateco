@@ -7,7 +7,7 @@ import workflowInfo from '../../../workflow'
 @Injectable()
 export class WorkflowLibService {
   getWorkflow(id: string): TWorkflow {
-    const workflow = Object.values(workflowInfo.schema)
+    const workflow = Object.values(workflowInfo.variant)
       .find((wf) => wf.id === id)
 
     if (!workflow) {
@@ -27,7 +27,7 @@ export class WorkflowLibService {
   }
 
   findWorkflowsByTags ({ tags = [] }: { tags: string[]}): TWorkflow[] {
-    return Object.values(workflowInfo.schema)
+    return Object.values(workflowInfo.variant)
       .filter((wf) => tags.every(tag => wf.tags.includes(tag)))
   }
 

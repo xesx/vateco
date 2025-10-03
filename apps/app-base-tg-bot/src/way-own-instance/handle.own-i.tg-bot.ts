@@ -20,7 +20,7 @@ export class HandleOwnITgBot {
     private readonly cloudapilib: lib.CloudApiCallLibService,
     private readonly wflib: lib.WorkflowLibService,
     private readonly msglib: lib.MessageLibService,
-    private readonly herr: lib.ErrorHelperLibService,
+    private readonly h: lib.HelperLibService,
   ) {}
 
   commandStart (ctx: OwnInstanceContext, next: () => Promise<void>) {
@@ -248,7 +248,7 @@ export class HandleOwnITgBot {
       const result = await this.vastlib.destroyInstance({ instanceId })
       console.log('HandleOwnITgBot_actionInstanceDestroy_10', result)
     } catch (error) {
-      console.log('HandleOwnITgBot_actionInstanceDestroy_13', this.herr.parseAxiosError(error))
+      console.log('HandleOwnITgBot_actionInstanceDestroy_13', this.h.herr.parseAxiosError(error))
 
       if (error.response?.data?.error === 'no_such_instance') {
         console.log('HandleOwnITgBot_actionInstanceDestroy_31 Instance already destroyed')
@@ -283,7 +283,6 @@ export class HandleOwnITgBot {
   }
 
   actionWorkflowParamSelect (ctx: OwnInstanceMatchContext) {
-    console.log('\x1b[36m', 'ctx.match', ctx.match, '\x1b[0m')
     const [,workflowId, param] = ctx.match
     const [paramName, value] = param.split(':')
 
@@ -336,6 +335,8 @@ export class HandleOwnITgBot {
 
     const workflow = this.wflib.getWorkflow(workflowId)
     const params = workflow.params
+
+    ctx.session.workflowParams = {}
 
     Object.entries(params).forEach(([name, props]) => {
       if (props.user === false) {

@@ -1,18 +1,11 @@
 import { Injectable } from '@nestjs/common'
 
-import { ErrorHelperLibService, TarHelperLibService } from '@libs/h'
-import { RcloneLibService } from '@libs/rclone'
-import { MessageLibService } from '@libs/message'
-import { ComfyUiLibService } from '@libs/comfy-ui'
+import * as lib from '@lib'
 
 @Injectable()
 export class StartComfyuiCli {
   constructor(
-    private readonly herror: ErrorHelperLibService,
-    private readonly htar: TarHelperLibService,
-    private readonly rclonelib: RcloneLibService,
-    private readonly msgsrv: MessageLibService,
-    private readonly comfyuilib: ComfyUiLibService,
+    private readonly comfyuilib: lib.ComfyUiLibService,
   ) {}
 
   register(program) {
