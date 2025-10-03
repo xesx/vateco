@@ -30,7 +30,7 @@ export class WayOwnITgBot {
     this.bot.action('act:own-i:manage', (ctx) => this.view.showInstanceManageMenu(ctx))
     this.bot.action('act:own-i:status', (ctx) => this.handle.actionInstanceStatus(ctx))
     this.bot.action('act:own-i:destroy', (ctx) => this.handle.actionInstanceDestroy(ctx))
-    this.bot.action('act:own-i:workflow', (ctx) => this.view.showWorkflowMenu(ctx))
+    this.bot.action('act:own-i:workflow', (ctx) => this.view.showWorkflowsMenu(ctx))
 
     this.bot.action(/^act:own-i:workflow:([^:]+)$/, (ctx) => this.handle.actionWorkflowSelect(ctx))
     this.bot.action(/^act:own-i:workflow:([^:]+):param:(.+)$/, (ctx) => this.handle.actionWorkflowParamSelect(ctx))

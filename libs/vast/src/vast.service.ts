@@ -72,8 +72,6 @@ export class VastLibService {
       }
     }
 
-    console.log('\x1b[36m', 'data', data, geolocation, '\x1b[0m')
-
     const response = await axios.put(
       this.generateRequestUrl(path),
       data,
@@ -112,8 +110,6 @@ export class VastLibService {
 
     try {
       const response = await axios.get(this.generateRequestUrl(path), { headers: this.headers })
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       instance = (response?.data?.instances || { actual_status: 'not_found' }) as TVastAiInstanceStatus
     } catch (error) {
       console.log('VastService_showInstance_31', error)

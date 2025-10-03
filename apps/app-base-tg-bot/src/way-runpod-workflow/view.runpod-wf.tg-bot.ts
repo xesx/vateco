@@ -13,13 +13,13 @@ export class ViewRunpodWfTgBot {
     private readonly wflib: lib.WorkflowLibService,
   ) {}
 
-  showWorkflowMenu (ctx: RunpodWfContext) {
+  showWorkflowsMenu (ctx: RunpodWfContext) {
     this.tgbotlib.safeAnswerCallback(ctx)
 
     delete ctx.session.workflowId
 
     const message = '*Select workflow*'
-    const keyboard = this.tgbotlib.generateInlineKeyboard(kb.workflowMenu({
+    const keyboard = this.tgbotlib.generateInlineKeyboard(kb.workflowsMenu({
       workflows: this.wflib.findWorkflowsByTags({ tags: ['runpod'] }),
       prefixAction: 'act:rp-wf',
       backAction: 'act:main-menu'
@@ -29,7 +29,13 @@ export class ViewRunpodWfTgBot {
   }
 
   showWorkflowRunMenu (ctx: RunpodWfContext) {
+    if (!ctx.session.workflowId) {
+      throw new Error('Workflow ID not set in session')
+    }
+
     const message = `Workflow ${ctx.session.workflowId}`
+    const workflow = this.wflib.getWorkflow(ctx.session.workflowId)
+
     const keyboard = this.tgbotlib.generateInlineKeyboard(kb.workflowRunMenu({
       workflow,
       workflowUserParams: ctx.session.workflowParams,

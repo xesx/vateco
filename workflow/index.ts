@@ -12,8 +12,6 @@ const wfSchemaDir = `${rootDir}/workflow/wf-schema`
 const wfSchemaParamsFiles = globSync(`${wfSchemaParamsDir}/**/*.param.wf.json`)
 const wfSchemaFiles = globSync(`${wfSchemaDir}/**/*.schema.wf.json`)
 
-console.log('\x1b[36m', 'schemaFiles', wfSchemaFiles, '\x1b[0m')
-
 const wfSchema: { [key: string]: any } = {}
 
 wfSchemaFiles.forEach(file => {

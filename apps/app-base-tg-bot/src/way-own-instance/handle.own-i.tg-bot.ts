@@ -274,7 +274,7 @@ export class HandleOwnITgBot {
       baseUrl: `http://${ctx.session.instanceIp}:${ctx.session.instanceApiPort}`,
       instanceId: ctx.session.instanceId,
       token: ctx.session.instanceToken,
-      count: ctx.session.workflowParams.__count__ || 1,
+      count: ctx.session.workflowParams.generationNumber || 1,
       workflowId,
       workflowParams: ctx.session.workflowParams,
     })
@@ -283,6 +283,7 @@ export class HandleOwnITgBot {
   }
 
   actionWorkflowParamSelect (ctx: OwnInstanceMatchContext) {
+    console.log('\x1b[36m', 'ctx.match', ctx.match, '\x1b[0m')
     const [,workflowId, param] = ctx.match
     const [paramName, value] = param.split(':')
 
@@ -305,14 +306,14 @@ export class HandleOwnITgBot {
       const message = `Set parameter *"${paramName}"*\nCurrent value: *"${currentValue}"*`
       const enumOptions: [string, string][][] = wfParam.enum
         .map((value, i) => [[value, `act:own-i:workflow:${workflowId}:param:${paramName}:${i}`]])
-      enumOptions.push([['Back', `act:own-i:workflow:${workflowId}:run`]])
+      enumOptions.push([['Back', `act:own-i:workflow:${workflowId}`]])
 
       const keyboard = this.tgbotlib.generateInlineKeyboard(enumOptions)
       this.tgbotlib.reply(ctx, message, keyboard)
       return
     }
 
-    if (wfParam.type === 'string' || wfParam.type === 'number') {
+    if (wfParam.type === 'string' || ['integer', 'number'].includes(wfParam.type)) {
       ctx.session.inputWaiting = `act:own-i:workflow-param:${paramName}`
       this.tgbotlib.safeAnswerCallback(ctx)
 
@@ -337,12 +338,12 @@ export class HandleOwnITgBot {
     const params = workflow.params
 
     Object.entries(params).forEach(([name, props]) => {
-      if (props.user !== true) {
+      if (props.user === false) {
         return
       }
 
       // установим значение по умолчанию, если параметр не задан
-      ctx.session.workflowParams[name] = ctx.session.workflowParams[name] || props?.default
+      ctx.session.workflowParams[name] = ctx.session.workflowParams[name] || props?.value || props?.default
     })
 
     if (workflowId === ctx.session.workflowId) {

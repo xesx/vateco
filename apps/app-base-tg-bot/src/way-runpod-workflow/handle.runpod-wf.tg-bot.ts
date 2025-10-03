@@ -28,7 +28,7 @@ export class HandleRunpodWfTgBot {
       return this.view.showWorkflowRunMenu(ctx)
     }
 
-    this.view.showWorkflowMenu(ctx)
+    this.view.showWorkflowsMenu(ctx)
   }
 
   textMessage (ctx, next) {
@@ -93,7 +93,7 @@ export class HandleRunpodWfTgBot {
     const imgBuffer = Buffer.from(base64Data, 'base64')
 
     ctx.sendPhoto({ source: imgBuffer, filename: 'image' }, { caption: 'Here is your generated image.' })
-    const replyKeyboard = this.tgbotlib.generateReplyOneTimeKeyboard ([['🚀 Generate']])
+    const replyKeyboard = this.tgbotlib.generateReplyOneTimeKeyboard([['🚀 Generate']])
     ctx.sendMessage('Generation completed! What would you like more? ⤵', replyKeyboard)
   }
 

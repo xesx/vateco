@@ -1,0 +1,27 @@
+{
+  "name": "flux-dev-fp8-pulid-0",
+  "id": "101",
+  "tags": ["flux", "own-instance"],
+  "schema": "pulid-flux",
+  "models": [
+    "flux1-dev-fp8.safetensors",
+    "clip_l.safetensors",
+    "t5xxl_fp8.safetensors",
+    "flux-vae.safetensors",
+    "hyper-flux.1-dev-8steps-lora.safetensors",
+    "pulid_flux_v0.9.1.safetensors"
+  ],
+  "params": {
+    "model": { "value": "flux1-dev-fp8.safetensors", "user": false },
+    "model2": { "value": "pulid_flux_v0.9.1.safetensors", "user": false },
+    "generationNumber": {},
+    "image": {},
+    "filenamePrefix": { "value": "flux-pulid_" },
+    "seedType": { "value": "random" },
+    "width": { "value": 1024 },
+    "height": { "value": 1024 },
+    "positivePrompt": { "value": "green-purple cupcake with big eyes" },
+    "sampler": { "value": "euler" },
+    "scheduler": { "value": "normal" }
+  }
+}

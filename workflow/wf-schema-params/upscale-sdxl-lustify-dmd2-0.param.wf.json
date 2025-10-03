@@ -1,0 +1,19 @@
+{
+  "name": "upscale-sdxl-lustify-dmd2-0",
+  "id": "3",
+  "tags": ["sdxl", "own-instance"],
+  "schema": "base-upscale-00",
+  "models": ["lustifySDXLNSFW_endgameDMD2.safetensors"],
+  "params": {
+    "model": { "value": "lustifySDXLNSFW_endgameDMD2.safetensors", "user": false},
+    "generationNumber": { "user": false },
+    "filenamePrefix": { "value": "upscale-sdxl-lustify-dmd2_" },
+    "seedType": { "value": "random", "user": false },
+
+    "image": {},
+    "positivePrompt": { "value": "prompt for upscale" },
+    "negativePrompt": {},
+    "sampler": { "value": "lcm" },
+    "scheduler": { "value": "normal" }
+  }
+}

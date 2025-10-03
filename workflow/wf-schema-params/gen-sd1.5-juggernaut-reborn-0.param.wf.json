@@ -5,11 +5,12 @@
   "schema": "base-gen-00",
   "models": ["juggernaut_reborn.safetensors"],
   "params": {
-    "model": { "value": "juggernaut_reborn.safetensors", "user": false},
-    "count": { "value": 1, "user": true },
-    "seedType": { "value": "random", "user": true, "advanced": true },
-    "positivePrompt": { "user": true, "value": "green-purple cupcake with big eyes" },
-    "negativePrompt": { "user": true, "advanced": true },
-    "seedValue": { "user": true, "advanced": true }
+    "model": { "user": false, "value": "juggernaut_reborn.safetensors" },
+
+    "generationNumber": {},
+    "seedType": { "value": "random", "advanced": true },
+    "positivePrompt": { "value": "green-purple cupcake with big eyes" },
+    "negativePrompt": { "advanced": true },
+    "seedValue": { "advanced": true }
   }
 }

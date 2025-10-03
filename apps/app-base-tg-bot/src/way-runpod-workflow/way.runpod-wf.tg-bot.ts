@@ -17,10 +17,10 @@ export class WayOwnITgBot {
 
     this.bot.on(message('text'), (ctx, next) => this.handle.textMessage(ctx, next))
 
-    this.bot.action('act:rp-wf', (ctx) => this.view.showWorkflowMenu(ctx))
+    this.bot.action('act:rp-wf', (ctx) => this.view.showWorkflowsMenu(ctx))
     this.bot.action(/^act:rp-wf(.*)$/, (ctx, next) => this.initSession(ctx, next))
 
-    this.bot.action('act:rp-wf:workflow', (ctx) => this.view.showWorkflowMenu(ctx))
+    this.bot.action('act:rp-wf:workflow', (ctx) => this.view.showWorkflowsMenu(ctx))
     this.bot.action(/^act:rp-wf:workflow:([^:]+)$/, (ctx) => this.handle.actionWorkflowSelect(ctx))
     this.bot.action(/^act:rp-wf:workflow:([^:]+):param:(.+)$/, (ctx) => this.handle.actionWorkflowParamSelect(ctx))
     this.bot.action(/^act:rp-wf:workflow:([^:]+):run$/, (ctx) => this.handle.actionWorkflowRun(ctx))

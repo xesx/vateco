@@ -20,10 +20,21 @@ const params = {
     'description': 'Number of items to generate',
     'label': 'Generation Number',
   },
+  image: {
+    'type': 'string',
+    'default': 'N/A',
+    'description': 'image name or URL',
+    'label': 'Image',
+  },
   model: {
     'type': 'string',
     'description': 'The model to use for generation',
     'label': 'Model',
+  },
+  model2: {
+    'type': 'string',
+    'description': 'The model to use for generation',
+    'label': 'Model 2',
   },
   negativePrompt: {
     'type': 'string',

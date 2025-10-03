@@ -39,12 +39,19 @@ export class ViewOwnITgBot {
     this.tgbotlib.reply(ctx, message, keyboard)
   }
 
-  showWorkflowMenu (ctx: OwnInstanceContext) {
+  showWorkflowsMenu (ctx: OwnInstanceContext) {
     this.tgbotlib.safeAnswerCallback(ctx)
 
-    const message = '*Select workflow*'
-    const keyboard = this.tgbotlib.generateInlineKeyboard(kb.ownInstanceWorkflowSelectMenu())
+    delete ctx.session.workflowId
 
+    const message = '*Select workflow*'
+    const keyboard = this.tgbotlib.generateInlineKeyboard(kb.workflowsMenu({
+      workflows: this.wflib.findWorkflowsByTags({ tags: ['own-instance'] }),
+      prefixAction: 'act:own-i',
+      backAction: 'act:own-i:manage'
+    }))
+
+    this.tgbotlib.removeReplyKeyboard(ctx)
     this.tgbotlib.reply(ctx, message, { parse_mode: 'Markdown', ...keyboard })
   }
 
@@ -55,7 +62,7 @@ export class ViewOwnITgBot {
 
     const workflow = this.wflib.getWorkflow(ctx.session.workflowId)
 
-    const message = `Workflow ${ctx.session.workflowId}`
+    const message = `Workflow ${workflow.name}`
     const keyboard = this.tgbotlib.generateInlineKeyboard(kb.workflowRunMenu({
       workflow,
       workflowUserParams: ctx.session.workflowParams,

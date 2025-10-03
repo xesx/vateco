@@ -15,11 +15,12 @@ export class BaseCommandTgBot {
     @InjectBot() private readonly bot: Telegraf<TAppBaseTgBotContext>,
     private readonly tgbotsrv: AppBaseTgBotService,
     prismaStore: lib.TgBotSessionStorePrismaLibService,
+    private readonly tgbotlib: lib.TgBotLibService,
   ) {
     bot.use(session({ store: prismaStore }))
 
     bot.use(async (ctx, next) => {
-      // @ts-ignore
+      // @ts-expect-error todo
       const username = ctx.chat?.username
 
       // todo: remove this in production

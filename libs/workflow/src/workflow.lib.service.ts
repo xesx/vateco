@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common'
 
 import type { TWorkflow } from './type'
 
-import workflowInfo from '@workflow'
+import workflowInfo from '../../../workflow'
 
 @Injectable()
 export class WorkflowLibService {

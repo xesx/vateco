@@ -1,6 +1,6 @@
-export function workflowMenu ({ workflows, prefixAction, backAction }): [string, string][][] {
+export function workflowsMenu ({ workflows, prefixAction, backAction }): [string, string][][] {
   const keyboard = Object.entries(workflows)
-    .map(([key]) => { return [[key, `${prefixAction}:workflow:${key}`]]})
+    .map(([, value]: [string, any]) => { return [[value.name, `${prefixAction}:workflow:${value.id}`]]})
     .concat([[['⬅️ Back', backAction]]])
 
   return keyboard as [string, string][][]

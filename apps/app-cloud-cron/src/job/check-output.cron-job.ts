@@ -56,7 +56,7 @@ export class CheckOutputCronJob {
       l.log(`handleCheckOutputJob_99 Deleted image after reading: ${image}`)
     }
 
-    const replyKeyboard = this.tgbotlib.generateReplyOneTimeKeyboard ([['🚀 Generate']])
+    const replyKeyboard = this.tgbotlib.generateReplyOneTimeKeyboard([['🚀 Generate']])
     await this.tgbotlib.sendReplyOneTimeKeyboard({
       chatId: TG_CHAT_ID,
       keyboard: replyKeyboard,

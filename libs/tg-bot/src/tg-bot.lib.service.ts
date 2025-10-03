@@ -23,19 +23,32 @@ export class TgBotLibService {
   }
 
   reply (ctx: Context, message: string, extra?: any) {
-    if (ctx.callbackQuery) {
-      try {
+    try {
+      if (ctx.callbackQuery) {
         ctx.editMessageText(message, extra)
-      } catch (e: any) {
-        if (e.description?.includes("message is not modified")) {
-          // ничего не делаем
-        } else {
-          throw e
-        }
+      } else {
+        ctx.reply(message, extra)
       }
-    } else {
-      ctx.reply(message, extra)
+    } catch (e: any) {
+      console.log('\x1b[36m', '--->>>>>e', e, '\x1b[0m')
+      if (e.description?.includes("message is not modified")) {
+        // ничего не делаем
+      } else {
+        throw e
+      }
     }
+  }
+
+  async removeReplyKeyboard (ctx: Context) {
+    if (!ctx.chat?.id) {
+      return
+    }
+
+    const message = await ctx.telegram.sendMessage(ctx.chat.id, '...', {
+      reply_markup: { remove_keyboard: true },
+    })
+
+    ctx.deleteMessage(message.message_id)
   }
 
   safeAnswerCallback (ctx: Context, text?: string) {
