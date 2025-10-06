@@ -125,8 +125,8 @@ export class HandleRunpodWfTgBot {
     if (wfParam.enum) {
       const message = `Set parameter *"${paramName}"*\nCurrent value: *"${currentValue}"*`
       const enumOptions: [string, string][][] = wfParam.enum
-        .map((value, i) => [[value, `act:own-i:wf:${workflowId}:param:${paramName}:${i}`]])
-      enumOptions.push([['Back', `act:own-i:wf:${workflowId}:run`]])
+        .map((value, i) => [[value, `act:rp-wf:wf:${workflowId}:param:${paramName}:${i}`]])
+      enumOptions.push([['Back', `act:rp-wf:wf:${workflowId}`]])
 
       const keyboard = this.tgbotlib.generateInlineKeyboard(enumOptions)
       this.tgbotlib.reply(ctx, message, keyboard)
@@ -152,10 +152,8 @@ export class HandleRunpodWfTgBot {
     const workflow = this.wflib.getWorkflow(workflowId)
     const params = workflow.params
 
-    ctx.session.workflowParams = {}
-
     Object.entries(params).forEach(([name, props]) => {
-      if (props.user === false) {
+      if (props.user !== true) {
         return
       }
 

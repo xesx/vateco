@@ -1,6 +1,7 @@
 type TParam = {
   type: 'string' | 'integer' | 'boolean'
   default?: string | number | boolean
+  value?: string | number | boolean
   description: string
   label: string
   enum?: string[]
@@ -43,7 +44,7 @@ const params: Record<string, TParam> = {
     'label': 'Lora',
     'multiple': 5,
   },
-  loraEnable: {
+  loraEnabled: {
     'type': 'boolean',
     'description': 'Is LoRa enabled for generation',
     'default': false,
@@ -140,7 +141,7 @@ const params: Record<string, TParam> = {
 
 Object.entries(params).forEach(([key, param]) => {
   if (param.multiple) {
-    for (let i = 1; i < param.multiple; i++) {
+    for (let i = 0; i < param.multiple; i++) {
       params[`${key}${i + 1}`] = { ...param, label: `${param.label} ${i + 1}`, multiple: 0 }
     }
   }

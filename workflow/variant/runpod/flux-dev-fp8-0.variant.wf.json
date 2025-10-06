@@ -5,14 +5,14 @@
   "template": "base-gen-flux-with-checkpoint-00",
   "models": [],
   "params": {
-    "filenamePrefix": { "user": false, "value": "flux_" },
-    "seedType": { "user": false, "value": "random" },
+    "filenamePrefix": { "value": "flux_" },
+    "seedType": { "value": "random" },
 
-    "generationNumber": {},
-    "width": { "value": 1024, "label": "wwwidth" },
-    "height": { "value": 1024 },
-    "positivePrompt": { "value": "green-purple cupcake with big eyes" },
-    "sampler": { "value": "euler" },
-    "scheduler": { "value": "simple" }
+    "generationNumber": { "user": true, "position": [0, 0] },
+    "width": { "user": true, "value": 1024, "label": "wwwidth", "enum": [512, 768, 1024], "position": [1, 0] },
+    "height": { "user": true, "value": 1024, "enum": [512, 768, 1024], "position": [1, 1] },
+    "positivePrompt": { "user": true, "value": "green-purple cupcake with big eyes" },
+    "sampler": { "user": true, "value": "euler", "position": [3, 0] },
+    "scheduler": { "user": true, "value": "simple", "position": [3, 1] }
   }
 }

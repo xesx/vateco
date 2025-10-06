@@ -13,6 +13,8 @@ export class WayOwnITgBot {
     private readonly view: ViewRunpodWfTgBot,
     private readonly handle: HandleRunpodWfTgBot,
   ) {
+    this.bot.action(/^act:own-i(.*)$/, (ctx, next) => this.initSession(ctx, next))
+
     this.bot.command('start', (ctx, next) => this.handle.commandStart(ctx, next))
 
     this.bot.on(message('text'), (ctx, next) => this.handle.textMessage(ctx, next))

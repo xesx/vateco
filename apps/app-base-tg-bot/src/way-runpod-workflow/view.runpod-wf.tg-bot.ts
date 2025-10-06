@@ -17,6 +17,7 @@ export class ViewRunpodWfTgBot {
     this.tgbotlib.safeAnswerCallback(ctx)
 
     delete ctx.session.workflowId
+    ctx.session.workflowParams = {}
 
     const workflows = this.wflib.findWorkflowsByTags({ tags: ['runpod'] })
 

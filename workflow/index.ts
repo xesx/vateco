@@ -25,36 +25,41 @@ const wfVariant: { [key: string]: any } = {}
 
 wfVariantFiles.forEach(file => {
   // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const content = require(file)
+  const variant = require(file)
 
-  if (!wfTemplate[content.template]) {
-    throw new Error(`Template not found for parameter file: ${file}`)
+  if (!wfTemplate[variant.template]) {
+    throw new Error(`Template not found for variant file: "${file}"`)
   }
 
-  content.template = wfTemplate[content.template]
+  variant.template = wfTemplate[variant.template]
 
   // const name = basename(file).replace('.variant.wf.json', '')
-  if (wfVariant[content.id]) {
-    console.log('\x1b[33m', `Duplicate workflow variant id: ${content.id} in file ${file}`, '\x1b[0m')
+  if (wfVariant[variant.id]) {
+    console.log('\x1b[33m', `Duplicate workflow variant id: ${variant.id} in file "${file}"`, '\x1b[0m')
     return
   }
 
   const re = new RegExp(`{{([a-zA-Z0-9]+)}}`, 'gm')
-  const matches = JSON.stringify(content.template).matchAll(re)
+  const matches = JSON.stringify(variant.template).matchAll(re)
 
   for (const match of matches) {
     const key = match[1]
 
-    if (!content.params[key]){
-      if (!wfParam[key].default) {
-        throw new Error(`Parameter <<${key}>> in workflow ${content.id} has no default value and is not defined in params`)
-      }
+    const commonParam = wfParam[key]
+    const extraParam = variant.params?.[key] || {}
 
-      content.params[key] = { user: false, value: wfParam[key].default }
-    }
+    variant.params[key] = { ...commonParam, ...extraParam }
+
+    variant.params[key].value = extraParam.value ?? commonParam?.default
   }
 
-  wfVariant[content.id] = content
+  Object.keys(variant.params).forEach(key => {
+    if (!wfParam[key]) {
+      throw new Error(`Workflow_91 Unknown param "${key}" in variant file: "${file}"`)
+    }
+  })
+
+  wfVariant[variant.id] = variant
 })
 
 export default {

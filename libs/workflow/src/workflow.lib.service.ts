@@ -74,28 +74,29 @@ export class WorkflowLibService {
     const workflow = this.getWorkflow(id)
     const template = workflow.template
 
-    let compiled = JSON.stringify(template)
+    let templateStr = JSON.stringify(template)
 
-    const re = new RegExp(`{{([a-zA-Z0-9]+)}}`, 'gm')
-    const matches = compiled.matchAll(re)
-
-    for (const match of matches) {
-      const key = match[1]
-      let re = new RegExp(`{{${key}}}`, 'g')
-
-      const value = params[key] ?? workflowInfo.param[key]?.default
+    for (const key of Object.keys(workflow.params)) {
+      const value = params[key] ?? workflowInfo.param[key]?.value
 
       if (value === undefined) {
         throw new Error(`WorkflowLibService_compileWorkflow_13 Parameter <<${key}>> is required`)
       }
 
+      let re = new RegExp(`{{${key}}}`, 'g')
+
       if (typeof value !== 'string') {
         re = new RegExp(`"{{${key}}}"`, 'g')
       }
 
-      compiled = compiled.replace(re, String(value))
+      templateStr = templateStr.replace(re, String(value))
     }
 
-    return JSON.parse(compiled)
+    try {
+      const parsedTemplate = JSON.parse(templateStr)
+      return parsedTemplate
+    } catch (err) {
+      throw new Error(`WorkflowLibService_compileWorkflow_91 Error parsing compiled template: ${err.message}\nTemplate string: ${templateStr}`)
+    }
   }
 }
