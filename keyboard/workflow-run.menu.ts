@@ -10,6 +10,7 @@ type TArgs = {
 export function workflowRunMenu ({ workflow, workflowUserParams, prefixAction, backAction }: TArgs): [string, string][][] {
   const sortedParams = Object.entries(workflowUserParams)
     .filter(([name]) => !!workflow.params[name])
+    .filter(([name]) => workflow.params[name].user)
     .sort(([nameA], [nameB]) => {
       const positionA = workflow.params[nameA]?.position
       const positionB = workflow.params[nameB]?.position

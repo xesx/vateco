@@ -5,15 +5,15 @@
   "template": "base-upscale-00",
   "models": ["lustifySDXLNSFW_endgameDMD2.safetensors"],
   "params": {
-    "model": { "value": "lustifySDXLNSFW_endgameDMD2.safetensors", "user": false},
-    "generationNumber": { "user": false },
+    "model": { "value": "lustifySDXLNSFW_endgameDMD2.safetensors" },
+    "generationNumber": { "value": 1 },
     "filenamePrefix": { "value": "upscale-sdxl-lustify-dmd2_" },
-    "seedType": { "value": "random", "user": false },
+    "seedType": { "value": "random" },
 
-    "image": {},
-    "positivePrompt": { "value": "prompt for upscale" },
-    "negativePrompt": {},
-    "sampler": { "value": "lcm" },
-    "scheduler": { "value": "normal" }
+    "image": { "user": true, "position": [0] },
+    "sampler": { "user": true,  "value": "lcm", "position": [1] },
+    "scheduler": { "user": true,  "value": "normal", "position": [1] },
+    "negativePrompt": { "user": true, "position": [9] },
+    "positivePrompt": { "user": true,  "value": "prompt for upscale", "position": [10] }
   }
 }

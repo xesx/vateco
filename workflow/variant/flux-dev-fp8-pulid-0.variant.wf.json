@@ -12,17 +12,17 @@
     "pulid_flux_v0.9.1.safetensors"
   ],
   "params": {
-    "model": { "user": false, "value": "flux1-dev-fp8.safetensors" },
-    "model2": { "user": false, "value": "pulid_flux_v0.9.1.safetensors" },
+    "model": { "value": "flux1-dev-fp8.safetensors" },
+    "model2": { "value": "pulid_flux_v0.9.1.safetensors" },
 
-    "generationNumber": {},
-    "image": {},
-    "filenamePrefix": { "value": "flux-pulid_" },
-    "seedType": { "value": "random" },
-    "width": { "value": 1024 },
-    "height": { "value": 1024 },
-    "positivePrompt": { "value": "green-purple cupcake with big eyes" },
-    "sampler": { "value": "euler" },
-    "scheduler": { "value": "normal" }
+    "generationNumber": { "user": true },
+    "image": { "user": true },
+    "filenamePrefix": { "user": true,  "value": "flux-pulid_" },
+    "seedType": { "user": true,  "value": "random" },
+    "width": { "user": true,  "value": 1024 },
+    "height": { "user": true,  "value": 1024 },
+    "positivePrompt": { "user": true,  "value": "green-purple cupcake with big eyes" },
+    "sampler": { "user": true,  "value": "euler" },
+    "scheduler": { "user": true,  "value": "normal" }
   }
 }

@@ -5,11 +5,12 @@
   "template": "base-gen-00",
   "models": ["lustifySDXLNSFW_endgameDMD2.safetensors"],
   "params": {
-    "model": { "value": "lustifySDXLNSFW_endgameDMD2.safetensors", "user": false},
-    "generationNumber": {},
-    "seedType": { "value": "random" },
-    "positivePrompt": { "value": "green-purple cupcake with big eyes" },
-    "sampler": { "value": "euler" },
-    "scheduler": { "value": "normal" }
+    "model": { "value": "lustifySDXLNSFW_endgameDMD2.safetensors" },
+
+    "generationNumber": { "user": true },
+    "seedType": { "user": true,  "value": "random" },
+    "positivePrompt": { "user": true,  "value": "green-purple cupcake with big eyes" },
+    "sampler": { "user": true,  "value": "euler" },
+    "scheduler": { "user": true,  "value": "normal" }
   }
 }

@@ -347,7 +347,7 @@ export class HandleOwnITgBot {
     ctx.session.workflowParams = {}
 
     Object.entries(params).forEach(([name, props]) => {
-      if (props.user === false) {
+      if (props.user !== true) {
         return
       }
 
