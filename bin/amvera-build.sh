@@ -1,4 +1,6 @@
 #!/bin/bash
+apt install jq -y
+
 # Build the project
 nest build
 
@@ -13,6 +15,7 @@ API_URL="https://us.infisical.com/api/v3/secrets/raw"
 # Получаем JSON с секретами
 response=$(curl -s -H "Authorization: Bearer $INFISICAL_TOKEN" "$API_URL")
 
+echo "--->>>>>>>>> response $response"
 echo "--->>>>>>>>>INFISICAL_TOKEN $INFISICAL_TOKEN"
 echo "--->>>>>>>>>DATABASE_URL $DATABASE_URL"
 
