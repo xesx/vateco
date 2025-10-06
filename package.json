@@ -7,7 +7,7 @@
   "license": "UNLICENSED",
   "scripts": {
     "build": "./build.sh",
-    "build:amvera": "./bin/build.sh",
+    "build:amvera": "./bin/amvera-build.sh",
     "format": "prettier --write \"apps/**/*.ts\" \"libs/**/*.ts\"",
     "start:admin:dev": "npx nest start app-admin --watch",
     "start:cloud-api:dev": "npx nest start app-cloud-api --watch",
