@@ -19,7 +19,6 @@ response=$(curl -s -H "Authorization: Bearer $INFISICAL_TOKEN" "$API_URL")
 
 echo "--->>>>>>>>> response $response"
 echo "--->>>>>>>>>INFISICAL_TOKEN $INFISICAL_TOKEN"
-echo "--->>>>>>>>>DATABASE_URL $DATABASE_URL"
 
 echo "$response" | jq -r '.secrets[] | "\(.secretKey)=\(.secretValue)"' > .env
 source .env
