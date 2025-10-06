@@ -12,6 +12,7 @@
     "start:cloud-api:dev": "npx nest start app-cloud-api --watch",
     "start:cloud-cron:dev": "npx nest start app-cloud-cron --watch",
     "start:tg": "nest start app-base-tg-bot --watch",
+    "start:my-tg-bot:prod": "npx pm2 start ecosystem.config.js --only my-tg-bot",
     "start:cron:dev": "npx nest start app-cron --watch",
     "start:cloud:prod": "npx pm2 start ecosystem.config.js --only cloud-api,cloud-cron",
     "start:admin:prod": "npx pm2 start ecosystem.config.js --only admin",

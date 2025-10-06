@@ -1,7 +1,7 @@
 module.exports = {
   apps: [
     {
-      name: "tg-bot",
+      name: "my-tg-bot",
       script: "dist/apps/app-base-tg-bot/src/main.js",
       instances: 1,
       exec_mode: "fork",
