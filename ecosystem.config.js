@@ -4,6 +4,10 @@ module.exports = {
       name: "my-tg-bot",
       script: "dist/apps/app-base-tg-bot/src/main.js",
       instances: 1,
+      out_file: '/dev/stdout',
+      error_file: '/dev/stderr',
+      log_date_format: 'YYYY-MM-DD HH:mm:ss Z',
+      combine_logs: true,
       exec_mode: "fork",
       env: {
         ENV: "prod"
