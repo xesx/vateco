@@ -12,6 +12,8 @@ echo "Build completed successfully"
 # Базовый URL API
 API_URL="https://us.infisical.com/api/v3/secrets/raw"
 
+source .env.amvera
+
 # Получаем JSON с секретами
 response=$(curl -s -H "Authorization: Bearer $INFISICAL_TOKEN" "$API_URL")
 
