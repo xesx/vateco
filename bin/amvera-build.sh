@@ -15,6 +15,7 @@ response=$(curl -s -H "Authorization: Bearer $INFISICAL_TOKEN" "$API_URL")
 
 echo "$response" | jq -r '.secrets[] | "\(.secretKey)=\(.secretValue)"' > .env
 source .env
+cat .env
 echo "Секреты загружены:"
 
 npm run migrate:deploy
