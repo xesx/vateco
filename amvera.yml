@@ -5,13 +5,13 @@ meta:
     version: "22"
 build:
   skip: false
-  additionalCommands: npm run build
+  additionalCommands: npm run build:amvera
   artifacts:
     "*": /
 run:
   scriptName: ""
   scriptArguments: null
   nodeArguments: null
-  command: npm run start:my-tg-bot:prod
+  command: npm run start:my-tg-bot:amvera
   persistenceMount: /data
   containerPort: "80"
