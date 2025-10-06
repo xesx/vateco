@@ -148,18 +148,7 @@ export class HandleRunpodWfTgBot {
     const [,workflowId] = ctx.match
     ctx.session.workflowId = workflowId
     ctx.session.step = 'generating'
-
-    const workflow = this.wflib.getWorkflow(workflowId)
-    const params = workflow.params
-
-    Object.entries(params).forEach(([name, props]) => {
-      if (props.user !== true) {
-        return
-      }
-
-      // установим значение по умолчанию, если параметр не задан
-      ctx.session.workflowParams[name] = ctx.session.workflowParams[name] || props?.value || props?.default
-    })
+    ctx.session.workflowParams = this.wflib.getWfParamsForSession({ workflowId })
 
     this.view.showWorkflowRunMenu(ctx)
   }

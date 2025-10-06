@@ -6,7 +6,7 @@ import workflowInfo from '../../../workflow'
 
 @Injectable()
 export class WorkflowLibService {
-  getWorkflow(id: string): TWorkflow {
+  getWorkflow (id: string): TWorkflow {
     const workflow = workflowInfo.variant[id.toString()]
 
     if (!workflow) {
@@ -23,6 +23,24 @@ export class WorkflowLibService {
     })
 
     return workflow
+  }
+
+  getWfParamsForSession ({ workflowId, sessionWfParams = {} }) {
+    const workflow = this.getWorkflow(workflowId)
+    const params = workflow.params
+
+    const result = {}
+
+    Object.entries(params).forEach(([name, props]) => {
+      if (props.user !== true) {
+        return
+      }
+
+      // установим значение по умолчанию, если параметр не задан
+      result[name] = sessionWfParams || props?.value
+    })
+
+    return result
   }
 
   findWorkflowsByTags ({ tags = [] }: { tags: string[]}): TWorkflow[] {

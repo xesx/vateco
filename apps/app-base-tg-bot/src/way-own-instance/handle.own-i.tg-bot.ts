@@ -341,19 +341,7 @@ export class HandleOwnITgBot {
 
     const [,workflowId] = ctx.match
 
-    const workflow = this.wflib.getWorkflow(workflowId)
-    const params = workflow.params
-
-    ctx.session.workflowParams = {}
-
-    Object.entries(params).forEach(([name, props]) => {
-      if (props.user !== true) {
-        return
-      }
-
-      // установим значение по умолчанию, если параметр не задан
-      ctx.session.workflowParams[name] = ctx.session.workflowParams[name] || props?.value || props?.default
-    })
+    ctx.session.workflowParams = this.wflib.getWfParamsForSession({ workflowId })
 
     if (workflowId === ctx.session.workflowId) {
       this.view.showWorkflowRunMenu(ctx)
