@@ -10,10 +10,8 @@
     "build:amvera": "./bin/amvera-build.sh",
     "push:amvera": "git checkout amvera-master && git rebase master && git push amvera amvera-master:master --force && git checkout master",
     "format": "prettier --write \"apps/**/*.ts\" \"libs/**/*.ts\"",
-
     "start:tg": "nest start app-base-tg-bot --watch",
     "start:my-tg-bot:amvera": "node dist/apps/app-base-tg-bot/src/main.js",
-
     "start:admin:dev": "npx nest start app-admin --watch",
     "start:cloud-api:dev": "npx nest start app-cloud-api --watch",
     "start:cloud-cron:dev": "npx nest start app-cloud-cron --watch",
@@ -48,6 +46,7 @@
     "pm2": "^6.0.10",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
+    "sharp": "^0.34.4",
     "telegraf": "^4.16.3",
     "telegraf-session-local": "^2.1.1"
   },

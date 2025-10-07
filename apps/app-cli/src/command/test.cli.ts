@@ -1,5 +1,8 @@
 import { Injectable } from '@nestjs/common'
 
+import * as fs from 'fs'
+import * as sharp from 'sharp'
+
 import * as lib from '@lib'
 // import { packageDirectorySync } from 'pkg-dir'
 
@@ -10,6 +13,7 @@ import * as lib from '@lib'
 export class TestCli {
   constructor(
     private readonly vastlib: lib.VastLibService,
+    private readonly comfyuilib: lib.ComfyUiLibService,
   ) {}
 
   register(program) {
@@ -19,8 +23,13 @@ export class TestCli {
       .action(async (name) => {
         console.log(`Привет, ${name}!`)
 
-        const instance = await this.vastlib.showInstance({ instanceId: 26522082 })
-        console.log('----->>>>>>>>>> instance', JSON.stringify(instance))
+        const imagePath = './workspace/ComfyUI_00018_.png'
+        const all = await sharp(imagePath).metadata()
+        console.log('\x1b[36m', 'all', all?.comments?.find?.(i => i.keyword === 'prompt')?.text, '\x1b[0m')
+
+
+        // const instance = await this.vastlib.showInstance({ instanceId: 26522082 })
+        // console.log('----->>>>>>>>>> instance', JSON.stringify(instance))
 
         // const data = {
         //   transferredBytes: 120000000,
