@@ -19,6 +19,7 @@ import * as command from './command'
     lib.ComfyUiLibModule,
     lib.HuggingfaceLibModule,
     lib.WorkflowLibModule,
+    lib.VastLibModule,
   ],
   providers: [
     AppCliService,

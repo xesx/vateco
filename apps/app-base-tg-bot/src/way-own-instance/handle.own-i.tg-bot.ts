@@ -219,6 +219,10 @@ export class HandleOwnITgBot {
     const instanceApiPort = instance.ports?.['3042/tcp']?.[0]?.HostPort || 'N/A'
     const instanceAppPort = instance.ports?.['1111/tcp']?.[0]?.HostPort
 
+    if (instanceApiPort === 'N/A' || ipAddress === 'N/A') {
+      console.log('WayOwnInstance_actionInstanceStatus_31 instanceApiPort not found, instance:', JSON.stringify(instance))
+    }
+
     ctx.session.instanceToken = instance.jupyter_token || 'N/A'
     ctx.session.instanceIp = ipAddress
     ctx.session.instanceApiPort = instanceApiPort

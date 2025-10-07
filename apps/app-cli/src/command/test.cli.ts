@@ -1,10 +1,6 @@
 import { Injectable } from '@nestjs/common'
 
-import { ErrorHelperLibService, TarHelperLibService } from '@libs/h'
-import { RcloneLibService } from '@libs/rclone'
-import { MessageLibService } from '@libs/message'
-import { ComfyUiLibService } from '@libs/comfy-ui'
-
+import * as lib from '@lib'
 // import { packageDirectorySync } from 'pkg-dir'
 
 // const rootDir = packageDirectorySync()
@@ -13,18 +9,18 @@ import { ComfyUiLibService } from '@libs/comfy-ui'
 @Injectable()
 export class TestCli {
   constructor(
-    private readonly rclonelib: RcloneLibService,
-    private readonly msgsrv: MessageLibService,
-    private readonly comfyuilib: ComfyUiLibService,
+    private readonly vastlib: lib.VastLibService,
   ) {}
 
   register(program) {
     program
       .command('test <name>')
       .description('Сказать привет')
-      .action((name) => {
+      .action(async (name) => {
         console.log(`Привет, ${name}!`)
-        // console.log('----->>>>>>>>>> model', model)
+
+        const instance = await this.vastlib.showInstance({ instanceId: 26522082 })
+        console.log('----->>>>>>>>>> instance', JSON.stringify(instance))
 
         // const data = {
         //   transferredBytes: 120000000,
