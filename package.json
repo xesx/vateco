@@ -8,12 +8,15 @@
   "scripts": {
     "build": "./build.sh",
     "build:amvera": "./bin/amvera-build.sh",
+    "push:amvera": "git checkout amvera-master && git rebase master && git push amvera amvera-master:master",
     "format": "prettier --write \"apps/**/*.ts\" \"libs/**/*.ts\"",
+
+    "start:tg": "nest start app-base-tg-bot --watch",
+    "start:my-tg-bot:amvera": "node dist/apps/app-base-tg-bot/src/main.js",
+
     "start:admin:dev": "npx nest start app-admin --watch",
     "start:cloud-api:dev": "npx nest start app-cloud-api --watch",
     "start:cloud-cron:dev": "npx nest start app-cloud-cron --watch",
-    "start:tg": "nest start app-base-tg-bot --watch",
-    "start:my-tg-bot:amvera": "node dist/apps/app-base-tg-bot/src/main.js",
     "start:cron:dev": "npx nest start app-cron --watch",
     "start:cloud:prod": "npx pm2 start ecosystem.config.js --only cloud-api,cloud-cron",
     "start:admin:prod": "npx pm2 start ecosystem.config.js --only admin",

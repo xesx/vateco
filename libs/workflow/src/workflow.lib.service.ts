@@ -37,7 +37,7 @@ export class WorkflowLibService {
       }
 
       // установим значение по умолчанию, если параметр не задан
-      result[name] = sessionWfParams || props?.value
+      result[name] = sessionWfParams[name] || props?.value || props.default
     })
 
     return result

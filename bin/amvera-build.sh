@@ -15,13 +15,15 @@ source .env.amvera
 # Получаем JSON с секретами
 response=$(curl -s -H "Authorization: Bearer $INFISICAL_TOKEN" "$API_URL")
 
-echo "--->>>>>>>>> response $response"
-echo "--->>>>>>>>>INFISICAL_TOKEN $INFISICAL_TOKEN"
-
 #echo "$response" | jq -r '.secrets[] | "\(.secretKey)=\(.secretValue)"' > .env
-echo "$response" \
-  | sed -n 's/.*"secretKey":"\([^"]*\)".*"secretValue":"\([^"]*\)".*/\1=\2/p' \
-  > .env
+echo "$response" | node -e '
+  const data = JSON.parse(require("fs").readFileSync(0, "utf8"));
+  if (Array.isArray(data.secrets)) {
+    for (const s of data.secrets)
+      console.log(`${s.secretKey}="${s.secretValue}"`);
+  }
+' > .env
+
 source .env
 echo "Секреты загружены:"
 echo $(cat .env)
