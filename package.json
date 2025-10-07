@@ -8,7 +8,7 @@
   "scripts": {
     "build": "./build.sh",
     "build:amvera": "./bin/amvera-build.sh",
-    "push:amvera": "git checkout amvera-master && git rebase master && git push amvera amvera-master:master",
+    "push:amvera": "git checkout amvera-master && git rebase master && git push amvera amvera-master:master --force && git checkout master",
     "format": "prettier --write \"apps/**/*.ts\" \"libs/**/*.ts\"",
 
     "start:tg": "nest start app-base-tg-bot --watch",
