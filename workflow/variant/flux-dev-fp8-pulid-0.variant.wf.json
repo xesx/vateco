@@ -15,6 +15,7 @@
     "model": { "value": "flux1-dev-fp8.safetensors" },
     "model2": { "value": "pulid_flux_v0.9.1.safetensors" },
     "filenamePrefix": { "value": "flux-pulid_" },
+    "seedType": { "value": "random" },
 
     "generationNumber": { "user": true, "label": "GenNum", "position": [0] },
     "image": { "user": true, "position": [0] },

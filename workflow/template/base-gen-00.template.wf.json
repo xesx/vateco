@@ -2,8 +2,8 @@
   "3": {
     "inputs": {
       "seed": "{{seedValue}}",
-      "steps": 20,
-      "cfg": 8,
+      "steps": "{{steps}}",
+      "cfg": "{{cfg}}",
       "sampler_name": "{{sampler}}",
       "scheduler": "{{scheduler}}",
       "denoise": 1,

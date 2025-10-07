@@ -9,7 +9,7 @@
     "seedType": { "value": "random" },
 
     "generationNumber": { "user": true, "position": [0, 0] },
-    "width": { "user": true, "value": 1024, "label": "wwwidth", "enum": [512, 768, 1024], "position": [1, 0] },
+    "width": { "user": true, "value": 1024, "label": "Width", "enum": [512, 768, 1024], "position": [1, 0] },
     "height": { "user": true, "value": 1024, "enum": [512, 768, 1024], "position": [1, 1] },
     "positivePrompt": { "user": true, "value": "green-purple cupcake with big eyes" },
     "sampler": { "user": true, "value": "euler", "position": [3, 0] },

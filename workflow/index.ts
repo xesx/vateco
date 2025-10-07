@@ -23,9 +23,21 @@ wfTemplateFiles.forEach(file => {
 
 const wfVariant: { [key: string]: any } = {}
 
+const variantIdSet = new Set<string>()
+
 wfVariantFiles.forEach(file => {
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const variant = require(file)
+
+  if (!variant.id) {
+    throw new Error(`Workflow variant id is required in file: "${file}"`)
+  }
+
+  if (variantIdSet.has(variant.id)) {
+    throw new Error(`Duplicate workflow variant id: ${variant.id} in file: "${file}"`)
+  }
+
+  variantIdSet.add(variant.id)
 
   if (!wfTemplate[variant.template]) {
     throw new Error(`Template not found for variant file: "${file}"`)

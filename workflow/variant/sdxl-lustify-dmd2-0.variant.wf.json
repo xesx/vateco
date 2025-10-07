@@ -6,11 +6,13 @@
   "models": ["lustifySDXLNSFW_endgameDMD2.safetensors"],
   "params": {
     "model": { "value": "lustifySDXLNSFW_endgameDMD2.safetensors" },
+    "seedType": { "value": "random" },
 
-    "generationNumber": { "user": true },
-    "seedType": { "user": true,  "value": "random" },
-    "positivePrompt": { "user": true,  "value": "green-purple cupcake with big eyes" },
-    "sampler": { "user": true,  "value": "euler" },
-    "scheduler": { "user": true,  "value": "normal" }
+    "generationNumber": { "user": true, "position": [0] },
+    "sampler": { "user": true,  "value": "lcm", "position": [1] },
+    "scheduler": { "user": true,  "value": "beta", "position": [1] },
+    "steps": { "user": true, "value": 4, "position": [2] },
+    "cfg": { "user": true, "value": 1, "position": [2] },
+    "positivePrompt": { "user": true,  "value": "green-purple cupcake with big eyes", "position": [10] }
   }
 }

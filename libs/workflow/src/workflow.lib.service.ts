@@ -79,6 +79,10 @@ export class WorkflowLibService {
           compiledParams[key] = rawValue
         }
 
+        if (paramInfo.type === 'number') {
+          compiledParams[key] = parseFloat(compiledParams[key].replace?.(',', '.') ?? compiledParams[key])
+        }
+
         // TODO: validate param type
       }
 

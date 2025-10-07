@@ -1,5 +1,5 @@
 type TParam = {
-  type: 'string' | 'integer' | 'boolean'
+  type: 'string' | 'integer' | 'boolean' | 'number'
   default?: string | number | boolean
   value?: string | number | boolean
   description: string
@@ -19,6 +19,12 @@ const params: Record<string, TParam> = {
     'compile': ({ params }) => {
       return params._example || 42
     },
+  },
+  cfg: {
+    'type': 'number',
+    'default': 1,
+    'description': 'CFG Scale for generation',
+    'label': 'CFG'
   },
   filenamePrefix: {
     'type': 'string',
@@ -71,14 +77,14 @@ const params: Record<string, TParam> = {
   },
   sampler: {
     'type': 'string',
-    'enum': ['euler', 'dpmpp_2m', 'heun', 'uni_pc'],
+    'enum': ['euler', 'dpmpp_2m', 'heun', 'uni_pc', 'lcm'],
     'default': 'euler',
     'description': 'The sampler to use for image generation',
     'label': 'Sampler',
   },
   scheduler: {
     'type': 'string',
-    'enum': ['normal', 'simple', 'karras', 'exponential'],
+    'enum': ['normal', 'simple', 'karras', 'exponential', 'beta'],
     'default': 'normal',
     'description': 'The scheduler to use for image generation',
     'label': 'Scheduler',
@@ -104,6 +110,12 @@ const params: Record<string, TParam> = {
       const seed = Math.abs(parseInt(params.seedValue, 10)) || 42
       return seed >>> 0
     },
+  },
+  steps: {
+    'type': 'integer',
+    'default': 20,
+    'description': 'Number of steps for the image generation process',
+    'label': 'Steps',
   },
   width: {
     'type': 'integer',
