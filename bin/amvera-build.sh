@@ -1,6 +1,4 @@
 #!/bin/bash
-apt install jq -y
-
 # Build the project
 nest build
 
@@ -20,13 +18,13 @@ response=$(curl -s -H "Authorization: Bearer $INFISICAL_TOKEN" "$API_URL")
 echo "--->>>>>>>>> response $response"
 echo "--->>>>>>>>>INFISICAL_TOKEN $INFISICAL_TOKEN"
 
-echo "$response" | jq -r '.secrets[] | "\(.secretKey)=\(.secretValue)"' > .env
+#echo "$response" | jq -r '.secrets[] | "\(.secretKey)=\(.secretValue)"' > .env
+echo "$response" \
+  | sed -n 's/.*"secretKey":"\([^"]*\)".*"secretValue":"\([^"]*\)".*/\1=\2/p' \
+  > .env
 source .env
-cat .env
 echo "Секреты загружены:"
+echo $(cat .env)
 
-echo "--->>>>>>>>>INFISICAL_TOKEN $INFISICAL_TOKEN"
-echo "--->>>>>>>>>DATABASE_URL $DATABASE_URL"
-
-npm run migrate:deploy
+DATABASE_URL=$DATABASE_URL npm run migrate:deploy
 echo "Migrations deployed successfully"
