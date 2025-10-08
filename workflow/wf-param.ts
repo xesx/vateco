@@ -62,6 +62,7 @@ const params: Record<string, TParam> = {
     'type': 'string',
     'description': 'The LoRa to use for generation',
     'label': 'Lora',
+    'default': 'N/A',
     'isComfyUiModel': true,
     'multiple': 20,
   },
