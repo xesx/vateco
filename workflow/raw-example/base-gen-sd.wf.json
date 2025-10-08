@@ -1,11 +1,11 @@
 {
   "3": {
     "inputs": {
-      "seed": null,
-      "steps": null,
-      "cfg": null,
-      "sampler_name": "{{sampler}}",
-      "scheduler": "{{scheduler}}",
+      "seed": 946104424753323,
+      "steps": 4,
+      "cfg": 1,
+      "sampler_name": "euler",
+      "scheduler": "simple",
       "denoise": 1,
       "model": [
         "11",
@@ -31,7 +31,7 @@
   },
   "4": {
     "inputs": {
-      "ckpt_name": "{{model}}"
+      "ckpt_name": "SD1.5/juggernaut_reborn.safetensors"
     },
     "class_type": "CheckpointLoaderSimple",
     "_meta": {
@@ -40,8 +40,8 @@
   },
   "5": {
     "inputs": {
-      "width": null,
-      "height": null,
+      "width": 512,
+      "height": 512,
       "batch_size": 1
     },
     "class_type": "EmptyLatentImage",
@@ -111,7 +111,7 @@
   },
   "9": {
     "inputs": {
-      "filename_prefix": "{{filenamePrefix}}",
+      "filename_prefix": "bot_img_",
       "images": [
         "8",
         0
@@ -124,7 +124,7 @@
   },
   "10": {
     "inputs": {
-      "stop_at_clip_layer": -2,
+      "stop_at_clip_layer": -1,
       "clip": [
         "4",
         1
@@ -140,17 +140,11 @@
       "PowerLoraLoaderHeaderWidget": {
         "type": "PowerLoraLoaderHeaderWidget"
       },
-      "lora_1": {
-        "on": false,
-        "lora": "SDXL\\RealSkin_xxXL_v1.safetensors",
-        "strength": 0.5
-      },
-      "lora_2": {
-        "on": true,
-        "lora": "SDXL\\epiCRealismXL-KiSSEnhancer_Lora.safetensors",
-        "strength": 0.5
-      },
       "➕ Add Lora": "",
+      "model": [
+        "4",
+        0
+      ],
       "clip": [
         "10",
         0
@@ -163,7 +157,7 @@
   },
   "13": {
     "inputs": {
-      "value": "{{positivePrompt}}",
+      "value": "green-purple cupcake with big eyes",
       "speak_and_recognation": {
         "__value__": [
           false,
@@ -178,7 +172,7 @@
   },
   "14": {
     "inputs": {
-      "value": "{{negativePrompt}}",
+      "value": "low quality, watermark",
       "speak_and_recognation": {
         "__value__": [
           false,

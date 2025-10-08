@@ -151,6 +151,10 @@
       "lora_9": { "on": "{{loraEnabled9}}", "lora": "{{lora9}}", "strength": "{{loraStrength9}}" },
       "lora_10": { "on": "{{loraEnabled10}}", "lora": "{{lora10}}", "strength": "{{loraStrength10}}" },
       "➕ Add Lora": "",
+      "model": [
+        "4",
+        0
+      ],
       "clip": [
         "10",
         0
