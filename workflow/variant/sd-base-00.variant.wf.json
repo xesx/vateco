@@ -1,0 +1,37 @@
+{
+  "name": "SD Base Generation",
+  "id": "42",
+  "tags": ["sdxl", "sd15","own-instance"],
+  "template": "base-gen-01",
+  "models": [],
+  "params": {
+    "seedType": { "value": "random" },
+
+    "generationNumber": { "user": true, "position": [0, 0] },
+
+    "width": { "user": true, "value": 1024, "enum": [512, 768, 1024], "position": [1, 0] },
+    "height": { "user": true, "value": 1024, "enum": [512, 768, 1024], "position": [1, 1] },
+
+    "clipSkip": { "user": true, "value": -1, "position": [2] },
+    "steps": { "user": true, "value": 4, "position": [2] },
+    "cfg": { "user": true, "value": 1, "position": [2] },
+
+    "sampler": { "user": true, "value": "euler", "position": [3, 0] },
+    "scheduler": { "user": true, "value": "simple", "position": [3, 1] },
+
+    "model": {
+      "user": true,
+      "position": [5, 0],
+      "value": "juggernaut_reborn.safetensors",
+      "enum": [
+        "juggernaut_reborn.safetensors",
+        "lyriel_v16.safetensors",
+        "juggernautXL_juggXIByRundiffusion.safetensors",
+        "lustifySDXLNSFW_endgameDMD2.safetensors"
+      ]
+    },
+
+    "negativePrompt": { "user": true, "value": "low quality, watermark", "position": [10] },
+    "positivePrompt": { "user": true,  "value": "green-purple cupcake with big eyes", "position": [11] }
+  }
+}

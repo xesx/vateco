@@ -1,0 +1,194 @@
+{
+  "3": {
+    "inputs": {
+      "seed": "{{seedValue}}",
+      "steps": "{{steps}}",
+      "cfg": "{{cfg}}",
+      "sampler_name": "{{sampler}}",
+      "scheduler": "{{scheduler}}",
+      "denoise": 1,
+      "model": [
+        "11",
+        0
+      ],
+      "positive": [
+        "6",
+        0
+      ],
+      "negative": [
+        "7",
+        0
+      ],
+      "latent_image": [
+        "5",
+        0
+      ]
+    },
+    "class_type": "KSampler",
+    "_meta": {
+      "title": "KSampler"
+    }
+  },
+  "4": {
+    "inputs": {
+      "ckpt_name": "{{model}}"
+    },
+    "class_type": "CheckpointLoaderSimple",
+    "_meta": {
+      "title": "Load Checkpoint"
+    }
+  },
+  "5": {
+    "inputs": {
+      "width": "{{width}}",
+      "height": "{{height}}",
+      "batch_size": 1
+    },
+    "class_type": "EmptyLatentImage",
+    "_meta": {
+      "title": "Empty Latent Image"
+    }
+  },
+  "6": {
+    "inputs": {
+      "text": [
+        "13",
+        0
+      ],
+      "speak_and_recognation": {
+        "__value__": [
+          false,
+          true
+        ]
+      },
+      "clip": [
+        "11",
+        1
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "CLIP Text Encode (Prompt)"
+    }
+  },
+  "7": {
+    "inputs": {
+      "text": [
+        "14",
+        0
+      ],
+      "speak_and_recognation": {
+        "__value__": [
+          false,
+          true
+        ]
+      },
+      "clip": [
+        "11",
+        1
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "CLIP Text Encode (Prompt)"
+    }
+  },
+  "8": {
+    "inputs": {
+      "samples": [
+        "3",
+        0
+      ],
+      "vae": [
+        "4",
+        2
+      ]
+    },
+    "class_type": "VAEDecode",
+    "_meta": {
+      "title": "VAE Decode"
+    }
+  },
+  "9": {
+    "inputs": {
+      "filename_prefix": "{{filenamePrefix}}",
+      "images": [
+        "8",
+        0
+      ]
+    },
+    "class_type": "SaveImage",
+    "_meta": {
+      "title": "Save Image"
+    }
+  },
+  "10": {
+    "inputs": {
+      "stop_at_clip_layer": "{{clipSkip}}",
+      "clip": [
+        "4",
+        1
+      ]
+    },
+    "class_type": "CLIPSetLastLayer",
+    "_meta": {
+      "title": "CLIP SKIP"
+    }
+  },
+  "11": {
+    "inputs": {
+      "PowerLoraLoaderHeaderWidget": {
+        "type": "PowerLoraLoaderHeaderWidget"
+      },
+      "lora_1": { "on": "{{loraEnabled1}}", "lora": "{{lora1}}", "strength": "{{loraStrength}}" },
+      "lora_2": { "on": "{{loraEnabled2}}", "lora": "{{lora2}}", "strength": "{{loraStrength2}}" },
+      "lora_3": { "on": "{{loraEnabled3}}", "lora": "{{lora3}}", "strength": "{{loraStrength3}}" },
+      "lora_4": { "on": "{{loraEnabled4}}", "lora": "{{lora4}}", "strength": "{{loraStrength4}}" },
+      "lora_5": { "on": "{{loraEnabled5}}", "lora": "{{lora5}}", "strength": "{{loraStrength5}}" },
+      "lora_6": { "on": "{{loraEnabled6}}", "lora": "{{lora6}}", "strength": "{{loraStrength6}}" },
+      "lora_7": { "on": "{{loraEnabled7}}", "lora": "{{lora7}}", "strength": "{{loraStrength7}}" },
+      "lora_8": { "on": "{{loraEnabled8}}", "lora": "{{lora8}}", "strength": "{{loraStrength8}}" },
+      "lora_9": { "on": "{{loraEnabled9}}", "lora": "{{lora9}}", "strength": "{{loraStrength9}}" },
+      "lora_10": { "on": "{{loraEnabled10}}", "lora": "{{lora10}}", "strength": "{{loraStrength10}}" },
+      "➕ Add Lora": "",
+      "clip": [
+        "10",
+        0
+      ]
+    },
+    "class_type": "Power Lora Loader (rgthree)",
+    "_meta": {
+      "title": "Power Lora Loader (rgthree)"
+    }
+  },
+  "13": {
+    "inputs": {
+      "value": "{{positivePrompt}}",
+      "speak_and_recognation": {
+        "__value__": [
+          false,
+          true
+        ]
+      }
+    },
+    "class_type": "PrimitiveStringMultiline",
+    "_meta": {
+      "title": "__wf_positive__"
+    }
+  },
+  "14": {
+    "inputs": {
+      "value": "{{negativePrompt}}",
+      "speak_and_recognation": {
+        "__value__": [
+          false,
+          true
+        ]
+      }
+    },
+    "class_type": "PrimitiveStringMultiline",
+    "_meta": {
+      "title": "__wf_negative__"
+    }
+  }
+}

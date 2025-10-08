@@ -5,6 +5,8 @@ import { Injectable, Logger } from '@nestjs/common'
 
 import * as lib from '@lib'
 
+import { HelperAppCloudCronService } from '../helper.app-cloud-cron.service'
+
 type TWorkflowTask = {
   workflowId: string
   count?: number
@@ -16,6 +18,8 @@ export class WorkflowRunCronJob {
   private readonly l = new Logger(WorkflowRunCronJob.name)
 
   constructor(
+    private readonly helper: HelperAppCloudCronService,
+
     private readonly comfyuilib: lib.ComfyUiLibService,
     private readonly wflib: lib.WorkflowLibService,
     private readonly msglib: lib.MessageLibService,
@@ -59,7 +63,20 @@ export class WorkflowRunCronJob {
         continue
       }
 
-      const message = this.msglib.genCodeMessage('Generation in pogress...')
+      const modelsForDownload: string[] = []
+
+      Object.entries(workflowParams || {}).forEach(([key, value]) => {
+        if (workflow.params[key].isComfyUiModel) {
+          workflow.params[key].default = value
+          modelsForDownload.push(value)
+        }
+      })
+
+      for (const modelName of modelsForDownload) {
+        await this.helper.loadModel(modelName)
+      }
+
+      const message = this.msglib.genCodeMessage('Generation in progress...')
       this.tgbotlib.sendMessage({ chatId: TG_CHAT_ID, text: message })
 
       for (let i = 0; i < count; i++) {

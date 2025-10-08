@@ -8,6 +8,7 @@ import { MessagesLibModule } from '@libs/message'
 import * as lib from '@lib'
 
 import { CloudCronService } from './app-cloud-cron.service'
+import { HelperAppCloudCronService } from './helper.app-cloud-cron.service'
 import * as job from './job'
 
 @Module({
@@ -26,6 +27,7 @@ import * as job from './job'
   ],
   providers: [
     CloudCronService,
+    HelperAppCloudCronService,
     job.WorkflowLoadCronJob,
     job.WorkflowRunCronJob,
     job.CheckOutputCronJob,

@@ -6,11 +6,14 @@ export type TWorkflow = {
 }
 
 export type TWorkflowParamCommon = {
-  type: 'string' | 'number' | 'boolean' | 'array' | 'object' | 'integer'
-  default?: any
+  type: 'string' | 'integer' | 'boolean' | 'number'
+  default?: string | number | boolean
+  value?: string | number | boolean
   description: string
   label: string
-  enum?: any[]
+  enum?: string[]
+  multiple?: number
+  isComfyUiModel?: boolean
   compile?: (params: Record<string, any>) => any
 }
 

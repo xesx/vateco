@@ -6,6 +6,7 @@ type TParam = {
   label: string
   enum?: string[]
   multiple?: number
+  isComfyUiModel?: boolean
   compile?: (params: Record<string, any>) => any
 }
 
@@ -25,6 +26,19 @@ const params: Record<string, TParam> = {
     'default': 1,
     'description': 'CFG Scale for generation',
     'label': 'CFG'
+  },
+  clipSkip: {
+    'type': 'integer',
+    'default': 1,
+    'description': 'CLIP Skip value for generation',
+    'label': 'CLIP Skip',
+    'compile': (params) => {
+      let clipSkip = parseInt(params.clipSkip, 10)
+      clipSkip = Math.min(Math.max(clipSkip, 1), 24) // between 1 and 14
+      clipSkip = -clipSkip // make it negative
+
+      return clipSkip
+    },
   },
   filenamePrefix: {
     'type': 'string',
@@ -48,19 +62,28 @@ const params: Record<string, TParam> = {
     'type': 'string',
     'description': 'The LoRa to use for generation',
     'label': 'Lora',
-    'multiple': 5,
+    'isComfyUiModel': true,
+    'multiple': 20,
   },
   loraEnabled: {
     'type': 'boolean',
     'description': 'Is LoRa enabled for generation',
     'default': false,
     'label': 'Lora enabled',
-    'multiple': 5,
+    'multiple': 20,
+  },
+  loraStrength: {
+    'type': 'number',
+    'description': 'The LoRa strength to use for generation',
+    'default': 1.0,
+    'label': 'Lora Strength',
+    'multiple': 20,
   },
   model: {
     'type': 'string',
     'description': 'The model to use for generation',
     'label': 'Model',
+    'isComfyUiModel': true,
     'multiple': 5,
   },
   negativePrompt: {
