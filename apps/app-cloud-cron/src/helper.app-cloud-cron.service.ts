@@ -51,11 +51,14 @@ export class HelperAppCloudCronService {
 
     const [repo] = Object.keys(model.huggingfaceLink)
 
-    await this.hflib.download({
+    await this.hflib.downloadWithRetry({
       repo,
       filename: model.huggingfaceLink[repo],
       dir: dstDir,
+      retries: 5,
+      delayMs: 10000,
     })
+
     fs.renameSync(`${dstDir}/${model.huggingfaceLink[repo]}`, fullFileName)
 
     message = this.msglib.genCodeMessage(`Download "${modelName}" complete`)

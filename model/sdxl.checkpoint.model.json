@@ -2,7 +2,7 @@
   "juggernautXL_juggXIByRundiffusion.safetensors": {
     "comfyUiDir": "checkpoints",
     "huggingfaceLink": {
-      "JCTN/Juggernaut": "juggernaut_reborn.safetensors"
+      "misri/juggernautXL_juggXIByRundiffusion": "juggernautXL_juggXIByRundiffusion.safetensors"
     }
   },
   "lustifySDXLNSFW_endgameDMD2.safetensors": {

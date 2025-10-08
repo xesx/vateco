@@ -30,4 +30,20 @@ export class HuggingfaceLibService {
       })
     })
   }
+
+  async downloadWithRetry ({ repo = 'alalarty/models2', filename, dir, retries = 3, delayMs = 5000 }) {
+    for (let attempt = 1; attempt <= retries; attempt++) {
+      try {
+        await this.download({ repo, filename, dir })
+        return // Success, exit the function
+      } catch (error) {
+        if (attempt >= retries) {
+          throw error // Rethrow the error if it's the last attempt
+        }
+        // Wait before retrying
+        console.log('huggingfaceLib_downloadWithRetry_91 Error downloading file, retrying...', error)
+        await new Promise(res => setTimeout(res, delayMs))
+      }
+    }
+  }
 }
