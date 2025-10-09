@@ -44,31 +44,43 @@ export class HandleOwnITgBot {
   }
 
   textMessage (ctx, next) {
-    if (ctx.session.way === 'own-instance') {
-      const message = ctx.message.text
-        .replace(/\r\n/g, '\n')     // Windows → Unix переносы
-        .replace(/\n+/g, ' ')       // убираем лишние переводы строк
-        .replace(/\s+/g, ' ')       // схлопываем все пробелы/табы
-        .trim()
+    if (ctx.session.way !== 'own-instance') {
+      return next()
+    }
 
-      if (message === '🚀 Generate') {
-        return this.actionWorkflowRun(ctx)
-      }
+    const message = ctx.message.text
+      .replace(/\r\n/g, '\n')     // Windows → Unix переносы
+      .replace(/\n+/g, ' ')       // убираем лишние переводы строк
+      .replace(/\s+/g, ' ')       // схлопываем все пробелы/табы
+      .trim()
 
-      if (ctx.session.inputWaiting) {
-        const paramName = ctx.session.inputWaiting
-        ctx.session.workflowParams[paramName] = message
+    if (message === '🚀 Generate') {
+      return this.actionWorkflowRun(ctx)
+    }
 
-        delete ctx.session.inputWaiting
+    if (message === '🎛 Params') {
+      return this.view.showWorkflowRunMenu(ctx)
+    }
 
-        return this.view.showWorkflowRunMenu(ctx)
-      }
+    if (message === '📝 Show prompt') {
+      const prompt = ctx.session.workflowParams?.positivePrompt || 'N/A'
+      const message = this.msglib.genCodeMessage(prompt)
+      return this.tgbotlib.reply(ctx, message , { parse_mode: 'HTML' })
+    }
 
-      if (ctx.session.workflowParams?.positivePrompt) {
-        ctx.session.workflowParams.positivePrompt = message
-        return this.actionWorkflowRun(ctx)
-        // return this.view.showWorkflowRunMenu(ctx)
-      }
+    if (ctx.session.inputWaiting) {
+      const paramName = ctx.session.inputWaiting
+      ctx.session.workflowParams[paramName] = message
+
+      delete ctx.session.inputWaiting
+
+      return this.view.showWorkflowRunMenu(ctx)
+    }
+
+    if (ctx.session.workflowParams?.positivePrompt) {
+      ctx.session.workflowParams.positivePrompt = message
+      return this.actionWorkflowRun(ctx)
+      // return this.view.showWorkflowRunMenu(ctx)
     }
 
     return next()

@@ -14,6 +14,7 @@ export class TestCli {
   constructor(
     private readonly vastlib: lib.VastLibService,
     private readonly comfyuilib: lib.ComfyUiLibService,
+    private readonly tgbotlib: lib.TgBotLibService,
   ) {}
 
   register(program) {
@@ -23,9 +24,9 @@ export class TestCli {
       .action(async (name) => {
         console.log(`Привет, ${name}!`)
 
-        const imagePath = './workspace/ComfyUI_00018_.png'
-        const all = await sharp(imagePath).metadata()
-        console.log('\x1b[36m', 'all', all?.comments?.find?.(i => i.keyword === 'prompt')?.text, '\x1b[0m')
+        // const imagePath = './workspace/ComfyUI_00018_.png'
+        // const all = await sharp(imagePath).metadata()
+        // console.log('\x1b[36m', 'all', all?.comments?.find?.(i => i.keyword === 'prompt')?.text, '\x1b[0m')
 
 
         // const instance = await this.vastlib.showInstance({ instanceId: 26522082 })
@@ -43,6 +44,13 @@ export class TestCli {
         //   type: 'download-comfyui-v0',
         //   data,
         // })
+
+        await this.tgbotlib.sendMessage({
+          chatId: '185857068',
+          text: `<blockquote expandable><pre>Expandable block quotation started\\nExpandable block quotation continued\\nExpandable block quotation continued\\nHidden by default part of the block quotation started\\nExpandable block quotation continued\\nThe last line of the block quotation</pre></blockquote>`,
+          parseMode: 'HTML'
+        })
+
         //
         // console.log('\x1b[36m', 'message', message, '\x1b[0m')
       })

@@ -21,6 +21,12 @@ export class CheckOutputCronJob {
       return
     }
 
+    const archivePath = join(OUTPUT_DIR, 'archive')
+    if (!fs.existsSync(archivePath)) {
+      fs.mkdirSync(archivePath)
+      l.log(`handleCheckOutputJob_24 Created archive directory: ${archivePath}`)
+    }
+
     const images = fs.readdirSync(OUTPUT_DIR)
       .filter(file => /\.(png|jpg|jpeg|gif|bmp|webp)$/i.test(file))
 
@@ -52,11 +58,14 @@ export class CheckOutputCronJob {
       l.log(`handleCheckOutputJob_45 Sending image ${image} to Telegram chat ${TG_CHAT_ID}`)
       await this.tgbotlib.sendPhoto({ chatId: TG_CHAT_ID, photo: buffer })
 
-      fs.unlinkSync(imagePath)
-      l.log(`handleCheckOutputJob_99 Deleted image after reading: ${image}`)
+      // fs.unlinkSync(imagePath)
+      const archivedImagePath = join(archivePath, image)
+      fs.renameSync(imagePath, archivedImagePath)
+
+      l.log(`handleCheckOutputJob_99 archive image after sending: ${image}`)
     }
 
-    const replyKeyboard = this.tgbotlib.generateReplyOneTimeKeyboard([['🚀 Generate']])
+    const replyKeyboard = this.tgbotlib.generateReplyOneTimeKeyboard([['🚀 Generate'], ['🎛 Params', '📝 Show prompt']])
     await this.tgbotlib.sendReplyOneTimeKeyboard({
       chatId: TG_CHAT_ID,
       keyboard: replyKeyboard,

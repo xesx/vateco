@@ -43,6 +43,16 @@ export class HandleRunpodWfTgBot {
         return this.actionWorkflowRun(ctx)
       }
 
+      if (message === '🎛 Params') {
+        return this.view.showWorkflowRunMenu(ctx)
+      }
+
+      if (message === '📝 Show prompt') {
+        const prompt = ctx.session.workflowParams?.positivePrompt || 'N/A'
+        const message = this.msglib.genCodeMessage(prompt)
+        return this.tgbotlib.reply(ctx, message , { parse_mode: 'HTML' })
+      }
+
       if (ctx.session.inputWaiting) {
         const paramName = ctx.session.inputWaiting
         ctx.session.workflowParams[paramName] = message
@@ -95,7 +105,7 @@ export class HandleRunpodWfTgBot {
       await ctx.sendPhoto({ source: imgBuffer, filename: 'image' }, { caption: 'Here is your generated image.' })
     }
 
-    const replyKeyboard = this.tgbotlib.generateReplyOneTimeKeyboard([['🚀 Generate']])
+    const replyKeyboard = this.tgbotlib.generateReplyOneTimeKeyboard([['🚀 Generate'], ['🎛 Params', '📝 Show prompt']])
     ctx.sendMessage('Generation completed! What would you like more? ⤵', replyKeyboard)
   }
 

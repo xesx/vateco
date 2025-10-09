@@ -33,6 +33,7 @@ export class TgBotLibService {
       if (e.description?.includes("message is not modified")) {
         // ничего не делаем
       } else {
+        console.log('TgBotLibService_reply_13 Error:', e.message, e.description)
         throw e
       }
     }
@@ -86,7 +87,7 @@ export class TgBotLibService {
       const response = await axios.post(url, { 'chat_id': chatId, text, parse_mode: parseMode, })
       return response.data?.result?.message_id
     } catch (error) {
-      console.error('tgbotlib_sendMessage_13 Error sending message:', error.message)
+      console.error('tgbotlib_sendMessage_13 Error sending message:', error)
       // throw error
     }
   }
