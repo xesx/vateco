@@ -80,6 +80,12 @@ export class TgBotLibService {
       .oneTime()  // спрячется после выбора
   }
 
+  generateReplyKeyboard (options: string[][]){
+    return Markup.keyboard(options)
+      .resize()   // подгоняет под экран
+      .oneTime()  // спрячется после выбора
+  }
+
   async sendMessage({ chatId, text, parseMode = 'HTML' }) {
     const url = `${this.baseUrl}/sendMessage`
 
@@ -104,14 +110,14 @@ export class TgBotLibService {
     }
   }
 
-  async sendReplyOneTimeKeyboard({ chatId, keyboard,  text = '⤵' }) {
+  async sendKeyboard({ chatId, keyboard,  text = '⤵' }) {
     const url = `${this.baseUrl}/sendMessage`
 
     try {
       const response = await axios.post(url, { 'chat_id': chatId, text, ...keyboard })
       return response.data.result.message_id
     } catch (error) {
-      console.error('tgbotlib_sendReplyOneTimeKeyboard_13 Error sending message:', error)
+      console.error('tgbotlib_sendKeyboard_13 Error sending message:', error)
       // throw error;
     }
   }

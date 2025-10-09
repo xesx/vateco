@@ -18,6 +18,7 @@ export class ViewRunpodWfTgBot {
 
     delete ctx.session.workflowId
     ctx.session.workflowParams = {}
+    this.tgbotlib.removeReplyKeyboard(ctx)
 
     const workflows = this.wflib.findWorkflowsByTags({ tags: ['runpod'] })
 

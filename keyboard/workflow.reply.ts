@@ -1,0 +1,1 @@
+export const WORKFLOW_REPLY = [['🚀 Generate'], ['🎛 Params', '📝 Show prompt']] as [string][]

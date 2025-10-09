@@ -374,5 +374,8 @@ export class HandleOwnITgBot {
     })
 
     this.view.showWorkflowRunMenu(ctx)
+
+    const replyKeyboard = this.tgbotlib.generateReplyKeyboard(kb.WORKFLOW_REPLY)
+    ctx.sendMessage('Use for fast work ⤵', replyKeyboard)
   }
 }

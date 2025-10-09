@@ -5,7 +5,7 @@ import * as lib from '@lib'
 import { RunpodWfContext, RunpodWfMatchContext } from './types'
 import { ViewRunpodWfTgBot } from './view.runpod-wf.tg-bot'
 
-// import * as kb from '@kb'
+import * as kb from '@kb'
 // import { GEOLOCATION } from '@const'
 
 @Injectable()
@@ -104,9 +104,6 @@ export class HandleRunpodWfTgBot {
 
       await ctx.sendPhoto({ source: imgBuffer, filename: 'image' }, { caption: 'Here is your generated image.' })
     }
-
-    const replyKeyboard = this.tgbotlib.generateReplyOneTimeKeyboard([['🚀 Generate'], ['🎛 Params', '📝 Show prompt']])
-    ctx.sendMessage('Generation completed! What would you like more? ⤵', replyKeyboard)
   }
 
   actionWorkflowParamSelect (ctx: RunpodWfMatchContext) {
@@ -161,5 +158,8 @@ export class HandleRunpodWfTgBot {
     ctx.session.workflowParams = this.wflib.getWfParamsForSession({ workflowId })
 
     this.view.showWorkflowRunMenu(ctx)
+
+    const replyKeyboard = this.tgbotlib.generateReplyKeyboard(kb.WORKFLOW_REPLY)
+    ctx.sendMessage('Use for fast work ⤵', replyKeyboard)
   }
 }

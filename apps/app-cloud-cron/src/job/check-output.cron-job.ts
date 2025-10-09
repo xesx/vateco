@@ -58,18 +58,10 @@ export class CheckOutputCronJob {
       l.log(`handleCheckOutputJob_45 Sending image ${image} to Telegram chat ${TG_CHAT_ID}`)
       await this.tgbotlib.sendPhoto({ chatId: TG_CHAT_ID, photo: buffer })
 
-      // fs.unlinkSync(imagePath)
       const archivedImagePath = join(archivePath, image)
       fs.renameSync(imagePath, archivedImagePath)
 
       l.log(`handleCheckOutputJob_99 archive image after sending: ${image}`)
     }
-
-    const replyKeyboard = this.tgbotlib.generateReplyOneTimeKeyboard([['🚀 Generate'], ['🎛 Params', '📝 Show prompt']])
-    await this.tgbotlib.sendReplyOneTimeKeyboard({
-      chatId: TG_CHAT_ID,
-      keyboard: replyKeyboard,
-      text: 'Generation completed! What would you like more? ⤵',
-    })
   }
 }
