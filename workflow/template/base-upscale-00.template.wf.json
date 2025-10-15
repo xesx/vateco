@@ -1,7 +1,7 @@
 {
   "56": {
     "inputs": {
-      "stop_at_clip_layer": -2,
+      "stop_at_clip_layer": "{{clipSkip}}",
       "clip": [
         "78",
         1
@@ -78,8 +78,8 @@
   "440": {
     "inputs": {
       "seed": "{{seedValue}}",
-      "steps": 8,
-      "cfg": 1.2,
+      "steps": "{{steps}}",
+      "cfg": "{{cfg}}",
       "sampler_name": "{{sampler}}",
       "scheduler": "{{scheduler}}",
       "denoise": 0.35,
@@ -124,7 +124,7 @@
   "447": {
     "inputs": {
       "upscale_method": "bicubic",
-      "width": 1400,
+      "width": "{{width}}",
       "height": 0,
       "crop": "disabled",
       "image": [

@@ -6,14 +6,22 @@
   "models": ["lustifySDXLNSFW_endgameDMD2.safetensors"],
   "params": {
     "model": { "value": "lustifySDXLNSFW_endgameDMD2.safetensors" },
-    "generationNumber": { "value": 1 },
     "filenamePrefix": { "value": "upscale-sdxl-lustify-dmd2_" },
     "seedType": { "value": "random" },
 
-    "image": { "user": true, "position": [0] },
-    "sampler": { "user": true,  "value": "lcm", "position": [1] },
-    "scheduler": { "user": true,  "value": "normal", "position": [1] },
-    "negativePrompt": { "user": true, "position": [9] },
-    "positivePrompt": { "user": true,  "value": "prompt for upscale", "position": [10] }
+    "generationNumber": { "user": true, "value": 1, "position": [0] },
+
+    "image": { "user": true, "position": [10] },
+    "width": { "user": true, "value": 1400, "enum": [1400, 1600, 1800], "position": [10] },
+
+    "sampler": { "user": true,  "value": "lcm", "position": [20] },
+    "scheduler": { "user": true,  "value": "normal", "position": [20] },
+
+    "steps": { "user": true, "value": 8, "position": [30] },
+    "cfg": { "user": true, "value": 1.2, "position": [30] },
+    "clipSkip": { "user": true, "value": -2, "position": [30] },
+
+    "negativePrompt": { "user": true, "position": [50] },
+    "positivePrompt": { "user": true,  "value": "prompt for upscale", "position": [50] }
   }
 }

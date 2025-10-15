@@ -83,7 +83,7 @@ export class TgBotLibService {
   generateReplyKeyboard (options: string[][]){
     return Markup.keyboard(options)
       .resize()   // подгоняет под экран
-      .oneTime()  // спрячется после выбора
+      // .oneTime()  // спрячется после выбора
   }
 
   async sendMessage({ chatId, text, parseMode = 'HTML' }) {
