@@ -1,5 +1,5 @@
 {
-  "name": "upscale-sdxl-lustify-dmd2-0",
+  "name": "upscale-illustrious-dmd2-0",
   "id": "301",
   "tags": ["sdxl", "own-instance"],
   "template": "base-upscale-00",
@@ -13,6 +13,7 @@
 
     "image": { "user": true, "position": [10] },
     "width": { "user": true, "value": 1400, "enum": [1400, 1600, 1800], "position": [10, 0] },
+    "denoise": { "user": true, "value": 0.5, "position": [10] },
 
     "sampler": { "user": true,  "value": "euler_ancestral", "position": [20] },
     "scheduler": { "user": true,  "value": "karras", "position": [20] },

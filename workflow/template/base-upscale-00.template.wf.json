@@ -82,7 +82,7 @@
       "cfg": "{{cfg}}",
       "sampler_name": "{{sampler}}",
       "scheduler": "{{scheduler}}",
-      "denoise": 0.35,
+      "denoise": "{{denoise}}",
       "model": [
         "78",
         0

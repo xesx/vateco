@@ -40,11 +40,26 @@ const params: Record<string, TParam> = {
       return clipSkip
     },
   },
+  denoise: {
+    'type': 'number',
+    'default': 1,
+    'description': 'Denoise strength for image-to-image generation',
+    'label': 'Denoise',
+    'compile': (params) => {
+      let denoise = parseFloat(params.clipSkip) || 0
+      denoise = Math.min(Math.abs(denoise), 1) // between 0 and 1
+
+      return denoise
+    },
+  },
   filenamePrefix: {
     'type': 'string',
     'default': 'bot_img_',
     'description': 'Prefix for the generated image filenames',
     'label': 'Filename Prefix',
+    'compile': (params) => {
+      return `${params.filenamePrefix}${Date.now()}_`
+    },
   },
   generationNumber: {
     'type': 'integer',
