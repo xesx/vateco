@@ -1,0 +1,338 @@
+{
+  "62": {
+    "inputs": {
+      "image": "100_195.239.111.3_15414.jpg"
+    },
+    "class_type": "LoadImage",
+    "_meta": {
+      "title": "Load Image"
+    }
+  },
+  "99": {
+    "inputs": {
+      "text": "Change the car color to white,add custom car wrap black stripes on the car door,Make weather snowy,everything covered in snow,turn on the car lights,Change time to sunset,",
+      "clip": [
+        "282",
+        1
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "CLIP Text Encode (Prompt)"
+    }
+  },
+  "234": {
+    "inputs": {
+      "image": [
+        "62",
+        0
+      ]
+    },
+    "class_type": "FluxKontextImageScale",
+    "_meta": {
+      "title": "FluxKontextImageScale"
+    }
+  },
+  "235": {
+    "inputs": {
+      "pixels": [
+        "303",
+        0
+      ],
+      "vae": [
+        "279",
+        0
+      ]
+    },
+    "class_type": "VAEEncode",
+    "_meta": {
+      "title": "VAE Encode"
+    }
+  },
+  "236": {
+    "inputs": {
+      "conditioning": [
+        "99",
+        0
+      ],
+      "latent": [
+        "235",
+        0
+      ]
+    },
+    "class_type": "ReferenceLatent",
+    "_meta": {
+      "title": "ReferenceLatent"
+    }
+  },
+  "248": {
+    "inputs": {
+      "noise": [
+        "259",
+        0
+      ],
+      "guider": [
+        "249",
+        0
+      ],
+      "sampler": [
+        "251",
+        0
+      ],
+      "sigmas": [
+        "252",
+        0
+      ],
+      "latent_image": [
+        "341",
+        0
+      ]
+    },
+    "class_type": "SamplerCustomAdvanced",
+    "_meta": {
+      "title": "SamplerCustomAdvanced"
+    }
+  },
+  "249": {
+    "inputs": {
+      "model": [
+        "275",
+        0
+      ],
+      "conditioning": [
+        "290",
+        0
+      ]
+    },
+    "class_type": "BasicGuider",
+    "_meta": {
+      "title": "BasicGuider"
+    }
+  },
+  "250": {
+    "inputs": {
+      "samples": [
+        "248",
+        0
+      ],
+      "vae": [
+        "279",
+        0
+      ]
+    },
+    "class_type": "VAEDecode",
+    "_meta": {
+      "title": "VAE Decode"
+    }
+  },
+  "251": {
+    "inputs": {
+      "dishonesty_factor": -0.04000000000000001,
+      "start_percent": 0.25000000000000006,
+      "end_percent": 0.7000000000000002,
+      "sampler": [
+        "253",
+        0
+      ]
+    },
+    "class_type": "LyingSigmaSampler",
+    "_meta": {
+      "title": "Lying Sigma Sampler"
+    }
+  },
+  "252": {
+    "inputs": {
+      "scheduler": "simple",
+      "steps": 15,
+      "denoise": 1,
+      "model": [
+        "275",
+        0
+      ]
+    },
+    "class_type": "BasicScheduler",
+    "_meta": {
+      "title": "BasicScheduler"
+    }
+  },
+  "253": {
+    "inputs": {
+      "sampler_name": "euler"
+    },
+    "class_type": "KSamplerSelect",
+    "_meta": {
+      "title": "KSamplerSelect"
+    }
+  },
+  "259": {
+    "inputs": {
+      "noise_seed": 465250420185559
+    },
+    "class_type": "RandomNoise",
+    "_meta": {
+      "title": "RandomNoise"
+    }
+  },
+  "275": {
+    "inputs": {
+      "max_shift": 1.15,
+      "base_shift": 0.5,
+      "width": [
+        "293",
+        0
+      ],
+      "height": [
+        "293",
+        1
+      ],
+      "model": [
+        "281",
+        0
+      ]
+    },
+    "class_type": "ModelSamplingFlux",
+    "_meta": {
+      "title": "ModelSamplingFlux"
+    }
+  },
+  "277": {
+    "inputs": {
+      "unet_name": "flux1-dev-kontext_fp8_scaled.safetensors",
+      "weight_dtype": "default"
+    },
+    "class_type": "UNETLoader",
+    "_meta": {
+      "title": "Load Diffusion Model"
+    }
+  },
+  "278": {
+    "inputs": {
+      "clip_name1": "clip_l.safetensors",
+      "clip_name2": "t5xxl_fp8_e4m3fn.safetensors",
+      "type": "flux",
+      "device": "default"
+    },
+    "class_type": "DualCLIPLoader",
+    "_meta": {
+      "title": "DualCLIPLoader"
+    }
+  },
+  "279": {
+    "inputs": {
+      "vae_name": "flux-vae-fp-16.safetensors"
+    },
+    "class_type": "VAELoader",
+    "_meta": {
+      "title": "Load VAE"
+    }
+  },
+  "281": {
+    "inputs": {
+      "max_shift": 1.15,
+      "base_shift": 0.5000000000000001,
+      "width": 1024,
+      "height": 1024,
+      "model": [
+        "282",
+        0
+      ]
+    },
+    "class_type": "ModelSamplingFlux",
+    "_meta": {
+      "title": "ModelSamplingFlux"
+    }
+  },
+  "282": {
+    "inputs": {
+      "PowerLoraLoaderHeaderWidget": {
+        "type": "PowerLoraLoaderHeaderWidget"
+      },
+      "lora_1": {
+        "on": false,
+        "lora": "KONTEXT\\Dtpr_Photorealistic【style】_flux_kontext_lora_v1-PAseer.safetensors",
+        "strength": 1
+      },
+      "➕ Add Lora": "",
+      "model": [
+        "277",
+        0
+      ],
+      "clip": [
+        "278",
+        0
+      ]
+    },
+    "class_type": "Power Lora Loader (rgthree)",
+    "_meta": {
+      "title": "Power Lora Loader (rgthree)"
+    }
+  },
+  "290": {
+    "inputs": {
+      "guidance": 2.5,
+      "conditioning": [
+        "236",
+        0
+      ]
+    },
+    "class_type": "FluxGuidance",
+    "_meta": {
+      "title": "FluxGuidance"
+    }
+  },
+  "293": {
+    "inputs": {
+      "image": [
+        "303",
+        0
+      ]
+    },
+    "class_type": "Get resolution [Crystools]",
+    "_meta": {
+      "title": "🪛 Get resolution"
+    }
+  },
+  "302": {
+    "inputs": {
+      "filename_prefix": "kontext-",
+      "images": [
+        "250",
+        0
+      ]
+    },
+    "class_type": "SaveImage",
+    "_meta": {
+      "title": "Save Image"
+    }
+  },
+  "303": {
+    "inputs": {
+      "upscale_method": "lanczos",
+      "scale_by": 1.0000000000000002,
+      "image": [
+        "234",
+        0
+      ]
+    },
+    "class_type": "ImageScaleBy",
+    "_meta": {
+      "title": "Upscale Image By"
+    }
+  },
+  "341": {
+    "inputs": {
+      "pixels": [
+        "303",
+        0
+      ],
+      "vae": [
+        "279",
+        0
+      ]
+    },
+    "class_type": "VAEEncode",
+    "_meta": {
+      "title": "VAE Encode"
+    }
+  }
+}
