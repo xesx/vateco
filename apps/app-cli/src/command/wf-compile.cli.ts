@@ -20,16 +20,16 @@ export class WfCompileCli {
         console.log('\x1b[36m', 'wf', JSON.stringify(wf, null, 2), '\x1b[0m')
 
         const params = {
-          "model": "flux1-dev-fp8.safetensors",
-          "model2": "pulid_flux_v0.9.1.safetensors",
-          "generationNumber": 1,
-          "image": "some.jpg",
-          "filenamePrefix": "flux-pulid_",
-          "width": 1024,
-          "height": 1024,
-          "positivePrompt": "green-purple cupcake with big eyes",
-          "sampler": "euler",
-          "scheduler": "normal",
+          // "model": "flux1-dev-fp8.safetensors",
+          // "model2": "pulid_flux_v0.9.1.safetensors",
+          // "generationNumber": 1,
+          // "image": "some.jpg",
+          // "filenamePrefix": "flux-pulid_",
+          // "width": 1024,
+          // "height": 1024,
+          // "positivePrompt": "green-purple cupcake with big eyes",
+          // "sampler": "euler",
+          // "scheduler": "normal",
         }
 
         const compiledWorkflowSchema = this.wflib.compileWorkflow({ id: workflowId, params })

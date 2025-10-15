@@ -34,7 +34,7 @@ const params: Record<string, TParam> = {
     'label': 'CLIP Skip',
     'compile': (params) => {
       let clipSkip = parseInt(params.clipSkip, 10)
-      clipSkip = Math.min(Math.max(clipSkip, 1), 24) // between 1 and 14
+      clipSkip = Math.min(Math.max(Math.abs(clipSkip), 1), 24) // between 1 and 14
       clipSkip = -clipSkip // make it negative
 
       return clipSkip
