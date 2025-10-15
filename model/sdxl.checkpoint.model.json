@@ -10,5 +10,11 @@
     "huggingfaceLink": {
       "alalarty/models2": "lustifySDXLNSFW_endgameDMD2.safetensors"
     }
+  },
+  "arthemyComics_v60.safetensors": {
+    "comfyUiDir": "checkpoints",
+    "huggingfaceLink": {
+      "alalarty/models2": "arthemyComics_v60.safetensors"
+    }
   }
 }

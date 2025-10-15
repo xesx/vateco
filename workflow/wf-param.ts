@@ -101,7 +101,7 @@ const params: Record<string, TParam> = {
   },
   sampler: {
     'type': 'string',
-    'enum': ['euler', 'dpmpp_2m', 'heun', 'uni_pc', 'lcm'],
+    'enum': ['euler', 'euler_ancestral','dpmpp_2m', 'heun', 'uni_pc', 'lcm'],
     'default': 'euler',
     'description': 'The sampler to use for image generation',
     'label': 'Sampler',

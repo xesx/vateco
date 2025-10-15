@@ -1,0 +1,19 @@
+{
+  "name": "sdxl-lustify-dmd2-0",
+  "id": "2",
+  "tags": ["sdxl", "own-instance"],
+  "template": "base-gen-01",
+  "models": ["arthemyComics_v60.safetensors"],
+  "params": {
+    "model": { "value": "arthemyComics_v60.safetensors" },
+    "seedType": { "value": "random" },
+
+    "generationNumber": { "user": true, "position": [0] },
+    "sampler": { "user": true,  "value": "euler_ancestral", "position": [1] },
+    "scheduler": { "user": true,  "value": "karras", "position": [1] },
+    "steps": { "user": true, "value": 50, "position": [2] },
+    "cfg": { "user": true, "value": 5.5, "position": [2] },
+    "positivePrompt": { "user": true,  "value": "green-purple cupcake with big eyes", "position": [10] },
+    "negativePrompt": { "user": true,  "value": "bad quality, watermark", "position": [10] }
+  }
+}
