@@ -82,6 +82,7 @@ export class WorkflowRunCronJob {
       for (let i = 0; i < count; i++) {
         l.log(`🔄 Running workflow ${workflowId}, iteration ${i + 1} of ${count}`)
 
+        l.log(`handleRunWorkflowJob_60 Workflow params: ${JSON.stringify(workflowParams)}`)
         const compiledWorkflowSchema = this.wflib.compileWorkflow({ id: workflowId, params: workflowParams })
 
         try {

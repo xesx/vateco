@@ -346,6 +346,16 @@ export class HandleOwnITgBot {
       // this.tgbotlib.reply(ctx, `Enter value for parameter *"${paramName}"*\nCurrent value: *"${currentValue}"*` , { parse_mode: 'Markdown' })
       return
     }
+
+    if (wfParam.type === 'boolean') {
+      const message = `Set parameter *"${paramName}"*\nCurrent value: *"${currentValue}"*`
+      const keyboard = this.tgbotlib.generateInlineKeyboard([
+        [['True', `act:own-i:wf:${workflowId}:param:${paramName}:true`], ['False', `act:own-i:wf:${workflowId}:param:${paramName}:false`]],
+        [['Back', `act:own-i:wf:${workflowId}`]],
+      ])
+      this.tgbotlib.reply(ctx, message, keyboard)
+      return
+    }
   }
 
   async actionWorkflowSelect (ctx: OwnInstanceMatchContext) {
