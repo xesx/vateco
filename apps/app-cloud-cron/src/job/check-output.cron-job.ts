@@ -11,6 +11,7 @@ export class CheckOutputCronJob {
 
   constructor(
     private readonly tgbotlib: lib.TgBotLibService,
+    private readonly h: lib.HelperLibService,
   ) {}
 
   async handle({ OUTPUT_DIR, TG_CHAT_ID }) {
@@ -56,7 +57,13 @@ export class CheckOutputCronJob {
       // }
 
       l.log(`handleCheckOutputJob_45 Sending image ${image} to Telegram chat ${TG_CHAT_ID}`)
-      await this.tgbotlib.sendPhoto({ chatId: TG_CHAT_ID, photo: buffer })
+      try {
+        await this.tgbotlib.sendPhoto({ chatId: TG_CHAT_ID, photo: buffer })
+      } catch (error) {
+        l.error(`handleCheckOutputJob_49 Error sending image ${image} to Telegram:`, this.h.herr.parseAxiosError(error))
+        continue
+      }
+
 
       const archivedImagePath = join(archivePath, image)
       fs.renameSync(imagePath, archivedImagePath)

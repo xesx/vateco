@@ -181,7 +181,7 @@ export class TgBotLibService {
 
       return response.data
     } catch (error) {
-      console.error('Error sending photo:', error.response?.data || error.message)
+      console.log('TgBotLibService_sendPhoto_91 Error sending photo:', error.message)
       throw error
     }
   }
