@@ -133,9 +133,9 @@
   },
   "251": {
     "inputs": {
-      "dishonesty_factor": -0.04000000000000001,
-      "start_percent": 0.25000000000000006,
-      "end_percent": 0.7000000000000002,
+      "dishonesty_factor": -0.04,
+      "start_percent": 0.25,
+      "end_percent": 0.7,
       "sampler": [
         "253",
         0
@@ -149,7 +149,7 @@
   "252": {
     "inputs": {
       "scheduler": "{{scheduler}}",
-      "steps": 15,
+      "steps": "{{steps}}",
       "denoise": 1,
       "model": [
         "275",
