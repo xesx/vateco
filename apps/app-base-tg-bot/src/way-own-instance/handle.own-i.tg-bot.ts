@@ -206,7 +206,7 @@ export class HandleOwnITgBot {
       env: {
         'TG_CHAT_ID': ctx.chat?.id.toString(),
         // 'COMFY_UI_ARCHIVE_FILE': 'comfyui-cu128-py312-insightface-v2.tar.zst',
-        'COMFY_UI_ARCHIVE_FILE': 'comfyui-portable-cu128-py312-v1.tar.zst', // todo: make it configurable
+        'COMFY_UI_ARCHIVE_FILE': 'comfyui-cu128-py312-v2.tar.zst', // todo: make it configurable
       },
     })
 

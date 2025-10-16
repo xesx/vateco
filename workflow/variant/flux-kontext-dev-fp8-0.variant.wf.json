@@ -1,0 +1,31 @@
+{
+  "name": "flux-kontext-dev-fp8-0",
+  "id": "150",
+  "tags": ["flux", "img2img","own-instance"],
+  "template": "flux-kontext-00",
+  "models": [
+    "flux1-kontext-dev-fp8.safetensors",
+    "clip_l.safetensors",
+    "t5xxl_fp8.safetensors",
+    "flux-vae.safetensors",
+    "hyper-flux.1-dev-8steps-lora.safetensors"
+  ],
+  "params": {
+    "filenamePrefix": { "value": "flux_" },
+    "seedType": { "value": "random" },
+
+    "generationNumber": { "user": true, "position": [10] },
+    "image": { "user": true, "position": [10] },
+
+    "loraEnabled": { "user": true, "value": false, "label": "LoraHyper", "position": [20] },
+    "loraStrength": { "user": true, "value": 0.13, "label": "LoraH Strength", "position": [20] },
+
+    "sampler": { "user": true, "value": "euler", "position": [30] },
+    "scheduler": { "user": true, "value": "simple", "position": [30] },
+
+    "steps": { "user": true, "value": 15, "position": [40] },
+    "fluxGuidance": { "user": true, "value": 2.5, "position": [40] },
+
+    "positivePrompt": { "user": true, "value": "make it drawing in line art style", "position": [100] }
+  }
+}

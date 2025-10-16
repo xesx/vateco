@@ -73,6 +73,12 @@ const params: Record<string, TParam> = {
     'description': 'image name or URL',
     'label': 'Image',
   },
+  fluxGuidance: {
+    'type': 'number',
+    'default': 2.5,
+    'description': 'Flux Guidance Scale for generation',
+    'label': 'Guidance',
+  },
   lora: {
     'type': 'string',
     'description': 'The LoRa to use for generation',

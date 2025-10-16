@@ -1,4 +1,10 @@
 {
+  "flux1-kontext-dev-fp8.safetensors": {
+    "comfyUiDir": "diffusion_models",
+    "huggingfaceLink": {
+      "alalarty/models2": "flux1-kontext-dev-fp8.safetensors"
+    }
+  },
   "flux1-dev-fp8.safetensors": {
     "comfyUiDir": "diffusion_models",
     "huggingfaceLink": {

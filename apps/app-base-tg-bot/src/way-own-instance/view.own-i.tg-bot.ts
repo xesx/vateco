@@ -31,6 +31,10 @@ export class ViewOwnITgBot {
     this.tgbotlib.reply(ctx, message, keyboard)
   }
 
+  showInstanceInfo (ctx: OwnInstanceContext) {
+
+  }
+
   showInstanceManageMenu (ctx: OwnInstanceContext) {
     const message = 'Manage instance:'
     const keyboard = this.tgbotlib.generateInlineKeyboard(kb.ownInstanceManageMenu(ctx.session.step))

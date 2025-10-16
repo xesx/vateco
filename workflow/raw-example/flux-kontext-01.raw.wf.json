@@ -1,16 +1,16 @@
 {
   "62": {
     "inputs": {
-      "image": "100_195.239.111.3_15414.jpg"
+      "image": "start-image.png"
     },
     "class_type": "LoadImage",
     "_meta": {
-      "title": "Load Image"
+      "title": "__wf_load_image__"
     }
   },
   "99": {
     "inputs": {
-      "text": "Change the car color to white,add custom car wrap black stripes on the car door,Make weather snowy,everything covered in snow,turn on the car lights,Change time to sunset,",
+      "text": "recolor it to orange and purple colors",
       "clip": [
         "282",
         1
@@ -18,7 +18,7 @@
     },
     "class_type": "CLIPTextEncode",
     "_meta": {
-      "title": "CLIP Text Encode (Prompt)"
+      "title": "__wf_positive__"
     }
   },
   "234": {
@@ -127,9 +127,9 @@
   },
   "251": {
     "inputs": {
-      "dishonesty_factor": -0.04000000000000001,
-      "start_percent": 0.25000000000000006,
-      "end_percent": 0.7000000000000002,
+      "dishonesty_factor": -0.04,
+      "start_percent": 0.25,
+      "end_percent": 0.7,
       "sampler": [
         "253",
         0
@@ -152,7 +152,7 @@
     },
     "class_type": "BasicScheduler",
     "_meta": {
-      "title": "BasicScheduler"
+      "title": "__wf_basic_scheduler__"
     }
   },
   "253": {
@@ -161,16 +161,16 @@
     },
     "class_type": "KSamplerSelect",
     "_meta": {
-      "title": "KSamplerSelect"
+      "title": "__wf_sampler__"
     }
   },
   "259": {
     "inputs": {
-      "noise_seed": 465250420185559
+      "noise_seed": 914614111060696
     },
     "class_type": "RandomNoise",
     "_meta": {
-      "title": "RandomNoise"
+      "title": "__wf_seed__"
     }
   },
   "275": {
@@ -197,7 +197,7 @@
   },
   "277": {
     "inputs": {
-      "unet_name": "flux1-dev-kontext_fp8_scaled.safetensors",
+      "unet_name": "flux1-kontext-dev-fp8.safetensors",
       "weight_dtype": "default"
     },
     "class_type": "UNETLoader",
@@ -208,7 +208,7 @@
   "278": {
     "inputs": {
       "clip_name1": "clip_l.safetensors",
-      "clip_name2": "t5xxl_fp8_e4m3fn.safetensors",
+      "clip_name2": "t5xxl_fp8.safetensors",
       "type": "flux",
       "device": "default"
     },
@@ -219,7 +219,7 @@
   },
   "279": {
     "inputs": {
-      "vae_name": "flux-vae-fp-16.safetensors"
+      "vae_name": "flux-vae.safetensors"
     },
     "class_type": "VAELoader",
     "_meta": {
@@ -229,7 +229,7 @@
   "281": {
     "inputs": {
       "max_shift": 1.15,
-      "base_shift": 0.5000000000000001,
+      "base_shift": 0.5,
       "width": 1024,
       "height": 1024,
       "model": [
@@ -247,11 +247,6 @@
       "PowerLoraLoaderHeaderWidget": {
         "type": "PowerLoraLoaderHeaderWidget"
       },
-      "lora_1": {
-        "on": false,
-        "lora": "KONTEXT\\Dtpr_Photorealistic【style】_flux_kontext_lora_v1-PAseer.safetensors",
-        "strength": 1
-      },
       "➕ Add Lora": "",
       "model": [
         "277",
@@ -264,7 +259,7 @@
     },
     "class_type": "Power Lora Loader (rgthree)",
     "_meta": {
-      "title": "Power Lora Loader (rgthree)"
+      "title": "__wf_power_lora_loader__"
     }
   },
   "290": {
@@ -277,7 +272,7 @@
     },
     "class_type": "FluxGuidance",
     "_meta": {
-      "title": "FluxGuidance"
+      "title": "__wf_flux_guidance__"
     }
   },
   "293": {
@@ -308,7 +303,7 @@
   "303": {
     "inputs": {
       "upscale_method": "lanczos",
-      "scale_by": 1.0000000000000002,
+      "scale_by": 1,
       "image": [
         "234",
         0

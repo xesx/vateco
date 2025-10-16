@@ -2,7 +2,7 @@
   "name": "flux-dev-fp8-pulid-0",
   "id": "101",
   "tags": ["flux", "own-instance"],
-  "template": "pulid-flux",
+  "template": "flux-pulid",
   "models": [
     "flux1-dev-fp8.safetensors",
     "clip_l.safetensors",
