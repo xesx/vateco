@@ -58,7 +58,7 @@ const params: Record<string, TParam> = {
     'description': 'Prefix for the generated image filenames',
     'label': 'Filename Prefix',
     'compile': (params) => {
-      return `${params.filenamePrefix || 'img'}_${new Date().toJSON().replace(/[:.]/g, '-')}_`
+      return `${params.filenamePrefix || 'img'}_${new Date().toJSON().replace(/[:.]/g, '-')}`
     },
   },
   generationNumber: {

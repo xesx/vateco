@@ -58,6 +58,8 @@ export class WorkflowLibService {
 
   compileWorkflow ({ id, params = {} }) {
     const compiledParams = this.compileWorkflowParams({ id, params })
+    console.log('WorkflowLibService_compileWorkflow_10', JSON.stringify(params, null, 4))
+
     const compiledSchema = this.compileWorkflowSchema({ id, params: compiledParams })
 
     return compiledSchema

@@ -97,8 +97,8 @@ export class ComfyUiLibService {
         resolve(ws)
       })
 
-      ws.on('close', (code, reason) => {
-        l.log('ComfyUiLibService_wsConnect_89 ComfyUI WebSocket disconnected', { code, reason })
+      ws.on('close', (code, reason: Buffer) => {
+        l.log('ComfyUiLibService_wsConnect_89 ComfyUI WebSocket disconnected', code, reason.toString?.())
         this.wsConnectionMap.delete(url)
       })
 

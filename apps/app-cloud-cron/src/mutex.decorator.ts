@@ -10,7 +10,7 @@ export function Mutex(jobName?: string) {
 
     descriptor.value = async function (...args: any[]) {
       if (runningJobs.get(mutexKey)) {
-        logger.warn(`⚠️ Job "${mutexKey}" is still running, skipping...`)
+        // logger.warn(`⚠️ Job "${mutexKey}" is still running, skipping...`)
         return
       }
 
