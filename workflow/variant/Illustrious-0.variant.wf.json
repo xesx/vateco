@@ -18,7 +18,7 @@
 
     "steps": { "user": true, "value": 50, "position": [30] },
     "cfg": { "user": true, "value": 5.5, "position": [30] },
-    "clipSkip": { "user": true, "value": -2, "position": [30] },
+    "clipSkip": { "user": true, "value": 2, "position": [30] },
 
     "positivePrompt": { "user": true,  "value": "green-purple cupcake with big eyes", "position": [40] },
     "negativePrompt": { "user": true,  "value": "bad quality, watermark", "position": [40] }

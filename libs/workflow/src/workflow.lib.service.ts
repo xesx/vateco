@@ -58,7 +58,7 @@ export class WorkflowLibService {
 
   compileWorkflow ({ id, params = {} }) {
     const compiledParams = this.compileWorkflowParams({ id, params })
-    console.log('WorkflowLibService_compileWorkflow_10', JSON.stringify(params, null, 4))
+    console.log('WorkflowLibService_compileWorkflow_10', JSON.stringify(compiledParams, null, 4))
 
     const compiledSchema = this.compileWorkflowSchema({ id, params: compiledParams })
 
@@ -70,29 +70,30 @@ export class WorkflowLibService {
     const compiledParams = {}
 
     // 2 passes to allow params to depend on each other
-    for (let i = 0; i < 2; i++) {
-      for (const key in workflow.params) {
-        const paramInfo = workflowInfo.param[key]
-        const rawValue = params[key] ?? workflow.params[key]?.value ?? paramInfo?.default
+    // for (let i = 0; i < 2; i++) {
+    //   ???
+    //   params = compiledParams
+    // }
 
-        if (paramInfo?.compile) {
-          compiledParams[key] = paramInfo?.compile({ ...params, [key]: rawValue })
-        } else {
-          compiledParams[key] = rawValue
-        }
+    for (const key in workflow.params) {
+      const paramInfo = workflowInfo.param[key]
+      const rawValue = params[key] ?? workflow.params[key]?.value ?? paramInfo?.default
 
-        if (paramInfo.type === 'number') {
-          compiledParams[key] = parseFloat(compiledParams[key].replace?.(',', '.') ?? compiledParams[key])
-        }
-
-        if (paramInfo.type === 'boolean') {
-          compiledParams[key] = (String(compiledParams[key]) === 'true') || (compiledParams[key] === true)
-        }
-
-        // TODO: validate param type
+      if (paramInfo?.compile) {
+        compiledParams[key] = paramInfo?.compile({ ...params, [key]: rawValue })
+      } else {
+        compiledParams[key] = rawValue
       }
 
-      params = compiledParams
+      if (paramInfo.type === 'number') {
+        compiledParams[key] = parseFloat(compiledParams[key].replace?.(',', '.') ?? compiledParams[key])
+      }
+
+      if (paramInfo.type === 'boolean') {
+        compiledParams[key] = (String(compiledParams[key]) === 'true') || (compiledParams[key] === true)
+      }
+
+      // TODO: validate param type
     }
 
     return compiledParams
