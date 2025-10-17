@@ -96,7 +96,7 @@ export class WorkflowProgressCronJob {
 
           const runningNode = Object.values(message.data.nodes).find((node => node.state === 'running'))
 
-          if (runningNode && runningNode.max > 1 && runningNode.value / runningNode.max < 0.9) {
+          if (runningNode && runningNode.max > 1 && runningNode.value / runningNode.max < 0.97) {
             lastProgressMessageTimestamp = now
 
             if (message.data.prompt_id !== promptId) {

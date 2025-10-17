@@ -71,6 +71,8 @@ export class ComfyUiLibService {
   }
 
   async wsConnect (url?: string): Promise<WebSocket> {
+    const { l } = this
+
     url = url || this.COMFY_UI_WS_URL
 
     return new Promise((resolve) => {
@@ -78,10 +80,10 @@ export class ComfyUiLibService {
 
       if (ws) {
         if (ws.readyState === WebSocket.OPEN) {
-          this.l.log('✅ Reusing existing ComfyUI WebSocket connection')
+          l.log('ComfyUiLibService_wsConnect_20 Reusing existing ComfyUI WebSocket connection')
           resolve(ws)
         } else {
-          this.l.log('✅ Existing ComfyUI WebSocket connection is not open, creating a new one')
+          l.log('ComfyUiLibService_wsConnect_30 Existing ComfyUI WebSocket connection is not open, creating a new one')
           this.wsConnectionMap.delete(url)
           ws.terminate?.()
         }
@@ -90,15 +92,19 @@ export class ComfyUiLibService {
       ws = new WebSocket(url || this.COMFY_UI_WS_URL)
 
       ws.on('open', () => {
-        this.l.log('✅ ComfyUI WebSocket connected')
+        l.log('ComfyUiLibService_wsConnect_50 ComfyUI WebSocket connected')
         this.wsConnectionMap.set(url, ws)
         resolve(ws)
       })
 
-      // ws.on('error', (error) => {
-      //   this.l.error('Ошибка подключения к ComfyUI WebSocket', error)
-      //   reject(error)
-      // })
+      ws.on('close', (code, reason) => {
+        l.log('ComfyUiLibService_wsConnect_89 ComfyUI WebSocket disconnected', { code, reason })
+        this.wsConnectionMap.delete(url)
+      })
+
+      ws.on('error', (error) => {
+        l.error('ComfyUiLibService_wsConnect_93 Ошибка подключения к ComfyUI WebSocket', error)
+      })
     })
   }
 }

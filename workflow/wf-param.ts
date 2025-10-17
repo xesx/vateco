@@ -46,7 +46,7 @@ const params: Record<string, TParam> = {
     'description': 'Denoise strength for image-to-image generation',
     'label': 'Denoise',
     'compile': (params) => {
-      let denoise = parseFloat(params.clipSkip) || 0
+      let denoise = parseFloat(params.denoise) || 0
       denoise = Math.min(Math.abs(denoise), 1) // between 0 and 1
 
       return denoise
@@ -58,7 +58,7 @@ const params: Record<string, TParam> = {
     'description': 'Prefix for the generated image filenames',
     'label': 'Filename Prefix',
     'compile': (params) => {
-      return `${params.filenamePrefix || 'img'}_%date:yy-MM-dd-hh-mm-ss%_`
+      return `${params.filenamePrefix || 'img'}_${new Date().toJSON().replace(/[:.]/g, '-')}_`
     },
   },
   generationNumber: {
