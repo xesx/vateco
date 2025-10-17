@@ -11,7 +11,7 @@
     "hyper-flux.1-dev-8steps-lora.safetensors"
   ],
   "params": {
-    "filenamePrefix": { "value": "flux_" },
+    "filenamePrefix": { "value": "flux" },
     "seedType": { "value": "random" },
 
     "generationNumber": { "user": true, "position": [10] },

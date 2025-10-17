@@ -6,7 +6,7 @@
   "models": ["lustifySDXLNSFW_endgameDMD2.safetensors"],
   "params": {
     "model": { "value": "lustifySDXLNSFW_endgameDMD2.safetensors" },
-    "filenamePrefix": { "value": "upscale-sdxl-lustify-dmd2_" },
+    "filenamePrefix": { "value": "upscale-sdxl-lustify-dmd2" },
     "seedType": { "value": "random" },
 
     "generationNumber": { "user": true, "value": 1, "position": [0] },

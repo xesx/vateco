@@ -24,7 +24,7 @@ export class WfCompileCli {
           // "model2": "pulid_flux_v0.9.1.safetensors",
           // "generationNumber": 1,
           // "image": "some.jpg",
-          // "filenamePrefix": "flux-pulid_",
+          // "filenamePrefix": "flux-pulid",
           // "width": 1024,
           // "height": 1024,
           // "positivePrompt": "green-purple cupcake with big eyes",

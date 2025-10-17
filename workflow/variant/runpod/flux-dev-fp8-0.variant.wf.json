@@ -5,7 +5,7 @@
   "template": "base-gen-flux-with-checkpoint-00",
   "models": [],
   "params": {
-    "filenamePrefix": { "value": "flux_" },
+    "filenamePrefix": { "value": "flux" },
     "seedType": { "value": "random" },
 
     "generationNumber": { "user": true, "position": [0, 0] },

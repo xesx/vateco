@@ -14,7 +14,7 @@
     "model": { "value": "flux1-dev-fp8.safetensors" },
     "lora1": { "value": "hyper-flux.1-dev-8steps-lora.safetensors" },
     "loraEnabled1": { "value": true },
-    "filenamePrefix": { "value": "flux_" },
+    "filenamePrefix": { "value": "flux" },
 
     "generationNumber": { "user": true },
     "seedType": { "user": true, "value": "random" },
