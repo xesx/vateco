@@ -58,7 +58,7 @@ const params: Record<string, TParam> = {
     'description': 'Prefix for the generated image filenames',
     'label': 'Filename Prefix',
     'compile': (params) => {
-      return `${params.filenamePrefix}${Date.now()}_`
+      return `${params.filenamePrefix || 'img'}_%date:yy-MM-dd-hh-mm-ss%_`
     },
   },
   generationNumber: {
