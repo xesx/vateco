@@ -68,7 +68,7 @@ export class WorkflowLibService {
 
   compileWorkflowParams ({ id, params = {} }) {
     const workflow = this.getWorkflow(id)
-    const compiledParams = {}
+    const compiledParams: any = {}
 
     // 2 passes to allow params to depend on each other
     // for (let i = 0; i < 2; i++) {
@@ -96,6 +96,9 @@ export class WorkflowLibService {
 
       // TODO: validate param type
     }
+
+    // TODO: invent some labuba
+    compiledParams.seedValue = workflowInfo.param.seedValue?.compile?.(compiledParams)
 
     return compiledParams
   }
