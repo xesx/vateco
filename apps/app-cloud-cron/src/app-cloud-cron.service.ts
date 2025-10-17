@@ -53,8 +53,8 @@ export class CloudCronService {
     await this.workflowRunCronJob.handle({ TG_CHAT_ID, GENERATE_TASKS_DIR })
   }
 
-  // Every 2 seconds
-  @Cron('*/2 * * * * *')
+  // Every 3 seconds
+  @Cron('*/3 * * * * *')
   @Mutex('handleProgressWorkflowJob')
   async _workflowProgressCronJob() {
     const { TG_CHAT_ID } = this
