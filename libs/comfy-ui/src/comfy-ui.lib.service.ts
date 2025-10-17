@@ -92,13 +92,13 @@ export class ComfyUiLibService {
       ws = new WebSocket(url || this.COMFY_UI_WS_URL)
 
       ws.on('open', () => {
-        l.log('ComfyUiLibService_wsConnect_50 ComfyUI WebSocket connected')
+        l.debug('ComfyUiLibService_wsConnect_50 ComfyUI WebSocket connected')
         this.wsConnectionMap.set(url, ws)
         resolve(ws)
       })
 
-      ws.on('close', (code, reason: Buffer) => {
-        l.log('ComfyUiLibService_wsConnect_89 ComfyUI WebSocket disconnected', code, reason.toString?.())
+      ws.on('close', (code) => {
+        l.debug(`ComfyUiLibService_wsConnect_89 ComfyUI WebSocket disconnected code:${code}`, )
         this.wsConnectionMap.delete(url)
       })
 
