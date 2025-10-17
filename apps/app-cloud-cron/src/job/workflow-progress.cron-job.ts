@@ -57,6 +57,7 @@ export class WorkflowProgressCronJob {
 
     let tgMessageId: string | null = null
     let lastProgressMessageTimestamp = 0
+    let promptId: string | null = null
 
     await new Promise((resolve) => {
       wsClient.on('error', (error) => {
@@ -81,7 +82,7 @@ export class WorkflowProgressCronJob {
             }
 
             wsClient.close()
-            resolve(null)
+            return resolve(null)
           }
 
           return
@@ -97,7 +98,13 @@ export class WorkflowProgressCronJob {
 
           if (runningNode && runningNode.max > 1 && runningNode.value / runningNode.max < 0.9) {
             lastProgressMessageTimestamp = now
-            const tgMessage = this.msglib.genCodeMessage(`⏳ Workflow is in progress...\nNode: ${runningNode.node_id}\nProgress: ${Math.floor((runningNode.value / runningNode.max) * 100)}%`)
+
+            if (message.data.prompt_id !== promptId) {
+              tgMessageId = null
+              promptId = message.data.prompt_id
+            }
+
+            const tgMessage = this.msglib.genCodeMessage(`⏳ WF is in progress...\nid: ${promptId}\nNode: ${runningNode.node_id}\nProgress: ${Math.floor((runningNode.value / runningNode.max) * 100)}%`)
 
             if (tgMessageId) {
               await tgbotlib.editMessage({

@@ -2,10 +2,12 @@ import { spawn } from 'child_process'
 
 import { Injectable } from '@nestjs/common'
 
-// import axios from 'axios'
+import axios from 'axios'
 
 @Injectable()
 export class HuggingfaceLibService {
+  private readonly HF_BASE_URL = 'https://huggingface.co'
+
   constructor(
     // private readonly configService: ConfigService
   ) {
@@ -44,6 +46,32 @@ export class HuggingfaceLibService {
         console.log('huggingfaceLib_downloadWithRetry_91 Error downloading file, retrying...', error)
         await new Promise(res => setTimeout(res, delayMs))
       }
+    }
+  }
+
+  async getFileSize ({ repo, filename, token }) {
+    const url = `${this.HF_BASE_URL}/api/models/${repo}`
+
+    token = token || process.env.HF_TOKEN || ''
+
+    if (!token) {
+      throw new Error('HuggingfaceLibService_getFileSize_13 Huggingface token is not provided')
+    }
+
+    try {
+      const response = await axios.get(url, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+
+      const file = response.data.siblings?.find(f => f.rfilename === filename)
+      if (!file || typeof file.size !== 'number') {
+        throw new Error(`Файл "${filename}" не найден или не имеет размера.`)
+      }
+
+      return file.size
+    } catch (error) {
+      console.error('Ошибка при получении размера файла:', error.message)
+      throw error
     }
   }
 }
