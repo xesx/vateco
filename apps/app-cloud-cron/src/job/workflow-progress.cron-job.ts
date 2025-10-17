@@ -41,7 +41,7 @@ export class WorkflowProgressCronJob {
   ) {}
 
   async handle({ TG_CHAT_ID }) {
-    const { tgbotlib } = this
+    const { l, tgbotlib } = this
 
     let wsClient
 
@@ -58,46 +58,51 @@ export class WorkflowProgressCronJob {
     let tgMessageId: string | null = null
     let lastProgressMessageTimestamp = 0
 
-    wsClient.on('message', async (data) => {
-      const message: TWsMessage = JSON.parse(data.toString())
+    await new Promise((resolve) => {
+      wsClient.on('error', (error) => {
+        l.error('WorkflowProgressCronJob_handle_42 WebSocket error', error)
+        resolve(null)
+      })
 
-      if (message.type === 'status') {
-        // console.log('\x1b[36m', 'ws status', JSON.stringify(message, null, 2), '\x1b[0m')
+      wsClient.on('message', async (data) => {
+        const message: TWsMessage = JSON.parse(data.toString())
 
-        if (message.data?.status?.exec_info?.queue_remaining <= 0) {
-          if (lastProgressMessageTimestamp > 0 && tgMessageId) {
-            const tgMessage = this.msglib.genCodeMessage(`✅ Generations completed.`)
-            await tgbotlib.sendMessage({ chatId: TG_CHAT_ID, text: tgMessage })
+        if (message.type === 'status') {
+          if (message.data?.status?.exec_info?.queue_remaining <= 0) {
+            if (lastProgressMessageTimestamp > 0 && tgMessageId) {
+              const tgMessage = this.msglib.genCodeMessage(`✅ Generations completed.`)
+              await tgbotlib.sendMessage({ chatId: TG_CHAT_ID, text: tgMessage })
+            }
+
+            wsClient.close()
+          }
+          return resolve(null)
+        } else if (message.type === 'progress_state') {
+          const now = Date.now()
+
+          if (now - lastProgressMessageTimestamp < 2000) {
+            // Throttle to send/edit message every 2 seconds
+            return resolve(null)
           }
 
-          wsClient.close()
-        }
-        return
-      } else if (message.type === 'progress_state') {
-        const now = Date.now()
+          const runningNode = Object.values(message.data.nodes).find((node => node.state === 'running'))
 
-        if (now - lastProgressMessageTimestamp < 2000) {
-          // Throttle to send/edit message every 2 seconds
-          return
-        }
+          if (runningNode && runningNode.max > 1 && runningNode.value / runningNode.max < 0.9) {
+            lastProgressMessageTimestamp = now
+            const tgMessage = this.msglib.genCodeMessage(`⏳ Workflow is in progress...\nNode: ${runningNode.node_id}\nProgress: ${Math.floor((runningNode.value / runningNode.max) * 100)}%`)
 
-        const runningNode = Object.values(message.data.nodes).find((node => node.state === 'running'))
-
-        if (runningNode && runningNode.max > 1 && runningNode.value / runningNode.max < 0.9) {
-          lastProgressMessageTimestamp = now
-          const tgMessage = this.msglib.genCodeMessage(`⏳ Workflow is in progress...\nNode: ${runningNode.node_id}\nProgress: ${Math.floor((runningNode.value / runningNode.max) * 100)}%`)
-
-          if (tgMessageId) {
-            await tgbotlib.editMessage({
-              chatId: TG_CHAT_ID,
-              messageId: tgMessageId,
-              text: tgMessage
-            })
-          } else {
-            tgMessageId = await tgbotlib.sendMessage({ chatId: TG_CHAT_ID, text: tgMessage })
+            if (tgMessageId) {
+              await tgbotlib.editMessage({
+                chatId: TG_CHAT_ID,
+                messageId: tgMessageId,
+                text: tgMessage
+              })
+            } else {
+              tgMessageId = await tgbotlib.sendMessage({ chatId: TG_CHAT_ID, text: tgMessage })
+            }
           }
         }
-      }
+      })
     })
   }
 }
