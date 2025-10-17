@@ -1,7 +1,10 @@
 import { Injectable } from '@nestjs/common'
 
 import * as fs from 'fs'
+import { setTimeout } from 'timers/promises'
+
 import * as sharp from 'sharp'
+
 
 import * as lib from '@lib'
 // import { packageDirectorySync } from 'pkg-dir'
@@ -15,6 +18,8 @@ export class TestCli {
     private readonly vastlib: lib.VastLibService,
     private readonly comfyuilib: lib.ComfyUiLibService,
     private readonly tgbotlib: lib.TgBotLibService,
+    private readonly wflib: lib.WorkflowLibService,
+    private readonly h: lib.HelperLibService,
   ) {}
 
   register(program) {
@@ -28,6 +33,43 @@ export class TestCli {
         // const all = await sharp(imagePath).metadata()
         // console.log('\x1b[36m', 'all', all?.comments?.find?.(i => i.keyword === 'prompt')?.text, '\x1b[0m')
 
+
+        // const compiledWorkflowSchema = this.wflib.compileWorkflow({ id: '300' })
+        // console.log('----->>>>>>>>>> compiledWorkflowSchema', JSON.stringify(compiledWorkflowSchema))
+        //
+        // let response: any = null
+        //
+        // try {
+        //   response = await this.comfyuilib.prompt(compiledWorkflowSchema)
+        //   console.log('\x1b[36m', 'response', response, '\x1b[0m')
+        // } catch (error) {
+        //   console.log('\x1b[31m', 'error', this.h.herr.parseAxiosError(error), '\x1b[0m')
+        //   process.exit(1)
+        // }
+        //
+        // const { 'prompt_id': promptId } = response
+        // console.log('\x1b[36m', 'promptId', promptId, '\x1b[0m')
+
+        const wsClient = await this.comfyuilib.wsConnect()
+
+        wsClient.on('message', (data) => {
+          const message = JSON.parse(data.toString())
+          if (message.type === 'crystools.monitor') {
+            return
+          }
+
+          if (message.type === 'status') {
+            console.log('\x1b[36m', 'ws status', JSON.stringify(message, null, 2), '\x1b[0m')
+            if (message.data.status.exec_info.queue_remaining <= 0) {
+              wsClient.close()
+            }
+            return
+          }
+
+          // progress_state
+
+          console.log('\x1b[36m', 'ws message', JSON.stringify(message, null, 2), '\x1b[0m')
+        })
 
         // const instance = await this.vastlib.showInstance({ instanceId: 26522082 })
         // console.log('----->>>>>>>>>> instance', JSON.stringify(instance))
@@ -45,11 +87,11 @@ export class TestCli {
         //   data,
         // })
 
-        await this.tgbotlib.sendMessage({
-          chatId: '185857068',
-          text: `<blockquote expandable><pre>Expandable block quotation started\\nExpandable block quotation continued\\nExpandable block quotation continued\\nHidden by default part of the block quotation started\\nExpandable block quotation continued\\nThe last line of the block quotation</pre></blockquote>`,
-          parseMode: 'HTML'
-        })
+        // await this.tgbotlib.sendMessage({
+        //   chatId: '185857068',
+        //   text: `<blockquote expandable><pre>Expandable block quotation started\\nExpandable block quotation continued\\nExpandable block quotation continued\\nHidden by default part of the block quotation started\\nExpandable block quotation continued\\nThe last line of the block quotation</pre></blockquote>`,
+        //   parseMode: 'HTML'
+        // })
 
         //
         // console.log('\x1b[36m', 'message', message, '\x1b[0m')

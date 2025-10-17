@@ -1,0 +1,70 @@
+// import * as fs from 'fs'
+// import { join } from 'path'
+
+import { Injectable, Logger } from '@nestjs/common'
+
+import * as lib from '@lib'
+
+import { HelperAppCloudCronService } from '../helper.app-cloud-cron.service'
+
+@Injectable()
+export class WorkflowProgressCronJob {
+  private readonly l = new Logger(WorkflowProgressCronJob.name)
+
+  constructor(
+    private readonly helper: HelperAppCloudCronService,
+
+    private readonly comfyuilib: lib.ComfyUiLibService,
+    private readonly wflib: lib.WorkflowLibService,
+    private readonly msglib: lib.MessageLibService,
+    private readonly tgbotlib: lib.TgBotLibService,
+  ) {}
+
+  async handle({ TG_CHAT_ID }) {
+    const { tgbotlib } = this
+
+    const wsClient = await this.comfyuilib.wsConnect()
+    let tgMessageId: string | null = null
+    let lastProgressMessageTimestamp = 0
+
+    wsClient.on('message', async (data) => {
+      const message = JSON.parse(data.toString())
+
+      if (message.type === 'status') {
+        console.log('\x1b[36m', 'ws status', JSON.stringify(message, null, 2), '\x1b[0m')
+
+        if (message.data?.status?.exec_info?.queue_remaining <= 0) {
+          const tgMessage = this.msglib.genCodeMessage(`✅ Generations completed.`)
+          await tgbotlib.sendMessage({ chatId: TG_CHAT_ID, text: tgMessage })
+
+          wsClient.close()
+        }
+        return
+      } else if (message.type === 'progress_state') {
+        const now = Date.now()
+
+        if (now - lastProgressMessageTimestamp < 2000) {
+          // Throttle to send/edit message every 2 seconds
+          return
+        }
+
+        const runningNode = message.data.nodes.find((node => node.state === 'running'))
+
+        if (runningNode && runningNode.max > 1 && runningNode.value / runningNode.max < 0.9) {
+          lastProgressMessageTimestamp = now
+          const tgMessage = this.msglib.genCodeMessage(`⏳ Workflow is in progress...\nNode: ${runningNode.node_id}\nProgress: ${Math.floor((runningNode.value / runningNode.max) * 100)}%`)
+
+          if (tgMessageId) {
+            await tgbotlib.editMessage({
+              chatId: TG_CHAT_ID,
+              messageId: tgMessageId,
+              text: tgMessage
+            })
+          } else {
+            tgMessageId = await tgbotlib.sendMessage({ chatId: TG_CHAT_ID, text: tgMessage })
+          }
+        }
+      }
+    })
+  }
+}

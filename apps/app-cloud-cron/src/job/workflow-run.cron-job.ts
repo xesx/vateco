@@ -76,8 +76,8 @@ export class WorkflowRunCronJob {
         await this.helper.loadModel(modelName)
       }
 
-      const message = this.msglib.genCodeMessage('Generation in progress...')
-      this.tgbotlib.sendMessage({ chatId: TG_CHAT_ID, text: message })
+      // const message = this.msglib.genCodeMessage('Generation in progress...')
+      // this.tgbotlib.sendMessage({ chatId: TG_CHAT_ID, text: message })
 
       for (let i = 0; i < count; i++) {
         l.log(`🔄 Running workflow ${workflowId}, iteration ${i + 1} of ${count}`)

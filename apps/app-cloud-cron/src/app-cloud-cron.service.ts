@@ -26,6 +26,7 @@ export class CloudCronService {
 
     private readonly workflowLoadCronJob: job.WorkflowLoadCronJob,
     private readonly workflowRunCronJob: job.WorkflowRunCronJob,
+    private readonly workflowProgressCronJob: job.WorkflowProgressCronJob,
     private readonly checkOutputCronJob: job.CheckOutputCronJob,
   ) {
     this.WORKSPACE = this.configService.get<string>('WORKSPACE') || '/workspace'
@@ -50,6 +51,14 @@ export class CloudCronService {
   async _workflowRunCronJob() {
     const { TG_CHAT_ID, GENERATE_TASKS_DIR } = this
     await this.workflowRunCronJob.handle({ TG_CHAT_ID, GENERATE_TASKS_DIR })
+  }
+
+  // Every 2 seconds
+  @Cron('*/2 * * * * *')
+  @Mutex('handleProgressWorkflowJob')
+  async _workflowProgressCronJob() {
+    const { TG_CHAT_ID, GENERATE_TASKS_DIR } = this
+    await this.workflowProgressCronJob.handle({ TG_CHAT_ID, GENERATE_TASKS_DIR })
   }
 
   // Every 2 seconds

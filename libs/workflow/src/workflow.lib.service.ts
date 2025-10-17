@@ -80,7 +80,7 @@ export class WorkflowLibService {
         }
 
         if (paramInfo.type === 'number') {
-          // compiledParams[key] = parseFloat(compiledParams[key].replace?.(',', '.') ?? compiledParams[key])
+          compiledParams[key] = parseFloat(compiledParams[key].replace?.(',', '.') ?? compiledParams[key])
         }
 
         if (paramInfo.type === 'boolean') {
