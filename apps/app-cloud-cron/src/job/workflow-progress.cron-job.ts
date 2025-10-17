@@ -71,7 +71,13 @@ export class WorkflowProgressCronJob {
           if (message.data?.status?.exec_info?.queue_remaining <= 0) {
             if (lastProgressMessageTimestamp > 0 && tgMessageId) {
               const tgMessage = this.msglib.genCodeMessage(`✅ Generations completed.`)
-              await tgbotlib.sendMessage({ chatId: TG_CHAT_ID, text: tgMessage })
+              await tgbotlib.editMessage({
+                chatId: TG_CHAT_ID,
+                messageId: tgMessageId,
+                text: tgMessage
+              })
+
+              tgMessageId = null
             }
 
             wsClient.close()
