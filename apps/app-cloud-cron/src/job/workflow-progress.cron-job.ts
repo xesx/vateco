@@ -7,6 +7,26 @@ import * as lib from '@lib'
 
 import { HelperAppCloudCronService } from '../helper.app-cloud-cron.service'
 
+type TWorkflowNode = {
+  value: number
+  max: number
+  state: string
+  node_id: string
+  prompt_id: string
+  display_node_id: string
+  parent_node_id: string | null
+  real_node_id: string
+}
+
+type TWsMessage = {
+  type: string
+  data: {
+    prompt_id: string
+    status: any
+    nodes: Record<string, TWorkflowNode>
+  }
+}
+
 @Injectable()
 export class WorkflowProgressCronJob {
   private readonly l = new Logger(WorkflowProgressCronJob.name)
@@ -39,10 +59,10 @@ export class WorkflowProgressCronJob {
     let lastProgressMessageTimestamp = 0
 
     wsClient.on('message', async (data) => {
-      const message = JSON.parse(data.toString())
+      const message: TWsMessage = JSON.parse(data.toString())
 
       if (message.type === 'status') {
-        console.log('\x1b[36m', 'ws status', JSON.stringify(message, null, 2), '\x1b[0m')
+        // console.log('\x1b[36m', 'ws status', JSON.stringify(message, null, 2), '\x1b[0m')
 
         if (message.data?.status?.exec_info?.queue_remaining <= 0) {
           if (lastProgressMessageTimestamp > 0 && tgMessageId) {
@@ -61,7 +81,7 @@ export class WorkflowProgressCronJob {
           return
         }
 
-        const runningNode = message.data.nodes.find((node => node.state === 'running'))
+        const runningNode = Object.values(message.data.nodes).find((node => node.state === 'running'))
 
         if (runningNode && runningNode.max > 1 && runningNode.value / runningNode.max < 0.9) {
           lastProgressMessageTimestamp = now
