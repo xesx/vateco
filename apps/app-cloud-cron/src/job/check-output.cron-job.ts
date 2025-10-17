@@ -1,4 +1,5 @@
 import * as fs from 'fs'
+import { setTimeout } from 'timers/promises'
 import { join } from 'path'
 
 import { Injectable, Logger } from '@nestjs/common'
@@ -18,14 +19,14 @@ export class CheckOutputCronJob {
     const { l } = this
 
     if (!fs.existsSync(OUTPUT_DIR)) {
-      l.log(`handleCheckOutputJob_17 Output directory does not exist: ${OUTPUT_DIR}`)
+      l.log(`CheckOutputCronJob_handleCheckOutputJob_17 Output directory does not exist: ${OUTPUT_DIR}`)
       return
     }
 
     const archivePath = join(OUTPUT_DIR, 'archive')
     if (!fs.existsSync(archivePath)) {
       fs.mkdirSync(archivePath)
-      l.log(`handleCheckOutputJob_24 Created archive directory: ${archivePath}`)
+      l.log(`CheckOutputCronJob_handleCheckOutputJob_24 Created archive directory: ${archivePath}`)
     }
 
     const images = fs.readdirSync(OUTPUT_DIR)
@@ -37,14 +38,22 @@ export class CheckOutputCronJob {
 
     for (const image of images) {
       const imagePath = join(OUTPUT_DIR, image)
+
+      const isStable = await this.waitForFileStable(imagePath, 500, 10)
+
+      if (!isStable) {
+        l.log(`CheckOutputCronJob_handleCheckOutputJob_29 File is not stable, skipping: ${image}`)
+        continue
+      }
+
       const stats = fs.statSync(imagePath)
       const fileSizeInBytes = stats.size
 
-      l.log(`handleCheckOutputJob_30 Found image: ${image}, size: ${fileSizeInBytes} bytes`)
+      l.log(`CheckOutputCronJob_handleCheckOutputJob_30 Found image: ${image}, size: ${fileSizeInBytes} bytes`)
 
       if (fileSizeInBytes === 0) {
         fs.unlinkSync(imagePath)
-        l.warn(`handleCheckOutputJob_37 Deleted zero-size image: ${image}`)
+        l.warn(`CheckOutputCronJob_handleCheckOutputJob_37 Deleted zero-size image: ${image}`)
         continue
       }
 
@@ -52,15 +61,15 @@ export class CheckOutputCronJob {
 
       // const maxSize = 5 * 1024 * 1024 // 5MB
       // if (buffer.length > maxSize) {
-      //   log.log(`handleCheckOutputJob_131 Image ${image} is too large (${buffer.length} bytes), skipping upload.`)
+      //   log.log(`CheckOutputCronJob_handleCheckOutputJob_131 Image ${image} is too large (${buffer.length} bytes), skipping upload.`)
       //   continue
       // }
 
-      l.log(`handleCheckOutputJob_45 Sending image ${image} to Telegram chat ${TG_CHAT_ID}`)
+      l.log(`CheckOutputCronJob_handleCheckOutputJob_45 Sending image ${image} to Telegram chat ${TG_CHAT_ID}`)
       try {
         await this.tgbotlib.sendPhoto({ chatId: TG_CHAT_ID, photo: buffer })
       } catch (error) {
-        l.error(`handleCheckOutputJob_49 Error sending image ${image} to Telegram:`, this.h.herr.parseAxiosError(error))
+        l.error(`CheckOutputCronJob_handleCheckOutputJob_49 Error sending image ${image} to Telegram:`, this.h.herr.parseAxiosError(error))
         continue
       }
 
@@ -68,7 +77,33 @@ export class CheckOutputCronJob {
       const archivedImagePath = join(archivePath, image)
       fs.renameSync(imagePath, archivedImagePath)
 
-      l.log(`handleCheckOutputJob_99 archive image after sending: ${image}`)
+      l.log(`CheckOutputCronJob_handleCheckOutputJob_99 archive image after sending: ${image}`)
     }
+  }
+
+  private async waitForFileStable (path, intervalInMs = 500, attemptsNumber = 10) {
+    const { l } = this
+
+    let lastSize = -1
+
+    for (let i = 0; i < attemptsNumber; i++) {
+      try {
+        const { size } = fs.statSync(path)
+
+        if (size === lastSize) {
+          l.log(`CheckOutputCronJob_waitForFileStable_50 file is ready ${path}`)
+          return true
+        }
+
+        lastSize = size
+      } catch (error) {
+        l.log(`CheckOutputCronJob_waitForFileStable_91 read file error ${path}`, error)
+      }
+
+      await setTimeout(intervalInMs)
+    }
+
+    l.log(`CheckOutputCronJob_waitForFileStable_90 file not stable ${path}`)
+    return false
   }
 }
