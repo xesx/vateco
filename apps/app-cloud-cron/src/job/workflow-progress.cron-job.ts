@@ -75,14 +75,16 @@ export class WorkflowProgressCronJob {
             }
 
             wsClient.close()
+            resolve(null)
           }
-          return resolve(null)
+
+          return
         } else if (message.type === 'progress_state') {
           const now = Date.now()
 
           if (now - lastProgressMessageTimestamp < 2000) {
             // Throttle to send/edit message every 2 seconds
-            return resolve(null)
+            return
           }
 
           const runningNode = Object.values(message.data.nodes).find((node => node.state === 'running'))
