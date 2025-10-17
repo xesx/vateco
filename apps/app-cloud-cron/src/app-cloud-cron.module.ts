@@ -30,6 +30,7 @@ import * as job from './job'
     HelperAppCloudCronService,
     job.WorkflowLoadCronJob,
     job.WorkflowRunCronJob,
+    job.WorkflowProgressCronJob,
     job.CheckOutputCronJob,
   ],
 })

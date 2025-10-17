@@ -23,7 +23,18 @@ export class WorkflowProgressCronJob {
   async handle({ TG_CHAT_ID }) {
     const { tgbotlib } = this
 
-    const wsClient = await this.comfyuilib.wsConnect()
+    let wsClient
+
+    try {
+      wsClient = await this.comfyuilib.wsConnect()
+    } catch (error) {
+      this.l.error('WorkflowProgressCronJob_handle_31 WebSocket connection error', error)
+    }
+
+    if (!wsClient) {
+      return
+    }
+
     let tgMessageId: string | null = null
     let lastProgressMessageTimestamp = 0
 
