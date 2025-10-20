@@ -75,7 +75,7 @@ export class ComfyUiLibService {
 
     url = url || this.COMFY_UI_WS_URL
 
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       let ws = this.wsConnectionMap.get(url)
 
       if (ws) {
@@ -104,6 +104,7 @@ export class ComfyUiLibService {
 
       ws.on('error', (error) => {
         l.error('ComfyUiLibService_wsConnect_93 Ошибка подключения к ComfyUI WebSocket', error)
+        reject(new Error('WS_CONNECT_ERROR') )
       })
     })
   }
