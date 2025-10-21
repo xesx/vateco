@@ -1,10 +1,10 @@
-import * as fs from 'fs'
 import { join } from 'path'
+import * as fs from 'fs'
 
 import { Controller, All, Post, Body } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 
-import { TgBotLibService } from '@libs/tg-bot'
+import * as lib from '@lib'
 
 @Controller()
 export class AppCloudApiController {
@@ -12,7 +12,7 @@ export class AppCloudApiController {
   private readonly GENERATE_TASKS_DIR: string
 
   constructor(
-    private readonly tgBotLibService: TgBotLibService,
+    private readonly tgBotLibService: lib.TgBotLibService,
     private readonly configService: ConfigService,
   ) {
     this.WORKSPACE = this.configService.get<string>('WORKSPACE') || '/workspace'
@@ -24,6 +24,22 @@ export class AppCloudApiController {
   @All('ping')
   appCloudApiPing(): any {
     return { message: 'Pong!', timestamp: new Date() }
+  }
+
+  @Post('hf/download')
+  appCloudApiDownloadTask (@Body() body: { chatId: string, repo: string, filename: string, dir: string }): any {
+    const DOWNLOAD_TASKS_DIR = join(this.WORKSPACE, 'download_tasks')
+
+    if (!fs.existsSync(DOWNLOAD_TASKS_DIR)) {
+      fs.mkdirSync(DOWNLOAD_TASKS_DIR)
+    }
+
+    const filename = `hf_download_${Date.now()}.json`
+    const filePath = join(DOWNLOAD_TASKS_DIR, filename)
+
+    fs.writeFileSync(filePath, JSON.stringify(body), "utf8")
+
+    console.log(`appCloudApiDownloadTask_99 Download task for "${body.repo}/${body.filename}" added in ${filePath}`)
   }
 
   @Post('workflow/load')

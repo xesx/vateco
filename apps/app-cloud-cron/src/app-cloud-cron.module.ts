@@ -2,10 +2,8 @@ import { Module } from '@nestjs/common'
 import { ScheduleModule } from '@nestjs/schedule'
 import { ConfigModule } from '@nestjs/config'
 
-import { RcloneLibModule } from '@libs/rclone'
-import { TgBotLibModule } from '@libs/tg-bot'
-import { MessagesLibModule } from '@libs/message'
 import * as lib from '@lib'
+import * as synth from '@synth'
 
 import { CloudCronService } from './app-cloud-cron.service'
 import { HelperAppCloudCronService } from './helper.app-cloud-cron.service'
@@ -17,21 +15,24 @@ import * as job from './job'
       isGlobal: true,
     }),
     ScheduleModule.forRoot(),
-    RcloneLibModule,
-    TgBotLibModule,
-    MessagesLibModule,
+    lib.RcloneLibModule,
+    lib.TgBotLibModule,
+    lib.MessagesLibModule,
     lib.HelperLibModule,
     lib.WorkflowLibModule,
     lib.ComfyUiLibModule,
     lib.HuggingfaceLibModule,
+
+    synth.CloudAppSynthModule
   ],
   providers: [
     CloudCronService,
     HelperAppCloudCronService,
-    job.WorkflowLoadCronJob,
-    job.WorkflowRunCronJob,
-    job.WorkflowProgressCronJob,
-    job.CheckOutputCronJob,
+    // job.WorkflowLoadCronJob,
+    // job.WorkflowRunCronJob,
+    // job.WorkflowProgressCronJob,
+    // job.CheckOutputCronJob,
+    ...Object.values(job),
   ],
 })
 export class AppCloudCronModule {}

@@ -2,9 +2,6 @@ import { Module } from '@nestjs/common'
 import { ScheduleModule } from '@nestjs/schedule'
 import { ConfigModule } from '@nestjs/config'
 
-import { RcloneLibModule } from '@libs/rclone'
-import { TgBotLibModule } from '@libs/tg-bot'
-import { MessagesLibModule } from '@libs/message'
 import * as lib from '@lib'
 
 import { CloudCronService } from './app-cron.service'
@@ -16,9 +13,9 @@ import * as job from './job'
       isGlobal: true,
     }),
     ScheduleModule.forRoot(),
-    RcloneLibModule,
-    TgBotLibModule,
-    MessagesLibModule,
+    lib.RcloneLibModule,
+    lib.TgBotLibModule,
+    lib.MessagesLibModule,
     lib.HelperLibModule,
     lib.WorkflowLibModule,
     lib.ComfyUiLibModule

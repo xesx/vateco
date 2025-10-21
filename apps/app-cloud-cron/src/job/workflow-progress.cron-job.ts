@@ -1,3 +1,5 @@
+import { setTimeout } from 'timers/promises'
+
 // import * as fs from 'fs'
 // import { join } from 'path'
 
@@ -60,8 +62,9 @@ export class WorkflowProgressCronJob {
     let promptId: string | null = null
 
     await new Promise((resolve) => {
-      wsClient.on('error', (error) => {
+      wsClient.on('error', async (error) => {
         l.error('WorkflowProgressCronJob_handle_42 WebSocket error', error)
+        await setTimeout(5000)
         resolve(null)
       })
 
