@@ -1,11 +1,12 @@
 import { setTimeout } from 'timers/promises'
 
-// import * as fs from 'fs'
-// import { join } from 'path'
+import * as fs from 'fs'
+import { join } from 'path'
 
 import { Injectable, Logger } from '@nestjs/common'
 
 import * as lib from '@lib'
+import * as synth from '@synth'
 
 import { HelperAppCloudCronService } from '../helper.app-cloud-cron.service'
 
@@ -40,10 +41,12 @@ export class WorkflowProgressCronJob {
     private readonly wflib: lib.WorkflowLibService,
     private readonly msglib: lib.MessageLibService,
     private readonly tgbotlib: lib.TgBotLibService,
+    private readonly appcloudsynth: synth.CloudAppSynthService,
   ) {}
 
   async handle({ TG_CHAT_ID }) {
     const { l, tgbotlib } = this
+    const { GENERATE_PROGRESS_TASKS_DIR } = this.appcloudsynth
 
     let wsClient
 
@@ -60,6 +63,7 @@ export class WorkflowProgressCronJob {
     let tgMessageId: string | null = null
     let lastProgressMessageTimestamp = 0
     let promptId: string | null = null
+    let taskData: any = null
 
     await new Promise((resolve) => {
       wsClient.on('error', async (error) => {
@@ -99,17 +103,32 @@ export class WorkflowProgressCronJob {
 
           const runningNode = Object.values(message.data.nodes).find((node => node.state === 'running'))
 
-          if (runningNode && runningNode.max > 1 && runningNode.value / runningNode.max < 0.97) {
+          // if (runningNode && runningNode.max > 1 && runningNode.value / runningNode.max < 0.97) {
+          if (runningNode) {
             lastProgressMessageTimestamp = now
 
             if (message.data.prompt_id !== promptId) {
               tgMessageId = null
               promptId = message.data.prompt_id
+
+              try {
+                taskData = JSON.parse(fs.readFileSync(join(GENERATE_PROGRESS_TASKS_DIR, `${promptId}.json`), 'utf-8'))
+              } catch (error) {
+                l.error('WorkflowProgressCronJob_handle_81 parse prompt file error', error)
+              }
             }
 
+            const nodeId = runningNode.node_id || runningNode.display_node_id || runningNode.real_node_id
+
+            let messageText = `Generation`
+            const currentNodeType = taskData?.workflow?.[nodeId]?.class_type
+
+            if (currentNodeType) {
+              messageText = currentNodeType
+            }
             // const tgMessage = this.msglib.genCodeMessage(`⏳ WF is in progress...\nid: ${promptId}\nNode: ${runningNode.node_id}\nProgress: ${Math.floor((runningNode.value / runningNode.max) * 100)}%`)
             const tgMessage = this.msglib.genProgressMessage({
-              message: 'generation',
+              message: messageText,
               total: runningNode.max,
               done: runningNode.value,
             })
