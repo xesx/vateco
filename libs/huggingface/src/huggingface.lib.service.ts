@@ -37,7 +37,7 @@ export class HuggingfaceLibService {
     const env = { ...process.env, HF_HUB_ENABLE_HF_TRANSFER: '1' }
 
     return new Promise((resolve, reject) => {
-      const child = spawn('python3', ['/workspace/vateco/bin/download_with_progress.py', repo, filename, dir], { env })
+      const child = spawn('python3', ['/workspace/vateco/bin/hf-download-with-progress.py', repo, filename, dir], { env })
 
       child.stderr.on('data', (chunk) => {
         const lines = chunk.toString().split('\n')

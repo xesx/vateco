@@ -10,8 +10,6 @@ import getFolderSize from 'get-folder-size'
 
 import * as lib from '@lib'
 
-console.log('\x1b[36m', 'lib', lib, '\x1b[0m')
-
 @Injectable()
 export class CloudAppSynthService {
   private readonly l = new Logger(CloudAppSynthService.name)
