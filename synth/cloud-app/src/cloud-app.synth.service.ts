@@ -1,20 +1,14 @@
 import { join } from 'path'
 import * as fs from 'fs'
 
-// import * as assert from 'node:assert/strict'
-// import * as pm2 from 'pm2'
-// import axios from 'axios'
-// import * as WebSocket from 'ws'
-//
-// console.log('\x1b[36m', 'WebSocket', WebSocket, '\x1b[0m')
-
 import { Injectable, Logger } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 
 import * as filesize from 'file-size'
-// import axios, { AxiosInstance } from 'axios'
 
 import * as lib from '@lib'
+
+console.log('\x1b[36m', 'lib', lib, '\x1b[0m')
 
 @Injectable()
 export class CloudAppSynthService {
@@ -29,12 +23,18 @@ export class CloudAppSynthService {
   private readonly COMFY_UI_URL: string
   private readonly COMFY_UI_WS_URL: string
 
-  private readonly hflib: lib.HuggingfaceLibService
-  private readonly tgbotlib: lib.TgBotLibService
-  private readonly msglib: lib.MessageLibService
+  constructor(
+    private readonly configService: ConfigService,
+    private readonly hflib: lib.HuggingfaceLibService,
+    private readonly tgbotlib: lib.TgBotLibService,
+    private readonly msglib: lib.MessageLibService,
+  ) {
+    this.WORKSPACE = this.configService.get<string>('WORKSPACE') || process.env.WORKSPACE || ''
 
-  constructor(private readonly configService: ConfigService) {
-    this.WORKSPACE = this.configService.get<string>('WORKSPACE') || '/workspace'
+    if (!this.WORKSPACE) {
+      throw new Error('CloudAppSynthService_constructor_38 WORKSPACE is not set')
+    }
+
     this.HF_HOME = process.env.HF_HOME || `${this.WORKSPACE}/.hf_home`
     this.GENERATE_TASKS_DIR = `${this.WORKSPACE}/generate_tasks`
     this.DOWNLOAD_TASKS_DIR = join(this.WORKSPACE, 'download_tasks')

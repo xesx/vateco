@@ -5,7 +5,7 @@ import * as lib from '@lib'
 
 @Module({
   imports: [
-    lib.HuggingfaceLibModule,
+    lib.MessagesLibModule,
     lib.TgBotLibModule,
     lib.HuggingfaceLibModule,
   ],

@@ -8,6 +8,7 @@ import * as filesize from 'file-size'
 
 
 import * as lib from '@lib'
+import * as synth from '@synth'
 // import { packageDirectorySync } from 'pkg-dir'
 
 // const rootDir = packageDirectorySync()
@@ -22,6 +23,8 @@ export class TestCli {
     private readonly wflib: lib.WorkflowLibService,
     private readonly h: lib.HelperLibService,
     private readonly hflib: lib.HuggingfaceLibService,
+
+    private readonly appcloudsynth: synth.CloudAppSynthService,
   ) {}
 
   register(program) {
@@ -35,13 +38,14 @@ export class TestCli {
         // const all = await sharp(imagePath).metadata()
         // console.log('\x1b[36m', 'all', all?.comments?.find?.(i => i.keyword === 'prompt')?.text, '\x1b[0m')
 
+        await this.appcloudsynth.loadFileFromHF({ chatId: '', repo: 'alalarty/models2', filename: 'comfyui-cu128-py312-v2.tar.zst', dir: '' })
 
-        const size = await this.hflib.getFileSize({
-          repo: 'alalarty/models2',
-          filename: 'clip_l.safetensors',
-        })
-
-        console.log('\x1b[36m', 'size', filesize(size).human('si'), '\x1b[0m') // ok!
+        // const size = await this.hflib.getFileSize({
+        //   repo: 'alalarty/models2',
+        //   filename: 'clip_l.safetensors',
+        // })
+        //
+        // console.log('\x1b[36m', 'size', filesize(size).human('si'), '\x1b[0m') // ok!
 
         // console.log('\x1b[36m', 'size', filesize(size).human('jedec'), '\x1b[0m')
         // console.log('\x1b[36m', 'size', filesize(size).human(), '\x1b[0m')
