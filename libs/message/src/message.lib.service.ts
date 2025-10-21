@@ -37,4 +37,10 @@ export class MessageLibService {
     })
   }
 
+  genProgressMessage ({ message, total = 0, done = 0 }) {
+    return this.generateMessage({
+      type: 'progress',
+      data: { message, total, done },
+    })
+  }
 }

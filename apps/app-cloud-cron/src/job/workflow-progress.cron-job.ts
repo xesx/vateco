@@ -107,7 +107,12 @@ export class WorkflowProgressCronJob {
               promptId = message.data.prompt_id
             }
 
-            const tgMessage = this.msglib.genCodeMessage(`⏳ WF is in progress...\nid: ${promptId}\nNode: ${runningNode.node_id}\nProgress: ${Math.floor((runningNode.value / runningNode.max) * 100)}%`)
+            // const tgMessage = this.msglib.genCodeMessage(`⏳ WF is in progress...\nid: ${promptId}\nNode: ${runningNode.node_id}\nProgress: ${Math.floor((runningNode.value / runningNode.max) * 100)}%`)
+            const tgMessage = this.msglib.genProgressMessage({
+              message: 'generation',
+              total: runningNode.max,
+              done: runningNode.value,
+            })
 
             if (tgMessageId) {
               await tgbotlib.editMessage({
