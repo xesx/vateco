@@ -6,7 +6,7 @@ import { Injectable, Logger } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 
 import * as filesize from 'file-size'
-import getFolderSize from 'get-folder-size'
+// import getFolderSize from 'get-folder-size'
 
 import * as lib from '@lib'
 
@@ -50,7 +50,7 @@ export class CloudAppSynthService {
   }
 
   async loadFileFromHF ({ chatId, repo, filename, dir }: { chatId: string, repo: string, filename: string, dir: string }) {
-    const { l, WORKSPACE, HF_HOME } = this
+    const { l, WORKSPACE } = this
 
     const dstDir = `${WORKSPACE}/${dir}`
     const fullFileName = `${dstDir}/${filename}`
@@ -68,7 +68,6 @@ export class CloudAppSynthService {
 
     const hfSizeHuman = filesize(hfSize).human('si')
 
-
     try {
       while (this.lockDownloadHFFiles) {
         l.log(`CloudAppSynthService_loadFileFromHF_60 Waiting for other download to finish...`)
@@ -76,33 +75,9 @@ export class CloudAppSynthService {
       }
 
       this.lockDownloadHFFiles = true
-      const startCacheHFSize = await getFolderSize.loose(HF_HOME)
 
       let message = this.msglib.genCodeMessage(`Downloading "${filename}" (${hfSizeHuman}) ...`)
       const messageId = await this.tgbotlib.sendMessage({ chatId, text: message })
-
-      const timer = setInterval(() => {
-        // Запускаем асинхронную операцию "в фоне"
-        (async (): Promise<void> => {
-          if (!fs.existsSync(HF_HOME)) {
-            return
-          }
-
-          try {
-            const currentCacheHFSize = await getFolderSize.loose(HF_HOME)
-            const downloadedSize = currentCacheHFSize - startCacheHFSize
-
-            const percent = ((downloadedSize / hfSize) * 100).toFixed(2)
-            message = this.msglib.genCodeMessage(
-              `Downloading "${filename}" (${hfSizeHuman}) ... ${filesize(downloadedSize).human('si')} (${percent}%)`
-            )
-            await this.tgbotlib.editMessage({ chatId, messageId, text: message })
-          } catch (error) {
-            console.log('CloudAppSynthService_loadFileFromHF_93 Error in download progress update:', error)
-            // Можно также отправить сообщение об ошибке в Telegram, если нужно
-          }
-        })()
-      }, 3000)
 
       await this.hflib.downloadWithRetry({
         repo,
@@ -111,8 +86,6 @@ export class CloudAppSynthService {
         retries: 5,
         delayMs: 10000,
       })
-
-      clearInterval(timer)
 
       message = this.msglib.genCodeMessage(`Download "${filename}" complete!`)
       await this.tgbotlib.editMessage({ chatId, messageId, text: message })

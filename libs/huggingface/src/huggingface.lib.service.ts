@@ -33,46 +33,11 @@ export class HuggingfaceLibService {
     })
   }
 
-  async downloadV2 ({ repo = 'alalarty/models2', filename, dir }) {
-    const env = { ...process.env, HF_HUB_ENABLE_HF_TRANSFER: '1' }
-
-    return new Promise((resolve, reject) => {
-      const child = spawn('python3', ['/workspace/vateco/bin/hf-download-with-progress.py', repo, filename, dir], { env })
-
-      child.stderr.on('data', (chunk) => {
-        const lines = chunk.toString().split('\n')
-        for (const line of lines) {
-          if (line.startsWith('PROGRESS:')) {
-            const percent = parseFloat(line.split(':')[1])
-            console.log(`Загрузка: ${percent.toFixed(1)}%`)
-            // Здесь можно эмитить событие, обновлять UI и т.д.
-          } else if (line.startsWith('ERROR:')) {
-            console.error('Ошибка загрузки:', line.slice(6))
-          } else if (line.trim()) {
-            console.log('[stderr]', line)
-          }
-        }
-      })
-
-      child.on('close', (code) => {
-        if (code === 0) {
-          resolve(true)
-        } else {
-          reject(new Error(`Загрузка завершилась с кодом ${code}`))
-        }
-      })
-
-      child.on('error', (err) => {
-        reject(err)
-      })
-    })
-  }
-
   async downloadWithRetry ({ repo = 'alalarty/models2', filename, dir, retries = 3, delayMs = 5000 }) {
     for (let attempt = 1; attempt <= retries; attempt++) {
       try {
         // await this.download({ repo, filename, dir })
-        await this.downloadV2({ repo, filename, dir })
+        await this.download({ repo, filename, dir })
         return // Success, exit the function
       } catch (error) {
         if (attempt >= retries) {
