@@ -4,10 +4,12 @@ import { join } from 'path'
 import { Injectable, Logger } from '@nestjs/common'
 
 import * as lib from '@lib'
+import * as synth from '@synth'
 
 import { HelperAppCloudCronService } from '../helper.app-cloud-cron.service'
 
 type TWorkflowTask = {
+  chatId: string
   workflowId: string
   count?: number
   workflowParams: Record<string, any>
@@ -24,10 +26,12 @@ export class WorkflowRunCronJob {
     private readonly wflib: lib.WorkflowLibService,
     private readonly msglib: lib.MessageLibService,
     private readonly tgbotlib: lib.TgBotLibService,
+    private readonly appcloudsynth: synth.CloudAppSynthService,
   ) {}
 
-  async handle({ GENERATE_TASKS_DIR, TG_CHAT_ID }) {
+  async handle () {
     const { l } = this
+    const { GENERATE_PROGRESS_TASKS_DIR, GENERATE_TASKS_DIR } = this.appcloudsynth
 
     if (!fs.existsSync(GENERATE_TASKS_DIR)) {
       l.log(`handleRunWorkflowJob_11 Generate tasks directory does not exist: ${GENERATE_TASKS_DIR}`)
@@ -51,7 +55,7 @@ export class WorkflowRunCronJob {
         continue
       }
 
-      const { workflowId, count = 1, workflowParams } = taskData
+      const { chatId, workflowId, count = 1, workflowParams } = taskData
       fs.unlinkSync(taskFilePath)
 
       l.log(`🕐 Run workflow cron job executed, found "${workflowId}" workflow to run ${count} times`)
@@ -88,6 +92,19 @@ export class WorkflowRunCronJob {
         try {
           const response = await this.comfyuilib.prompt(compiledWorkflowSchema)
           l.log(`handleRunWorkflowJob_80 Workflow ${workflowId} run completed, response: ${JSON.stringify(response)}`)
+
+          const promptId = response.prompt_id
+          const progressFilename = `${promptId}.json`
+
+          const content = {
+            chatId,
+            promptId,
+            workflowId,
+            workflowParams,
+            workflow: compiledWorkflowSchema,
+          }
+
+          fs.writeFileSync(join(GENERATE_PROGRESS_TASKS_DIR, progressFilename), JSON.stringify(content, null, 2), "utf8")
         } catch (error) {
           l.error('handleRunWorkflowJob_85 Error', error)
         }

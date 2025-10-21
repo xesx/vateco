@@ -19,6 +19,7 @@ export class CloudAppSynthService {
   readonly HF_HOME: string
   readonly WORKSPACE: string
   readonly GENERATE_TASKS_DIR: string
+  readonly GENERATE_PROGRESS_TASKS_DIR: string
   readonly DOWNLOAD_TASKS_DIR: string
 
   private readonly COMFY_UI_DIR: string
@@ -39,6 +40,7 @@ export class CloudAppSynthService {
 
     this.HF_HOME = process.env.HF_HOME || `${this.WORKSPACE}/.hf_home`
     this.GENERATE_TASKS_DIR = `${this.WORKSPACE}/generate_tasks`
+    this.GENERATE_PROGRESS_TASKS_DIR = join(this.WORKSPACE, 'generate_progress_tasks')
     this.DOWNLOAD_TASKS_DIR = join(this.WORKSPACE, 'download_tasks')
 
     fs.mkdirSync(this.GENERATE_TASKS_DIR, { recursive: true })

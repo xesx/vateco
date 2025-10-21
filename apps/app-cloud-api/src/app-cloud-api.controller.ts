@@ -72,11 +72,12 @@ export class AppCloudApiController {
   }
 
   @Post('workflow/run')
-  appCloudApiWorkflowRun(@Body() body: { id: string, count?: number, params: Record<string, any> }): any {
+  appCloudApiWorkflowRun(@Body() body: { chatId: string, id: string, count?: number, params: Record<string, any> }): any {
     const now = Date.now()
     const filePath = join(this.GENERATE_TASKS_DIR, `${now}_${body.id}.json`)
 
     const content = {
+      chatId: body.chatId,
       count: body.count || 1,
       workflowId: body.id,
       workflowParams: body.params,
