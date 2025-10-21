@@ -50,7 +50,7 @@ export class CloudAppSynthService {
   }
 
   async loadFileFromHF ({ chatId, repo, filename, dir }: { chatId: string, repo: string, filename: string, dir: string }) {
-    const { l, WORKSPACE } = this
+    const { l, WORKSPACE, HF_HOME } = this
 
     const dstDir = `${WORKSPACE}/${dir}`
     const fullFileName = `${dstDir}/${filename}`
@@ -67,7 +67,9 @@ export class CloudAppSynthService {
     }
 
     const hfSizeHuman = filesize(hfSize).human('si')
-    const startDirSize = await getFolderSize.loose(dstDir)
+
+    let startCacheDirSize = await getFolderSize.loose(HF_HOME)
+    let startDirSize = await getFolderSize.loose(dstDir)
 
     let timer
 
@@ -89,7 +91,15 @@ export class CloudAppSynthService {
         (async (): Promise<void> => {
           try {
             const currentDirSize = await getFolderSize.loose(dstDir)
-            const deltaSize = currentDirSize - startDirSize
+            const currentCacheDirSize = await getFolderSize.loose(HF_HOME)
+
+            const deltaSize = (currentDirSize + currentCacheDirSize) - (startDirSize + startCacheDirSize)
+
+            if (deltaSize <= 0 || downloadedSize + deltaSize > hfSize) {
+              startCacheDirSize = await getFolderSize.loose(HF_HOME)
+              startDirSize = await getFolderSize.loose(dstDir)
+              return
+            }
 
             downloadedSize = downloadedSize + deltaSize
 
