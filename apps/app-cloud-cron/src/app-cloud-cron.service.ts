@@ -74,7 +74,6 @@ export class CloudCronService {
   @Cron('*/2 * * * * *')
   @Mutex('downloadCronJob')
   async _downloadCronJob () {
-    const { WORKSPACE } = this
-    await this.downloadCronJob.handle({ WORKSPACE })
+    await this.downloadCronJob.handle()
   }
 }

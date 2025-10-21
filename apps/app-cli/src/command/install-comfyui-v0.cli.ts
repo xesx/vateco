@@ -34,12 +34,8 @@ export class InstallComfyuiV0Cli {
             throw new Error('InstallComfyuiV0Cli_register_48 COMFY_UI_ARCHIVE_FILE is not set')
           }
 
-          await this.appcloudsynth.loadFileFromHF({ chatId, repo: 'alalarty/models2', filename, dir: '' })
-          // await this.tgbotlib.sendMessage({ chatId, text: this.msglib.genCodeMessage('Downloading ComfyUI...') })
-          // await this.hflib.download({
-          //   filename: process.env.COMFY_UI_ARCHIVE_FILE,
-          //   dir: workspacePath
-          // })
+          // download comfyui archive from HF
+          await this.appcloudsynth.loadFileFromHF({ chatId, repo: 'alexxxiy/vtc', filename, dir: '' })
 
           // unpack comfyui
           await this.tgbotlib.sendMessage({ chatId, text: this.msglib.genCodeMessage('Unpacking ComfyUI...') })

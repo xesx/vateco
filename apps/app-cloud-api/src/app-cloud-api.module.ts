@@ -4,6 +4,7 @@ import { ConfigModule } from '@nestjs/config'
 import { MulterModule } from '@nestjs/platform-express'
 
 import * as lib from '@lib'
+import * as synth from '@synth'
 
 import { MulterConfigAppCloudApiService } from './multer-config.app-cloud-api.service'
 
@@ -21,6 +22,8 @@ import { FileAppCloudApiController } from './file.app-cloud-api.controller'
     }),
     lib.VastLibModule,
     lib.TgBotLibModule,
+
+    synth.CloudAppSynthModule
   ],
   controllers: [
     AppCloudApiController,

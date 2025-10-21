@@ -24,10 +24,10 @@ export class DownloadCronJob {
     private readonly appcloudsynth: synth.CloudAppSynthService,
   ) {}
 
-  async handle({ WORKSPACE }) {
+  async handle () {
     const { l } = this
 
-    const DOWNLOAD_TASKS_DIR = join(WORKSPACE, 'download_tasks')
+    const { DOWNLOAD_TASKS_DIR } = this.appcloudsynth
 
     if (!fs.existsSync(DOWNLOAD_TASKS_DIR)) {
       return
@@ -47,6 +47,8 @@ export class DownloadCronJob {
 
         l.log(`DownloadCronJob_95 Huggingface file "${repo}/${filename}" downloaded to "${dir}" for chatId ${chatId}`)
       }
+
+      fs.unlinkSync(taskFilePath)
     }
   }
 }

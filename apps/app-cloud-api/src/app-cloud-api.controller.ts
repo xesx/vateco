@@ -5,6 +5,7 @@ import { Controller, All, Post, Body } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 
 import * as lib from '@lib'
+import * as synth from '@synth'
 
 @Controller()
 export class AppCloudApiController {
@@ -14,6 +15,7 @@ export class AppCloudApiController {
   constructor(
     private readonly tgBotLibService: lib.TgBotLibService,
     private readonly configService: ConfigService,
+    private readonly appcloudsynth: synth.CloudAppSynthService,
   ) {
     this.WORKSPACE = this.configService.get<string>('WORKSPACE') || '/workspace'
     this.GENERATE_TASKS_DIR = `${this.WORKSPACE}/generate_tasks`
@@ -28,7 +30,7 @@ export class AppCloudApiController {
 
   @Post('hf/download')
   appCloudApiDownloadTask (@Body() body: { chatId: string, repo: string, filename: string, dir: string }): any {
-    const DOWNLOAD_TASKS_DIR = join(this.WORKSPACE, 'download_tasks')
+    const { DOWNLOAD_TASKS_DIR } = this.appcloudsynth
 
     if (!fs.existsSync(DOWNLOAD_TASKS_DIR)) {
       fs.mkdirSync(DOWNLOAD_TASKS_DIR)

@@ -19,7 +19,7 @@ export class WorkflowLoadYdiskCronJob {
     private readonly wflib: lib.WorkflowLibService,
   ) {}
 
-  async handle({ TG_CHAT_ID, WORKSPACE }) {
+  async handle ({ TG_CHAT_ID, WORKSPACE }) {
     const { l } = this
 
     const filePath = join(WORKSPACE, 'load.json')

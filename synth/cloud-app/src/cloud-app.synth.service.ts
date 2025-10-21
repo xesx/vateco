@@ -6,7 +6,7 @@ import { Injectable, Logger } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 
 import * as filesize from 'file-size'
-// import getFolderSize from 'get-folder-size'
+import getFolderSize from 'get-folder-size'
 
 import * as lib from '@lib'
 
@@ -16,10 +16,10 @@ export class CloudAppSynthService {
 
   private lockDownloadHFFiles = false
 
-  private readonly HF_HOME: string
-  private readonly WORKSPACE: string
-  private readonly GENERATE_TASKS_DIR: string
-  private readonly DOWNLOAD_TASKS_DIR: string
+  readonly HF_HOME: string
+  readonly WORKSPACE: string
+  readonly GENERATE_TASKS_DIR: string
+  readonly DOWNLOAD_TASKS_DIR: string
 
   private readonly COMFY_UI_DIR: string
   private readonly COMFY_UI_URL: string
@@ -50,7 +50,7 @@ export class CloudAppSynthService {
   }
 
   async loadFileFromHF ({ chatId, repo, filename, dir }: { chatId: string, repo: string, filename: string, dir: string }) {
-    const { l, WORKSPACE } = this
+    const { l, WORKSPACE, HF_HOME } = this
 
     const dstDir = `${WORKSPACE}/${dir}`
     const fullFileName = `${dstDir}/${filename}`
@@ -67,6 +67,9 @@ export class CloudAppSynthService {
     }
 
     const hfSizeHuman = filesize(hfSize).human('si')
+    let hfStartCacheSize = await getFolderSize.loose(HF_HOME)
+
+    let timer
 
     try {
       while (this.lockDownloadHFFiles) {
@@ -79,6 +82,37 @@ export class CloudAppSynthService {
       let message = this.msglib.genCodeMessage(`Downloading "${filename}" (${hfSizeHuman}) ...`)
       const messageId = await this.tgbotlib.sendMessage({ chatId, text: message })
 
+      let downloadedSize = 0
+
+      timer = setInterval(() => {
+        // Запускаем асинхронную операцию "в фоне"
+        (async (): Promise<void> => {
+          try {
+            const hfCurrentCacheSize = await getFolderSize.loose(HF_HOME)
+            const deltaSize = hfCurrentCacheSize - hfStartCacheSize
+
+            if (deltaSize <= 0) {
+              // Размер не увеличился, пропускаем обновление
+              hfStartCacheSize = hfCurrentCacheSize
+              return
+            }
+
+            downloadedSize = downloadedSize + deltaSize
+
+            message = this.msglib.genProgressMessage({
+              message: `Downloading "${filename}" (${hfSizeHuman})`,
+              total: hfSize,
+              done: downloadedSize,
+            })
+
+            await this.tgbotlib.editMessage({ chatId, messageId, text: message })
+          } catch (error) {
+            console.error('Error in download progress update:', error)
+            // Можно также отправить сообщение об ошибке в Telegram, если нужно
+          }
+        })()
+      }, 2000)
+
       await this.hflib.downloadWithRetry({
         repo,
         filename,
@@ -87,12 +121,18 @@ export class CloudAppSynthService {
         delayMs: 10000,
       })
 
+      clearInterval(timer)
+
       message = this.msglib.genCodeMessage(`Download "${filename}" complete!`)
       await this.tgbotlib.editMessage({ chatId, messageId, text: message })
     } catch (error) {
       l.error(`CloudAppSynthService_loadFileFromHF_97 Error downloading file ${repo}/${filename}`, error.message)
     } finally {
       this.lockDownloadHFFiles = false
+
+      if (timer) {
+        clearInterval(timer)
+      }
     }
 
   }
