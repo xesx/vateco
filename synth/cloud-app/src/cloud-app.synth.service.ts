@@ -44,6 +44,7 @@ export class CloudAppSynthService {
     this.DOWNLOAD_TASKS_DIR = join(this.WORKSPACE, 'download_tasks')
 
     fs.mkdirSync(this.GENERATE_TASKS_DIR, { recursive: true })
+    fs.mkdirSync(this.GENERATE_PROGRESS_TASKS_DIR, { recursive: true })
     fs.mkdirSync(this.DOWNLOAD_TASKS_DIR, { recursive: true })
 
     this.COMFY_UI_DIR = `${this.WORKSPACE}/ComfyUI`
