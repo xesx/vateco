@@ -4,6 +4,8 @@ import { Injectable, Logger } from '@nestjs/common'
 import { Cron } from '@nestjs/schedule'
 import { ConfigService } from '@nestjs/config'
 
+import * as filesize from 'file-size'
+
 import { Mutex } from './mutex.decorator'
 
 import * as lib from '@lib'
@@ -46,10 +48,12 @@ export class HelperAppCloudCronService {
       return
     }
 
-    let message = this.msglib.genCodeMessage(`Downloading "${modelName}"...`)
-    const messageId = await this.tgbotlib.sendMessage({ chatId: TG_CHAT_ID, text: message })
-
     const [repo] = Object.keys(model.huggingfaceLink)
+
+    const size = await this.hflib.getFileSize({ repo, filename: model.huggingfaceLink[repo] })
+
+    let message = this.msglib.genCodeMessage(`Downloading "${modelName}" (${filesize(size).human('si')}) ...`)
+    const messageId = await this.tgbotlib.sendMessage({ chatId: TG_CHAT_ID, text: message })
 
     await this.hflib.downloadWithRetry({
       repo,

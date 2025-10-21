@@ -4,6 +4,7 @@ import * as fs from 'fs'
 import { setTimeout } from 'timers/promises'
 
 import * as sharp from 'sharp'
+import * as filesize from 'file-size'
 
 
 import * as lib from '@lib'
@@ -20,6 +21,7 @@ export class TestCli {
     private readonly tgbotlib: lib.TgBotLibService,
     private readonly wflib: lib.WorkflowLibService,
     private readonly h: lib.HelperLibService,
+    private readonly hflib: lib.HuggingfaceLibService,
   ) {}
 
   register(program) {
@@ -34,6 +36,15 @@ export class TestCli {
         // console.log('\x1b[36m', 'all', all?.comments?.find?.(i => i.keyword === 'prompt')?.text, '\x1b[0m')
 
 
+        const size = await this.hflib.getFileSize({
+          repo: 'alalarty/models2',
+          filename: 'clip_l.safetensors',
+        })
+
+        console.log('\x1b[36m', 'size', filesize(size).human('si'), '\x1b[0m') // ok!
+
+        // console.log('\x1b[36m', 'size', filesize(size).human('jedec'), '\x1b[0m')
+        // console.log('\x1b[36m', 'size', filesize(size).human(), '\x1b[0m')
         // const compiledWorkflowSchema = this.wflib.compileWorkflow({ id: '300' })
         // console.log('----->>>>>>>>>> compiledWorkflowSchema', JSON.stringify(compiledWorkflowSchema))
         //
@@ -50,26 +61,26 @@ export class TestCli {
         // const { 'prompt_id': promptId } = response
         // console.log('\x1b[36m', 'promptId', promptId, '\x1b[0m')
 
-        const wsClient = await this.comfyuilib.wsConnect()
-
-        wsClient.on('message', (data) => {
-          const message = JSON.parse(data.toString())
-          if (message.type === 'crystools.monitor') {
-            return
-          }
-
-          if (message.type === 'status') {
-            console.log('\x1b[36m', 'ws status', JSON.stringify(message, null, 2), '\x1b[0m')
-            if (message.data.status.exec_info.queue_remaining <= 0) {
-              wsClient.close()
-            }
-            return
-          }
-
-          // progress_state
-
-          console.log('\x1b[36m', 'ws message', JSON.stringify(message, null, 2), '\x1b[0m')
-        })
+        // const wsClient = await this.comfyuilib.wsConnect()
+        //
+        // wsClient.on('message', (data) => {
+        //   const message = JSON.parse(data.toString())
+        //   if (message.type === 'crystools.monitor') {
+        //     return
+        //   }
+        //
+        //   if (message.type === 'status') {
+        //     console.log('\x1b[36m', 'ws status', JSON.stringify(message, null, 2), '\x1b[0m')
+        //     if (message.data.status.exec_info.queue_remaining <= 0) {
+        //       wsClient.close()
+        //     }
+        //     return
+        //   }
+        //
+        //   // progress_state
+        //
+        //   console.log('\x1b[36m', 'ws message', JSON.stringify(message, null, 2), '\x1b[0m')
+        // })
 
         // const instance = await this.vastlib.showInstance({ instanceId: 26522082 })
         // console.log('----->>>>>>>>>> instance', JSON.stringify(instance))

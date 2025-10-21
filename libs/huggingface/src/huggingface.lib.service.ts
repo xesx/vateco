@@ -26,7 +26,7 @@ export class HuggingfaceLibService {
         if (code === 0) {
           resolve(true)
         } else {
-          const error = new Error(`huggingfaceLib_download_87 hf download exited with code ${code}`)
+          const error = new Error(`HuggingfaceLibService_download_87 hf download exited with code ${code}`)
           reject(error)
         }
       })
@@ -43,35 +43,27 @@ export class HuggingfaceLibService {
           throw error // Rethrow the error if it's the last attempt
         }
         // Wait before retrying
-        console.log('huggingfaceLib_downloadWithRetry_91 Error downloading file, retrying...', error)
+        console.log('HuggingfaceLibService_downloadWithRetry_91 Error downloading file, retrying...', error)
         await new Promise(res => setTimeout(res, delayMs))
       }
     }
   }
 
-  async getFileSize ({ repo, filename, token }) {
-    const url = `${this.HF_BASE_URL}/api/models/${repo}`
-
-    token = token || process.env.HF_TOKEN || ''
+  async getFileSize ({ repo, filename, token = process.env.HF_TOKEN }) {
+    const url = `${this.HF_BASE_URL}/${repo}/resolve/main/${filename}`
 
     if (!token) {
       throw new Error('HuggingfaceLibService_getFileSize_13 Huggingface token is not provided')
     }
 
     try {
-      const response = await axios.get(url, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
+      const response = await axios.head(url, { headers: { Authorization: `Bearer ${token}` } })
 
-      const file = response.data.siblings?.find(f => f.rfilename === filename)
-      if (!file || typeof file.size !== 'number') {
-        throw new Error(`Файл "${filename}" не найден или не имеет размера.`)
-      }
-
-      return file.size
+      return Number(response.headers['content-length'])
     } catch (error) {
-      console.error('Ошибка при получении размера файла:', error.message)
-      throw error
+      console.log('HuggingfaceLibService_getFileSize_91 Error get file size', error, error.message)
+      // throw error
+      return 0
     }
   }
 }
