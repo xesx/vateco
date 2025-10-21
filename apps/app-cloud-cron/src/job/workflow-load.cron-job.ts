@@ -5,6 +5,8 @@ import { join } from 'path'
 import { Injectable, Logger } from '@nestjs/common'
 
 import * as lib from '@lib'
+import * as synth from '@synth'
+import modelMap from '@model'
 
 import { HelperAppCloudCronService } from '../helper.app-cloud-cron.service'
 
@@ -18,6 +20,8 @@ export class WorkflowLoadCronJob {
     private readonly tgbotlib: lib.TgBotLibService,
     private readonly msglib: lib.MessageLibService,
     private readonly wflib: lib.WorkflowLibService,
+
+    private readonly appcloudsynth: synth.CloudAppSynthService,
   ) {}
 
   async handle({ TG_CHAT_ID, WORKSPACE }) {
@@ -45,7 +49,13 @@ export class WorkflowLoadCronJob {
       const models = workflow?.models
 
       for (const modelName of models) {
-        await this.helper.loadModel(modelName)
+        const model = modelMap[modelName]
+        const [repo] = Object.keys(model.huggingfaceLink)
+        const filename = model.huggingfaceLink[repo]
+        const dir = `ComfyUI/models/${model.comfyUiDir}`
+
+        // await this.helper.loadModel(modelName)
+        this.appcloudsynth.loadFileFromHF({ chatId: TG_CHAT_ID, repo, filename, dir })
       }
 
       await this.tgbotlib.sendMessage({
