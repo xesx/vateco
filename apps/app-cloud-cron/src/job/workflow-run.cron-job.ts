@@ -84,10 +84,10 @@ export class WorkflowRunCronJob {
       // this.tgbotlib.sendMessage({ chatId: TG_CHAT_ID, text: message })
 
       for (let i = 0; i < count; i++) {
-        l.log(`🔄 Running workflow ${workflowId}, iteration ${i + 1} of ${count}`)
-
+        l.log(`handleRunWorkflowJob_55 Running workflow ${workflowId}, iteration ${i + 1} of ${count}`)
         l.log(`handleRunWorkflowJob_60 Workflow params: ${JSON.stringify(workflowParams)}`)
-        const compiledWorkflowSchema = this.wflib.compileWorkflow({ id: workflowId, params: workflowParams })
+
+        const { workflow: compiledWorkflowSchema, params: compiledParams } = this.wflib.compileWorkflowV2({ id: workflowId, params: workflowParams })
 
         try {
           const response = await this.comfyuilib.prompt(compiledWorkflowSchema)
@@ -101,6 +101,7 @@ export class WorkflowRunCronJob {
             promptId,
             workflowId,
             workflowParams,
+            filenamePrefix: compiledParams.filenamePrefix || '',
             workflow: compiledWorkflowSchema,
           }
 
