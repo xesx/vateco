@@ -24,6 +24,10 @@
     "comfyUiDir": "loras",
     "huggingfaceLink": {
       "alalarty/models2": "il/lora/style_hhammerh_r2.safetensors"
+    },
+    "meta": {
+      "info": "https://civitai.com/models/1600070/hhammerh-artist-style-il",
+      "trigger": ["style_hhammerh", "wide hips", "narrow waist", "big ass", "large breasts", "thick thighs", "big lips"]
     }
   },
   "wwafr-10.safetensors": {
@@ -40,6 +44,10 @@
     "comfyUiDir": "loras",
     "huggingfaceLink": {
       "alalarty/models2": "il/lora/Messy_Sketch_Test.safetensors"
+    },
+    "meta": {
+      "info": "https://civitai.com/models/1627367/style-messy-sketch",
+        "trigger": ["messy sketch", "sketch", "monochrome", "greyscale", "traditional media"]
     }
   },
   "Cum_Slider_Illustrious_alpha1.0_rank4_noxattn_last.safetensors": {
