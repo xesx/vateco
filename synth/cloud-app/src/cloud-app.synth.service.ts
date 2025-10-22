@@ -96,19 +96,19 @@ export class CloudAppSynthService {
             const currentCacheDirSize = await getFolderSize.loose(HF_HOME)
             const currentDstDirSize = await getFolderSize.loose(dstDir)
 
+            let deltaSize = (currentDstDirSize + currentCacheDirSize) - (startDstDirSize + startCacheDirSize)
+            downloadedSize = downloadedSize + deltaSize
+
             if (currentCacheDirSize < startCacheDirSize) {
               startCacheDirSize = currentCacheDirSize
+
+              deltaSize = 0
+              downloadedSize = currentDstDirSize - startDstDirSize
             }
 
-            const deltaSize = (currentDstDirSize + currentCacheDirSize) - (startDstDirSize + startCacheDirSize)
-
-            if (deltaSize <= 0 || downloadedSize + deltaSize > hfSize) {
-              startCacheDirSize = currentCacheDirSize
-              startDstDirSize = currentDstDirSize
-              return
+            if (deltaSize < 0 || downloadedSize + deltaSize > hfSize) {
+              downloadedSize = currentDstDirSize - startDstDirSize
             }
-
-            downloadedSize = downloadedSize + deltaSize
 
             message = this.msglib.genProgressMessage({
               message: `Downloading "${filename}" (${hfSizeHuman})`,
