@@ -6,7 +6,17 @@ import * as illustrious from './illustrious.checkpoint.model.json'
 import * as illustriousLora from './illustrious.lora.model.json'
 import * as illustriousCN from './illustrious.controlnet.model.json'
 
-export default {
+function addParamToModel (models: Record<string, any>, key: string, value: any) {
+  for (const modelName in models) {
+    models[modelName].meta = models[modelName].meta || {}
+    models[modelName].meta[key] = value
+  }
+}
+
+addParamToModel(illustriousLora, 'illustrious_lora', true)
+
+// Add additional parameters to each model
+const modelMap = {
   ...clip,
   ...flux,
   ...sd15,
@@ -15,3 +25,5 @@ export default {
   ...illustriousLora,
   ...illustriousCN,
 }
+
+export default modelMap

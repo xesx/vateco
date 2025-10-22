@@ -1,3 +1,5 @@
+import modelMap from '@model'
+
 type TParam = {
   type: 'string' | 'integer' | 'boolean' | 'number'
   default?: string | number | boolean
@@ -87,6 +89,15 @@ const params: Record<string, TParam> = {
   lora: {
     type: 'string',
     description: 'The LoRa to use for generation',
+    label: 'Lora',
+    default: 'N/A',
+    isComfyUiModel: true,
+    multiple: 20,
+  },
+  loraIllustrious: {
+    type: 'string',
+    enum: Object.keys(modelMap).filter(modelName => modelMap[modelName].meta?.illustrious_lora),
+    description: 'The LoRa to use for generation on Illustrious model',
     label: 'Lora',
     default: 'N/A',
     isComfyUiModel: true,

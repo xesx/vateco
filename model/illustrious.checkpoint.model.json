@@ -3,18 +3,27 @@
     "comfyUiDir": "checkpoints",
     "huggingfaceLink": {
       "alalarty/models2": "il/arthemyComics_v60.safetensors"
+    },
+    "meta": {
+      "info": "https://civitai.com/models/1273254/arthemy-comics-illustrious"
     }
   },
   "honeysIllustrious_10.safetensors": {
     "comfyUiDir": "checkpoints",
     "huggingfaceLink": {
       "alalarty/models2": "il/honeysIllustrious_10.safetensors"
+    },
+    "meta": {
+      "info": "https://civitai.com/models/1361344/honeys-illustrious"
     }
   },
   "illustriousXL_v01.safetensors": {
     "comfyUiDir": "checkpoints",
     "huggingfaceLink": {
       "alalarty/models2": "il/illustriousXL_v01.safetensors"
+    },
+    "meta": {
+      "info": "https://civitai.com/models/795765/illustrious-xl"
     }
   },
   "riMixPONYIllustrious_riMix.safetensors": {

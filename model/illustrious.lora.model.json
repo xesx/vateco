@@ -9,6 +9,9 @@
     "comfyUiDir": "loras",
     "huggingfaceLink": {
       "alalarty/models2": "il/lora/Breast_Size_Slider_Illustrious_V2_alpha1.0_rank4_noxattn_last.safetensors"
+    },
+    "meta": {
+      "info": "https://civitai.com/models/481016/breast-size-slider-pony-illustrious"
     }
   },
   "commixmixL.safetensors": {
@@ -27,6 +30,10 @@
     "comfyUiDir": "loras",
     "huggingfaceLink": {
       "alalarty/models2": "il/lora/wwafr-10.safetensors"
+    },
+    "meta": {
+      "info": "https://civitai.com/models/1529811/style-or-wwafr",
+      "trigger": ["wwafr"]
     }
   },
   "Messy_Sketch_Test.safetensors": {
