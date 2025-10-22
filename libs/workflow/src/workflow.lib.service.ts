@@ -83,35 +83,40 @@ export class WorkflowLibService {
     const workflow = this.getWorkflow(id)
     const compiledParams: any = {}
 
-    // 2 passes to allow params to depend on each other
-    // for (let i = 0; i < 2; i++) {
-    //   ???
-    //   params = compiledParams
-    // }
+    const compiledParamsSet = new Set<string>()
 
-    for (const key in workflow.params) {
-      const paramInfo = workflowInfo.param[key]
-      const rawValue = params[key] ?? workflow.params[key]?.value ?? paramInfo?.default
+    while (compiledParamsSet.size < Object.keys(workflow.params).length) {
+      for (const key in workflow.params) {
+        if (compiledParamsSet.has(key)) {
+          continue
+        }
 
-      if (paramInfo?.compile) {
-        compiledParams[key] = paramInfo?.compile({ ...params, [key]: rawValue })
-      } else {
-        compiledParams[key] = rawValue
+        const paramInfo = workflowInfo.param[key]
+        const rawValue = params[key] ?? workflow.params[key]?.value ?? paramInfo?.default
+
+        if (paramInfo?.compile) {
+          if (paramInfo.depends && !paramInfo.depends.every((depKey) => compiledParamsSet.has(depKey))) {
+            continue
+          }
+
+          compiledParams[key] = paramInfo?.compile({ ...params, ...compiledParams, [key]: rawValue })
+        } else {
+          compiledParams[key] = rawValue
+        }
+
+        if (paramInfo.type === 'number') {
+          compiledParams[key] = parseFloat(compiledParams[key].replace?.(',', '.') ?? compiledParams[key])
+        }
+
+        if (paramInfo.type === 'boolean') {
+          compiledParams[key] = (String(compiledParams[key]) === 'true') || (compiledParams[key] === true)
+        }
+
+        compiledParamsSet.add(key)
+
+        // TODO: validate param type
       }
-
-      if (paramInfo.type === 'number') {
-        compiledParams[key] = parseFloat(compiledParams[key].replace?.(',', '.') ?? compiledParams[key])
-      }
-
-      if (paramInfo.type === 'boolean') {
-        compiledParams[key] = (String(compiledParams[key]) === 'true') || (compiledParams[key] === true)
-      }
-
-      // TODO: validate param type
     }
-
-    // TODO: invent some labuba
-    compiledParams.seedValue = workflowInfo.param.seedValue?.compile?.(compiledParams)
 
     return compiledParams
   }

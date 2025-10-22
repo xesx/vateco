@@ -17,7 +17,7 @@ export class WfCompileCli {
         // console.log('\x1b[36m', 'workflow', workflow, '\x1b[0m')
 
         const wf = this.wflib.getWorkflow(workflowId)
-        console.log('\x1b[36m', 'wf', JSON.stringify(wf, null, 2), '\x1b[0m')
+        // console.log('\x1b[36m', 'wf', JSON.stringify(wf, null, 2), '\x1b[0m')
 
         const params = {
           // "model": "flux1-dev-fp8.safetensors",
