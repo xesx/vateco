@@ -72,7 +72,7 @@ export class CloudAppSynthService {
     const hfSizeHuman = filesize(hfSize).human('si')
 
     let startCacheDirSize = await getFolderSize.loose(HF_HOME)
-    let startDirSize = await getFolderSize.loose(dstDir)
+    let startDstDirSize = await getFolderSize.loose(dstDir)
 
     let timer
 
@@ -93,14 +93,18 @@ export class CloudAppSynthService {
         // Запускаем асинхронную операцию "в фоне"
         (async (): Promise<void> => {
           try {
-            const currentDirSize = await getFolderSize.loose(dstDir)
             const currentCacheDirSize = await getFolderSize.loose(HF_HOME)
+            const currentDstDirSize = await getFolderSize.loose(dstDir)
 
-            const deltaSize = (currentDirSize + currentCacheDirSize) - (startDirSize + startCacheDirSize)
+            if (currentCacheDirSize < startCacheDirSize) {
+              startCacheDirSize = currentCacheDirSize
+            }
+
+            const deltaSize = (currentDstDirSize + currentCacheDirSize) - (startDstDirSize + startCacheDirSize)
 
             if (deltaSize <= 0 || downloadedSize + deltaSize > hfSize) {
-              startCacheDirSize = await getFolderSize.loose(HF_HOME)
-              startDirSize = await getFolderSize.loose(dstDir)
+              startCacheDirSize = currentCacheDirSize
+              startDstDirSize = currentDstDirSize
               return
             }
 
@@ -129,6 +133,9 @@ export class CloudAppSynthService {
       })
 
       clearInterval(timer)
+
+      // если файл в репозитории лежит в папке, то hf cli скачает его вместе с папкой
+      fs.renameSync(`${dstDir}/${filename}`, fullFileName)
 
       message = this.msglib.genCodeMessage(`Download "${filename}" complete!`)
       await this.tgbotlib.editMessage({ chatId, messageId, text: message })

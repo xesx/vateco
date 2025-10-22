@@ -140,7 +140,7 @@
       "PowerLoraLoaderHeaderWidget": {
         "type": "PowerLoraLoaderHeaderWidget"
       },
-      "lora_1": { "on": "{{loraEnabled1}}", "lora": "{{lora1}}", "strength": "{{loraStrength}}" },
+      "lora_1": { "on": "{{loraEnabled1}}", "lora": "{{lora1}}", "strength": "{{loraStrength1}}" },
       "lora_2": { "on": "{{loraEnabled2}}", "lora": "{{lora2}}", "strength": "{{loraStrength2}}" },
       "lora_3": { "on": "{{loraEnabled3}}", "lora": "{{lora3}}", "strength": "{{loraStrength3}}" },
       "lora_4": { "on": "{{loraEnabled4}}", "lora": "{{lora4}}", "strength": "{{loraStrength4}}" },

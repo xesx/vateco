@@ -6,6 +6,8 @@ import { Injectable, Logger } from '@nestjs/common'
 import * as lib from '@lib'
 import * as synth from '@synth'
 
+import modelMap from '@model'
+
 import { HelperAppCloudCronService } from '../helper.app-cloud-cron.service'
 
 type TWorkflowTask = {
@@ -32,6 +34,7 @@ export class WorkflowRunCronJob {
   async handle () {
     const { l } = this
     const { GENERATE_PROGRESS_TASKS_DIR, GENERATE_TASKS_DIR } = this.appcloudsynth
+    const TG_CHAT_ID = String(process.env.TG_CHAT_ID) // todo
 
     if (!fs.existsSync(GENERATE_TASKS_DIR)) {
       l.log(`handleRunWorkflowJob_11 Generate tasks directory does not exist: ${GENERATE_TASKS_DIR}`)
@@ -77,7 +80,12 @@ export class WorkflowRunCronJob {
       })
 
       for (const modelName of modelsForDownload) {
-        await this.helper.loadModel(modelName)
+        const model = modelMap[modelName]
+        const [repo] = Object.keys(model.huggingfaceLink)
+        const filename = model.huggingfaceLink[repo]
+        const dir = `ComfyUI/models/${model.comfyUiDir}`
+
+        await this.appcloudsynth.loadFileFromHF({ chatId: TG_CHAT_ID, repo, filename, dir })
       }
 
       // const message = this.msglib.genCodeMessage('Generation in progress...')

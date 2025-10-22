@@ -5,11 +5,22 @@
   "template": "base-upscale-00",
   "models": ["arthemyComics_v60.safetensors"],
   "params": {
-    "model": { "value": "arthemyComics_v60.safetensors" },
     "filenamePrefix": { "value": "illustrious_upscale_" },
     "seedType": { "value": "random" },
 
     "generationNumber": { "user": true, "value": 1, "position": [0] },
+
+    "model": {
+      "user": true,
+      "value": "arthemyComics_v60.safetensors",
+      "enum": [
+        "arthemyComics_v60.safetensors",
+        "honeysIllustrious_10.safetensors",
+        "illustriousXL_v01.safetensors",
+        "riMixPONYIllustrious_riMix.safetensors"
+      ],
+      "position": [5]
+    },
 
     "image": { "user": true, "position": [10, 0] },
     "width": { "user": true, "value": 1400, "enum": [1400, 1600, 1800], "position": [10] },

@@ -5,8 +5,9 @@
   "template": "base-gen-01",
   "models": ["arthemyComics_v60.safetensors"],
   "params": {
-    "generationNumber": { "user": true, "position": [0, 0] },
+    "generationNumber": { "user": true, "position": [0, 0], "labal": "GenNum" },
     "seedType": { "user": true, "value": "random", "position": [0, 1] },
+    "seedValue": { "user": true, "value": 73, "position": [0, 2] },
 
     "model": {
       "user": true,
@@ -17,8 +18,20 @@
         "illustriousXL_v01.safetensors",
         "riMixPONYIllustrious_riMix.safetensors"
       ],
-      "position": [5]
+      "position": [2]
     },
+
+    "loraEnabled1": { "user": true, "value": false, "position": [5, 0] },
+    "lora1": { "user": true, "value": "AddMicroDetails_Illustrious_v5.safetensors", "position": [5, 1] },
+    "loraStrength1": { "user": true, "value": 0.5, "position": [5, 2] },
+
+    "loraEnabled2": { "user": true, "value": false, "position": [6, 0] },
+    "lora2": { "user": true, "value": "Breast_Size_Slider_Illustrious_V2_alpha1.0_rank4_noxattn_last.safetensors", "position": [6, 1] },
+    "loraStrength2": { "user": true, "value": 0.5, "position": [6, 2] },
+
+    "loraEnabled3": { "user": true, "value": false, "position": [7, 0] },
+    "lora3": { "user": true, "value": "wwafr-10.safetensors", "position": [7, 1] },
+    "loraStrength3": { "user": true, "value": 0.5, "position": [7, 2] },
 
     "width": { "user": true, "value": 1024, "enum": [512, 768, 1024], "position": [10, 0] },
     "height": { "user": true, "value": 1024, "enum": [512, 768, 1024], "position": [10, 1] },
