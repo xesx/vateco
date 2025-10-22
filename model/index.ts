@@ -3,6 +3,8 @@ import * as flux from './flux.model.json'
 import * as sd15 from './sd15.checkpoint.model.json'
 import * as sdxl from './sdxl.checkpoint.model.json'
 import * as illustrious from './illustrious.checkpoint.model.json'
+import * as illustriousLora from './illustrious.lora.model.json'
+import * as illustriousCN from './illustrious.controlnet.model.json'
 
 export default {
   ...clip,
@@ -10,4 +12,6 @@ export default {
   ...sd15,
   ...sdxl,
   ...illustrious,
+  ...illustriousLora,
+  ...illustriousCN,
 }

@@ -1,0 +1,8 @@
+{
+  "illustriousXL_cn_openpose_v10.safetensors": {
+    "comfyUiDir": "controlnet",
+    "huggingfaceLink": {
+      "alalarty/models2": "il/cn/illustriousXL_cn_openpose_v10.safetensors"
+    }
+  }
+}
