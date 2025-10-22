@@ -1,0 +1,26 @@
+{
+  "arthemyComics_v60.safetensors": {
+    "comfyUiDir": "checkpoints",
+    "huggingfaceLink": {
+      "alalarty/models2": "il/arthemyComics_v60.safetensors"
+    }
+  },
+  "honeysIllustrious_10.safetensors": {
+    "comfyUiDir": "checkpoints",
+    "huggingfaceLink": {
+      "alalarty/models2": "il/honeysIllustrious_10.safetensors"
+    }
+  },
+  "illustriousXL_v01.safetensors": {
+    "comfyUiDir": "checkpoints",
+    "huggingfaceLink": {
+      "alalarty/models2": "il/illustriousXL_v01.safetensors"
+    }
+  },
+  "riMixPONYIllustrious_riMix.safetensors": {
+    "comfyUiDir": "checkpoints",
+    "huggingfaceLink": {
+      "alalarty/models2": "il/riMixPONYIllustrious_riMix.safetensors"
+    }
+  }
+}

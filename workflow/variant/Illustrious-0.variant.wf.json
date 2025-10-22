@@ -5,10 +5,20 @@
   "template": "base-gen-01",
   "models": ["arthemyComics_v60.safetensors"],
   "params": {
-    "model": { "value": "arthemyComics_v60.safetensors" },
-    "seedType": { "value": "random" },
+    "generationNumber": { "user": true, "position": [0, 0] },
+    "seedType": { "user": true, "value": "random", "position": [0, 1] },
 
-    "generationNumber": { "user": true, "position": [0] },
+    "model": {
+      "user": true,
+      "value": "arthemyComics_v60.safetensors",
+      "enum": [
+        "arthemyComics_v60.safetensors",
+        "honeysIllustrious_10.safetensors",
+        "illustriousXL_v01.safetensors",
+        "riMixPONYIllustrious_riMix.safetensors"
+      ],
+      "position": [5]
+    },
 
     "width": { "user": true, "value": 1024, "enum": [512, 768, 1024], "position": [10, 0] },
     "height": { "user": true, "value": 1024, "enum": [512, 768, 1024], "position": [10, 1] },
