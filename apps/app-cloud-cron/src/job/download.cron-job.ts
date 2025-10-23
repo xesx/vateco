@@ -42,10 +42,16 @@ export class DownloadCronJob {
       const fileContent = fs.readFileSync(taskFilePath, "utf8")
 
       if (taskFile.startsWith('hf_download_')) {
-        const { chatId, repo, filename, dir } = JSON.parse(fileContent)
-        await this.appcloudsynth.loadFileFromHF({ chatId, repo, filename, dir })
+        const { chatId, repo, srcFilename, dstFilename, dstDir } = JSON.parse(fileContent)
+        await this.appcloudsynth.loadFileFromHF({
+          chatId,
+          repo,
+          srcFilename,
+          dstFilename,
+          dstDir
+        })
 
-        l.log(`DownloadCronJob_95 Huggingface file "${repo}/${filename}" downloaded to "${dir}" for chatId ${chatId}`)
+        l.log(`DownloadCronJob_95 Huggingface file "${repo}/${srcFilename}" downloaded to "${dstDir}/${dstFilename}" for chatId ${chatId}`)
       }
 
       fs.unlinkSync(taskFilePath)

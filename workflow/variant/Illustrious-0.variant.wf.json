@@ -6,8 +6,8 @@
   "models": [],
   "params": {
     "generationNumber": { "user": true, "label": "GenNum", "position": [0, 0] },
-    "seedType": { "user": true, "value": "random", "position": [0, 1] },
-    "seedValue": { "user": true, "value": 73, "position": [0, 2] },
+    "seedType": { "user": true, "value": "random", "position": [0, 1], "label": "seed" },
+    "seedValue": { "user": true, "value": 73, "position": [0, 2], "label": "" },
 
     "model": {
       "user": true,
@@ -22,11 +22,11 @@
     "loraStrength6": { "user": true, "value": 0.5, "label": "", "position": [5, 2] },
 
     "loraEnabled7": { "user": true, "value": false, "label": "l2 on", "position": [6, 0] },
-    "lora2": { "user": true, "enum": "$.ilLoraEnum", "value": "$.ilLoraEnum:1", "label": "", "position": [6, 1] },
+    "lora2": { "user": true, "enum": "$.ilLoraEnum", "label": "", "position": [6, 1] },
     "loraStrength7": { "user": true, "value": 0.5, "label": "", "position": [6, 2] },
 
     "loraEnabled8": { "user": true, "value": false, "label": "l3 on", "position": [7, 0] },
-    "lora3": { "user": true, "enum": "$.ilLoraEnum", "value": "$.ilLoraEnum:2", "label": "", "position": [7, 1] },
+    "lora3": { "user": true, "enum": "$.ilLoraEnum", "label": "", "position": [7, 1] },
     "loraStrength8": { "user": true, "value": 0.5, "label": "", "position": [7, 2] },
 
     "width": { "user": true, "value": 1024, "enum": [512, 768, 1024], "position": [10, 0] },

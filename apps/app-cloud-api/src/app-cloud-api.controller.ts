@@ -29,7 +29,7 @@ export class AppCloudApiController {
   }
 
   @Post('hf/download')
-  appCloudApiDownloadTask (@Body() body: { chatId: string, repo: string, filename: string, dir: string }): any {
+  appCloudApiDownloadTask (@Body() body: { chatId: string, repo: string, srcFilename: string, dstFilename: string, dstDir: string }): any {
     const { DOWNLOAD_TASKS_DIR } = this.appcloudsynth
 
     if (!fs.existsSync(DOWNLOAD_TASKS_DIR)) {
@@ -39,9 +39,10 @@ export class AppCloudApiController {
     const filename = `hf_download_${Date.now()}.json`
     const filePath = join(DOWNLOAD_TASKS_DIR, filename)
 
-    fs.writeFileSync(filePath, JSON.stringify(body), "utf8")
+    const content = JSON.stringify(body)
+    fs.writeFileSync(filePath, content, "utf8")
 
-    console.log(`appCloudApiDownloadTask_99 Download task for "${body.repo}/${body.filename}" added in ${filePath}`)
+    console.log(`appCloudApiDownloadTask_99 Download task content: ${content}`)
   }
 
   @Post('workflow/load')

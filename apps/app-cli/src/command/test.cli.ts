@@ -38,7 +38,7 @@ export class TestCli {
         // const all = await sharp(imagePath).metadata()
         // console.log('\x1b[36m', 'all', all?.comments?.find?.(i => i.keyword === 'prompt')?.text, '\x1b[0m')
 
-        await this.appcloudsynth.loadFileFromHF({ chatId: '', repo: 'alalarty/models2', filename: 'comfyui-cu128-py312-v2.tar.zst', dir: '' })
+        // await this.appcloudsynth.loadFileFromHF({ chatId: '', repo: 'alalarty/models2', filename: 'comfyui-cu128-py312-v2.tar.zst', dir: '' })
 
         // const size = await this.hflib.getFileSize({
         //   repo: 'alalarty/models2',

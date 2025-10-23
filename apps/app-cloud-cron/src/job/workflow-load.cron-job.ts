@@ -51,10 +51,17 @@ export class WorkflowLoadCronJob {
       for (const modelName of models) {
         const model = modelMap[modelName]
         const [repo] = Object.keys(model.huggingfaceLink)
-        const filename = model.huggingfaceLink[repo]
-        const dir = `ComfyUI/models/${model.comfyUiDir}`
+        const srcFilename = model.huggingfaceLink[repo]
+        const dstFilename = model.comfyUiFileName
+        const dstDir = `ComfyUI/models/${model.comfyUiDir}`
 
-        await this.appcloudsynth.loadFileFromHF({ chatId: TG_CHAT_ID, repo, filename, dir })
+        await this.appcloudsynth.loadFileFromHF({
+          chatId: TG_CHAT_ID,
+          repo,
+          srcFilename,
+          dstFilename,
+          dstDir
+        })
       }
 
       await this.tgbotlib.sendMessage({

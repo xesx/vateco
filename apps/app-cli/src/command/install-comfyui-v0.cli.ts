@@ -35,7 +35,13 @@ export class InstallComfyuiV0Cli {
           }
 
           // download comfyui archive from HF
-          await this.appcloudsynth.loadFileFromHF({ chatId, repo: 'alexxxiy/vtc', filename, dir: '' })
+          await this.appcloudsynth.loadFileFromHF({
+            chatId,
+            repo: 'alexxxiy/vtc',
+            srcFilename: filename,
+            dstFilename: filename,
+            dstDir: ''
+          })
 
           // unpack comfyui
           await this.tgbotlib.sendMessage({ chatId, text: this.msglib.genCodeMessage('Unpacking ComfyUI...') })
