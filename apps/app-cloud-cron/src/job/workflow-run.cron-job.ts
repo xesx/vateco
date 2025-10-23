@@ -73,6 +73,10 @@ export class WorkflowRunCronJob {
       const modelsForDownload: string[] = []
 
       Object.entries(workflowParams || {}).forEach(([key, value]) => {
+        if (typeof value === 'object') {
+          value = value.value
+        }
+
         if (['❓', 'N/A'].includes(value)) {
           return
         }
