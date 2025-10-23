@@ -92,7 +92,11 @@ export class WorkflowLibService {
         }
 
         const paramInfo = workflowInfo.param[key]
-        const rawValue = params[key] ?? workflow.params[key]?.value ?? paramInfo?.default
+        let rawValue = params[key] ?? workflow.params[key]?.value ?? paramInfo?.default
+
+        if (typeof rawValue === 'object') {
+          rawValue = rawValue.value
+        }
 
         if (paramInfo?.compile) {
           if (paramInfo.depends && !paramInfo.depends.every((depKey) => compiledParamsSet.has(depKey))) {
