@@ -2,7 +2,7 @@
   "il_cp_arthemy_comics_v60": {
     "comfyUiDir": "checkpoints",
     "comfyUiFileName": "il_cp_arthemy_comics_v60.safetensors",
-    "label": "ArthemyComicsIL",
+    "label": "Arthemy Comics IL",
     "huggingfaceLink": {
       "alalarty/models2": "il/arthemyComics_v60.safetensors"
     },
@@ -13,7 +13,7 @@
   "il_cp_honeys_10": {
     "comfyUiDir": "checkpoints",
     "comfyUiFileName": "il_cp_honeys_10.safetensors",
-    "label": "HoneyIL",
+    "label": "Honey IL",
     "huggingfaceLink": {
       "alalarty/models2": "il/honeysIllustrious_10.safetensors"
     },
@@ -24,7 +24,7 @@
   "il_cp_xl_v01": {
     "comfyUiDir": "checkpoints",
     "comfyUiFileName": "il_cp_xl_v01.safetensors",
-    "label": "XlIL",
+    "label": "IL Xl v0.1",
     "huggingfaceLink": {
       "alalarty/models2": "il/illustriousXL_v01.safetensors"
     },
@@ -35,7 +35,7 @@
   "il_cp_rimix_pony": {
     "comfyUiDir": "checkpoints",
     "comfyUiFileName": "il_cp_rimix_pony.safetensors",
-    "label": "PonyRimixIL",
+    "label": "PonyIL Rimix",
     "huggingfaceLink": {
       "alalarty/models2": "il/riMixPONYIllustrious_riMix.safetensors"
     }

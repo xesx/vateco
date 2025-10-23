@@ -317,9 +317,7 @@ export class HandleOwnITgBot {
 
     if (value) {
       if (wfParam.enum) { // value is enum index
-        ctx.session.workflowParams[paramName] = typeof wfParam.enum[value] === 'object'
-          ? wfParam.enum[value].value
-          : wfParam.enum[value]
+        ctx.session.workflowParams[paramName] = wfParam.enum[value]
       } else {
         ctx.session.workflowParams[paramName] = value
       }
