@@ -34,8 +34,9 @@ export class TestCli {
       .action(async (name) => {
         console.log(`Привет, ${name}!`)
 
-        // const imagePath = './workspace/ComfyUI_00018_.png'
-        // const all = await sharp(imagePath).metadata()
+        const imagePath = './workspace/test.png'
+        const all = await sharp(imagePath).metadata()
+        console.log('\x1b[36m', 'all', all, '\x1b[0m')
         // console.log('\x1b[36m', 'all', all?.comments?.find?.(i => i.keyword === 'prompt')?.text, '\x1b[0m')
 
         // await this.appcloudsynth.loadFileFromHF({ chatId: '', repo: 'alalarty/models2', filename: 'comfyui-cu128-py312-v2.tar.zst', dir: '' })

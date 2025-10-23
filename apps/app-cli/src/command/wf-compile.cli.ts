@@ -32,7 +32,7 @@ export class WfCompileCli {
           // "scheduler": "normal",
         }
 
-        const compiledWorkflowSchema = this.wflib.compileWorkflow({ id: workflowId, params })
+        const compiledWorkflowSchema = this.wflib.compileWorkflowV2({ id: workflowId, params })
         console.log('\x1b[36m', 'compiledWorkflowSchema', JSON.stringify(compiledWorkflowSchema), '\x1b[0m')
 
         // console.log('\x1b[36m', 'compiledWorkflowSchema', JSON.stringify(compiledWorkflowSchema, null, 4), '\x1b[0m')

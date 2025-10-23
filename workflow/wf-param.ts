@@ -94,6 +94,10 @@ const params: Record<string, TParam> = {
     isComfyUiModel: true,
     multiple: 20,
     compile: (model) => {
+      if (['N/A', '❓'].includes(model)) {
+        return ''
+      }
+
       return modelMap[model].comfyUiFileName
     },
   },
@@ -118,6 +122,10 @@ const params: Record<string, TParam> = {
     isComfyUiModel: true,
     multiple: 5,
     compile: (model) => {
+      if (['N/A', '❓'].includes(model)) {
+        return ''
+      }
+
       return modelMap[model].comfyUiFileName
     },
   },
