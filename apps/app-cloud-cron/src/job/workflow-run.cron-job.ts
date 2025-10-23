@@ -73,6 +73,10 @@ export class WorkflowRunCronJob {
       const modelsForDownload: string[] = []
 
       Object.entries(workflowParams || {}).forEach(([key, value]) => {
+        if (['❓', 'N/A'].includes(value)) {
+          return
+        }
+
         if (workflow.params[key].isComfyUiModel) {
           workflow.params[key].default = value
           modelsForDownload.push(value)

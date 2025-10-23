@@ -12,7 +12,11 @@ import {
 export class AppBaseTgBotService {
   constructor(
     private readonly tgbotlib: lib.TgBotLibService,
-  ) {}
+  ) {
+    setTimeout(() => {
+      tgbotlib.sendMessage({ chatId: '185857068:185857068', text: '!!! DEPLOY !!!' })
+    }, 2000)
+  }
 
   actionMainMenu (ctx: TAppBaseTgBotContext) {
     this.tgbotlib.safeAnswerCallback(ctx)

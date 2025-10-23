@@ -1,13 +1,14 @@
 {
-  "AddMicroDetails_Illustrious_v5": {
+  "AddMicroDetails_IL_v5": {
     "comfyUiDir": "loras",
-    "comfyUiFileName": "AddMicroDetails_Illustrious_v5.safetensors",
+    "comfyUiFileName": "AddMicroDetails_IL_v5.safetensors",
     "huggingfaceLink": {
       "alalarty/models2": "il/lora/AddMicroDetails_Illustrious_v5.safetensors"
     }
   },
-  "Breast_Size_Slider_Illustrious_V2_alpha1.0_rank4_noxattn_last.safetensors": {
+  "Breast_Size_Slider_IL_V2": {
     "comfyUiDir": "loras",
+    "comfyUiFileName": "Breast_Size_Slider_IL_V2.safetensors",
     "huggingfaceLink": {
       "alalarty/models2": "il/lora/Breast_Size_Slider_Illustrious_V2_alpha1.0_rank4_noxattn_last.safetensors"
     },
@@ -15,14 +16,16 @@
       "info": "https://civitai.com/models/481016/breast-size-slider-pony-illustrious"
     }
   },
-  "commixmixL.safetensors": {
+  "commixmixL": {
     "comfyUiDir": "loras",
+    "comfyUiFileName": "commixmixL.safetensors",
     "huggingfaceLink": {
       "alalarty/models2": "il/lora/commixmixL.safetensors"
     }
   },
-  "style_hhammerh_r2.safetensors": {
+  "style_hhammerh_r2": {
     "comfyUiDir": "loras",
+    "comfyUiFileName": "style_hhammerh_r2.safetensors",
     "huggingfaceLink": {
       "alalarty/models2": "il/lora/style_hhammerh_r2.safetensors"
     },
@@ -31,8 +34,9 @@
       "trigger": ["style_hhammerh", "wide hips", "narrow waist", "big ass", "large breasts", "thick thighs", "big lips"]
     }
   },
-  "wwafr-10.safetensors": {
+  "wwafr_10": {
     "comfyUiDir": "loras",
+    "comfyUiFileName": "wwafr_10.safetensors",
     "huggingfaceLink": {
       "alalarty/models2": "il/lora/wwafr-10.safetensors"
     },
@@ -41,8 +45,9 @@
       "trigger": ["wwafr"]
     }
   },
-  "Messy_Sketch_Test.safetensors": {
+  "Messy_Sketch_Test": {
     "comfyUiDir": "loras",
+    "comfyUiFileName": "Messy_Sketch_Test.safetensors",
     "huggingfaceLink": {
       "alalarty/models2": "il/lora/Messy_Sketch_Test.safetensors"
     },
@@ -51,26 +56,30 @@
         "trigger": ["messy sketch", "sketch", "monochrome", "greyscale", "traditional media"]
     }
   },
-  "Cum_Slider_Illustrious_alpha1.0_rank4_noxattn_last.safetensors": {
+  "Cum_Slider_IL": {
     "comfyUiDir": "loras",
+    "comfyUiFileName": "Cum_Slider_IL.safetensors",
     "huggingfaceLink": {
       "alalarty/models2": "il/lora/Cum_Slider_Illustrious_alpha1.0_rank4_noxattn_last.safetensors"
     }
   },
-  "Group_Sex_Slider_Illustrious_alpha1.0_rank4_noxattn_last.safetensors": {
+  "Group_Sex_Slider_IL": {
     "comfyUiDir": "loras",
+    "comfyUiFileName": "Group_Sex_Slider_IL.safetensors",
     "huggingfaceLink": {
       "alalarty/models2": "il/lora/Group_Sex_Slider_Illustrious_alpha1.0_rank4_noxattn_last.safetensors"
     }
   },
-  "Penis_Size_Slider_Illustrious_Girthy_alpha1.0_rank4_noxattn_250steps.safetensors": {
+  "Penis_Size_Slider_IL": {
     "comfyUiDir": "loras",
+    "comfyUiFileName": "Penis_Size_Slider_IL.safetensors",
     "huggingfaceLink": {
       "alalarty/models2": "il/lora/Penis_Size_Slider_Illustrious_Girthy_alpha1.0_rank4_noxattn_250steps.safetensors"
     }
   },
-  "bukkake_slider_illustrious_goofy.safetensors": {
+  "bukkake_slider_iL": {
     "comfyUiDir": "loras",
+    "comfyUiFileName": "bukkake_slider_iL.safetensors",
     "huggingfaceLink": {
       "alalarty/models2": "il/lora/bukkake_slider_illustrious_goofy.safetensors"
     }
