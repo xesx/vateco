@@ -103,7 +103,7 @@ export class WorkflowLibService {
             continue
           }
 
-          compiledParams[key] = paramInfo?.compile({ ...params, ...compiledParams, [key]: rawValue })
+          compiledParams[key] = paramInfo?.compile(rawValue, { ...params, ...compiledParams })
         } else {
           compiledParams[key] = rawValue
         }

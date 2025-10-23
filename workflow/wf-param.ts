@@ -1,3 +1,5 @@
+import modelMap from '@model'
+
 type TParam = {
   type: 'string' | 'integer' | 'boolean' | 'number'
   default?: string | number | boolean
@@ -8,7 +10,7 @@ type TParam = {
   multiple?: number
   isComfyUiModel?: boolean
   depends?: string[]
-  compile?: (params: Record<string, any>) => any
+  compile?: (rawValue: any, params: Record<string, any>) => any
 }
 
 const params: Record<string, TParam> = {
@@ -18,8 +20,8 @@ const params: Record<string, TParam> = {
     description: 'Some description of the parameter',
     label: 'Some Parameter',
     multiple: 0,
-    compile: ({ some }) => {
-      return some || 42
+    compile: (rawValue, params) => {
+      return params.some || rawValue || 42
     },
   },
   cfg: {
@@ -33,7 +35,7 @@ const params: Record<string, TParam> = {
     default: 1,
     description: 'CLIP Skip value for generation',
     label: 'CLIP Skip',
-    compile: ({ clipSkip }) => {
+    compile: (clipSkip) => {
       clipSkip = parseInt(clipSkip, 10)
       clipSkip = Math.min(Math.max(Math.abs(clipSkip), 1), 24) // between 1 and 14
       clipSkip = -clipSkip // make it negative
@@ -46,7 +48,7 @@ const params: Record<string, TParam> = {
     default: 1,
     description: 'Denoise strength for image-to-image generation',
     label: 'Denoise',
-    compile: ({ denoise }) => {
+    compile: (denoise) => {
       denoise = parseFloat(denoise) || 0
       denoise = Math.min(Math.abs(denoise), 1) // between 0 and 1
 
@@ -58,7 +60,7 @@ const params: Record<string, TParam> = {
     default: 'bot_img_',
     description: 'Prefix for the generated image filenames',
     label: 'Filename Prefix',
-    compile: ({ filenamePrefix }) => {
+    compile: (filenamePrefix) => {
       filenamePrefix = String(filenamePrefix || 'img')
       filenamePrefix = `${filenamePrefix}_${new Date().toJSON().replace(/[:.]/g, '-')}`
       filenamePrefix = filenamePrefix.replace(/_+/g, '_').replace(/_$/, '')
@@ -112,6 +114,9 @@ const params: Record<string, TParam> = {
     label: 'Model',
     isComfyUiModel: true,
     multiple: 5,
+    compile: (model) => {
+      return modelMap[model].comfyUiFileName
+    },
   },
   negativePrompt: {
     type: 'string',
@@ -154,8 +159,7 @@ const params: Record<string, TParam> = {
     description: 'The seed value to use when Seed Type is fixed',
     label: 'Seed Value',
     depends: ['seedType'],
-    compile: ({ seedValue, seedType }) => {
-      console.log('\x1b[36m', 'seedValue, seedType ', seedValue, seedType , '\x1b[0m')
+    compile: (seedValue, { seedType }) => {
       if (seedType === 'random') {
         const seed = Math.floor(Math.random() * 4294967296) // 0..2^32-1
         return seed >>> 0
@@ -176,7 +180,7 @@ const params: Record<string, TParam> = {
     default: 512,
     description: 'Width of the generated image in pixels',
     label: 'Width',
-    compile: ({ width }) => {
+    compile: (width) => {
       width = parseInt(width, 10)
 
       // Clamp width to be multiple of 8
@@ -192,7 +196,7 @@ const params: Record<string, TParam> = {
     default: 512,
     description: 'Height of the generated image in pixels',
     label: 'Height',
-    compile: ({ height }) => {
+    compile: (height) => {
       height = parseInt(height, 10)
 
       // Clamp height to be multiple of 8

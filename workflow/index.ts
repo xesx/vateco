@@ -6,8 +6,6 @@ import { packageDirectorySync } from 'pkg-dir'
 import wfParam from './wf-param'
 import * as compiler from './compiler'
 
-console.log('\x1b[36m', 'compiler', compiler, '\x1b[0m')
-
 const rootDir = packageDirectorySync()
 const wfVariantDir = `${rootDir}/workflow/variant`
 const wfTemplateDir = `${rootDir}/workflow/template`

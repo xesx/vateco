@@ -88,9 +88,7 @@ export class WorkflowRunCronJob {
         }
       })
 
-      console.log('\x1b[36m', 'modelsForDownload', modelsForDownload, '\x1b[0m')
       for (const modelName of modelsForDownload) {
-        console.log('\x1b[36m', 'modelName', modelName, '\x1b[0m')
         const model = modelMap[modelName]
         const [repo] = Object.keys(model.huggingfaceLink)
         const srcFilename = model.huggingfaceLink[repo]
