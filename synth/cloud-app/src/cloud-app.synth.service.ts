@@ -52,26 +52,30 @@ export class CloudAppSynthService {
     this.COMFY_UI_WS_URL = 'ws://localhost:18188/ws'
   }
 
-  async loadFileFromHF ({ chatId, repo, filename, dir }: { chatId: string, repo: string, filename: string, dir: string }) {
+  async loadFileFromHF ({ chatId, repo, srcFilename, dstFilename, dstDir }: {
+    chatId: string,
+    repo: string,
+    srcFilename: string,
+    dstFilename: string,
+    dstDir: string,
+  }) {
     const { l, WORKSPACE, HF_HOME } = this
 
-    const dstDir = `${WORKSPACE}/${dir}`
-    const fullFileName = `${dstDir}/${filename}`
+    dstDir = `${WORKSPACE}/${dstDir}`
+    const fullDstFilename = `${dstDir}/${dstFilename}`
 
-    if (fs.existsSync(fullFileName)) {
-      l.log(`CloudAppSynthService_loadFileFromHF_30 File ${fullFileName} already exists, skipping download`)
+    if (fs.existsSync(fullDstFilename)) {
+      l.log(`CloudAppSynthService_loadFileFromHF_30 File ${fullDstFilename} already exists, skipping download`)
       return
     }
 
-    const hfSize = await this.hflib.getFileSize({ repo, filename })
+    const hfSize = await this.hflib.getFileSize({ repo, filename: srcFilename })
     if (!hfSize) {
-      l.error(`CloudAppSynthService_loadFileFromHF_47 Unable to get file size for ${repo}/${filename}, skipping download`)
+      l.error(`CloudAppSynthService_loadFileFromHF_47 Unable to get file size for ${repo}/${srcFilename}, skipping download`)
       return
     }
 
     const hfSizeHuman = filesize(hfSize).human('si')
-
-    let startCacheDirSize = await getFolderSize.loose(HF_HOME)
 
     fs.readdirSync(dstDir, { withFileTypes: true })
       .filter(entry => entry.isDirectory()) // оставляем только папки
@@ -82,6 +86,7 @@ export class CloudAppSynthService {
         fs.rmSync(cacheDirPath, { recursive: true, force: true })
       })
 
+    let startCacheDirSize = await getFolderSize.loose(HF_HOME)
     const startDstDirSize = await getFolderSize.loose(dstDir)
 
     let timer
@@ -94,10 +99,11 @@ export class CloudAppSynthService {
 
       this.lockDownloadHFFiles = true
 
-      let message = this.msglib.genCodeMessage(`Downloading "${filename}" (${hfSizeHuman}) ...`)
+      let message = this.msglib.genCodeMessage(`Downloading "${srcFilename}" (${hfSizeHuman}) ...`)
       const messageId = await this.tgbotlib.sendMessage({ chatId, text: message })
 
       let downloadedSize = 0
+      let step = 1
 
       timer = setInterval(() => {
         // Запускаем асинхронную операцию "в фоне"
@@ -106,27 +112,33 @@ export class CloudAppSynthService {
             const currentCacheDirSize = await getFolderSize.loose(HF_HOME)
             const currentDstDirSize = await getFolderSize.loose(dstDir)
 
-            let deltaSize = (currentDstDirSize + currentCacheDirSize) - (startDstDirSize + startCacheDirSize)
-            downloadedSize = downloadedSize + deltaSize
+            let deltaSize = 0
+            // let deltaSize = (currentDstDirSize + currentCacheDirSize) - (startDstDirSize + startCacheDirSize)
 
-            if (currentCacheDirSize < startCacheDirSize) {
-              startCacheDirSize = currentCacheDirSize
-
-              deltaSize = 0
-              downloadedSize = currentDstDirSize - startDstDirSize
+            if (currentCacheDirSize > startCacheDirSize) {
+              deltaSize += currentCacheDirSize - startCacheDirSize
             }
 
-            if (deltaSize < 0 || downloadedSize + deltaSize > hfSize) {
+            startCacheDirSize = currentCacheDirSize
+
+            if (deltaSize === 0) {
+              deltaSize += currentDstDirSize - startDstDirSize
+            }
+
+            downloadedSize = downloadedSize + deltaSize
+
+            if (downloadedSize > hfSize) {
               downloadedSize = currentDstDirSize - startDstDirSize
             }
 
             message = this.msglib.genProgressMessage({
-              message: `Downloading "${filename}" (${hfSizeHuman})`,
+              message: `Downloading "${srcFilename}" (${hfSizeHuman}), step ${step}`,
               total: hfSize,
               done: downloadedSize,
             })
 
             await this.tgbotlib.editMessage({ chatId, messageId, text: message })
+            step++
           } catch (error) {
             console.error('Error in download progress update:', error)
             // Можно также отправить сообщение об ошибке в Telegram, если нужно
@@ -136,7 +148,7 @@ export class CloudAppSynthService {
 
       await this.hflib.downloadWithRetry({
         repo,
-        filename,
+        filename: srcFilename,
         dir: dstDir,
         retries: 5,
         delayMs: 10000,
@@ -145,12 +157,12 @@ export class CloudAppSynthService {
       clearInterval(timer)
 
       // если файл в репозитории лежит в папке, то hf cli скачает его вместе с папкой
-      fs.renameSync(`${dstDir}/${filename}`, fullFileName)
+      fs.renameSync(`${dstDir}/${srcFilename}`, fullDstFilename)
 
-      message = this.msglib.genCodeMessage(`Download "${filename}" complete!`)
+      message = this.msglib.genCodeMessage(`Download "${srcFilename}" complete!`)
       await this.tgbotlib.editMessage({ chatId, messageId, text: message })
     } catch (error) {
-      l.error(`CloudAppSynthService_loadFileFromHF_97 Error downloading file ${repo}/${filename}`, error.message)
+      l.error(`CloudAppSynthService_loadFileFromHF_97 Error downloading file ${repo}/${srcFilename}`, error.message)
     } finally {
       this.lockDownloadHFFiles = false
 
