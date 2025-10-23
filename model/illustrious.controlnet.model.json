@@ -1,6 +1,8 @@
 {
-  "illustriousXL_cn_openpose_v10.safetensors": {
+  "illustriousXL_cn_openpose_v10": {
     "comfyUiDir": "controlnet",
+    "comfyUiFileName": "illustriousXL_cn_openpose_v10.safetensors",
+    "label": "Open Pose",
     "huggingfaceLink": {
       "alalarty/models2": "il/cn/illustriousXL_cn_openpose_v10.safetensors"
     }

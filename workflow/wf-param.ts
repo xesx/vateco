@@ -93,6 +93,9 @@ const params: Record<string, TParam> = {
     default: '❓',
     isComfyUiModel: true,
     multiple: 20,
+    compile: (model) => {
+      return modelMap[model].comfyUiFileName
+    },
   },
   loraEnabled: {
     type: 'boolean',
