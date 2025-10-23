@@ -1,6 +1,8 @@
 {
-  "arthemyComics_v60.safetensors": {
+  "il_cp_arthemy_comics_v60": {
     "comfyUiDir": "checkpoints",
+    "comfyUiFileName": "il_cp_arthemy_comics_v60.safetensors",
+    "label": "ArthemyComicsIL",
     "huggingfaceLink": {
       "alalarty/models2": "il/arthemyComics_v60.safetensors"
     },
@@ -8,8 +10,10 @@
       "info": "https://civitai.com/models/1273254/arthemy-comics-illustrious"
     }
   },
-  "honeysIllustrious_10.safetensors": {
+  "il_cp_honeys_10": {
     "comfyUiDir": "checkpoints",
+    "comfyUiFileName": "il_cp_honeys_10.safetensors",
+    "label": "HoneyIL",
     "huggingfaceLink": {
       "alalarty/models2": "il/honeysIllustrious_10.safetensors"
     },
@@ -17,8 +21,10 @@
       "info": "https://civitai.com/models/1361344/honeys-illustrious"
     }
   },
-  "illustriousXL_v01.safetensors": {
+  "il_cp_xl_v01": {
     "comfyUiDir": "checkpoints",
+    "comfyUiFileName": "il_cp_xl_v01.safetensors",
+    "label": "XlIL",
     "huggingfaceLink": {
       "alalarty/models2": "il/illustriousXL_v01.safetensors"
     },
@@ -26,8 +32,10 @@
       "info": "https://civitai.com/models/795765/illustrious-xl"
     }
   },
-  "riMixPONYIllustrious_riMix.safetensors": {
+  "il_cp_rimix_pony": {
     "comfyUiDir": "checkpoints",
+    "comfyUiFileName": "il_cp_rimix_pony.safetensors",
+    "label": "PonyRimixIL",
     "huggingfaceLink": {
       "alalarty/models2": "il/riMixPONYIllustrious_riMix.safetensors"
     }

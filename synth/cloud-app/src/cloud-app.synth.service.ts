@@ -72,7 +72,17 @@ export class CloudAppSynthService {
     const hfSizeHuman = filesize(hfSize).human('si')
 
     let startCacheDirSize = await getFolderSize.loose(HF_HOME)
-    let startDstDirSize = await getFolderSize.loose(dstDir)
+
+    fs.readdirSync(dstDir, { withFileTypes: true })
+      .filter(entry => entry.isDirectory()) // оставляем только папки
+      .map(entry => entry.name)
+      .filter(name => name.startsWith('.') && name.includes('cache'))
+      .forEach(dirName => {
+        const cacheDirPath = join(dstDir, dirName)
+        fs.rmSync(cacheDirPath, { recursive: true, force: true })
+      })
+
+    const startDstDirSize = await getFolderSize.loose(dstDir)
 
     let timer
 

@@ -145,12 +145,11 @@
       "lora_3": { "on": "{{loraEnabled3}}", "lora": "{{lora3}}", "strength": "{{loraStrength3}}" },
       "lora_4": { "on": "{{loraEnabled4}}", "lora": "{{lora4}}", "strength": "{{loraStrength4}}" },
       "lora_5": { "on": "{{loraEnabled5}}", "lora": "{{lora5}}", "strength": "{{loraStrength5}}" },
-
-      "lora_6": { "on": "{{loraEnabled6}}", "lora": "{{loraIllustrious6}}", "strength": "{{loraStrength6}}" },
-      "lora_7": { "on": "{{loraEnabled7}}", "lora": "{{loraIllustrious7}}", "strength": "{{loraStrength7}}" },
-      "lora_8": { "on": "{{loraEnabled8}}", "lora": "{{loraIllustrious8}}", "strength": "{{loraStrength8}}" },
-      "lora_9": { "on": "{{loraEnabled9}}", "lora": "{{loraIllustrious9}}", "strength": "{{loraStrength9}}" },
-      "lora_10": { "on": "{{loraEnabled10}}", "lora": "{{loraIllustrious10}}", "strength": "{{loraStrength10}}" },
+      "lora_6": { "on": "{{loraEnabled6}}", "lora": "{{lora6}}", "strength": "{{loraStrength6}}" },
+      "lora_7": { "on": "{{loraEnabled7}}", "lora": "{{lora7}}", "strength": "{{loraStrength7}}" },
+      "lora_8": { "on": "{{loraEnabled8}}", "lora": "{{lora8}}", "strength": "{{loraStrength8}}" },
+      "lora_9": { "on": "{{loraEnabled9}}", "lora": "{{lora9}}", "strength": "{{loraStrength9}}" },
+      "lora_10": { "on": "{{loraEnabled10}}", "lora": "{{lora10}}", "strength": "{{loraStrength10}}" },
       "➕ Add Lora": "",
       "model": [
         "4",

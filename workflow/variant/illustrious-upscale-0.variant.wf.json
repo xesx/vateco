@@ -1,24 +1,20 @@
 {
   "name": "upscale-illustrious-0",
   "id": "301",
-  "tags": ["sdxl", "own-instance"],
+  "tags": ["illustrious", "own-instance"],
   "template": "base-upscale-00",
-  "models": ["arthemyComics_v60.safetensors"],
+  "models": [],
   "params": {
-    "filenamePrefix": { "value": "illustrious_upscale_" },
+    "filenamePrefix": { "value": "il_upscale_" },
     "seedType": { "value": "random" },
 
     "generationNumber": { "user": true, "value": 1, "position": [0] },
 
     "model": {
       "user": true,
-      "value": "arthemyComics_v60.safetensors",
-      "enum": [
-        "arthemyComics_v60.safetensors",
-        "honeysIllustrious_10.safetensors",
-        "illustriousXL_v01.safetensors",
-        "riMixPONYIllustrious_riMix.safetensors"
-      ],
+      "value": "$.ilCheckpointEnum:0",
+      "enum": "$.ilCheckpointEnum",
+      "label": "model",
       "position": [5]
     },
 
@@ -33,7 +29,11 @@
     "cfg": { "user": true, "value": 5.5, "position": [30] },
     "clipSkip": { "user": true, "value": -2, "position": [30] },
 
-    "negativePrompt": { "user": true, "position": [50] },
-    "positivePrompt": { "user": true,  "value": "prompt for upscale", "position": [50] }
+    "positivePrompt": { "user": true,  "value": "prompt for upscale", "position": [50] },
+    "negativePrompt": {
+      "user": true,
+      "value": "lowres, (bad), bad anatomy, bad hands, extra digits, multiple views, fewer, extra, missing, text, error, worst quality, jpeg artifacts, low quality, watermark, unfinished, displeasing, oldest, early, chromatic aberration, signature, artistic error, username, scan",
+      "position": [50]
+    }
   }
 }

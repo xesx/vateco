@@ -4,6 +4,9 @@ import { basename } from 'path'
 import { packageDirectorySync } from 'pkg-dir'
 
 import wfParam from './wf-param'
+import * as compiler from './compiler'
+
+console.log('\x1b[36m', 'compiler', compiler, '\x1b[0m')
 
 const rootDir = packageDirectorySync()
 const wfVariantDir = `${rootDir}/workflow/variant`
@@ -65,10 +68,28 @@ wfVariantFiles.forEach(file => {
     variant.params[key].value = extraParam.value ?? commonParam?.default
   }
 
-  Object.keys(variant.params).forEach(key => {
+  Object.entries(variant.params).forEach(([key, paramProps]: [string, Record<string, any>]) => {
     if (!wfParam[key]) {
       throw new Error(`Workflow_91 Unknown param "${key}" in variant file: "${file}"`)
     }
+
+    Object.entries(paramProps).forEach(([propName, propValue]: [string, any]) => {
+      if (typeof propValue === 'string' && propValue.startsWith('$.')) {
+        const [compilerFuncName, ...args] = propValue
+          .replace('$.', '')
+          .split(':')
+
+        if (!compiler[compilerFuncName]) {
+          throw new Error(`Workflow_93 Unknown compiler function "${compilerFuncName}" for param "${key}" in variant file: "${file}"`)
+        }
+
+        if (typeof compiler[compilerFuncName] !== 'function') {
+          throw new Error(`Workflow_94 Unknown compiler function "${compilerFuncName}" for enum of param "${key}" in variant file: "${file}"`)
+        }
+
+        variant.params[key][propName] = compiler[compilerFuncName](...args)
+      }
+    })
   })
 
   wfVariant[variant.id] = variant
@@ -78,4 +99,3 @@ export default {
   variant: wfVariant,
   param: wfParam,
 }
-

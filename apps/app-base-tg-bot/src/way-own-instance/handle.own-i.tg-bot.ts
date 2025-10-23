@@ -316,7 +316,7 @@ export class HandleOwnITgBot {
     const currentValue = ctx.session.workflowParams[paramName]
 
     if (value) {
-      if (wfParam.enum) {
+      if (wfParam.enum) { // value is enum index
         ctx.session.workflowParams[paramName] = wfParam.enum[value]
       } else {
         ctx.session.workflowParams[paramName] = value
