@@ -317,7 +317,9 @@ export class HandleOwnITgBot {
 
     if (value) {
       if (wfParam.enum) { // value is enum index
-        ctx.session.workflowParams[paramName] = wfParam.enum[value]
+        ctx.session.workflowParams[paramName] = typeof wfParam.enum[value] === 'object'
+          ? wfParam.enum[value].value
+          : wfParam.enum[value]
       } else {
         ctx.session.workflowParams[paramName] = value
       }
@@ -329,7 +331,9 @@ export class HandleOwnITgBot {
     if (wfParam.enum) {
       const message = `Set parameter *"${paramName}"*\nCurrent value: *"${currentValue}"*`
       const enumOptions: [string, string][][] = wfParam.enum
+        .map((value: any) => typeof value === 'object' ? value.label : String(value))
         .map((value, i) => [[value, `act:own-i:wf:${workflowId}:param:${paramName}:${i}`]])
+
       enumOptions.push([['Back', `act:own-i:wf:${workflowId}`]])
 
       const keyboard = this.tgbotlib.generateInlineKeyboard(enumOptions)
