@@ -28,6 +28,7 @@ export class WorkflowRunCronJob {
     private readonly wflib: lib.WorkflowLibService,
     private readonly msglib: lib.MessageLibService,
     private readonly tgbotlib: lib.TgBotLibService,
+    private readonly h: lib.HelperLibService,
     private readonly appcloudsynth: synth.CloudAppSynthService,
   ) {}
 
@@ -126,7 +127,7 @@ export class WorkflowRunCronJob {
 
           fs.writeFileSync(join(GENERATE_PROGRESS_TASKS_DIR, progressFilename), JSON.stringify(content, null, 2), "utf8")
         } catch (error) {
-          l.error('handleRunWorkflowJob_85 Error', error)
+          l.error('handleRunWorkflowJob_85 Error', this.h.herr.parseAxiosError(error))
         }
       }
     }
