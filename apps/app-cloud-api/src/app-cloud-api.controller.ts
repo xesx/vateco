@@ -86,6 +86,6 @@ export class AppCloudApiController {
 
     fs.writeFileSync(filePath, JSON.stringify(content), "utf8")
 
-    console.log(`appCloudApiWorkflowRun_99 Workflow run task for "${body.id}" added in ${filePath}`)
+    console.log(`appCloudApiWorkflowRun_99 Workflow run task for "${body.id}" added in ${filePath}, content: ${JSON.stringify(content)}`)
   }
 }

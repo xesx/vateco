@@ -1,6 +1,7 @@
 {
-  "AddMicroDetails_Illustrious_v5.safetensors": {
+  "AddMicroDetails_Illustrious_v5": {
     "comfyUiDir": "loras",
+    "comfyUiFileName": "AddMicroDetails_Illustrious_v5.safetensors",
     "huggingfaceLink": {
       "alalarty/models2": "il/lora/AddMicroDetails_Illustrious_v5.safetensors"
     }
