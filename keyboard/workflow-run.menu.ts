@@ -41,8 +41,13 @@ export function workflowRunMenu ({ workflow, workflowUserParams, prefixAction, b
     })
 
     const keyboard = sortedParams.reduce((acc: [string, string][][], [name, value], i) => {
-      if (typeof value === 'boolean') {
+      if (typeof value === 'boolean' || ['false', 'true'].includes(String(value).toLowerCase())) {
+        value = value === true || String(value).toLowerCase() === 'true'
         value = value ? '✅' : '❌'
+      }
+
+      if (typeof value === 'object') {
+        value = value.label || value.value
       }
 
       value = String(value).length > 15 ? String(value).slice(0, 13) + '...' : String(value)
