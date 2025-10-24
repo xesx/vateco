@@ -57,13 +57,12 @@ const params: Record<string, TParam> = {
   },
   filenamePrefix: {
     type: 'string',
-    default: 'bot_img_',
+    default: 'img',
     description: 'Prefix for the generated image filenames',
     label: 'Filename Prefix',
     compile: (filenamePrefix) => {
       filenamePrefix = String(filenamePrefix || 'img')
-      filenamePrefix = `${filenamePrefix}_${new Date().toJSON().replace(/[:.]/g, '-')}`
-      filenamePrefix = filenamePrefix.replace(/_+/g, '_').replace(/_$/, '')
+      filenamePrefix = `${filenamePrefix}_${Date.now()}`
 
       return filenamePrefix
     },

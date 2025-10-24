@@ -149,10 +149,17 @@ export class TgBotLibService {
     }
   }
 
-  async sendPhoto({ chatId, photo, caption }: {
-    chatId: string;
-    photo: string | Buffer; // URL, file_id или Buffer с изображением
-    caption?: string;
+  async sendPhoto({ chatId, photo, caption, inlineKeyboard }: {
+    chatId: string
+    photo: string | Buffer // URL, file_id или Buffer с изображением
+    caption?: string
+    inlineKeyboard?: {
+      inline_keyboard: Array<Array<{
+        text: string;
+        callback_data?: string;
+        url?: string;
+      }>>;
+    }
   }) {
     const url = `${this.baseUrl}/sendPhoto`
 
@@ -171,10 +178,15 @@ export class TgBotLibService {
       formData.append('caption', caption)
     }
 
+    if (inlineKeyboard) {
+      formData.append('reply_markup', JSON.stringify(inlineKeyboard))
+    }
+
     try {
       const response = await axios.post(url, formData, {
         headers: {
-          'Content-Type': 'multipart/form-data',
+          ...formData.getHeaders(),
+          // 'Content-Type': 'multipart/form-data',
           // axios и formData сами установят правильный Content-Type с boundary
         },
       })

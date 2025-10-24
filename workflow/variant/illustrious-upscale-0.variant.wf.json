@@ -5,7 +5,6 @@
   "template": "base-upscale-01",
   "models": [],
   "params": {
-    "filenamePrefix": { "value": "il_up_" },
     "seedType": { "value": "random" },
 
     "generationNumber": { "user": true, "value": 1, "position": [0] },

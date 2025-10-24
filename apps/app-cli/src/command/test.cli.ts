@@ -1,12 +1,13 @@
 import { Injectable } from '@nestjs/common'
 
+import axios from 'axios'
 import * as fs from 'fs'
 import { setTimeout } from 'timers/promises'
 
 import * as sharp from 'sharp'
 import * as filesize from 'file-size'
 
-
+import * as kb from '@kb'
 import * as lib from '@lib'
 import * as synth from '@synth'
 // import { packageDirectorySync } from 'pkg-dir'
@@ -21,6 +22,7 @@ export class TestCli {
     private readonly comfyuilib: lib.ComfyUiLibService,
     private readonly tgbotlib: lib.TgBotLibService,
     private readonly wflib: lib.WorkflowLibService,
+    private readonly msglib: lib.MessageLibService,
     private readonly h: lib.HelperLibService,
     private readonly hflib: lib.HuggingfaceLibService,
 
@@ -34,9 +36,9 @@ export class TestCli {
       .action(async (name) => {
         console.log(`Привет, ${name}!`)
 
-        const imagePath = './workspace/test.png'
-        const all = await sharp(imagePath).metadata()
-        console.log('\x1b[36m', 'all', all, '\x1b[0m')
+        // const imagePath = './workspace/test.png'
+        // const all = await sharp(imagePath).metadata()
+        // console.log('\x1b[36m', 'all', all, '\x1b[0m')
         // console.log('\x1b[36m', 'all', all?.comments?.find?.(i => i.keyword === 'prompt')?.text, '\x1b[0m')
 
         // await this.appcloudsynth.loadFileFromHF({ chatId: '', repo: 'alalarty/models2', filename: 'comfyui-cu128-py312-v2.tar.zst', dir: '' })
@@ -97,11 +99,30 @@ export class TestCli {
         //   speedInBytes: 1230000,
         //   transferTimeInSec: 143,
         // }
-        //
-        // const message = this.msgsrv.generateMessage({
+
+        // const message = this.msglib.generateMessage({
         //   type: 'download-comfyui-v0',
         //   data,
         // })
+
+        // const keyboard = this.tgbotlib.generateInlineKeyboard([
+        //   [[`use it as input`, 'act:own-i:use-img-as-input']],
+        // ])
+        //
+        // console.log('\x1b[36m', 'keyboard', keyboard, '\x1b[0m')
+        // const res = await this.tgbotlib.sendPhoto({
+        //   chatId: '185857068:185857068',
+        //   photo: 'https://imgv3.fotor.com/images/blog-richtext-image/a-shadow-of-a-boy-carrying-the-camera-with-red-sky-behind.jpg',
+        //   inlineKeyboard: keyboard.reply_markup,
+        // })
+        //
+        // console.log('\x1b[36m', 'res', res, '\x1b[0m')
+
+        const fileUrl = `https://api.telegram.org/file/bot8330568246:AAGrtHQHbRoaZKE0UZ3Itf1tw8mYotBfAIQ/photos/file_2.jpg`
+        const imageResponse = await axios.get(fileUrl, { responseType: 'arraybuffer' })
+        const imageBuffer = imageResponse.data // Buffer с изображением
+        console.log(imageBuffer)
+
 
         // await this.tgbotlib.sendMessage({
         //   chatId: '185857068',

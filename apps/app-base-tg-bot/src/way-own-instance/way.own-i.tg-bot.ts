@@ -30,6 +30,8 @@ export class WayOwnITgBot {
     this.bot.action('act:own-i:instance:status', (ctx) => this.handle.actionInstanceStatus(ctx))
     this.bot.action('act:own-i:instance:destroy', (ctx) => this.handle.actionInstanceDestroy(ctx))
 
+    this.bot.action('act:own-i:use-img-as-input', (ctx) => this.handle.actionUseImageAsInput(ctx))
+
     this.bot.action('act:own-i:wf:variants', (ctx) => this.view.showWorkflowVariants(ctx))
     this.bot.action(/act:own-i:wf:([^:]+)$/, (ctx) => this.handle.actionWorkflowSelect(ctx))
     this.bot.action(/act:own-i:wf:([^:]+):param:(.+)$/, (ctx) => this.handle.actionWorkflowParamSelect(ctx))

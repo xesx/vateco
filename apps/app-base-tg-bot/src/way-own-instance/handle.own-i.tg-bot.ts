@@ -391,4 +391,14 @@ export class HandleOwnITgBot {
     const replyKeyboard = this.tgbotlib.generateReplyKeyboard(kb.WORKFLOW_REPLY)
     ctx.sendMessage('Use for fast work ⤵', replyKeyboard)
   }
+
+  async actionUseImageAsInput (ctx: OwnInstanceMatchContext) {
+    console.log('\x1b[36m', 'ctx', JSON.stringify(ctx, null, 3), '\x1b[0m')
+    this.tgbotlib.safeAnswerCallback(ctx)
+
+    // ctx.session.inputWaiting = 'image'
+    //
+    // const message = 'Please, send me the image you want to use as input:'
+    // this.tgbotlib.reply(ctx, message)
+  }
 }

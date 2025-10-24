@@ -13,7 +13,19 @@ function addParamToModel (models: Record<string, any>, key: string, value: any) 
   }
 }
 
+function addTags (models: Record<string, any>, tags: string[]) {
+  for (const modelName in models) {
+    models[modelName].tag = models[modelName].tag || []
+    models[modelName].tag = Array.from(new Set([...models[modelName].tag, ...tags]))
+  }
+}
+
+
 addParamToModel(illustriousLora, 'illustrious_lora', true)
+
+addTags(illustriousLora, ['illustrious', 'lora'])
+addTags(illustriousCN, ['illustrious', 'controlnet'])
+addTags(illustrious, ['illustrious', 'checkpoint', 'sd'])
 
 // Add additional parameters to each model
 const modelMap = {

@@ -80,7 +80,7 @@ export class CloudAppSynthService {
     fs.readdirSync(dstDir, { withFileTypes: true })
       .filter(entry => entry.isDirectory()) // оставляем только папки
       .map(entry => entry.name)
-      .filter(name => name.startsWith('.') && name.includes('cache'))
+      .filter(name => name.startsWith('.cache'))
       .forEach(dirName => {
         const cacheDirPath = join(dstDir, dirName)
         fs.rmSync(cacheDirPath, { recursive: true, force: true })
