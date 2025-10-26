@@ -4,13 +4,14 @@ import { ConfigService } from '@nestjs/config'
 import * as FormData from 'form-data'
 import axios from 'axios'
 
-import { Context, Markup } from 'telegraf'
+import { Context, Markup, Telegraf } from 'telegraf'
 
 import { TSendInlineKeyboardArgs } from './types'
 
 @Injectable()
 export class TgBotLibService {
   private readonly baseUrl: string
+  private bot: Telegraf<Context>
 
   constructor(private readonly configService: ConfigService) {
     const token = this.configService.get<string>('TELEGRAM_BOT_TOKEN')
@@ -20,6 +21,7 @@ export class TgBotLibService {
     }
 
     this.baseUrl = `https://api.telegram.org/bot${token}`
+    this.bot = new Telegraf(token)
   }
 
   async reply (ctx: Context, message: string, extra?: any) {
@@ -96,6 +98,15 @@ export class TgBotLibService {
       console.error('tgbotlib_sendMessage_13 Error sending message:', error)
       // throw error
     }
+  }
+
+  // Метод для отправки сообщения по chatId
+  async sendMessageV2 (chatId: number | string, text: string): Promise<void> {
+    await this.bot.telegram.sendMessage(chatId, text)
+  }
+
+  async sendMediaGroup (chatId, media) {
+    return await this.bot.telegram.sendMediaGroup(chatId, media)
   }
 
   async removeMessage({ chatId, messageId }) {

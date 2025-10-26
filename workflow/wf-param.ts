@@ -75,7 +75,7 @@ const params: Record<string, TParam> = {
   },
   image: {
     type: 'string',
-    default: 'N/A',
+    default: '❓',
     description: 'image name or URL',
     label: 'Image',
   },

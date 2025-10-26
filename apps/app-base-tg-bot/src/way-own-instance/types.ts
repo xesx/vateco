@@ -1,4 +1,11 @@
 import { Context } from 'telegraf'
+import type {
+  // CallbackQuery,
+  // CommonMessageBundle,
+  // Message,
+  // CallbackQueryUpdate,
+  Update,
+} from '@telegraf/types'
 
 export interface OwnInstanceContext extends Context {
   session: SessionData
@@ -6,6 +13,7 @@ export interface OwnInstanceContext extends Context {
 
 export interface OwnInstanceMatchContext extends OwnInstanceContext {
   match: RegExpMatchArray
+  update: Update.CallbackQueryUpdate
 }
 
 export interface SessionData {

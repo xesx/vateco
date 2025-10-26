@@ -36,7 +36,27 @@ export class TestCli {
       .action(async (name) => {
         console.log(`Привет, ${name}!`)
 
+        await this.tgbotlib.sendMessageV2(185857068, 'test message')
+
+        const photoUrlsOrPaths = [
+          'https://i.imgur.com/BAO9m8l.jpeg',
+          'https://i.imgur.com/qCfOYnl.jpeg',
+          'https://i.imgur.com/vno5dvK.jpeg',
+          'https://i.imgur.com/lcfTx9F.jpeg',
+        ]
+
+        const caption = 'some caption'
+        const media = photoUrlsOrPaths.map((photo, index) => ({
+          type: 'photo',
+          media: photo, // может быть URL, путь к файлу или Buffer
+          ...(index === 0 && caption ? { caption } : {}), // подпись только к первому
+        }))
+
+        const res = await this.tgbotlib.sendMediaGroup(185857068, media)
+        console.log('\x1b[36m', 'res', res, '\x1b[0m');
+
         // const imagePath = './workspace/test.png'
+        // const imagePath = '/Users/alex/tmp/test.jpg'
         // const all = await sharp(imagePath).metadata()
         // console.log('\x1b[36m', 'all', all, '\x1b[0m')
         // console.log('\x1b[36m', 'all', all?.comments?.find?.(i => i.keyword === 'prompt')?.text, '\x1b[0m')
@@ -118,10 +138,10 @@ export class TestCli {
         //
         // console.log('\x1b[36m', 'res', res, '\x1b[0m')
 
-        const fileUrl = `https://api.telegram.org/file/bot8330568246:AAGrtHQHbRoaZKE0UZ3Itf1tw8mYotBfAIQ/photos/file_2.jpg`
-        const imageResponse = await axios.get(fileUrl, { responseType: 'arraybuffer' })
-        const imageBuffer = imageResponse.data // Buffer с изображением
-        console.log(imageBuffer)
+        // const fileUrl = `https://api.telegram.org/file/bot8330568246:AAGrtHQHbRoaZKE0UZ3Itf1tw8mYotBfAIQ/photos/file_2.jpg`
+        // const imageResponse = await axios.get(fileUrl, { responseType: 'arraybuffer' })
+        // const imageBuffer = imageResponse.data // Buffer с изображением
+        // console.log(imageBuffer)
 
 
         // await this.tgbotlib.sendMessage({
