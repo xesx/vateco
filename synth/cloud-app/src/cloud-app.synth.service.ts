@@ -116,24 +116,27 @@ export class CloudAppSynthService {
             const currentCacheDirSize = await getFolderSize.loose(HF_HOME)
             const currentDstDirSize = await getFolderSize.loose(dstDir)
 
-            let deltaSize = 0
-            // let deltaSize = (currentDstDirSize + currentCacheDirSize) - (startDstDirSize + startCacheDirSize)
+            // let deltaSize = 0
 
-            if (currentCacheDirSize > startCacheDirSize) {
-              deltaSize += currentCacheDirSize - startCacheDirSize
+            if (currentCacheDirSize - startCacheDirSize >= 0) {
+              // deltaSize += currentCacheDirSize - startCacheDirSize
+              startCacheDirSize = currentCacheDirSize
+              downloadedSize += currentCacheDirSize - startCacheDirSize
+            } else {
+              downloadedSize += currentDstDirSize - startDstDirSize
             }
 
-            startCacheDirSize = currentCacheDirSize
-
-            if (deltaSize === 0) {
-              deltaSize += currentDstDirSize - startDstDirSize
-            }
-
-            downloadedSize = downloadedSize + deltaSize
-
-            if (downloadedSize > hfSize) {
-              downloadedSize = currentDstDirSize - startDstDirSize
-            }
+            // startCacheDirSize = currentCacheDirSize
+            //
+            // if (deltaSize === 0) {
+            //   deltaSize += currentDstDirSize - startDstDirSize
+            // }
+            //
+            // downloadedSize = downloadedSize + deltaSize
+            //
+            // if (downloadedSize > hfSize) {
+            //   downloadedSize = currentDstDirSize - startDstDirSize
+            // }
 
             message = this.msglib.genProgressMessage({
               message: `Downloading "${srcFilename}" (${hfSizeHuman}), step ${step}`,
