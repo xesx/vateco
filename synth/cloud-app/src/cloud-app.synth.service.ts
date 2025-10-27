@@ -90,7 +90,7 @@ export class CloudAppSynthService {
         fs.rmSync(cacheDirPath, { recursive: true, force: true })
       })
 
-    // let startCacheDirSize = await getFolderSize.loose(HF_HOME)
+    let startCacheDirSize = await getFolderSize.loose(HF_HOME)
     const startDstDirSize = await getFolderSize.loose(dstDir)
 
     let timer
@@ -122,6 +122,8 @@ export class CloudAppSynthService {
 
             if (cacheDirDelta > 0) {
               downloadedInCacheDir += cacheDirDelta
+            } else {
+              startCacheDirSize = currentCacheDirSize
             }
 
             const downloadedInDstDirSize = currentDstDirSize - startDstDirSize
