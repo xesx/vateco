@@ -64,10 +64,12 @@ export class WorkflowLoadCronJob {
         })
       }
 
-      await this.tgbotlib.sendMessage({
-        chatId: TG_CHAT_ID,
-        text: this.msglib.genCodeMessage(`Workflow ${workflowId} loaded!`),
-      })
+      if (models?.length > 0) {
+        await this.tgbotlib.sendMessage({
+          chatId: TG_CHAT_ID,
+          text: this.msglib.genCodeMessage(`Workflow ${workflowId} loaded!`),
+        })
+      }
     }
   }
 }

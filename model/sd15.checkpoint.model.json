@@ -1,12 +1,16 @@
 {
-  "juggernaut_reborn.safetensors": {
+  "juggernaut_reborn": {
     "comfyUiDir": "checkpoints",
+    "comfyUiFileName": "juggernaut_reborn.safetensors",
+    "label": "Juggernaut Reborn",
     "huggingfaceLink": {
       "KamCastle/jugg": "juggernaut_reborn.safetensors"
     }
   },
-  "lyriel_v16.safetensors": {
+  "lyriel_v16": {
     "comfyUiDir": "checkpoints",
+    "comfyUiFileName": "lyriel_v16.safetensors",
+    "label": "Lyriel v1.6",
     "huggingfaceLink": {
       "danbrown/checkpoints": "lyriel_v16.safetensors"
     }

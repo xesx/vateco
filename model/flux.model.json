@@ -1,35 +1,45 @@
 {
-  "flux1-kontext-dev-fp8.safetensors": {
+  "flux1_kontext_dev_fp8": {
     "comfyUiDir": "diffusion_models",
+    "comfyUiFileName": "flux1-kontext-dev-fp8",
+    "label": "Hhammerh Style R2",
     "huggingfaceLink": {
-      "alalarty/models2": "flux1-kontext-dev-fp8.safetensors"
+      "alalarty/models2": "flux/flux1-kontext-dev-fp8.safetensors"
     }
   },
-  "flux1-dev-fp8.safetensors": {
+  "flux1_dev_fp8": {
     "comfyUiDir": "diffusion_models",
+    "comfyUiFileName": "flux1-dev-fp8.safetensors",
+    "label": "Flux1 Dev FP8",
     "huggingfaceLink": {
       "Kijai/flux-fp8": "flux1-dev-fp8-e4m3fn.safetensors",
-      "alalarty/models2": "flux1-dev-fp8.safetensors",
+      "alalarty/models2": "flux/flux1-dev-fp8.safetensors",
       "XLabs-AI/flux-dev-fp8": "flux-dev-fp8.safetensors"
     }
   },
-  "pulid_flux_v0.9.1.safetensors": {
+  "pulid_flux_v091": {
     "comfyUiDir": "pulid",
+    "comfyUiFileName": "pulid_flux_v0.9.1.safetensors",
+    "label": "PulID Flux v0.9.1",
     "huggingfaceLink": {
-      "alalarty/models2": "pulid_flux_v0.9.1.safetensors",
+      "alalarty/models2": "flux/pulid_flux_v0.9.1.safetensors",
       "guozinan/PuLID": "pulid_flux_v0.9.1.safetensors"
     }
   },
-  "hyper-flux.1-dev-8steps-lora.safetensors": {
+  "hyper_flux1_dev_8steps_lora": {
     "comfyUiDir": "loras",
+    "comfyUiFileName": "hyper-flux.1-dev-8steps-lora.safetensors",
+    "label": "Hyper 8steps Flux.1Dev",
     "huggingfaceLink": {
-      "alalarty/models2": "hyper-flux.1-dev-8steps-lora.safetensors"
+      "alalarty/models2": "flux/lora/hyper-flux.1-dev-8steps-lora.safetensors"
     }
   },
-  "flux-vae.safetensors": {
+  "flux_vae": {
     "comfyUiDir": "vae",
+    "comfyUiFileName": "flux-vae.safetensors",
+    "label": "Flux Vae",
     "huggingfaceLink": {
-      "alalarty/models2": "flux-vae.safetensors",
+      "alalarty/models2": "flux/flux-vae.safetensors",
       "Kijai/flux-fp8": "flux-vae-bf16.safetensors"
     }
   }

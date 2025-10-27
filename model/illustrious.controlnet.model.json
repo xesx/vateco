@@ -1,10 +1,58 @@
 {
-  "illustriousXL_cn_openpose_v10": {
+  "ilxl_cn_canny_v10": {
     "comfyUiDir": "controlnet",
-    "comfyUiFileName": "illustriousXL_cn_openpose_v10.safetensors",
-    "label": "Open Pose",
+    "comfyUiFileName": "ilxl_cn_canny_v10.safetensors",
+    "label": "IL Canny v1.0",
     "huggingfaceLink": {
-      "alalarty/models2": "il/cn/illustriousXL_cn_openpose_v10.safetensors"
+      "alalarty/models2": "il/cn/ilxl_cn_canny_v10.safetensors"
+    }
+  },
+  "ilxl_cn_depth_v20": {
+    "comfyUiDir": "controlnet",
+    "comfyUiFileName": "ilxl_cn_depth_v20.safetensors",
+    "label": "IL Depth v2.0",
+    "huggingfaceLink": {
+      "alalarty/models2": "il/cn/ilxl_cn_depth_v20.safetensors"
+    }
+  },
+  "ilxl_cn_lineart_v10": {
+    "comfyUiDir": "controlnet",
+    "comfyUiFileName": "ilxl_cn_lineart_v10.safetensors",
+    "label": "IL Lineart v1.0",
+    "huggingfaceLink": {
+      "alalarty/models2": "il/cn/ilxl_cn_lineart_v10.safetensors"
+    }
+  },
+  "ilxl_cn_openpose_v10": {
+    "comfyUiDir": "controlnet",
+    "comfyUiFileName": "ilxl_cn_openpose_v10.safetensors",
+    "label": "IL Openpose v1.0",
+    "huggingfaceLink": {
+      "alalarty/models2": "il/cn/ilxl_cn_openpose_v10.safetensors"
+    }
+  },
+  "ilxl_cn_shuffle_v10": {
+    "comfyUiDir": "controlnet",
+    "comfyUiFileName": "ilxl_cn_shuffle_v10.safetensors",
+    "label": "IL Shuffle v1.0",
+    "huggingfaceLink": {
+      "alalarty/models2": "il/cn/ilxl_cn_shuffle_v10.safetensors"
+    }
+  },
+  "ilxl_cn_softedge_v10": {
+    "comfyUiDir": "controlnet",
+    "comfyUiFileName": "ilxl_cn_softedge_v10.safetensors",
+    "label": "IL Softedge v1.0",
+    "huggingfaceLink": {
+      "alalarty/models2": "il/cn/ilxl_cn_softedge_v10.safetensors"
+    }
+  },
+  "ilxl_cn_inpainting_v01": {
+    "comfyUiDir": "controlnet",
+    "comfyUiFileName": "ilxl_cn_inpainting_v01.safetensors",
+    "label": "IL Inpainting v0.1",
+    "huggingfaceLink": {
+      "alalarty/models2": "il/cn/ilxl_cn_inpainting_v01.safetensors"
     }
   }
 }

@@ -4,12 +4,12 @@
   "tags": ["flux", "own-instance"],
   "template": "flux-pulid",
   "models": [
-    "flux1-dev-fp8.safetensors",
-    "clip_l.safetensors",
-    "t5xxl_fp8.safetensors",
-    "flux-vae.safetensors",
-    "hyper-flux.1-dev-8steps-lora.safetensors",
-    "pulid_flux_v0.9.1.safetensors"
+    "flux1_dev_fp8",
+    "flux_vae",
+    "hyper_flux1_dev_8steps_lora",
+    "pulid_flux_v091",
+    "clip_l",
+    "t5xxl_fp8"
   ],
   "params": {
     "model": { "value": "flux1-dev-fp8.safetensors" },

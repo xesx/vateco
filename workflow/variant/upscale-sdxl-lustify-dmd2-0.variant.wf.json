@@ -3,9 +3,9 @@
   "id": "3",
   "tags": ["sdxl", "own-instance"],
   "template": "base-upscale-00",
-  "models": ["lustifySDXLNSFW_endgameDMD2.safetensors"],
+  "models": ["lustifySDXLNSFW_endgameDMD2"],
   "params": {
-    "model": { "value": "lustifySDXLNSFW_endgameDMD2.safetensors" },
+    "model": { "value": "lustifySDXLNSFW_endgameDMD2" },
     "filenamePrefix": { "value": "upscale-sdxl-lustify-dmd2" },
     "seedType": { "value": "random" },
 

@@ -1,14 +1,18 @@
 {
-  "juggernautXL_juggXIByRundiffusion.safetensors": {
+  "juggernautXL_juggXIByRundiffusion": {
     "comfyUiDir": "checkpoints",
+    "comfyUiFileName": "juggernautXL_juggXIByRundiffusion.safetensors",
+    "label": "JuggernautXL",
     "huggingfaceLink": {
       "misri/juggernautXL_juggXIByRundiffusion": "juggernautXL_juggXIByRundiffusion.safetensors"
     }
   },
-  "lustifySDXLNSFW_endgameDMD2.safetensors": {
+  "lustifySDXLNSFW_endgameDMD2": {
     "comfyUiDir": "checkpoints",
+    "comfyUiFileName": "lustifySDXLNSFW_endgameDMD2.safetensors",
+    "label": "Lustify SDXL NSFW Endgame DMD2",
     "huggingfaceLink": {
-      "alalarty/models2": "lustifySDXLNSFW_endgameDMD2.safetensors"
+      "alalarty/models2": "sdxl/lustifySDXLNSFW_endgameDMD2.safetensors"
     }
   }
 }
