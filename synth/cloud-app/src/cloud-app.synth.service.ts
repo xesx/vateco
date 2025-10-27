@@ -118,7 +118,7 @@ export class CloudAppSynthService {
 
             // let deltaSize = 0
 
-            if (currentCacheDirSize - startCacheDirSize >= 0) {
+            if (currentCacheDirSize - startCacheDirSize > 0) {
               // deltaSize += currentCacheDirSize - startCacheDirSize
               startCacheDirSize = currentCacheDirSize
               downloadedSize += currentCacheDirSize - startCacheDirSize
