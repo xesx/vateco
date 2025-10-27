@@ -90,6 +90,7 @@ export class WorkflowRunCronJob {
 
         if (key.startsWith('image') && typeof value === 'string') {
           imagesForDownload.push(value) // value is fileId from tg bot chat
+          workflowParams[key] = `${value}.jpg`
         }
       })
 
@@ -105,21 +106,21 @@ export class WorkflowRunCronJob {
 
       for (const fileId of imagesForDownload) {
         const uploadPath = `/${this.appcloudsynth.COMFY_UI_DIR}/input`
-        const imagePath = join(uploadPath, `input.jpg`)
-        let fileBuffer: Buffer
+        const imagePath = join(uploadPath, `${fileId}.jpg`)
 
-        if (fs.existsSync(join(this.appcloudsynth.CACHE_DIR, fileId))) {
-          fileBuffer = fs.readFileSync(join(this.appcloudsynth.CACHE_DIR, fileId))
-          fs.writeFileSync(imagePath, fileBuffer)
+        if (fs.existsSync(imagePath)) {
+          // fileBuffer = fs.readFileSync(join(this.appcloudsynth.CACHE_DIR, fileId))
+          // fs.writeFileSync(imagePath, fileBuffer)
           l.log(`handleRunWorkflowJob_150 Image loaded from cache and saved to ${imagePath}`)
-          continue
+          // continue
         } else {
-          fileBuffer = await this.tgbotlib.importImageBufferByFileId({ fileId })
-          fs.writeFileSync(join(this.appcloudsynth.CACHE_DIR, fileId), fileBuffer)
+          const imageBuffer = await this.tgbotlib.importImageBufferByFileId({ fileId })
+          // fs.writeFileSync(join(this.appcloudsynth.CACHE_DIR, fileId), fileBuffer)
           l.log(`handleRunWorkflowJob_156 Image downloaded from Telegram and saved to cache`)
+          fs.writeFileSync(imagePath, imageBuffer)
         }
 
-        fs.writeFileSync(imagePath, fileBuffer)
+        // fs.writeFileSync(imagePath, fileBuffer)
       }
 
       // const message = this.msglib.genCodeMessage('Generation in progress...')
