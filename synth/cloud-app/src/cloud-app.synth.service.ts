@@ -22,9 +22,11 @@ export class CloudAppSynthService {
   readonly GENERATE_PROGRESS_TASKS_DIR: string
   readonly DOWNLOAD_TASKS_DIR: string
 
-  private readonly COMFY_UI_DIR: string
-  private readonly COMFY_UI_URL: string
-  private readonly COMFY_UI_WS_URL: string
+  readonly CACHE_DIR: string
+
+  readonly COMFY_UI_DIR: string
+  readonly COMFY_UI_URL: string
+  readonly COMFY_UI_WS_URL: string
 
   constructor(
     private readonly configService: ConfigService,
@@ -42,10 +44,12 @@ export class CloudAppSynthService {
     this.GENERATE_TASKS_DIR = `${this.WORKSPACE}/generate_tasks`
     this.GENERATE_PROGRESS_TASKS_DIR = join(this.WORKSPACE, 'generate_progress_tasks')
     this.DOWNLOAD_TASKS_DIR = join(this.WORKSPACE, 'download_tasks')
+    this.CACHE_DIR = `${this.WORKSPACE}/cache`
 
     fs.mkdirSync(this.GENERATE_TASKS_DIR, { recursive: true })
     fs.mkdirSync(this.GENERATE_PROGRESS_TASKS_DIR, { recursive: true })
     fs.mkdirSync(this.DOWNLOAD_TASKS_DIR, { recursive: true })
+    fs.mkdirSync(this.CACHE_DIR, { recursive: true })
 
     this.COMFY_UI_DIR = `${this.WORKSPACE}/ComfyUI`
     this.COMFY_UI_URL = 'http://localhost:18188'

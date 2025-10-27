@@ -208,4 +208,36 @@ export class TgBotLibService {
       throw error
     }
   }
+
+  getImageFileIdFromMessage ({ message, preferedSizeInBytes = 1_000_000 }): string | undefined {
+    if (!message.photo || message.photo.length === 0) {
+      return
+    }
+
+    let [closestPhoto] = message.photo
+    let minDifference = Infinity
+
+    for (const photo of message.photo) {
+      const pixels = photo.width * photo.height
+      const difference = Math.abs(pixels - preferedSizeInBytes) // nearest to megapixel
+
+      if (difference < minDifference) {
+        minDifference = difference
+        closestPhoto = photo
+      }
+    }
+
+    const fileId = closestPhoto?.file_id
+
+    return fileId
+  }
+
+  async importImageBufferByFileId ({ fileId }: { fileId: string }): Promise<Buffer> {
+    const fileLink = await this.bot.telegram.getFileLink(fileId)
+
+    // Качаем  с Telegram
+    const tgRes = await axios.get(fileLink.href, { responseType: 'arraybuffer' })
+
+    return Buffer.from(tgRes.data)
+  }
 }

@@ -67,7 +67,11 @@ export class CheckOutputCronJob {
 
       l.log(`CheckOutputCronJob_handleCheckOutputJob_45 Sending image ${image} to Telegram chat ${TG_CHAT_ID}`)
       try {
-        await this.tgbotlib.sendPhoto({ chatId: TG_CHAT_ID, photo: buffer })
+        const keyboard = this.tgbotlib.generateInlineKeyboard([
+          [[`Use it as input`, 'act:own-i:use-img-as-input']],
+        ])
+
+        await this.tgbotlib.sendPhoto({ chatId: TG_CHAT_ID, photo: buffer, inlineKeyboard: keyboard.reply_markup })
       } catch (error) {
         l.error(`CheckOutputCronJob_handleCheckOutputJob_49 Error sending image ${image} to Telegram:`, this.h.herr.parseAxiosError(error))
         continue

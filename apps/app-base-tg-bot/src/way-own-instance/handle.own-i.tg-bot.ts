@@ -91,46 +91,65 @@ export class HandleOwnITgBot {
       return next()
     }
 
-    const photos = ctx.message.photo
-    const bestPhoto = photos.at(-1) // самое большое фото
-    const fileId = bestPhoto.file_id
+    let paramKey = ctx.session.inputWaiting
 
-    const fileLink = await ctx.telegram.getFileLink(fileId)
-    console.log("Ссылка на фото:", fileLink.href)
-
-    // Качаем фото с Telegram
-    const tgRes = await axios.get(fileLink.href, { responseType: 'stream' })
-
-    // Оборачиваем в FormData
-    const form = new FormData()
-    form.append('file', tgRes.data, { filename: `${fileId}.jpg`, contentType: 'image/jpeg' })
-
-    // Отправляем на API NestJS
-    const res = await this.cloudapilib.vastAiUploadInputImage({
-      baseUrl: ctx.session.instanceApiUrl,
-      instanceId: ctx.session.instanceId,
-      token: ctx.session.instanceToken,
-      form
-    })
-
-    console.log("Файл успешно отправлен на API:", res)
-
-    const filename = res.filename || 'N/A'
-
-    if (ctx.session.inputWaiting) {
-      const paramName = ctx.session.inputWaiting
-      ctx.session.workflowParams[paramName] = filename
-
-      delete ctx.session.inputWaiting
-
-      return this.view.showWorkflowRunMenu(ctx)
+    if (!paramKey) {
+      const imageWfParamKeys = Object.keys(ctx.session.workflowParams)
+        .filter(key => key.includes('image'))
+      paramKey = imageWfParamKeys[0]
     }
 
-    if (ctx.session.workflowParams?.image) {
-      ctx.session.workflowParams.image = filename
-      // return this.actionWorkflowRun(ctx)
-      return this.view.showWorkflowRunMenu(ctx)
+    const fileId = this.tgbotlib.getImageFileIdFromMessage({ message: ctx.message })
+    console.log('HandleOwnITgBot_photo_23 fileId', fileId)
+
+    // TODO more than one image param?
+    if (fileId) {
+      ctx.session.workflowParams[paramKey] = fileId
     }
+
+    delete ctx.session.inputWaiting
+    await this.tgbotlib.safeAnswerCallback(ctx)
+
+    // const photos = ctx.message.photo
+    // const bestPhoto = photos.at(-1) // самое большое фото
+    // const fileId = bestPhoto.file_id
+    //
+    // const fileLink = await ctx.telegram.getFileLink(fileId)
+    // console.log("Ссылка на фото:", fileLink.href)
+    //
+    // // Качаем фото с Telegram
+    // const tgRes = await axios.get(fileLink.href, { responseType: 'stream' })
+    //
+    // // Оборачиваем в FormData
+    // const form = new FormData()
+    // form.append('file', tgRes.data, { filename: `${fileId}.jpg`, contentType: 'image/jpeg' })
+    //
+    // // Отправляем на API NestJS
+    // const res = await this.cloudapilib.vastAiUploadInputImage({
+    //   baseUrl: ctx.session.instanceApiUrl,
+    //   instanceId: ctx.session.instanceId,
+    //   token: ctx.session.instanceToken,
+    //   form
+    // })
+    //
+    // console.log("Файл успешно отправлен на API:", res)
+    //
+    // const filename = res.filename || 'N/A'
+    //
+    // if (ctx.session.inputWaiting) {
+    //   const paramName = ctx.session.inputWaiting
+    //   ctx.session.workflowParams[paramName] = filename
+    //
+    //   delete ctx.session.inputWaiting
+    //
+    //   return this.view.showWorkflowRunMenu(ctx)
+    // }
+    //
+    // if (ctx.session.workflowParams?.image) {
+    //   ctx.session.workflowParams.image = filename
+    //   // return this.actionWorkflowRun(ctx)
+    //   return this.view.showWorkflowRunMenu(ctx)
+    // }
   }
 
   actionOffer (ctx: OwnInstanceContext) {
@@ -400,43 +419,18 @@ export class HandleOwnITgBot {
     const imageWfParamKeys = Object.keys(ctx.session.workflowParams)
       .filter(key => key.includes('image'))
 
-    console.log('\x1b[36m', 'imageWfParamKeys', imageWfParamKeys, '\x1b[0m');
     if (!imageWfParamKeys.length) {
       return this.tgbotlib.safeAnswerCallback(ctx)
     }
 
-    // if (Object.keys(ctx.session.workflowParams).)
-    // @ts-expect-error todo
-    const photos = ctx.update?.callback_query?.message?.photo
+    const fileId = this.tgbotlib.getImageFileIdFromMessage({ message: ctx.update?.callback_query?.message })
+    console.log('HandleOwnITgBot_actionUseImageAsInput_23 fileId', fileId)
 
-    if (!photos) {
-      console.log('HandleOwnITgBot_actionUseImageAsInput_23 No photo', ctx.update?.callback_query?.message)
-      return this.tgbotlib.safeAnswerCallback(ctx)
+    // TODO more than one image param?
+    if (fileId) {
+      ctx.session.workflowParams[imageWfParamKeys[0]] = fileId
     }
 
-    let [closestPhoto] = photos
-    let minDifference = Infinity
-
-    for (const photo of photos) {
-      const pixels = photo.width * photo.height
-      const difference = Math.abs(pixels - 1_000_000) // nearest to megapixel
-
-      if (difference < minDifference) {
-        minDifference = difference
-        closestPhoto = photo
-      }
-    }
-
-    const fileId = closestPhoto.file_id
-    const fileLink = await ctx.telegram.getFileLink(fileId)
-
-    ctx.session.workflowParams[imageWfParamKeys[0]] = fileLink.href
-    console.log('HandleOwnITgBot_actionUseImageAsInput_23 photo link:', fileLink.href)
     this.tgbotlib.safeAnswerCallback(ctx)
-
-    // ctx.session.inputWaiting = 'image'
-    //
-    // const message = 'Please, send me the image you want to use as input:'
-    // this.tgbotlib.reply(ctx, message)
   }
 }

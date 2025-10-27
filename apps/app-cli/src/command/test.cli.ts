@@ -36,24 +36,27 @@ export class TestCli {
       .action(async (name) => {
         console.log(`Привет, ${name}!`)
 
-        await this.tgbotlib.sendMessageV2(185857068, 'test message')
+        // const res = await this.tgbotlib.getImageByFileId({ fileId: 'AgACAgQAAxkDAAOPaPuYK1ByHWeGdC0dZhW23h26XmAAAi22MRuesxxR2f-cY5tODI4BAAMCAAN4AAM2BA' })
+        // console.log('\x1b[36m', 'res', res, '\x1b[0m');
 
-        const photoUrlsOrPaths = [
-          'https://i.imgur.com/BAO9m8l.jpeg',
-          'https://i.imgur.com/qCfOYnl.jpeg',
-          'https://i.imgur.com/vno5dvK.jpeg',
-          'https://i.imgur.com/lcfTx9F.jpeg',
-        ]
-
-        const caption = 'some caption'
-        const media = photoUrlsOrPaths.map((photo, index) => ({
-          type: 'photo',
-          media: photo, // может быть URL, путь к файлу или Buffer
-          ...(index === 0 && caption ? { caption } : {}), // подпись только к первому
-        }))
-
-        const res = await this.tgbotlib.sendMediaGroup(185857068, media)
-        console.log('\x1b[36m', 'res', res, '\x1b[0m');
+        // await this.tgbotlib.sendMessageV2(185857068, 'test message')
+        //
+        // const photoUrlsOrPaths = [
+        //   'https://i.imgur.com/BAO9m8l.jpeg',
+        //   'https://i.imgur.com/qCfOYnl.jpeg',
+        //   'https://i.imgur.com/vno5dvK.jpeg',
+        //   'https://i.imgur.com/lcfTx9F.jpeg',
+        // ]
+        //
+        // const caption = 'some caption'
+        // const media = photoUrlsOrPaths.map((photo, index) => ({
+        //   type: 'photo',
+        //   media: photo, // может быть URL, путь к файлу или Buffer
+        //   ...(index === 0 && caption ? { caption } : {}), // подпись только к первому
+        // }))
+        //
+        // const res = await this.tgbotlib.sendMediaGroup(185857068, media)
+        // console.log('\x1b[36m', 'res', res, '\x1b[0m');
 
         // const imagePath = './workspace/test.png'
         // const imagePath = '/Users/alex/tmp/test.jpg'
