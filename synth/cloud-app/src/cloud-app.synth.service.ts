@@ -90,7 +90,7 @@ export class CloudAppSynthService {
         fs.rmSync(cacheDirPath, { recursive: true, force: true })
       })
 
-    let startCacheDirSize = await getFolderSize.loose(HF_HOME)
+    // let startCacheDirSize = await getFolderSize.loose(HF_HOME)
     const startDstDirSize = await getFolderSize.loose(dstDir)
 
     let timer
@@ -106,7 +106,9 @@ export class CloudAppSynthService {
       let message = this.msglib.genCodeMessage(`Downloading "${srcFilename}" (${hfSizeHuman}) ...`)
       const messageId = await this.tgbotlib.sendMessage({ chatId, text: message })
 
-      let downloadedSize = 0
+      // let downloadedSize = 0
+      let downloadedInCacheDir = 0
+      // let downloadedInDstDir = 0
       let step = 1
 
       timer = setInterval(() => {
@@ -116,15 +118,23 @@ export class CloudAppSynthService {
             const currentCacheDirSize = await getFolderSize.loose(HF_HOME)
             const currentDstDirSize = await getFolderSize.loose(dstDir)
 
+            const cacheDirDelta = currentCacheDirSize - startCacheDirSize
+
+            if (cacheDirDelta > 0) {
+              downloadedInCacheDir += cacheDirDelta
+            }
+
+            const downloadedInDstDirSize = currentDstDirSize - startDstDirSize
+
             // let deltaSize = 0
 
-            if (currentCacheDirSize - startCacheDirSize > 0) {
-              // deltaSize += currentCacheDirSize - startCacheDirSize
-              startCacheDirSize = currentCacheDirSize
-              downloadedSize += currentCacheDirSize - startCacheDirSize
-            } else {
-              downloadedSize += currentDstDirSize - startDstDirSize
-            }
+            // if (currentCacheDirSize - startCacheDirSize > 0) {
+            //   // deltaSize += currentCacheDirSize - startCacheDirSize
+            //   startCacheDirSize = currentCacheDirSize
+            //   downloadedSize += currentCacheDirSize - startCacheDirSize
+            // } else {
+            //   downloadedSize += currentDstDirSize - startDstDirSize
+            // }
 
             // startCacheDirSize = currentCacheDirSize
             //
@@ -138,12 +148,19 @@ export class CloudAppSynthService {
             //   downloadedSize = currentDstDirSize - startDstDirSize
             // }
 
-            message = this.msglib.genProgressMessage({
-              message: `Downloading "${srcFilename}" (${hfSizeHuman}), step ${step}`,
+            const cacheDirProgressMessage = this.msglib.genProgressMessage({
+              message: `Downloading "${srcFilename}" (${hfSizeHuman}), step ${step}\nCache dir:`,
               total: hfSize,
-              done: downloadedSize,
+              done: downloadedInCacheDir,
             })
 
+            const dstDirProgressMessage = this.msglib.genProgressMessage({
+              message: `Dst dir:`,
+              total: hfSize,
+              done: downloadedInDstDirSize,
+            })
+
+            message = cacheDirProgressMessage + dstDirProgressMessage
             await this.tgbotlib.editMessage({ chatId, messageId, text: message })
             step++
           } catch (error) {

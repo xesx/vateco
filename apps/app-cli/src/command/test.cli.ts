@@ -36,6 +36,19 @@ export class TestCli {
       .action(async (name) => {
         console.log(`Привет, ${name}!`)
 
+        const message1 = this.msglib.genProgressMessage({
+          message: `Downloading "test" (${223}), step`,
+          total: 1_000_000,
+          done: 200_000,
+        })
+        const message2 = this.msglib.genProgressMessage({
+          message: `Downloading "test" (${223}), step`,
+          total: 1_000_000,
+          done: 600_000,
+        })
+
+        await this.tgbotlib.sendMessage({ chatId: '185857068:185857068', text: message1 + message2 })
+
         // const res = await this.tgbotlib.getImageByFileId({ fileId: 'AgACAgQAAxkDAAOPaPuYK1ByHWeGdC0dZhW23h26XmAAAi22MRuesxxR2f-cY5tODI4BAAMCAAN4AAM2BA' })
         // console.log('\x1b[36m', 'res', res, '\x1b[0m');
 
