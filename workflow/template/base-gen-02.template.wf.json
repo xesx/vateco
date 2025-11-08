@@ -43,7 +43,7 @@
   },
   "4": {
     "inputs": {
-      "ckpt_name": "SD1.5/lyriel_v16.safetensors"
+      "ckpt_name": "{{model}}"
     },
     "class_type": "CheckpointLoaderSimple",
     "_meta": {
@@ -169,11 +169,11 @@
       "lora_3": { "on": "{{loraEnabled3}}", "lora": "{{lora3}}", "strength": "{{loraStrength3}}" },
       "➕ Add Lora": "",
       "model": [
-        "78",
+        "4",
         0
       ],
       "clip": [
-        "56",
+        "10",
         0
       ]
     },
