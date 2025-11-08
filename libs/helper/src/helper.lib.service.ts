@@ -5,11 +5,13 @@ import { Injectable } from '@nestjs/common'
 
 import { ErrorHelperLibService } from './error.helper.lib.service'
 import { TarHelperLibService } from './tar.helper.lib.service'
+import { FormatHelperLibService } from './format.helper.lib.service'
 
 @Injectable()
 export class HelperLibService {
   constructor(
     readonly herr: ErrorHelperLibService,
     readonly htar: TarHelperLibService,
+    readonly format: FormatHelperLibService,
   ) {}
 }

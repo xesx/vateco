@@ -119,6 +119,7 @@ const params: Record<string, TParam> = {
     description: 'The model to use for generation',
     label: 'Model',
     isComfyUiModel: true,
+    default: '❓',
     multiple: 5,
     compile: (model) => {
       if (['N/A', '❓'].includes(model)) {

@@ -33,6 +33,7 @@ export class CloudAppSynthService {
     private readonly hflib: lib.HuggingfaceLibService,
     private readonly tgbotlib: lib.TgBotLibService,
     private readonly msglib: lib.MessageLibService,
+    private readonly h: lib.HelperLibService,
   ) {
     this.WORKSPACE = this.configService.get<string>('WORKSPACE') || process.env.WORKSPACE || ''
 
@@ -107,7 +108,7 @@ export class CloudAppSynthService {
       const messageId = await this.tgbotlib.sendMessage({ chatId, text: message })
 
       let downloadedInCacheDir = 0
-      let step = 1
+      const start = Date.now()
 
       timer = setInterval(() => {
         // Запускаем асинхронную операцию "в фоне"
@@ -125,22 +126,18 @@ export class CloudAppSynthService {
             }
 
             const downloadedInDstDirSize = currentDstDirSize - startDstDirSize
+            const duration = this.h.format.duration((Date.now() - start) / 1000)
 
-            const cacheDirProgressMessage = this.msglib.genProgressMessage({
-              message: `Downloading "${srcFilename}" (${hfSizeHuman}), step ${step}\nCache dir:`,
-              total: hfSize,
-              done: downloadedInCacheDir,
-            })
+            const message = this.msglib.genMultiProgressMessage([
+              {
+                message: `Downloading "${srcFilename}" (${hfSizeHuman}) ${duration}`,
+                total: hfSize,
+                done: downloadedInCacheDir,
+              },
+              { total: hfSize, done: downloadedInDstDirSize },
+            ])
 
-            const dstDirProgressMessage = this.msglib.genProgressMessage({
-              message: `Dst dir:`,
-              total: hfSize,
-              done: downloadedInDstDirSize,
-            })
-
-            message = cacheDirProgressMessage + dstDirProgressMessage
             await this.tgbotlib.editMessage({ chatId, messageId, text: message })
-            step++
           } catch (error) {
             console.error('Error in download progress update:', error)
             // Можно также отправить сообщение об ошибке в Telegram, если нужно

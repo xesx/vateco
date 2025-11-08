@@ -36,18 +36,26 @@ export class TestCli {
       .action(async (name) => {
         console.log(`Привет, ${name}!`)
 
-        const message1 = this.msglib.genProgressMessage({
-          message: `Downloading "test" (${223}), step`,
-          total: 1_000_000,
-          done: 200_000,
-        })
-        const message2 = this.msglib.genProgressMessage({
-          message: `Downloading "test" (${223}), step`,
-          total: 1_000_000,
-          done: 600_000,
-        })
+        // const message1 = this.msglib.genProgressMessage({
+        //   message: `Downloading "test" (${223}), step`,
+        //   total: 1_000_000,
+        //   done: 200_000,
+        // })
+        // const message2 = this.msglib.genProgressMessage({
+        //   // message: `Downloading "test" (${223}), step`,
+        //   total: 1_000_000,
+        //   done: 600_000,
+        // })
 
-        await this.tgbotlib.sendMessage({ chatId: '185857068:185857068', text: message1 + message2 })
+        // const message = this.msglib.genMultiProgressMessage([
+        //   {message: `Downloading "model-a.safetensors"`, total: 1_000_000, done: 200_000},
+        //   { total: 2_000_000, done: 1_200_000},
+        //   { total: 3_000_000, done: 2_500_000},
+        // ])
+
+        const message = this.msglib.genMessageForCopy('By default, all bots are \nable to broadcast \nup to 30 messages per \nsecond to their users. Developers can increase this limit by enabling Paid Broadcasts in @Botfather - allowing their bot to broadcast up to 1000 messages per second. Each message broadcasted over the free amount of 30 messages per second incurs a cost of 0.1 Stars per message, paid with Telegram Stars from the bot\'s balance. In order to use this feature, a bot must have at least 10,000 Stars on its balance. By default, all bots are able to broadcast up to 30 messages per second to their users. Developers can increase this limit by enabling Paid Broadcasts in @Botfather - allowing their bot to broadcast up to 1000 messages per second. Each message broadcasted over the free amount of 30 messages per second incurs a cost of 0.1 Stars per message, paid with Telegram Stars from the bot\'s balance. In order to use this feature, a bot must have at least 10,000 Stars on its balance.')
+
+        await this.tgbotlib.sendMessage({ chatId: '185857068:185857068', text: message })
 
         // const res = await this.tgbotlib.getImageByFileId({ fileId: 'AgACAgQAAxkDAAOPaPuYK1ByHWeGdC0dZhW23h26XmAAAi22MRuesxxR2f-cY5tODI4BAAMCAAN4AAM2BA' })
         // console.log('\x1b[36m', 'res', res, '\x1b[0m');

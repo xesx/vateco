@@ -30,6 +30,13 @@ export class MessageLibService {
     })
   }
 
+  genMessageForCopy (message: string) {
+    return this.generateMessage({
+      type: 'for-copy',
+      data: { message },
+    })
+  }
+
   genDownloadMessage({ name, totalBytes = 0, transferredBytes= 0, speedInBytes = 0, transferTimeInSec = 0, etaInSec = 0 }) {
     return this.generateMessage({
       type: 'download',
@@ -37,10 +44,17 @@ export class MessageLibService {
     })
   }
 
-  genProgressMessage ({ message, total = 0, done = 0 }) {
+  genProgressMessage ({ message = '', total = 0, done = 0 }) {
     return this.generateMessage({
       type: 'progress',
       data: { message, total, done },
+    })
+  }
+
+  genMultiProgressMessage (rows: { message?: string, total: number, done: number }[]) {
+    return this.generateMessage({
+      type: 'progress-multi',
+      data: { rows },
     })
   }
 }

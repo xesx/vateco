@@ -64,7 +64,7 @@ export class HandleOwnITgBot {
 
     if (message === '📝 Show prompt') {
       const prompt = ctx.session.workflowParams?.positivePrompt || 'N/A'
-      const message = this.msglib.genCodeMessage(prompt)
+      const message = this.msglib.genMessageForCopy(prompt)
       return this.tgbotlib.reply(ctx, message , { parse_mode: 'HTML' })
     }
 
