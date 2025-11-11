@@ -1,7 +1,7 @@
 {
   "name": "Illustrious-0",
   "id": "300",
-  "tags": ["illustrious", "own-instance"],
+  "tags": ["illustrious", "own-instance", "txt2img"],
   "template": "base-gen-01",
   "models": [],
   "params": {
@@ -17,17 +17,17 @@
       "position": [2]
     },
 
-    "loraEnabled6": { "user": true, "value": false, "label": "l1 on", "position": [5, 0] },
+    "loraEnabled1": { "user": true, "value": false, "label": "l1 on", "position": [5, 0] },
     "lora1": { "user": true, "enum": "$.ilLoraEnum", "value": "$.ilLoraEnum:0", "label": "", "position": [5, 1] },
-    "loraStrength6": { "user": true, "value": 0.5, "label": "", "position": [5, 2] },
+    "loraStrength1": { "user": true, "value": 0.5, "label": "", "position": [5, 2] },
 
-    "loraEnabled7": { "user": true, "value": false, "label": "l2 on", "position": [6, 0] },
+    "loraEnabled2": { "user": true, "value": false, "label": "l2 on", "position": [6, 0] },
     "lora2": { "user": true, "enum": "$.ilLoraEnum", "label": "", "position": [6, 1] },
-    "loraStrength7": { "user": true, "value": 0.5, "label": "", "position": [6, 2] },
+    "loraStrength2": { "user": true, "value": 0.5, "label": "", "position": [6, 2] },
 
-    "loraEnabled8": { "user": true, "value": false, "label": "l3 on", "position": [7, 0] },
+    "loraEnabled3": { "user": true, "value": false, "label": "l3 on", "position": [7, 0] },
     "lora3": { "user": true, "enum": "$.ilLoraEnum", "label": "", "position": [7, 1] },
-    "loraStrength8": { "user": true, "value": 0.5, "label": "", "position": [7, 2] },
+    "loraStrength3": { "user": true, "value": 0.5, "label": "", "position": [7, 2] },
 
     "width": { "user": true, "value": 1024, "enum": [512, 768, 1024], "position": [10, 0] },
     "height": { "user": true, "value": 1024, "enum": [512, 768, 1024], "position": [10, 1] },

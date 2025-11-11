@@ -14,8 +14,110 @@ datasource db {
 }
 
 model TgBotSession {
-  key   String @id @map("key")
-  value Json   @map("value")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+  key       String   @id @map("key")
+  value     Json     @map("value")
 
   @@map("tg_bot_session")
+}
+
+model WorkflowTemplates {
+  id              Int                @id @default(autoincrement()) @map("id")
+  createdAt       DateTime           @default(now()) @map("created_at")
+  updatedAt       DateTime           @updatedAt @map("updated_at")
+  name            String             @map("name")
+  description     String?            @map("description")
+  schema          Json               @map("schema")
+  WorkflowVariant WorkflowVariants[]
+
+  @@map("workflow_template")
+}
+
+model WorkflowVariants {
+  id                 Int      @id @default(autoincrement()) @map("id")
+  createdAt          DateTime @default(now()) @map("created_at")
+  updatedAt          DateTime @updatedAt @map("updated_at")
+  workflowTemplateId Int      @map("workflow_template_id")
+  name               String   @unique @map("name")
+  description        String?  @map("description")
+
+  workflowTemplate WorkflowTemplates @relation(fields: [workflowTemplateId], references: [id])
+
+  params WorkflowVariantParams[] // связь с WorkflowVariantParams
+  tags   WorkflowVariantTags[] // связь с WorkflowVariantTags
+
+  @@map("workflow_variant")
+}
+
+model WorkflowVariantParams {
+  id                Int      @id @default(autoincrement()) @map("id")
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @updatedAt @map("updated_at")
+  workflowVariantId Int      @map("workflow_variant_id")
+  paramName         String   @map("param_name")
+  user              Boolean  @map("user")
+  value             Json     @map("value")
+  label             String?  @map("label")
+  enum              Json?    @map("enum")
+  positionX         Int?     @map("position_x")
+  positionY         Int?     @map("position_y")
+
+  workflowVariant WorkflowVariants @relation(fields: [workflowVariantId], references: [id])
+
+  @@unique([workflowVariantId, paramName])
+  @@map("workflow_variant_params")
+}
+
+model WorkflowVariantTags {
+  createdAt         DateTime @default(now()) @map("created_at")
+  workflowVariantId Int      @map("workflow_variant_id")
+  tag               String   @map("tag")
+
+  workflowVariant WorkflowVariants @relation(fields: [workflowVariantId], references: [id])
+
+  @@unique([workflowVariantId, tag])
+  @@map("workflow_variant_tags")
+}
+
+model Models {
+  id               Int      @id @default(autoincrement()) @map("id")
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+  name             String   @unique @map("name")
+  comfyUiDirectory String   @map("comfy_ui_directory")
+  comfyUiFileName  String   @map("comfy_ui_file_name")
+  label            String   @map("label")
+  description      String?  @map("description")
+  meta             Json     @map("meta")
+
+  huggingfaceLinks ModelHuggingfaceLinks[]
+  tags             ModelTags[]
+
+  @@map("models")
+}
+
+model ModelHuggingfaceLinks {
+  id        Int      @id @default(autoincrement()) @map("id")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  modelId   Int      @map("model_id")
+  repo      String   @map("repo")
+  file      String   @map("file")
+
+  model Models @relation(fields: [modelId], references: [id])
+
+  @@unique([repo, file])
+  @@map("model_huggingface_links")
+}
+
+model ModelTags {
+  createdAt DateTime @default(now()) @map("created_at")
+  modelId   Int      @map("model_id")
+  tag       String   @map("tag")
+
+  model Models @relation(fields: [modelId], references: [id])
+
+  @@unique([modelId, tag])
+  @@map("model_tags")
 }
