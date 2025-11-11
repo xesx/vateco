@@ -25,7 +25,7 @@ model TgBotSession {
 model WorkflowTemplates {
   id              Int                @id @default(autoincrement()) @map("id")
   createdAt       DateTime           @default(now()) @map("created_at")
-  updatedAt       DateTime           @updatedAt @map("updated_at")
+  updatedAt       DateTime           @default(now()) @updatedAt @map("updated_at")
   name            String             @map("name")
   description     String?            @map("description")
   schema          Json               @map("schema")
@@ -37,7 +37,7 @@ model WorkflowTemplates {
 model WorkflowVariants {
   id                 Int      @id @default(autoincrement()) @map("id")
   createdAt          DateTime @default(now()) @map("created_at")
-  updatedAt          DateTime @updatedAt @map("updated_at")
+  updatedAt          DateTime @default(now()) @updatedAt @map("updated_at")
   workflowTemplateId Int      @map("workflow_template_id")
   name               String   @unique @map("name")
   description        String?  @map("description")
@@ -53,7 +53,7 @@ model WorkflowVariants {
 model WorkflowVariantParams {
   id                Int      @id @default(autoincrement()) @map("id")
   createdAt         DateTime @default(now()) @map("created_at")
-  updatedAt         DateTime @updatedAt @map("updated_at")
+  updatedAt         DateTime @default(now()) @updatedAt @map("updated_at")
   workflowVariantId Int      @map("workflow_variant_id")
   paramName         String   @map("param_name")
   user              Boolean  @map("user")
@@ -83,13 +83,13 @@ model WorkflowVariantTags {
 model Models {
   id               Int      @id @default(autoincrement()) @map("id")
   createdAt        DateTime @default(now()) @map("created_at")
-  updatedAt        DateTime @updatedAt @map("updated_at")
+  updatedAt        DateTime @default(now()) @updatedAt @map("updated_at")
   name             String   @unique @map("name")
   comfyUiDirectory String   @map("comfy_ui_directory")
   comfyUiFileName  String   @map("comfy_ui_file_name")
   label            String   @map("label")
   description      String?  @map("description")
-  meta             Json     @map("meta")
+  meta             Json     @default("{}") @map("meta")
 
   huggingfaceLinks ModelHuggingfaceLinks[]
   tags             ModelTags[]
@@ -100,7 +100,7 @@ model Models {
 model ModelHuggingfaceLinks {
   id        Int      @id @default(autoincrement()) @map("id")
   createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
   modelId   Int      @map("model_id")
   repo      String   @map("repo")
   file      String   @map("file")
