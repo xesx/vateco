@@ -57,7 +57,7 @@ model WorkflowVariantParams {
   workflowVariantId Int      @map("workflow_variant_id")
   paramName         String   @map("param_name")
   user              Boolean  @map("user")
-  value             Json     @map("value")
+  value             Json?    @map("value")
   label             String?  @map("label")
   enum              Json?    @map("enum")
   positionX         Int?     @map("position_x")
