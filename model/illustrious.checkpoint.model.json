@@ -42,7 +42,7 @@
   },
   "il_cp_xl_v02": {
     "comfyUiDir": "checkpoints",
-    "comfyUiFileName": "illustriousXL_v02.safetensors",
+    "comfyUiFileName": "il_cp_xl_v02.safetensors",
     "label": "Illustrious-XL-v2.0",
     "huggingfaceLink": {
       "OnomaAIResearch/Illustrious-XL-v2.0": "Illustrious-XL-v2.0.safetensors"

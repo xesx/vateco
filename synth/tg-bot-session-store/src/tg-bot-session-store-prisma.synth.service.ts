@@ -1,10 +1,11 @@
 import { Injectable } from '@nestjs/common'
-import { PrismaLibService } from './prisma.lib.service'
 import type { AsyncSessionStore } from 'telegraf/session'
 
+import * as lib from '@lib'
+
 @Injectable()
-export class TgBotSessionStorePrismaLibService implements AsyncSessionStore<any> {
-  constructor(private prisma: PrismaLibService) {}
+export class TgBotSessionStorePrismaSynthService implements AsyncSessionStore<any> {
+  constructor(private prisma: lib.PrismaLibService) {}
 
   async get(key: string): Promise<any> {
     const record = await this.prisma.tgBotSession.findUnique({

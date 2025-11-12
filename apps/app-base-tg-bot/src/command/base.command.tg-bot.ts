@@ -3,7 +3,7 @@ import { Telegraf } from 'telegraf'
 import { InjectBot } from 'nestjs-telegraf'
 import { session } from 'telegraf'
 
-import * as lib from '@lib'
+import * as synth from '@synth'
 
 import { TAppBaseTgBotContext } from '../types'
 
@@ -14,8 +14,7 @@ export class BaseCommandTgBot {
   constructor(
     @InjectBot() private readonly bot: Telegraf<TAppBaseTgBotContext>,
     private readonly tgbotsrv: AppBaseTgBotService,
-    prismaStore: lib.TgBotSessionStorePrismaLibService,
-    private readonly tgbotlib: lib.TgBotLibService,
+    prismaStore: synth.TgBotSessionStorePrismaSynthService,
   ) {
     bot.use(session({ store: prismaStore }))
 
