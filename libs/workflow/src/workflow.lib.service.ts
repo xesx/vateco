@@ -48,14 +48,6 @@ export class WorkflowLibService {
       .filter((wf) => tags.every(tag => wf.tags.includes(tag)))
   }
 
-  genSeed (): number {
-    // Генерируем случайный seed
-    const seed = Math.floor(Math.random() * 4294967296) // 0..2^32-1
-
-    // Нормализуем под uint32
-    return seed >>> 0
-  }
-
   compileWorkflow ({ id, params = {} }) {
     console.log('WorkflowLibService_compileWorkflow_10', JSON.stringify(params, null, 4))
     const compiledParams = this.compileWorkflowParams({ id, params })

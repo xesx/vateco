@@ -31,7 +31,7 @@ model WorkflowTemplates {
   schema          Json               @map("schema")
   WorkflowVariant WorkflowVariants[]
 
-  @@map("workflow_template")
+  @@map("workflow_templates")
 }
 
 model WorkflowVariants {
@@ -47,7 +47,7 @@ model WorkflowVariants {
   params WorkflowVariantParams[] // связь с WorkflowVariantParams
   tags   WorkflowVariantTags[] // связь с WorkflowVariantTags
 
-  @@map("workflow_variant")
+  @@map("workflow_variants")
 }
 
 model WorkflowVariantParams {
