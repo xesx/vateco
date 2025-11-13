@@ -27,7 +27,7 @@ export class WorkflowRepository {
        WHERE 1=1
          AND wvt.tag in (${tags.join(',')})
        GROUP BY wv.id
-      HAVING count(*) = ${tags.length}
+      HAVING COUNT(*) = ${tags.length}
     `
 
     return workflows

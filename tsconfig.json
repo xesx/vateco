@@ -21,6 +21,7 @@
     "paths": {
       "@lib": ["libs"],
       "@synth": ["synth"],
+      "@repo": ["repo"],
       "@model": ["model"],
       "@kb": ["keyboard"],
       "@const": ["const"]
