@@ -44,6 +44,7 @@ import * as rpwf from './way-runpod-workflow'
     lib.RunpodLibModule,
 
     repo.TgBotSessionStoreRepositoryModule,
+    repo.WorkflowRepositoryModule,
 
     lib.HelperLibModule,
   ],
