@@ -41,10 +41,11 @@ export class WayOwnITgBot {
 
   private async initSession (ctx: OwnInstanceContext, next: () => Promise<void>) {
     ctx.session.way = 'own-instance'
+    ctx.session.offer ??= {}
 
-    ctx.session.gpu ??= 'any'
-    ctx.session.geolocation ??= 'any'
-    ctx.session.inDataCenterOnly ??= 'false'
+    ctx.session.offer.gpu ??= 'any'
+    ctx.session.offer.geolocation ??= 'any'
+    ctx.session.offer.inDataCenterOnly ??= 'false'
     ctx.session.workflowParams ??= {}
     ctx.session.inputWaiting = undefined
 

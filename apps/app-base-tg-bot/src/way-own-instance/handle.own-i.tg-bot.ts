@@ -1,9 +1,7 @@
-import axios from 'axios'
-import * as FormData from 'form-data'
-
 import { Injectable } from '@nestjs/common'
 
 import * as lib from '@lib'
+import * as repo from '@repo'
 
 import { OwnInstanceContext, OwnInstanceMatchContext } from './types'
 import { ViewOwnITgBot } from './view.own-i.tg-bot'
@@ -21,6 +19,8 @@ export class HandleOwnITgBot {
     private readonly wflib: lib.WorkflowLibService,
     private readonly msglib: lib.MessageLibService,
     private readonly h: lib.HelperLibService,
+
+    private readonly wfrepo: repo.WorkflowRepository,
   ) {}
 
   commandStart (ctx: OwnInstanceContext, next: () => Promise<void>) {
@@ -109,51 +109,10 @@ export class HandleOwnITgBot {
 
     delete ctx.session.inputWaiting
     await this.tgbotlib.safeAnswerCallback(ctx)
-
-    // const photos = ctx.message.photo
-    // const bestPhoto = photos.at(-1) // самое большое фото
-    // const fileId = bestPhoto.file_id
-    //
-    // const fileLink = await ctx.telegram.getFileLink(fileId)
-    // console.log("Ссылка на фото:", fileLink.href)
-    //
-    // // Качаем фото с Telegram
-    // const tgRes = await axios.get(fileLink.href, { responseType: 'stream' })
-    //
-    // // Оборачиваем в FormData
-    // const form = new FormData()
-    // form.append('file', tgRes.data, { filename: `${fileId}.jpg`, contentType: 'image/jpeg' })
-    //
-    // // Отправляем на API NestJS
-    // const res = await this.cloudapilib.vastAiUploadInputImage({
-    //   baseUrl: ctx.session.instanceApiUrl,
-    //   instanceId: ctx.session.instanceId,
-    //   token: ctx.session.instanceToken,
-    //   form
-    // })
-    //
-    // console.log("Файл успешно отправлен на API:", res)
-    //
-    // const filename = res.filename || 'N/A'
-    //
-    // if (ctx.session.inputWaiting) {
-    //   const paramName = ctx.session.inputWaiting
-    //   ctx.session.workflowParams[paramName] = filename
-    //
-    //   delete ctx.session.inputWaiting
-    //
-    //   return this.view.showWorkflowRunMenu(ctx)
-    // }
-    //
-    // if (ctx.session.workflowParams?.image) {
-    //   ctx.session.workflowParams.image = filename
-    //   // return this.actionWorkflowRun(ctx)
-    //   return this.view.showWorkflowRunMenu(ctx)
-    // }
   }
 
   actionOffer (ctx: OwnInstanceContext) {
-    ctx.session.workflowParams = {}
+    ctx.session.offer = ctx.session.offer || {}
     this.view.showOfferParamsMenu(ctx)
   }
 
@@ -167,7 +126,7 @@ export class HandleOwnITgBot {
     }
 
     if (value) {
-      ctx.session[name] = value
+      Object.assign(ctx.session.offer || {}, { [name]: value })
       this.view.showOfferParamsMenu(ctx)
     } else {
       ctx.editMessageText(`Select "${name}":`, this.tgbotlib.generateInlineKeyboard(menuMap[name]))
@@ -176,9 +135,9 @@ export class HandleOwnITgBot {
   }
 
   async actionSearchOffers(ctx: OwnInstanceContext) {
-    const gpu = ctx.session.gpu
-    const selectedGeo = ctx.session.geolocation
-    const inDataCenterOnly = ctx.session.inDataCenterOnly === 'true'
+    const gpu = ctx.session.offer?.gpu ?? 'any'
+    const selectedGeo = ctx.session.offer?.geolocation ?? 'any'
+    const inDataCenterOnly = ctx.session.offer?.inDataCenterOnly === 'true'
 
     let geolocation: string[] | undefined
 
@@ -204,7 +163,7 @@ export class HandleOwnITgBot {
   actionOfferSelect (ctx: OwnInstanceMatchContext) {
     const offerId = ctx.match[1]
 
-    ctx.session.offerId = Number(offerId)
+    Object.assign(ctx.session.offer || {}, { id: offerId })
 
     this.tgbotlib.safeAnswerCallback(ctx)
     this.view.showInstanceCreateMenu(ctx)
@@ -212,7 +171,8 @@ export class HandleOwnITgBot {
 
   async actionInstanceCreate (ctx: OwnInstanceContext) {
     const step = ctx.session.step
-    const offerId = ctx.session.offerId
+    const offerId = ctx.session.offer?.id
+    const chatId = ctx.chat?.id
 
     if (!offerId || step !== 'start') {
       ctx.reply('Error way', { offerId, step } as any)
@@ -221,9 +181,9 @@ export class HandleOwnITgBot {
 
     const result = await this.vastlib.createInstance({
       offerId,
-      clientId: 'base_' + ctx.session.chatId,
+      clientId: 'base_' + chatId,
       env: {
-        'TG_CHAT_ID': ctx.chat?.id.toString(),
+        'TG_CHAT_ID': chatId?.toString(),
         // 'COMFY_UI_ARCHIVE_FILE': 'comfyui-cu128-py312-iface-v2.tar.zst',
         'COMFY_UI_ARCHIVE_FILE': 'comfyui-cu128-py312-v2.tar.zst', // todo: make it configurable
       },
@@ -253,6 +213,8 @@ export class HandleOwnITgBot {
 
     if (instanceApiPort === 'N/A' || ipAddress === 'N/A') {
       console.log('WayOwnInstance_actionInstanceStatus_31 instanceApiPort not found, instance:', JSON.stringify(instance))
+      await ctx.reply('Error getting instance status: API port or IP address not found')
+      return
     }
 
     ctx.session.instanceToken = instance.jupyter_token || 'N/A'
@@ -389,6 +351,8 @@ export class HandleOwnITgBot {
 
     const [,workflowId] = ctx.match
 
+    const wfVariantParams = await this.wfrepo.getWorkflowVariantUserParams(workflowId)
+    console.log('\x1b[36m', 'wfVariantParams', wfVariantParams, '\x1b[0m')
     ctx.session.workflowParams = this.wflib.getWfParamsForSession({ workflowId })
 
     if (workflowId === ctx.session.workflowId) {

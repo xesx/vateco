@@ -16,19 +16,29 @@ export interface OwnInstanceMatchContext extends OwnInstanceContext {
   update: Update.CallbackQueryUpdate
 }
 
+export interface Offer {
+  id?: string
+  gpu?: string
+  geolocation?: string
+  inDataCenterOnly?: string
+  // [key: string]: any
+}
+
 export interface SessionData {
-  chatId: number
+  telegramId: number
+  userId: number
   step: string
+  offer?: Offer
   way?: string
   instanceId?: number
   instanceToken?: string
   instanceIp?: string
   instanceApiPort?: string
   instanceApiUrl?: string
-  offerId?: number
-  gpu: string
-  geolocation: string
-  inDataCenterOnly: string
+  // offerId?: number
+  // gpu: string
+  // geolocation: string
+  // inDataCenterOnly: string
   workflowId?: string
   workflowParams: Record<string, string | number | boolean>
   inputWaiting?: string

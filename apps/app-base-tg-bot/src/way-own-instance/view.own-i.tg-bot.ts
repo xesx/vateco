@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common'
 
 import * as lib from '@lib'
+import * as repo from '@repo'
 
 import { OwnInstanceContext } from './types'
 
@@ -11,18 +12,19 @@ export class ViewOwnITgBot {
   constructor(
     private readonly tgbotlib: lib.TgBotLibService,
     private readonly wflib: lib.WorkflowLibService,
+    private readonly wfrepo: repo.WorkflowRepository,
   ) {}
 
   showOfferParamsMenu (ctx: OwnInstanceContext) {
     const message = 'Search parameters:'
-    const keyboard = this.tgbotlib.generateInlineKeyboard(kb.ownInstanceOfferParamsMenu(ctx.session))
+    const keyboard = this.tgbotlib.generateInlineKeyboard(kb.ownInstanceOfferParamsMenu(ctx.session.offer || {}))
 
     this.tgbotlib.safeAnswerCallback(ctx)
     this.tgbotlib.reply(ctx, message, keyboard)
   }
 
   showInstanceCreateMenu(ctx: OwnInstanceContext) {
-    const offerId = ctx.session.offerId
+    const offerId = ctx.session.offer?.id
 
     const message = 'Now you can create your own instance ⤵️'
     const keyboard = this.tgbotlib.generateInlineKeyboard(kb.ownInstanceCreateMenu(offerId))
@@ -43,20 +45,19 @@ export class ViewOwnITgBot {
     this.tgbotlib.reply(ctx, message, keyboard)
   }
 
-  showWorkflowVariants (ctx: OwnInstanceContext) {
+  async showWorkflowVariants (ctx: OwnInstanceContext) {
     this.tgbotlib.safeAnswerCallback(ctx)
 
     delete ctx.session.workflowId
 
-    const message = '*Select workflow*'
-    const keyboard = this.tgbotlib.generateInlineKeyboard(kb.workflowsMenu({
-      workflows: this.wflib.findWorkflowsByTags({ tags: ['own-instance'] }),
-      prefixAction: 'act:own-i',
-      backAction: 'act:own-i:instance:manage'
-    }))
+    const workflows = await this.wfrepo.findWorkflowVariantsByTags(['own-instance'])
 
-    this.tgbotlib.removeReplyKeyboard(ctx)
-    this.tgbotlib.reply(ctx, message, { parse_mode: 'Markdown', ...keyboard })
+    const message = '*Select workflow*'
+    const keyboardSchema = kb.workflowsMenu({ workflows, prefixAction: 'act:own-i', backAction: 'act:own-i:instance:manage' })
+    const keyboard = this.tgbotlib.generateInlineKeyboard(keyboardSchema)
+
+    await this.tgbotlib.removeReplyKeyboard(ctx)
+    await this.tgbotlib.reply(ctx, message, { parse_mode: 'Markdown', ...keyboard })
   }
 
   showWorkflowRunMenu (ctx: OwnInstanceContext) {

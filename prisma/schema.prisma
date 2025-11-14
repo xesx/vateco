@@ -22,6 +22,20 @@ model TgBotSession {
   @@map("tg_bot_session")
 }
 
+model Users {
+  id         Int      @id @default(autoincrement()) @map("id")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @default(now()) @updatedAt @map("updated_at")
+  telegramId Int      @unique @map("telegram_id")
+  username   String?  @map("username")
+  firstName  String?  @map("first_name")
+  lastName   String?  @map("last_name")
+
+  workflowVariantUserParams WorkflowVariantUserParams[] // связь с WorkflowVariantUserParams
+
+  @@map("users")
+}
+
 model WorkflowTemplates {
   id              Int                @id @default(autoincrement()) @map("id")
   createdAt       DateTime           @default(now()) @map("created_at")
@@ -42,7 +56,8 @@ model WorkflowVariants {
   name               String   @unique @map("name")
   description        String?  @map("description")
 
-  workflowTemplate WorkflowTemplates @relation(fields: [workflowTemplateId], references: [id])
+  workflowTemplate WorkflowTemplates           @relation(fields: [workflowTemplateId], references: [id])
+  userParams       WorkflowVariantUserParams[] // связь с WorkflowVariantUserParams
 
   params WorkflowVariantParams[] // связь с WorkflowVariantParams
   tags   WorkflowVariantTags[] // связь с WorkflowVariantTags
@@ -67,6 +82,22 @@ model WorkflowVariantParams {
 
   @@unique([workflowVariantId, paramName])
   @@map("workflow_variant_params")
+}
+
+model WorkflowVariantUserParams {
+  id                Int      @id @default(autoincrement()) @map("id")
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @default(now()) @updatedAt @map("updated_at")
+  userId            Int      @map("user_id")
+  workflowVariantId Int      @map("workflow_variant_id")
+  paramName         String   @map("param_name")
+  value             Json?    @map("value")
+
+  workflowVariant WorkflowVariants @relation(fields: [workflowVariantId], references: [id])
+  user            Users            @relation(fields: [userId], references: [id])
+
+  @@unique([userId, workflowVariantId, paramName])
+  @@map("workflow_variant_user_params")
 }
 
 model WorkflowVariantTags {

@@ -32,8 +32,8 @@ export class AppBaseTgBotService {
 
   resetSession(ctx: TAppBaseTgBotContext) {
     ctx.session = {
-      lastTimestamp: Date.now(),
-      chatId: ctx.session.chatId,
+      telegramId: ctx.session.telegramId,
+      userId: ctx.session.userId,
       step: 'start',
     }
   }
