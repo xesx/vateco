@@ -3,8 +3,6 @@ import * as pm2 from 'pm2'
 import axios from 'axios'
 import * as WebSocket from 'ws'
 
-console.log('\x1b[36m', 'WebSocket', WebSocket, '\x1b[0m')
-
 import { Injectable, Logger } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 // import axios, { AxiosInstance } from 'axios'
@@ -24,6 +22,8 @@ export class ComfyUiLibService {
 
     this.COMFY_UI_URL = 'http://localhost:18188'
     this.COMFY_UI_WS_URL = 'ws://localhost:18188/ws'
+
+    this.l.log(`ComfyUiLibService_99 initialized. COMFY_UI_URL: ${this.COMFY_UI_URL}, COMFY_UI_WS_URL: ${this.COMFY_UI_WS_URL}`)
   }
 
   async startComfyUI(): Promise<void> {

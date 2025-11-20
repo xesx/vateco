@@ -1,10 +1,12 @@
 import { Module } from '@nestjs/common'
 import { WorkflowRepository } from './workflow.repository'
 
-// import * as lib from '@lib'
+import * as lib from '@lib'
 
 @Module({
-  imports: [],
+  imports: [
+    lib.WorkflowLibModule,
+  ],
   providers: [WorkflowRepository],
   exports: [WorkflowRepository],
 })

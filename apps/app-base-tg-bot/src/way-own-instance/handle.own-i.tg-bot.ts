@@ -1,9 +1,7 @@
-import axios from 'axios'
-import * as FormData from 'form-data'
-
 import { Injectable } from '@nestjs/common'
 
 import * as lib from '@lib'
+import * as repo from '@repo'
 
 import { OwnInstanceContext, OwnInstanceMatchContext } from './types'
 import { ViewOwnITgBot } from './view.own-i.tg-bot'
@@ -21,9 +19,11 @@ export class HandleOwnITgBot {
     private readonly wflib: lib.WorkflowLibService,
     private readonly msglib: lib.MessageLibService,
     private readonly h: lib.HelperLibService,
+
+    private readonly wfrepo: repo.WorkflowRepository,
   ) {}
 
-  commandStart (ctx: OwnInstanceContext, next: () => Promise<void>) {
+  async commandStart (ctx: OwnInstanceContext, next: () => Promise<void>) {
     if (ctx.session.way !== 'own-instance') {
       return next()
     }
@@ -31,15 +31,15 @@ export class HandleOwnITgBot {
     const step = ctx.session.step
 
     if (step === 'start') {
-      this.view.showOfferParamsMenu(ctx)
+      await this.view.showOfferParamsMenu(ctx)
     } else if (['loading', 'running'].includes(step)) {
-      if (ctx.session.workflowId) {
-        this.view.showWorkflowRunMenu(ctx)
+      if (ctx.session.workflowVariantId) {
+        await this.view.showWorkflowRunMenu(ctx)
       } else {
-        this.view.showInstanceManageMenu(ctx)
+        await this.view.showInstanceManageMenu(ctx)
       }
     } else {
-      this.view.showOfferParamsMenu(ctx)
+      await this.view.showOfferParamsMenu(ctx)
     }
   }
 
@@ -109,55 +109,14 @@ export class HandleOwnITgBot {
 
     delete ctx.session.inputWaiting
     await this.tgbotlib.safeAnswerCallback(ctx)
-
-    // const photos = ctx.message.photo
-    // const bestPhoto = photos.at(-1) // самое большое фото
-    // const fileId = bestPhoto.file_id
-    //
-    // const fileLink = await ctx.telegram.getFileLink(fileId)
-    // console.log("Ссылка на фото:", fileLink.href)
-    //
-    // // Качаем фото с Telegram
-    // const tgRes = await axios.get(fileLink.href, { responseType: 'stream' })
-    //
-    // // Оборачиваем в FormData
-    // const form = new FormData()
-    // form.append('file', tgRes.data, { filename: `${fileId}.jpg`, contentType: 'image/jpeg' })
-    //
-    // // Отправляем на API NestJS
-    // const res = await this.cloudapilib.vastAiUploadInputImage({
-    //   baseUrl: ctx.session.instanceApiUrl,
-    //   instanceId: ctx.session.instanceId,
-    //   token: ctx.session.instanceToken,
-    //   form
-    // })
-    //
-    // console.log("Файл успешно отправлен на API:", res)
-    //
-    // const filename = res.filename || 'N/A'
-    //
-    // if (ctx.session.inputWaiting) {
-    //   const paramName = ctx.session.inputWaiting
-    //   ctx.session.workflowParams[paramName] = filename
-    //
-    //   delete ctx.session.inputWaiting
-    //
-    //   return this.view.showWorkflowRunMenu(ctx)
-    // }
-    //
-    // if (ctx.session.workflowParams?.image) {
-    //   ctx.session.workflowParams.image = filename
-    //   // return this.actionWorkflowRun(ctx)
-    //   return this.view.showWorkflowRunMenu(ctx)
-    // }
   }
 
   actionOffer (ctx: OwnInstanceContext) {
-    ctx.session.workflowParams = {}
+    ctx.session.offer = ctx.session.offer || {}
     this.view.showOfferParamsMenu(ctx)
   }
 
-  actionSetSearchOfferParams(ctx: OwnInstanceMatchContext) {
+  async actionSetSearchOfferParams (ctx: OwnInstanceMatchContext) {
     const [name, value] = ctx.match[1].split(':')
 
     const menuMap = {
@@ -167,18 +126,18 @@ export class HandleOwnITgBot {
     }
 
     if (value) {
-      ctx.session[name] = value
+      Object.assign(ctx.session.offer || {}, { [name]: value })
       this.view.showOfferParamsMenu(ctx)
     } else {
-      ctx.editMessageText(`Select "${name}":`, this.tgbotlib.generateInlineKeyboard(menuMap[name]))
-      this.tgbotlib.safeAnswerCallback(ctx)
+      await ctx.editMessageText(`Select "${name}":`, this.tgbotlib.generateInlineKeyboard(menuMap[name]))
+      await this.tgbotlib.safeAnswerCallback(ctx)
     }
   }
 
-  async actionSearchOffers(ctx: OwnInstanceContext) {
-    const gpu = ctx.session.gpu
-    const selectedGeo = ctx.session.geolocation
-    const inDataCenterOnly = ctx.session.inDataCenterOnly === 'true'
+  async actionSearchOffers (ctx: OwnInstanceContext) {
+    const gpu = ctx.session.offer?.gpu ?? 'any'
+    const selectedGeo = ctx.session.offer?.geolocation ?? 'any'
+    const inDataCenterOnly = ctx.session.offer?.inDataCenterOnly === 'true'
 
     let geolocation: string[] | undefined
 
@@ -197,54 +156,61 @@ export class HandleOwnITgBot {
     const keyboard = this.tgbotlib.generateInlineKeyboard(kb.ownInstanceOffersMenu(offers))
 
 
-    this.tgbotlib.safeAnswerCallback(ctx)
-    this.tgbotlib.reply(ctx, message, keyboard)
+    await this.tgbotlib.safeAnswerCallback(ctx)
+    await this.tgbotlib.reply(ctx, message, keyboard)
   }
 
-  actionOfferSelect (ctx: OwnInstanceMatchContext) {
+  async actionOfferSelect (ctx: OwnInstanceMatchContext) {
     const offerId = ctx.match[1]
 
-    ctx.session.offerId = Number(offerId)
+    Object.assign(ctx.session.offer || {}, { id: offerId })
 
-    this.tgbotlib.safeAnswerCallback(ctx)
-    this.view.showInstanceCreateMenu(ctx)
+    await this.tgbotlib.safeAnswerCallback(ctx)
+    await this.view.showInstanceCreateMenu(ctx)
   }
 
   async actionInstanceCreate (ctx: OwnInstanceContext) {
     const step = ctx.session.step
-    const offerId = ctx.session.offerId
+    const offerId = ctx.session.offer?.id
+    const chatId = ctx.chat?.id
 
     if (!offerId || step !== 'start') {
-      ctx.reply('Error way', { offerId, step } as any)
+      await ctx.reply('Error way', { offerId, step } as any)
       return
     }
 
     const result = await this.vastlib.createInstance({
       offerId,
-      clientId: 'base_' + ctx.session.chatId,
+      clientId: 'base_' + chatId,
       env: {
-        'TG_CHAT_ID': ctx.chat?.id.toString(),
+        'TG_CHAT_ID': chatId?.toString(),
         // 'COMFY_UI_ARCHIVE_FILE': 'comfyui-cu128-py312-iface-v2.tar.zst',
         'COMFY_UI_ARCHIVE_FILE': 'comfyui-cu128-py312-v2.tar.zst', // todo: make it configurable
       },
     })
 
     ctx.session.step = 'loading'
-    ctx.session.instanceId = result.new_contract
+    ctx.session.instance = { id: result.new_contract }
 
-    this.view.showInstanceManageMenu(ctx)
+    await this.view.showInstanceManageMenu(ctx)
   }
 
   async actionInstanceStatus (ctx: OwnInstanceContext) {
     const step = ctx.session.step || '__undefined__'
-    const instanceId = ctx.session.instanceId
+    const instanceId = ctx.session.instance?.id
 
     if (!['loading', 'running'].includes(step)) {
-      ctx.deleteMessage()
+      await ctx.deleteMessage()
       return
     }
 
-    const instance = await this.vastlib.showInstance({ instanceId })
+    if (!ctx.session.instance || instanceId) {
+      console.log('WayOwnInstance_actionInstanceStatus_24 No instanceId in session')
+      await ctx.reply('Error getting instance status: no instance ID in session')
+      return
+    }
+
+    const instance = await this.vastlib.importInstanceInfo(instanceId)
 
     const token = instance.jupyter_token || 'N/A'
     const ipAddress = instance.public_ipaddr || 'N/A'
@@ -255,10 +221,10 @@ export class HandleOwnITgBot {
       console.log('WayOwnInstance_actionInstanceStatus_31 instanceApiPort not found, instance:', JSON.stringify(instance))
     }
 
-    ctx.session.instanceToken = instance.jupyter_token || 'N/A'
-    ctx.session.instanceIp = ipAddress
-    ctx.session.instanceApiPort = instanceApiPort
-    ctx.session.instanceApiUrl = `http://${ipAddress}:${instanceApiPort}`
+    ctx.session.instance.token = instance.jupyter_token
+    ctx.session.instance.ip = ipAddress
+    ctx.session.instance.apiPort = instanceApiPort
+    ctx.session.instance.apiUrl = `http://${ipAddress}:${instanceApiPort}`
 
     if (instance.actual_status === 'running') {
       ctx.session.step = 'running'
@@ -277,16 +243,16 @@ export class HandleOwnITgBot {
       + `\n⏰ *Remaining:* ${((instance.duration ?? 0) / (60 * 60 * 24)).toFixed(2)} days)`
       + (appsMenuLink ? `\n🔗 *Apps Menu Link:* [-->>](${appsMenuLink})`: '')
 
-    this.tgbotlib.safeAnswerCallback(ctx)
+    await this.tgbotlib.safeAnswerCallback(ctx)
     const keyboard = this.tgbotlib.generateInlineKeyboard([
       [[`⬅️ Back`, 'act:own-i:instance:manage'], [`🔄 Refresh`, 'act:own-i:instance:status']],
     ])
 
-    this.tgbotlib.reply(ctx, message, { parse_mode: 'Markdown', ...keyboard })
+    await this.tgbotlib.reply(ctx, message, { parse_mode: 'Markdown', ...keyboard })
   }
 
   async actionInstanceDestroy (ctx: OwnInstanceContext) {
-    const instanceId = ctx.session.instanceId
+    const instanceId = ctx.session.instance?.id
 
     try {
       const result = await this.vastlib.destroyInstance({ instanceId })
@@ -302,81 +268,90 @@ export class HandleOwnITgBot {
       }
     }
 
-    delete ctx.session.instanceId
+    delete ctx.session.instance
     ctx.session.step = 'start'
 
-    ctx.sendMessage('Instance destroyed')
-    this.tgbotlib.safeAnswerCallback(ctx)
+    await ctx.sendMessage('Instance destroyed')
+    await this.tgbotlib.safeAnswerCallback(ctx)
 
-    this.view.showOfferParamsMenu(ctx)
+    await this.view.showOfferParamsMenu(ctx)
   }
 
   async actionWorkflowRun (ctx: OwnInstanceContext) {
-    const workflowId = ctx.session.workflowId
+    const { workflowVariantId, userId } = ctx.session
+
+    if (!workflowVariantId) {
+      console.log('HandleOwnITgBot_actionWorkflowRun_21 No workflowId in session')
+      return this.tgbotlib.safeAnswerCallback(ctx)
+    }
+
+    const workflowParams = await this.wfrepo.getWorkflowMergedWorkflowVariantParams({ userId, workflowVariantId })
 
     await this.cloudapilib.vastAiWorkflowRun({
-      baseUrl: `http://${ctx.session.instanceIp}:${ctx.session.instanceApiPort}`,
-      instanceId: ctx.session.instanceId,
-      token: ctx.session.instanceToken,
-      count: ctx.session.workflowParams.generationNumber || 1,
-      workflowId,
-      workflowParams: ctx.session.workflowParams,
+      baseUrl: ctx.session.instance?.apiUrl,
+      instanceId: ctx.session.instance?.id,
+      token: ctx.session.instance?.token,
+      count: workflowParams.generationNumber || 1,
+      workflowVariantId,
+      workflowParams,
     })
 
-    this.tgbotlib.safeAnswerCallback(ctx)
+    await this.tgbotlib.safeAnswerCallback(ctx)
   }
 
-  actionWorkflowParamSelect (ctx: OwnInstanceMatchContext) {
-    const [,workflowId, param] = ctx.match
+  async actionWorkflowParamSelect (ctx: OwnInstanceMatchContext) {
+    const [,workflowVariantId, param] = ctx.match
     const [paramName, value] = param.split(':')
+    const { userId } = ctx.session
 
-    const workflow = this.wflib.getWorkflow(workflowId)
-    const wfParam = workflow?.params[paramName]
-    const currentValue = ctx.session.workflowParams[paramName]
+    const wfParam = await this.wfrepo.getWorkflowVariantParamByName({ workflowVariantId, paramName })
+    const wfUserParam = await this.wfrepo.findWorkflowVariantUserParam({ userId, workflowVariantId, paramName })
+    const currentValue = (wfUserParam?.value ?? wfParam?.value ?? '❌') as string | number | boolean
 
+    // set value
     if (value) {
       if (wfParam.enum) { // value is enum index
-        ctx.session.workflowParams[paramName] = wfParam.enum[value]
+        await this.wfrepo.setWorkflowVariantUserParam({ userId, workflowVariantId, paramName, value: wfParam.enum[value] })
       } else {
-        ctx.session.workflowParams[paramName] = value
+        await this.wfrepo.setWorkflowVariantUserParam({ userId, workflowVariantId, paramName, value })
       }
 
-      this.view.showWorkflowRunMenu(ctx)
+      await this.view.showWorkflowRunMenu(ctx)
       return
     }
 
-    if (wfParam.enum) {
+    // suggest value form enum
+    if (wfParam.enum && Array.isArray(wfParam.enum)) {
       const message = `Set parameter *"${paramName}"*\nCurrent value: *"${currentValue}"*`
       const enumOptions: [string, string][][] = wfParam.enum
         .map((value: any) => typeof value === 'object' ? value.label : String(value))
-        .map((value, i) => [[value, `act:own-i:wf:${workflowId}:param:${paramName}:${i}`]])
+        .map((value, i) => [[value, `act:own-i:wf:${workflowVariantId}:param:${paramName}:${i}`]])
 
-      enumOptions.push([['Back', `act:own-i:wf:${workflowId}`]])
+      enumOptions.push([['Back', `act:own-i:wf:${workflowVariantId}`]])
 
       const keyboard = this.tgbotlib.generateInlineKeyboard(enumOptions)
-      this.tgbotlib.reply(ctx, message, keyboard)
+      await this.tgbotlib.reply(ctx, message, keyboard)
       return
     }
 
-    if (wfParam.type === 'string' || ['integer', 'number'].includes(wfParam.type)) {
-      ctx.session.inputWaiting = paramName
-      this.tgbotlib.safeAnswerCallback(ctx)
-
-      const message = this.msglib.genCodeMessage(String(currentValue))
-      this.tgbotlib.reply(ctx, message , { parse_mode: 'HTML' })
-      // this.tgbotlib.reply(ctx, `Enter value for parameter *"${paramName}"*\nCurrent value: *"${currentValue}"*` , { parse_mode: 'Markdown' })
-      return
-    }
-
+    // suggest boolean value (true/false)
     if (wfParam.type === 'boolean') {
       const message = `Set parameter *"${paramName}"*\nCurrent value: *"${currentValue}"*`
       const keyboard = this.tgbotlib.generateInlineKeyboard([
-        [['True', `act:own-i:wf:${workflowId}:param:${paramName}:true`], ['False', `act:own-i:wf:${workflowId}:param:${paramName}:false`]],
-        [['Back', `act:own-i:wf:${workflowId}`]],
+        [['True', `act:own-i:wf:${workflowVariantId}:param:${paramName}:true`], ['False', `act:own-i:wf:${workflowVariantId}:param:${paramName}:false`]],
+        [['Back', `act:own-i:wf:${workflowVariantId}`]],
       ])
-      this.tgbotlib.reply(ctx, message, keyboard)
+      await this.tgbotlib.reply(ctx, message, keyboard)
       return
     }
+
+    // suggest value form text input
+    ctx.session.inputWaiting = paramName
+    await this.tgbotlib.safeAnswerCallback(ctx)
+
+    const message = this.msglib.genCodeMessage(String(currentValue))
+    await this.tgbotlib.reply(ctx, message , { parse_mode: 'HTML' })
+    // this.tgbotlib.reply(ctx, `Enter value for parameter *"${paramName}"*\nCurrent value: *"${currentValue}"*` , { parse_mode: 'Markdown' })
   }
 
   async actionWorkflowSelect (ctx: OwnInstanceMatchContext) {
@@ -387,50 +362,56 @@ export class HandleOwnITgBot {
       return
     }
 
-    const [,workflowId] = ctx.match
+    const [,workflowVariantIdStr] = ctx.match
+    const workflowVariantId = Number(workflowVariantIdStr)
 
-    ctx.session.workflowParams = this.wflib.getWfParamsForSession({ workflowId })
+    ctx.session.workflowVariantId = workflowVariantId
 
-    if (workflowId === ctx.session.workflowId) {
-      this.view.showWorkflowRunMenu(ctx)
-      return
-    }
+    const workflowVariant = await this.wfrepo.getWorkflowVariant(workflowVariantId)
+    const workflowTemplate = await this.wfrepo.getWorkflowTemplate(workflowVariant.workflowTemplateId)
 
-    ctx.session.workflowId = workflowId
-
-    await this.cloudapilib.vastAiWorkflowLoad({
-      baseUrl: `http://${ctx.session.instanceIp}:${ctx.session.instanceApiPort}`,
-      instanceId: ctx.session.instanceId,
-      token: ctx.session.instanceToken,
-      workflowId
+    await this.cloudapilib.vastAiWorkflowTemplateLoad({
+      baseUrl: ctx.session.instance?.apiUrl,
+      instanceId: ctx.session.instance?.id,
+      token: ctx.session.instance?.token,
+      workflowTemplate,
     })
 
-    this.view.showWorkflowRunMenu(ctx)
+    await this.view.showWorkflowRunMenu(ctx)
 
     const replyKeyboard = this.tgbotlib.generateReplyKeyboard(kb.WORKFLOW_REPLY)
-    ctx.sendMessage('Use for fast work ⤵', replyKeyboard)
+    await ctx.sendMessage('Use for fast work ⤵', replyKeyboard)
   }
 
   async actionUseImageAsInput (ctx: OwnInstanceMatchContext) {
-    if (!ctx.session.workflowId) {
+    const { workflowVariantId, userId } = ctx.session
+
+    if (!workflowVariantId) {
       return this.tgbotlib.safeAnswerCallback(ctx)
     }
 
-    const imageWfParamKeys = Object.keys(ctx.session.workflowParams)
-      .filter(key => key.includes('image'))
+    const imageWorkflowVariantParams = await this.wfrepo.findWorkflowVariantParamsByNameStartsWith({
+      workflowVariantId,
+      startsWith: 'image',
+    })
 
-    if (!imageWfParamKeys.length) {
-      return this.tgbotlib.safeAnswerCallback(ctx)
+    if (!imageWorkflowVariantParams.length) {
+      return await this.tgbotlib.safeAnswerCallback(ctx)
     }
 
     const fileId = this.tgbotlib.getImageFileIdFromMessage({ message: ctx.update?.callback_query?.message })
     console.log('HandleOwnITgBot_actionUseImageAsInput_23 fileId', fileId)
 
-    // TODO more than one image param?
     if (fileId) {
-      ctx.session.workflowParams[imageWfParamKeys[0]] = fileId
+      // TODO more than one image param?
+      await this.wfrepo.setWorkflowVariantUserParam({
+        userId,
+        workflowVariantId,
+        paramName: imageWorkflowVariantParams[0].paramName,
+        value: fileId,
+      })
     }
 
-    this.tgbotlib.safeAnswerCallback(ctx)
+    await this.tgbotlib.safeAnswerCallback(ctx)
   }
 }

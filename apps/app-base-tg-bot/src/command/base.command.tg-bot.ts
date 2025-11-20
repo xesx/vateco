@@ -14,20 +14,25 @@ export class BaseCommandTgBot {
   constructor(
     @InjectBot() private readonly bot: Telegraf<TAppBaseTgBotContext>,
     private readonly tgbotsrv: AppBaseTgBotService,
-    store: repo.TgBotSessionStoreRepository,
+    private readonly userrepo: repo.UserRepository,
+    store: repo.TgBotSessionsStoreRepository,
   ) {
     bot.use(session({ store }))
 
     bot.use(async (ctx, next) => {
       // @ts-expect-error todo
-      const username = ctx.chat?.username
+      const { username } = ctx.chat ?? {}
 
       // todo: remove this in production
       if (!['alexxxalart', 'alexxxiy'].includes(username)) {
         return ctx.reply('Access denied. You are not authorized to use this bot.')
       }
 
-      this.initSession(ctx)
+      if (!ctx.session?.userId) {
+        await this.initSession(ctx)
+      }
+
+
       return await next()
     })
 
@@ -35,14 +40,16 @@ export class BaseCommandTgBot {
     this.bot.action('act:main-menu', (ctx) => this.tgbotsrv.actionMainMenu(ctx))
   }
 
-  private initSession(ctx: TAppBaseTgBotContext) {
-    ctx.session ??= {
-      lastTimestamp: Date.now(),
-      chatId: ctx.chat?.id || -1,
-      step: 'start',
-    }
+  private async initSession(ctx) {
+    const { username, 'first_name': firstName, 'last_name': lastName, id: telegramId } = ctx.chat ?? {}
 
-    ctx.session.lastTimestamp = Date.now()
+    const userId = await this.userrepo.createUser({ telegramId, username, firstName, lastName })
+
+    ctx.session ??= {}
+
+    ctx.session.userId = userId
+    ctx.session.telegramId = telegramId
+    ctx.session.step ??= 'start'
   }
 
   private handleStart(ctx: TAppBaseTgBotContext, next) {

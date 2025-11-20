@@ -32,11 +32,9 @@ export class VastLibService {
   }
 
   async importBalance(): Promise<any> {
-    const path = '/users/{user_id}/machine-earnings/'
-    const response = await axios.get(this.generateRequestUrl(path), {
-      headers: this.headers,
-    })
+    const path = this.generateRequestUrl('/users/{user_id}/machine-earnings/')
 
+    const response = await axios.get(path, { headers: this.headers })
     return response?.data
   }
 
@@ -45,7 +43,7 @@ export class VastLibService {
     geolocation?: string[]
     inDataCenterOnly: boolean
   }): Promise<any> {
-    const path = '/search/asks/'
+    const path = this.generateRequestUrl('/search/asks/')
 
     const data = {
       'q': {
@@ -72,19 +70,12 @@ export class VastLibService {
       }
     }
 
-    const response = await axios.put(
-      this.generateRequestUrl(path),
-      data,
-      {
-        headers: this.headers,
-      }
-    )
-
+    const response = await axios.put(path, data, { headers: this.headers })
     return response?.data
   }
 
   async createInstance({ offerId, clientId, env }: any): Promise<any> {
-    const path = `/asks/${offerId}/`
+    const path = this.generateRequestUrl(`/asks/${offerId}/`)
 
     const data = {
       'template_id': 276510, // comfyui-api-01-cuda128-py312
@@ -92,27 +83,20 @@ export class VastLibService {
       'env': env,
     }
 
-    const response = await axios.put(
-      this.generateRequestUrl(path),
-      data,
-      {
-        headers: this.headers,
-      }
-    )
-
+    const response = await axios.put(path, data, { headers: this.headers })
     return response?.data
   }
 
-  async showInstance({ instanceId }): Promise<TVastAiInstanceStatus> {
-    const path = `/instances/${instanceId}/`
+  async importInstanceInfo (instanceId): Promise<TVastAiInstanceStatus> {
+    const path = this.generateRequestUrl(`/instances/${instanceId}/`)
 
-    let instance = { actual_status: 'undefined' }
+    let instance: TVastAiInstanceStatus
 
     try {
-      const response = await axios.get(this.generateRequestUrl(path), { headers: this.headers })
+      const response = await axios.get(path, { headers: this.headers })
       instance = (response?.data?.instances || { actual_status: 'not_found' }) as TVastAiInstanceStatus
     } catch (error) {
-      console.log('VastService_showInstance_31', error)
+      console.log('VastService_importInstanceInfo_31', error)
       instance = { actual_status: 'error' }
     }
 
@@ -120,15 +104,9 @@ export class VastLibService {
   }
 
   async destroyInstance({ instanceId }): Promise<any> {
-    const path = `/instances/${instanceId}/`
+    const path = this.generateRequestUrl(`/instances/${instanceId}/`)
 
-    const response = await axios.delete(
-      this.generateRequestUrl(path),
-      {
-        headers: this.headers,
-      }
-    )
-
+    const response = await axios.delete(path, { headers: this.headers })
     return response?.data
   }
 }

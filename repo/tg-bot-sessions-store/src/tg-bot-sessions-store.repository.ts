@@ -4,20 +4,20 @@ import type { AsyncSessionStore } from 'telegraf/session'
 import * as lib from '@lib'
 
 @Injectable()
-export class TgBotSessionStoreRepository implements AsyncSessionStore<any> {
+export class TgBotSessionsStoreRepository implements AsyncSessionStore<any> {
   constructor(
     private prisma: lib.PrismaLibService
   ) {}
 
   async get (key: string): Promise<any> {
-    const record = await this.prisma.tgBotSession.findUnique({
+    const record = await this.prisma.tgBotSessions.findUnique({
       where: { key },
     })
     return record?.value
   }
 
   async set (key: string, value: any): Promise<void> {
-    await this.prisma.tgBotSession.upsert({
+    await this.prisma.tgBotSessions.upsert({
       where: { key },
       update: { value },
       create: { key, value },
@@ -25,7 +25,7 @@ export class TgBotSessionStoreRepository implements AsyncSessionStore<any> {
   }
 
   async delete (key: string): Promise<void> {
-    await this.prisma.tgBotSession.delete({
+    await this.prisma.tgBotSessions.delete({
       where: { key },
     }).catch(() => {})
   }

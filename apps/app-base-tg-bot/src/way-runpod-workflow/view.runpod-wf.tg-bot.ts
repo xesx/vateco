@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common'
 
 import * as lib from '@lib'
+import * as repo from '@repo'
 
 import { RunpodWfContext } from './types'
 
@@ -11,6 +12,7 @@ export class ViewRunpodWfTgBot {
   constructor(
     private readonly tgbotlib: lib.TgBotLibService,
     private readonly wflib: lib.WorkflowLibService,
+    private readonly wfrepo: repo.WorkflowRepository,
   ) {}
 
   showWorkflowVariants (ctx: RunpodWfContext) {
@@ -32,16 +34,21 @@ export class ViewRunpodWfTgBot {
     this.tgbotlib.reply(ctx, message, { parse_mode: 'Markdown', ...keyboard })
   }
 
-  showWorkflowRunMenu (ctx: RunpodWfContext) {
+  async showWorkflowRunMenu (ctx: RunpodWfContext) {
     if (!ctx.session.workflowId) {
       throw new Error('Workflow ID not set in session')
     }
 
-    const message = `Workflow ${ctx.session.workflowId}`
-    const workflow = this.wflib.getWorkflow(ctx.session.workflowId)
+    const { workflowId } = ctx.session
+
+    const workflowVariant = await this.wfrepo.getWorkflowVariant(workflowId)
+    const workflowVariantParams = await this.wfrepo.getWorkflowVariantParamsMap(workflowId)
+
+    const message = `Workflow ${workflowVariant.name}`
 
     const keyboard = this.tgbotlib.generateInlineKeyboard(kb.workflowRunMenu({
-      workflow,
+      workflowVariantId: workflowId,
+      workflowVariantParams: workflowVariantParams,
       workflowUserParams: ctx.session.workflowParams,
       prefixAction: `act:rp-wf`,
       backAction: 'act:rp-wf:wf:variants'

@@ -6,6 +6,8 @@ import workflowInfo from '../../../workflow'
 
 @Injectable()
 export class WorkflowLibService {
+  readonly wfParamSchema = workflowInfo.param
+
   getWorkflow (id: string): TWorkflow {
     const workflow = workflowInfo.variant[id.toString()]
 

@@ -6,8 +6,8 @@ export interface TAppBaseTgBotContext extends Context {
 }
 
 export interface SessionData {
-  chatId: number
+  telegramId: number
+  userId: number
   step?: string
-  lastTimestamp: number
   // [key: string]: any
 }

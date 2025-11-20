@@ -13,13 +13,27 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model TgBotSession {
+model TgBotSessions {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
   key       String   @id @map("key")
   value     Json     @map("value")
 
-  @@map("tg_bot_session")
+  @@map("tg_bot_sessions")
+}
+
+model Users {
+  id         Int      @id @default(autoincrement()) @map("id")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @default(now()) @updatedAt @map("updated_at")
+  telegramId Int      @unique @map("telegram_id")
+  username   String?  @map("username")
+  firstName  String?  @map("first_name")
+  lastName   String?  @map("last_name")
+
+  workflowVariantUserParams WorkflowVariantUserParams[] // связь с WorkflowVariantUserParams
+
+  @@map("users")
 }
 
 model WorkflowTemplates {
@@ -42,7 +56,8 @@ model WorkflowVariants {
   name               String   @unique @map("name")
   description        String?  @map("description")
 
-  workflowTemplate WorkflowTemplates @relation(fields: [workflowTemplateId], references: [id])
+  workflowTemplate WorkflowTemplates           @relation(fields: [workflowTemplateId], references: [id])
+  userParams       WorkflowVariantUserParams[] // связь с WorkflowVariantUserParams
 
   params WorkflowVariantParams[] // связь с WorkflowVariantParams
   tags   WorkflowVariantTags[] // связь с WorkflowVariantTags
@@ -50,23 +65,46 @@ model WorkflowVariants {
   @@map("workflow_variants")
 }
 
+enum WorkflowParamType {
+  string
+  number
+  boolean
+}
+
 model WorkflowVariantParams {
-  id                Int      @id @default(autoincrement()) @map("id")
-  createdAt         DateTime @default(now()) @map("created_at")
-  updatedAt         DateTime @default(now()) @updatedAt @map("updated_at")
-  workflowVariantId Int      @map("workflow_variant_id")
-  paramName         String   @map("param_name")
-  user              Boolean  @map("user")
-  value             Json?    @map("value")
-  label             String?  @map("label")
-  enum              Json?    @map("enum")
-  positionX         Int?     @map("position_x")
-  positionY         Int?     @map("position_y")
+  id                Int               @id @default(autoincrement()) @map("id")
+  createdAt         DateTime          @default(now()) @map("created_at")
+  updatedAt         DateTime          @default(now()) @updatedAt @map("updated_at")
+  workflowVariantId Int               @map("workflow_variant_id")
+  paramName         String            @map("param_name")
+  user              Boolean           @map("user")
+  type              WorkflowParamType @map("type")
+  value             Json?             @map("value")
+  label             String?           @map("label")
+  enum              Json?             @map("enum")
+  positionX         Int?              @map("position_x")
+  positionY         Int?              @map("position_y")
 
   workflowVariant WorkflowVariants @relation(fields: [workflowVariantId], references: [id])
 
   @@unique([workflowVariantId, paramName])
   @@map("workflow_variant_params")
+}
+
+model WorkflowVariantUserParams {
+  id                Int      @id @default(autoincrement()) @map("id")
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @default(now()) @updatedAt @map("updated_at")
+  userId            Int      @map("user_id")
+  workflowVariantId Int      @map("workflow_variant_id")
+  paramName         String   @map("param_name")
+  value             Json?    @map("value")
+
+  workflowVariant WorkflowVariants @relation(fields: [workflowVariantId], references: [id])
+  user            Users            @relation(fields: [userId], references: [id])
+
+  @@unique([userId, workflowVariantId, paramName])
+  @@map("workflow_variant_user_params")
 }
 
 model WorkflowVariantTags {

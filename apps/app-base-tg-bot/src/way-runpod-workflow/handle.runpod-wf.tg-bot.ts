@@ -106,7 +106,7 @@ export class HandleRunpodWfTgBot {
     }
   }
 
-  actionWorkflowParamSelect (ctx: RunpodWfMatchContext) {
+  async actionWorkflowParamSelect (ctx: RunpodWfMatchContext) {
     const [,workflowId, param] = ctx.match
     const [paramName, value] = param.split(':')
 
@@ -125,7 +125,7 @@ export class HandleRunpodWfTgBot {
         ctx.session.workflowParams[paramName] = Number(ctx.session.workflowParams[paramName])
       }
 
-      this.view.showWorkflowRunMenu(ctx)
+      await this.view.showWorkflowRunMenu(ctx)
       return
     }
 
@@ -151,15 +151,15 @@ export class HandleRunpodWfTgBot {
     }
   }
 
-  actionWorkflowSelect (ctx: RunpodWfMatchContext) {
+  async actionWorkflowSelect (ctx: RunpodWfMatchContext) {
     const [,workflowId] = ctx.match
     ctx.session.workflowId = workflowId
     ctx.session.step = 'generating'
     ctx.session.workflowParams = this.wflib.getWfParamsForSession({ workflowId })
 
-    this.view.showWorkflowRunMenu(ctx)
+    await this.view.showWorkflowRunMenu(ctx)
 
     const replyKeyboard = this.tgbotlib.generateReplyKeyboard(kb.WORKFLOW_REPLY)
-    ctx.sendMessage('Use for fast work ⤵', replyKeyboard)
+    await ctx.sendMessage('Use for fast work ⤵', replyKeyboard)
   }
 }

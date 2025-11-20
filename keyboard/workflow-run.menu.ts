@@ -1,5 +1,13 @@
 type TArgs = {
-  workflow: any
+  workflowVariantId: number | string
+  workflowVariantParams: {
+    [key: string]: {
+      position: [number, number]
+      label: string
+      value: any
+      user: boolean
+    }
+  }
   workflowUserParams: {
     [key: string]: any
   }
@@ -7,13 +15,13 @@ type TArgs = {
   prefixAction: string
 }
 
-export function workflowRunMenu ({ workflow, workflowUserParams, prefixAction, backAction }: TArgs): [string, string][][] {
+export function workflowRunMenu ({ workflowVariantId, workflowVariantParams, workflowUserParams, prefixAction, backAction }: TArgs): [string, string][][] {
   const sortedParams = Object.entries(workflowUserParams)
-    .filter(([name]) => !!workflow.params[name])
-    .filter(([name]) => workflow.params[name].user)
+    // .filter(([name]) => !!workflow.params[name])
+    .filter(([name]) => workflowVariantParams[name].user)
     .sort(([nameA], [nameB]) => {
-      const positionA = workflow.params[nameA]?.position
-      const positionB = workflow.params[nameB]?.position
+      const positionA = workflowVariantParams[nameA].position
+      const positionB = workflowVariantParams[nameB].position
 
       // If both positions are undefined, sort by name
       if (!positionA && !positionB) {
@@ -52,21 +60,21 @@ export function workflowRunMenu ({ workflow, workflowUserParams, prefixAction, b
 
       value = String(value).length > 15 ? String(value).slice(0, 13) + '...' : String(value)
 
-      const [x] = workflow.params[name].position || []
+      const [x] = workflowVariantParams[name].position || []
       const [prevParamKey] = i > 0 ? sortedParams[i - 1] : []
-      const [prevX] = prevParamKey ? (workflow.params[prevParamKey].position || []) : []
+      const [prevX] = prevParamKey ? (workflowVariantParams[prevParamKey].position || []) : []
 
       if (prevX !== undefined && x !== undefined && x === prevX) {
-        acc[acc.length - 1].push([workflow.params[name].label + `(${value})`, `${prefixAction}:wf:${workflow.id}:param:${name}`])
+        acc[acc.length - 1].push([workflowVariantParams[name].label + `(${value})`, `${prefixAction}:wf:${workflowVariantId}:param:${name}`])
       } else {
-        acc.push([[workflow.params[name].label + `(${value})`, `${prefixAction}:wf:${workflow.id}:param:${name}`]])
+        acc.push([[workflowVariantParams[name].label + `(${value})`, `${prefixAction}:wf:${workflowVariantId}:param:${name}`]])
       }
 
       return acc
     }, [])
     .concat([[
       ['⬅️ Back', backAction],
-      ['🚀 Generate', `${prefixAction}:wf:${workflow.id}:run`],
+      ['🚀 Generate', `${prefixAction}:wf:${workflowVariantId}:run`],
     ]])
 
   return keyboard as [string, string][][]

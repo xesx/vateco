@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common'
 
 import * as lib from '@lib'
+import * as repo from '@repo'
 
 import { OwnInstanceContext } from './types'
 
@@ -10,71 +11,78 @@ import * as kb from '@kb'
 export class ViewOwnITgBot {
   constructor(
     private readonly tgbotlib: lib.TgBotLibService,
-    private readonly wflib: lib.WorkflowLibService,
+    private readonly wfrepo: repo.WorkflowRepository,
   ) {}
 
-  showOfferParamsMenu (ctx: OwnInstanceContext) {
+  async showOfferParamsMenu (ctx: OwnInstanceContext) {
     const message = 'Search parameters:'
-    const keyboard = this.tgbotlib.generateInlineKeyboard(kb.ownInstanceOfferParamsMenu(ctx.session))
+    const keyboard = this.tgbotlib.generateInlineKeyboard(kb.ownInstanceOfferParamsMenu(ctx.session.offer || {}))
 
-    this.tgbotlib.safeAnswerCallback(ctx)
-    this.tgbotlib.reply(ctx, message, keyboard)
+    await this.tgbotlib.safeAnswerCallback(ctx)
+    await this.tgbotlib.reply(ctx, message, keyboard)
   }
 
-  showInstanceCreateMenu(ctx: OwnInstanceContext) {
-    const offerId = ctx.session.offerId
+  async showInstanceCreateMenu(ctx: OwnInstanceContext) {
+    const offerId = ctx.session.offer?.id
 
     const message = 'Now you can create your own instance ⤵️'
     const keyboard = this.tgbotlib.generateInlineKeyboard(kb.ownInstanceCreateMenu(offerId))
 
-    this.tgbotlib.safeAnswerCallback(ctx)
-    this.tgbotlib.reply(ctx, message, keyboard)
+    await this.tgbotlib.safeAnswerCallback(ctx)
+    await this.tgbotlib.reply(ctx, message, keyboard)
   }
 
   showInstanceInfo (ctx: OwnInstanceContext) {
 
   }
 
-  showInstanceManageMenu (ctx: OwnInstanceContext) {
+  async showInstanceManageMenu (ctx: OwnInstanceContext) {
     const message = 'Manage instance:'
     const keyboard = this.tgbotlib.generateInlineKeyboard(kb.ownInstanceManageMenu(ctx.session.step))
 
-    this.tgbotlib.safeAnswerCallback(ctx)
-    this.tgbotlib.reply(ctx, message, keyboard)
+    await this.tgbotlib.safeAnswerCallback(ctx)
+    await this.tgbotlib.reply(ctx, message, keyboard)
   }
 
-  showWorkflowVariants (ctx: OwnInstanceContext) {
-    this.tgbotlib.safeAnswerCallback(ctx)
+  async showWorkflowVariants (ctx: OwnInstanceContext) {
+    await this.tgbotlib.safeAnswerCallback(ctx)
 
-    delete ctx.session.workflowId
+    delete ctx.session.workflowVariantId
+
+    const workflows = await this.wfrepo.findWorkflowVariantsByTags(['own-instance'])
 
     const message = '*Select workflow*'
-    const keyboard = this.tgbotlib.generateInlineKeyboard(kb.workflowsMenu({
-      workflows: this.wflib.findWorkflowsByTags({ tags: ['own-instance'] }),
-      prefixAction: 'act:own-i',
-      backAction: 'act:own-i:instance:manage'
-    }))
+    const keyboardSchema = kb.workflowsMenu({ workflows, prefixAction: 'act:own-i', backAction: 'act:own-i:instance:manage' })
+    const keyboard = this.tgbotlib.generateInlineKeyboard(keyboardSchema)
 
-    this.tgbotlib.removeReplyKeyboard(ctx)
-    this.tgbotlib.reply(ctx, message, { parse_mode: 'Markdown', ...keyboard })
+    await this.tgbotlib.removeReplyKeyboard(ctx)
+    await this.tgbotlib.reply(ctx, message, { parse_mode: 'Markdown', ...keyboard })
   }
 
-  showWorkflowRunMenu (ctx: OwnInstanceContext) {
-    if (!ctx.session.workflowId) {
-      throw new Error('Workflow ID not set in session')
+  async showWorkflowRunMenu (ctx: OwnInstanceContext) {
+    const { workflowVariantId } = ctx.session
+
+    if (!workflowVariantId) {
+      throw new Error('Workflow variant ID not set in session')
     }
 
-    const workflow = this.wflib.getWorkflow(ctx.session.workflowId)
+    const workflowVariant = await this.wfrepo.getWorkflowVariant(workflowVariantId)
+    const workflowVariantParams = await this.wfrepo.getWorkflowVariantParamsMap(workflowVariantId)
+    const workflowVariantUserParams = await this.wfrepo.getWorkflowVariantUserParamsMap({
+      userId: ctx.session.userId,
+      workflowVariantId,
+    })
 
-    const message = `Workflow ${workflow.name}`
+    const message = `Workflow ${workflowVariant.name}`
     const keyboard = this.tgbotlib.generateInlineKeyboard(kb.workflowRunMenu({
-      workflow,
-      workflowUserParams: ctx.session.workflowParams,
+      workflowVariantId,
+      workflowVariantParams: workflowVariantParams,
+      workflowUserParams: workflowVariantUserParams,
       prefixAction: `act:own-i`,
       backAction: 'act:own-i:wf:variants'
     }))
 
-    this.tgbotlib.safeAnswerCallback(ctx)
-    this.tgbotlib.reply(ctx, message, keyboard)
+    await this.tgbotlib.safeAnswerCallback(ctx)
+    await this.tgbotlib.reply(ctx, message, keyboard)
   }
 }

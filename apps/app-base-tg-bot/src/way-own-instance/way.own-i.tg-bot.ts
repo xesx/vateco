@@ -30,22 +30,22 @@ export class WayOwnITgBot {
     this.bot.action('act:own-i:instance:status', (ctx) => this.handle.actionInstanceStatus(ctx))
     this.bot.action('act:own-i:instance:destroy', (ctx) => this.handle.actionInstanceDestroy(ctx))
 
-    this.bot.action('act:own-i:use-img-as-input', (ctx) => this.handle.actionUseImageAsInput(ctx))
-    this.bot.action(/act:own-i:use-img-as-input:([^:]+)$/, (ctx) => this.handle.actionUseImageAsInput(ctx))
-
     this.bot.action('act:own-i:wf:variants', (ctx) => this.view.showWorkflowVariants(ctx))
     this.bot.action(/act:own-i:wf:([^:]+)$/, (ctx) => this.handle.actionWorkflowSelect(ctx))
     this.bot.action(/act:own-i:wf:([^:]+):param:(.+)$/, (ctx) => this.handle.actionWorkflowParamSelect(ctx))
     this.bot.action(/act:own-i:wf:([^:]+):run$/, (ctx) => this.handle.actionWorkflowRun(ctx))
+
+    this.bot.action('act:own-i:use-img-as-input', (ctx) => this.handle.actionUseImageAsInput(ctx))
+    this.bot.action(/act:own-i:use-img-as-input:([^:]+)$/, (ctx) => this.handle.actionUseImageAsInput(ctx))
   }
 
   private async initSession (ctx: OwnInstanceContext, next: () => Promise<void>) {
     ctx.session.way = 'own-instance'
+    ctx.session.offer ??= {}
 
-    ctx.session.gpu ??= 'any'
-    ctx.session.geolocation ??= 'any'
-    ctx.session.inDataCenterOnly ??= 'false'
-    ctx.session.workflowParams ??= {}
+    ctx.session.offer.gpu ??= 'any'
+    ctx.session.offer.geolocation ??= 'any'
+    ctx.session.offer.inDataCenterOnly ??= 'false'
     ctx.session.inputWaiting = undefined
 
     return await next()
