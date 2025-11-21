@@ -65,25 +65,18 @@ model WorkflowVariants {
   @@map("workflow_variants")
 }
 
-enum WorkflowParamType {
-  string
-  number
-  boolean
-}
-
 model WorkflowVariantParams {
-  id                Int               @id @default(autoincrement()) @map("id")
-  createdAt         DateTime          @default(now()) @map("created_at")
-  updatedAt         DateTime          @default(now()) @updatedAt @map("updated_at")
-  workflowVariantId Int               @map("workflow_variant_id")
-  paramName         String            @map("param_name")
-  user              Boolean           @map("user")
-  type              WorkflowParamType @map("type")
-  value             Json?             @map("value")
-  label             String?           @map("label")
-  enum              Json?             @map("enum")
-  positionX         Int?              @map("position_x")
-  positionY         Int?              @map("position_y")
+  id                Int      @id @default(autoincrement()) @map("id")
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @default(now()) @updatedAt @map("updated_at")
+  workflowVariantId Int      @map("workflow_variant_id")
+  paramName         String   @map("param_name")
+  user              Boolean  @map("user")
+  value             Json?    @map("value")
+  label             String?  @map("label")
+  enum              Json?    @map("enum")
+  positionX         Int?     @map("position_x")
+  positionY         Int?     @map("position_y")
 
   workflowVariant WorkflowVariants @relation(fields: [workflowVariantId], references: [id])
 

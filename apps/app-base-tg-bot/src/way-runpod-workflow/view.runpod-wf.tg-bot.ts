@@ -42,14 +42,18 @@ export class ViewRunpodWfTgBot {
     const { workflowId } = ctx.session
 
     const workflowVariant = await this.wfrepo.getWorkflowVariant(workflowId)
-    const workflowVariantParams = await this.wfrepo.getWorkflowVariantParamsMap(workflowId)
+    // const workflowVariantParams = await this.wfrepo.getWorkflowVariantParamsMap(workflowId)
+
+    const wfvParams = await this.wfrepo.getWorkflowMergedWorkflowVariantParams({
+      userId: 1,
+      workflowVariantId: workflowId,
+    })
 
     const message = `Workflow ${workflowVariant.name}`
 
     const keyboard = this.tgbotlib.generateInlineKeyboard(kb.workflowRunMenu({
       workflowVariantId: workflowId,
-      workflowVariantParams: workflowVariantParams,
-      workflowUserParams: ctx.session.workflowParams,
+      wfvParams,
       prefixAction: `act:rp-wf`,
       backAction: 'act:rp-wf:wf:variants'
     }))

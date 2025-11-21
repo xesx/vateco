@@ -1,31 +1,27 @@
 type TArgs = {
   workflowVariantId: number | string
-  workflowVariantParams: {
-    [key: string]: {
-      position: [number, number]
-      label: string
-      value: any
-      user: boolean
-    }
-  }
-  workflowUserParams: {
-    [key: string]: any
-  }
+  wfvParams: {
+    positionX: number | null
+    positionY: number | null
+    label: string | null
+    value: any
+    user: boolean
+    paramName: string
+  }[]
   backAction: string
   prefixAction: string
 }
 
-export function workflowRunMenu ({ workflowVariantId, workflowVariantParams, workflowUserParams, prefixAction, backAction }: TArgs): [string, string][][] {
-  const sortedParams = Object.entries(workflowUserParams)
-    // .filter(([name]) => !!workflow.params[name])
-    .filter(([name]) => workflowVariantParams[name].user)
-    .sort(([nameA], [nameB]) => {
-      const positionA = workflowVariantParams[nameA].position
-      const positionB = workflowVariantParams[nameB].position
+export function workflowRunMenu ({ workflowVariantId, wfvParams, prefixAction, backAction }: TArgs): [string, string][][] {
+  const sortedParams = Object.values(wfvParams)
+    .filter(wfvParam => wfvParam.user)
+    .sort((wfvParamA, wfvParamB) => {
+      const positionA = wfvParamA.positionX ? [wfvParamA.positionX, wfvParamA.positionY ?? undefined] : null
+      const positionB = wfvParamB.positionX ? [wfvParamB.positionX, wfvParamB.positionY ?? undefined] : null
 
       // If both positions are undefined, sort by name
       if (!positionA && !positionB) {
-        return nameA.localeCompare(nameB)
+        return wfvParamA.paramName.localeCompare(wfvParamB.paramName)
       }
       // If only positionA is undefined, it goes after positionB
       if (!positionA) {
@@ -48,30 +44,36 @@ export function workflowRunMenu ({ workflowVariantId, workflowVariantParams, wor
       return aX - bX
     })
 
-    const keyboard = sortedParams.reduce((acc: [string, string][][], [name, value], i) => {
-      if (typeof value === 'boolean' || ['false', 'true'].includes(String(value).toLowerCase())) {
-        value = value === true || String(value).toLowerCase() === 'true'
-        value = value ? '✅' : '❌'
-      }
+  const keyboard = sortedParams.reduce((acc: [string, string][][], param, i) => {
+    const name = param.paramName
+    let value = param.value
 
-      if (typeof value === 'object') {
-        value = value.label || value.value
-      }
+    if (typeof value === 'boolean' || ['false', 'true'].includes(String(value).toLowerCase())) {
+      value = value === true || String(value).toLowerCase() === 'true'
+      value = value ? '✅' : '❌'
+    }
 
-      value = String(value).length > 15 ? String(value).slice(0, 13) + '...' : String(value)
+    if (typeof value === 'object') {
+      value = param.value || value
+    }
 
-      const [x] = workflowVariantParams[name].position || []
-      const [prevParamKey] = i > 0 ? sortedParams[i - 1] : []
-      const [prevX] = prevParamKey ? (workflowVariantParams[prevParamKey].position || []) : []
+    value = String(value).length > 15 ? String(value).slice(0, 13) + '...' : String(value)
 
-      if (prevX !== undefined && x !== undefined && x === prevX) {
-        acc[acc.length - 1].push([workflowVariantParams[name].label + `(${value})`, `${prefixAction}:wf:${workflowVariantId}:param:${name}`])
-      } else {
-        acc.push([[workflowVariantParams[name].label + `(${value})`, `${prefixAction}:wf:${workflowVariantId}:param:${name}`]])
-      }
+    const x = param.positionX
+    const prevParam = i > 0 ? sortedParams[i - 1] : undefined
+    const prevX = prevParam?.positionX
 
-      return acc
-    }, [])
+    const action = `${prefixAction}:wf:${workflowVariantId}:param:${name}`
+    const label = param.label + `(${value})`
+
+    if (prevX !== undefined && x !== undefined && x === prevX) {
+      acc[acc.length - 1].push([label, action])
+    } else {
+      acc.push([[label, action]])
+    }
+
+    return acc
+  }, [])
     .concat([[
       ['⬅️ Back', backAction],
       ['🚀 Generate', `${prefixAction}:wf:${workflowVariantId}:run`],

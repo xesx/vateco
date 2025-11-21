@@ -12,9 +12,9 @@ import { HelperAppCloudCronService } from '../helper.app-cloud-cron.service'
 
 type TWorkflowTask = {
   chatId: string
-  workflowId: string
+  workflowVariantId: string
   count?: number
-  workflowParams: Record<string, any>
+  workflowVariantParams: Record<string, any>
 }
 
 @Injectable()
@@ -34,7 +34,8 @@ export class WorkflowRunCronJob {
 
   async handle () {
     const { l } = this
-    const { GENERATE_PROGRESS_TASKS_DIR, GENERATE_TASKS_DIR } = this.appcloudsynth
+    const { GENERATE_PROGRESS_TASKS_DIR, GENERATE_TASKS_DIR, WORKFLOW_DIR } = this.appcloudsynth
+    const { wfParamSchema } = this.wflib
     const TG_CHAT_ID = String(process.env.TG_CHAT_ID) // todo
 
     if (!fs.existsSync(GENERATE_TASKS_DIR)) {
@@ -59,22 +60,23 @@ export class WorkflowRunCronJob {
         continue
       }
 
-      const { chatId, workflowId, count = 1, workflowParams } = taskData
+      const { chatId, workflowVariantId, count = 1, workflowVariantParams } = taskData
       fs.unlinkSync(taskFilePath)
 
-      l.log(`🕐 Run workflow cron job executed, found "${workflowId}" workflow to run ${count} times`)
+      l.log(`🕐 Run workflow cron job executed, found "${workflowVariantId}" workflow to run ${count} times`)
 
-      const workflow = this.wflib.getWorkflow(workflowId)
+      // const workflow = this.wflib.getWorkflow(workflowId)
+      const workflow = JSON.parse(fs.readFileSync(join(WORKFLOW_DIR, `${workflowVariantId}.json`), 'utf8'))
 
       if (!workflow) {
-        l.warn(`❌ Workflow ${workflowId} not found`)
+        l.warn(`❌ Workflow ${workflowVariantId} not found`)
         continue
       }
 
       const modelsForDownload: string[] = []
       const imagesForDownload: string[] = []
 
-      Object.entries(workflowParams || {}).forEach(([key, value]) => {
+      Object.entries(workflowVariantParams || {}).forEach(([key, value]) => {
         if (typeof value === 'object') {
           value = value.value
         }
@@ -83,14 +85,14 @@ export class WorkflowRunCronJob {
           return
         }
 
-        if (workflow.params[key].isComfyUiModel) {
-          workflow.params[key].default = value
+        if (wfParamSchema[key].isComfyUiModel) {
+          // workflow.params[key].default = value
           modelsForDownload.push(value)
         }
 
         if (key.startsWith('image') && typeof value === 'string') {
           imagesForDownload.push(value) // value is fileId from tg bot chat
-          workflowParams[key] = `${value}.jpg`
+          workflowVariantParams[key] = `${value}.jpg`
         }
       })
 
@@ -127,14 +129,14 @@ export class WorkflowRunCronJob {
       // this.tgbotlib.sendMessage({ chatId: TG_CHAT_ID, text: message })
 
       for (let i = 0; i < count; i++) {
-        l.log(`handleRunWorkflowJob_55 Running workflow ${workflowId}, iteration ${i + 1} of ${count}`)
-        l.log(`handleRunWorkflowJob_60 Workflow params: ${JSON.stringify(workflowParams)}`)
+        l.log(`handleRunWorkflowJob_55 Running workflow ${workflowVariantId}, iteration ${i + 1} of ${count}`)
+        l.log(`handleRunWorkflowJob_60 Workflow params: ${JSON.stringify(workflowVariantParams)}`)
 
-        const { workflow: compiledWorkflowSchema, params: compiledParams } = this.wflib.compileWorkflowV2({ id: workflowId, params: workflowParams })
+        const { workflow: compiledWorkflowSchema, params: compiledParams } = this.wflib.compileWorkflowV2({ workflow, params: workflowVariantParams })
 
         try {
           const response = await this.comfyuilib.prompt(compiledWorkflowSchema)
-          l.log(`handleRunWorkflowJob_80 Workflow ${workflowId} run completed, response: ${JSON.stringify(response)}`)
+          l.log(`handleRunWorkflowJob_80 Workflow ${workflowVariantId} run completed, response: ${JSON.stringify(response)}`)
 
           const promptId = response.prompt_id
           const progressFilename = `${promptId}.json`
@@ -142,8 +144,8 @@ export class WorkflowRunCronJob {
           const content = {
             chatId,
             promptId,
-            workflowId,
-            workflowParams,
+            workflowVariantId,
+            workflowVariantParams,
             filenamePrefix: compiledParams.filenamePrefix || '',
             workflow: compiledWorkflowSchema,
           }

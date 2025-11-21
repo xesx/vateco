@@ -89,10 +89,10 @@ export class HandleRunpodWfTgBot {
     let data: any
 
     for (let i = 0; i < generationNumber; i++) {
-      const workflow = this.wflib.compileWorkflow({ id: workflowId, params: workflowParams })
+      // const workflow = this.wflib.compileWorkflow({ id: workflowId, params: workflowParams })
 
       try {
-        data = await this.runpodlib.runSync({ workflow })
+        // data = await this.runpodlib.runSync({ workflow })
       } catch (error) {
         console.log('Error in runpodlib.runSync:', this.h.herr.parseAxiosError(error))
         ctx.reply('Error generating image. Please try again later.')

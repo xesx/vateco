@@ -204,7 +204,7 @@ export class HandleOwnITgBot {
       return
     }
 
-    if (!ctx.session.instance || instanceId) {
+    if (!ctx.session.instance || !instanceId) {
       console.log('WayOwnInstance_actionInstanceStatus_24 No instanceId in session')
       await ctx.reply('Error getting instance status: no instance ID in session')
       return
@@ -285,15 +285,16 @@ export class HandleOwnITgBot {
       return this.tgbotlib.safeAnswerCallback(ctx)
     }
 
-    const workflowParams = await this.wfrepo.getWorkflowMergedWorkflowVariantParams({ userId, workflowVariantId })
+    const workflowVariantParams = await this.wfrepo.getWorkflowMergedWorkflowVariantParamsValueMap({ userId, workflowVariantId })
 
     await this.cloudapilib.vastAiWorkflowRun({
       baseUrl: ctx.session.instance?.apiUrl,
       instanceId: ctx.session.instance?.id,
       token: ctx.session.instance?.token,
-      count: workflowParams.generationNumber || 1,
+      count: workflowVariantParams.generationNumber || 1,
       workflowVariantId,
-      workflowParams,
+      workflowVariantParams,
+      chatId: ctx.session.telegramId,
     })
 
     await this.tgbotlib.safeAnswerCallback(ctx)
@@ -304,14 +305,16 @@ export class HandleOwnITgBot {
     const [paramName, value] = param.split(':')
     const { userId } = ctx.session
 
-    const wfParam = await this.wfrepo.getWorkflowVariantParamByName({ workflowVariantId, paramName })
-    const wfUserParam = await this.wfrepo.findWorkflowVariantUserParam({ userId, workflowVariantId, paramName })
-    const currentValue = (wfUserParam?.value ?? wfParam?.value ?? '❌') as string | number | boolean
+    const wfvParam = await this.wfrepo.getWorkflowVariantParamByName({ workflowVariantId, paramName })
+    const wfvParamEnum = wfvParam?.enum
+    const wfvParamType = this.wflib.wfParamSchema[paramName].type
+    const wfvUserParam = await this.wfrepo.findWorkflowVariantUserParam({ userId, workflowVariantId, paramName })
+    const currentValue = (wfvUserParam?.value ?? wfvParam?.value ?? '❌') as string | number | boolean
 
     // set value
     if (value) {
-      if (wfParam.enum) { // value is enum index
-        await this.wfrepo.setWorkflowVariantUserParam({ userId, workflowVariantId, paramName, value: wfParam.enum[value] })
+      if (wfvParamEnum) { // value is enum index
+        await this.wfrepo.setWorkflowVariantUserParam({ userId, workflowVariantId, paramName, value: wfvParamEnum[value] })
       } else {
         await this.wfrepo.setWorkflowVariantUserParam({ userId, workflowVariantId, paramName, value })
       }
@@ -321,9 +324,9 @@ export class HandleOwnITgBot {
     }
 
     // suggest value form enum
-    if (wfParam.enum && Array.isArray(wfParam.enum)) {
+    if (wfvParamEnum && Array.isArray(wfvParamEnum)) {
       const message = `Set parameter *"${paramName}"*\nCurrent value: *"${currentValue}"*`
-      const enumOptions: [string, string][][] = wfParam.enum
+      const enumOptions: [string, string][][] = wfvParamEnum
         .map((value: any) => typeof value === 'object' ? value.label : String(value))
         .map((value, i) => [[value, `act:own-i:wf:${workflowVariantId}:param:${paramName}:${i}`]])
 
@@ -335,10 +338,13 @@ export class HandleOwnITgBot {
     }
 
     // suggest boolean value (true/false)
-    if (wfParam.type === 'boolean') {
+    if (wfvParamType === 'boolean') {
       const message = `Set parameter *"${paramName}"*\nCurrent value: *"${currentValue}"*`
       const keyboard = this.tgbotlib.generateInlineKeyboard([
-        [['True', `act:own-i:wf:${workflowVariantId}:param:${paramName}:true`], ['False', `act:own-i:wf:${workflowVariantId}:param:${paramName}:false`]],
+        [
+          ['True', `act:own-i:wf:${workflowVariantId}:param:${paramName}:true`],
+          ['False', `act:own-i:wf:${workflowVariantId}:param:${paramName}:false`]
+        ],
         [['Back', `act:own-i:wf:${workflowVariantId}`]],
       ])
       await this.tgbotlib.reply(ctx, message, keyboard)

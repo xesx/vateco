@@ -91,8 +91,8 @@ export class AppCloudApiController {
     const content = {
       chatId: body.chatId,
       count: body.count || 1,
-      workflowId: body.id,
-      workflowParams: body.params,
+      workflowVariantId: body.id,
+      workflowVariantParams: body.params,
     }
 
     fs.writeFileSync(filePath, JSON.stringify(content), "utf8")

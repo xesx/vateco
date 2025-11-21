@@ -1,6 +1,3 @@
--- CreateEnum
-CREATE TYPE "public"."WorkflowParamType" AS ENUM ('string', 'number', 'boolean');
-
 -- CreateTable
 CREATE TABLE "public"."tg_bot_sessions" (
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -56,7 +53,6 @@ CREATE TABLE "public"."workflow_variant_params" (
     "workflow_variant_id" INTEGER NOT NULL,
     "param_name" TEXT NOT NULL,
     "user" BOOLEAN NOT NULL,
-    "type" "public"."WorkflowParamType" NOT NULL,
     "value" JSONB,
     "label" TEXT,
     "enum" JSONB,

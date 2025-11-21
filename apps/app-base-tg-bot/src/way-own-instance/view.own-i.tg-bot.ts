@@ -66,9 +66,10 @@ export class ViewOwnITgBot {
       throw new Error('Workflow variant ID not set in session')
     }
 
+    console.log('\x1b[36m', 'ctx.chat', ctx.chat, '\x1b[0m')
     const workflowVariant = await this.wfrepo.getWorkflowVariant(workflowVariantId)
-    const workflowVariantParams = await this.wfrepo.getWorkflowVariantParamsMap(workflowVariantId)
-    const workflowVariantUserParams = await this.wfrepo.getWorkflowVariantUserParamsMap({
+
+    const wfvParams = await this.wfrepo.getWorkflowMergedWorkflowVariantParams({
       userId: ctx.session.userId,
       workflowVariantId,
     })
@@ -76,8 +77,7 @@ export class ViewOwnITgBot {
     const message = `Workflow ${workflowVariant.name}`
     const keyboard = this.tgbotlib.generateInlineKeyboard(kb.workflowRunMenu({
       workflowVariantId,
-      workflowVariantParams: workflowVariantParams,
-      workflowUserParams: workflowVariantUserParams,
+      wfvParams,
       prefixAction: `act:own-i`,
       backAction: 'act:own-i:wf:variants'
     }))

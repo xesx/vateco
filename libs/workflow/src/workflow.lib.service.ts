@@ -50,22 +50,12 @@ export class WorkflowLibService {
       .filter((wf) => tags.every(tag => wf.tags.includes(tag)))
   }
 
-  compileWorkflow ({ id, params = {} }) {
+  compileWorkflowV2 ({ workflow, params = {} }) {
     console.log('WorkflowLibService_compileWorkflow_10', JSON.stringify(params, null, 4))
-    const compiledParams = this.compileWorkflowParams({ id, params })
+    const compiledParams = this.compileWorkflowParams({ workflow, params })
     console.log('WorkflowLibService_compileWorkflow_20', JSON.stringify(compiledParams, null, 4))
 
-    const compiledSchema = this.compileWorkflowSchema({ id, params: compiledParams })
-
-    return compiledSchema
-  }
-
-  compileWorkflowV2 ({ id, params = {} }) {
-    console.log('WorkflowLibService_compileWorkflow_10', JSON.stringify(params, null, 4))
-    const compiledParams = this.compileWorkflowParams({ id, params })
-    console.log('WorkflowLibService_compileWorkflow_20', JSON.stringify(compiledParams, null, 4))
-
-    const compiledSchema = this.compileWorkflowSchema({ id, params: compiledParams })
+    const compiledSchema = this.compileWorkflowSchema({ workflow, params: compiledParams })
 
     return {
       workflow: compiledSchema,
@@ -73,24 +63,28 @@ export class WorkflowLibService {
     }
   }
 
-  compileWorkflowParams ({ id, params = {} }) {
-    const workflow = this.getWorkflow(id)
+  compileWorkflowParams ({ workflow, params = {} }) {
     const compiledParams: any = {}
 
     const compiledParamsSet = new Set<string>()
 
-    while (compiledParamsSet.size < Object.keys(workflow.params).length) {
-      for (const key in workflow.params) {
+    const workflowTemplateParams: string[] = []
+    const re = new RegExp(`{{([a-zA-Z0-9]+)}}`, 'gm')
+    const matches = JSON.stringify(workflow).matchAll(re)
+
+    for (const match of matches) {
+      const key = match[1]
+      workflowTemplateParams.push(key)
+    }
+
+    while (compiledParamsSet.size < workflowTemplateParams.length) {
+      for (const key of workflowTemplateParams) {
         if (compiledParamsSet.has(key)) {
           continue
         }
 
         const paramInfo = workflowInfo.param[key]
-        let rawValue = params[key] ?? workflow.params[key]?.value ?? paramInfo?.default
-
-        if (typeof rawValue === 'object') {
-          rawValue = rawValue.value
-        }
+        const rawValue = params[key] ?? paramInfo?.default
 
         if (paramInfo?.compile) {
           if (paramInfo.depends && !paramInfo.depends.every((depKey) => compiledParamsSet.has(depKey))) {
@@ -119,14 +113,11 @@ export class WorkflowLibService {
     return compiledParams
   }
 
-  compileWorkflowSchema ({ id, params = {} }) {
-    const workflow = this.getWorkflow(id)
-    const template = workflow.template
+  compileWorkflowSchema ({ workflow, params = {} }) {
+    let templateStr = JSON.stringify(workflow)
 
-    let templateStr = JSON.stringify(template)
-
-    for (const key of Object.keys(workflow.params)) {
-      const value = params[key] ?? workflowInfo.param[key]?.value
+    for (const key of Object.keys(params)) {
+      const value = params[key] ?? workflowInfo.param[key]?.default
 
       if (value === undefined) {
         throw new Error(`WorkflowLibService_compileWorkflow_13 Parameter <<${key}>> is required`)

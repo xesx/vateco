@@ -3,7 +3,6 @@ import modelMap from '@model'
 type TParam = {
   type: 'string' | 'integer' | 'boolean' | 'number'
   default?: string | number | boolean
-  value?: string | number | boolean
   description: string
   label: string
   enum?: string[]
