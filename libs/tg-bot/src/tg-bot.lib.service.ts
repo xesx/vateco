@@ -76,12 +76,6 @@ export class TgBotLibService {
     )
   }
 
-  generateReplyOneTimeKeyboard (options: string[][]){
-    return Markup.keyboard(options)
-      .resize()   // подгоняет под экран
-      .oneTime()  // спрячется после выбора
-  }
-
   generateReplyKeyboard (options: string[][]){
     return Markup.keyboard(options)
       .resize()   // подгоняет под экран

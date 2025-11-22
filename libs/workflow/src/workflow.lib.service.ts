@@ -77,7 +77,13 @@ export class WorkflowLibService {
       workflowTemplateParams.push(key)
     }
 
+    let counter = 0
     while (compiledParamsSet.size < workflowTemplateParams.length) {
+      counter++
+      if (counter > 100) {
+        throw new Error('WorkflowLibService_compileWorkflowParams_48 Too many iterations compiling params, possible circular dependency')
+      }
+
       for (const key of workflowTemplateParams) {
         if (compiledParamsSet.has(key)) {
           continue
