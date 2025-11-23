@@ -293,9 +293,9 @@ export class HandleOwnITgBot {
 
     const workflowVariantParams = await this.wfrepo.getWorkflowMergedWorkflowVariantParamsValueMap({ userId, workflowVariantId })
 
-    console.log('\x1b[36m', 'workflowVariantParams', workflowVariantParams, '\x1b[0m');
-    await this.tgbotlib.safeAnswerCallback(ctx)
-    return
+    // console.log('\x1b[36m', 'workflowVariantParams', workflowVariantParams, '\x1b[0m');
+    // await this.tgbotlib.safeAnswerCallback(ctx)
+    // return
     await this.cloudapilib.vastAiWorkflowRun({
       baseUrl: ctx.session.instance?.apiUrl,
       instanceId: ctx.session.instance?.id,
@@ -336,7 +336,7 @@ export class HandleOwnITgBot {
       await this.wfrepo.setWorkflowVariantUserParam({ userId, workflowVariantId, paramName, value })
 
       if (wfParamSchema[paramName].isComfyUiModel) {
-        const modelName = String(value)
+        const modelName = String(value.value ?? value)
         const modelData = await this.modelrepo.getModelByName(modelName)
 
         await this.cloudapilib.vastAiModelInfoLoad({

@@ -97,7 +97,7 @@ export class WorkflowRunCronJob {
       })
 
       for (const modelName of modelsForDownload) {
-        const model = modelMap[modelName]
+        const model = modelMap[modelName] // todo
         const [repo] = Object.keys(model.huggingfaceLink)
         const srcFilename = model.huggingfaceLink[repo]
         const dstFilename = model.comfyUiFileName
