@@ -83,6 +83,17 @@ export class AppCloudApiController {
     console.log(`appCloudApiWorkflowLoad_99 Workflow "${body.workflowTemplate.name}" added in ${filePath}`)
   }
 
+  @Post('/model-data/load')
+  appCloudApiModelDataLoad(@Body() body: { name: string, data: Record<string, any> }): any {
+    const MODEL_INFO_DIR = this.appcloudsynth.MODEL_INFO_DIR
+
+    const filePath = join(MODEL_INFO_DIR, `${body.name}.json`)
+
+    fs.writeFileSync(filePath, JSON.stringify(body.data), "utf8")
+
+    console.log(`appCloudApiWorkflowLoad_99 Model data "${body.name}" added in ${filePath}`)
+  }
+
   @Post('workflow/run')
   appCloudApiWorkflowRun(@Body() body: { chatId: string, id: string, count?: number, params: Record<string, any> }): any {
     const now = Date.now()

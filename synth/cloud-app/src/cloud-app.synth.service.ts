@@ -22,6 +22,7 @@ export class CloudAppSynthService {
   readonly GENERATE_PROGRESS_TASKS_DIR: string
   readonly DOWNLOAD_TASKS_DIR: string
   readonly WORKFLOW_DIR: string
+  readonly MODEL_INFO_DIR: string
 
   readonly CACHE_DIR: string
 
@@ -48,12 +49,14 @@ export class CloudAppSynthService {
     this.DOWNLOAD_TASKS_DIR = join(this.WORKSPACE, 'download_tasks')
     this.CACHE_DIR = `${this.WORKSPACE}/cache`
     this.WORKFLOW_DIR = `${this.WORKSPACE}/workflows`
+    this.MODEL_INFO_DIR = `${this.WORKSPACE}/model_info`
 
     fs.mkdirSync(this.GENERATE_TASKS_DIR, { recursive: true })
     fs.mkdirSync(this.GENERATE_PROGRESS_TASKS_DIR, { recursive: true })
     fs.mkdirSync(this.DOWNLOAD_TASKS_DIR, { recursive: true })
     fs.mkdirSync(this.CACHE_DIR, { recursive: true })
     fs.mkdirSync(this.WORKFLOW_DIR, { recursive: true })
+    fs.mkdirSync(this.MODEL_INFO_DIR, { recursive: true })
 
     this.COMFY_UI_DIR = `${this.WORKSPACE}/ComfyUI`
     this.COMFY_UI_URL = 'http://localhost:18188'

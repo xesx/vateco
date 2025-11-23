@@ -6,6 +6,8 @@ import * as repo from '@repo'
 import { OwnInstanceContext, OwnInstanceMatchContext } from './types'
 import { ViewOwnITgBot } from './view.own-i.tg-bot'
 
+import { WorkflowSynthService } from '@synth'
+
 import * as kb from '@kb'
 import { GEOLOCATION } from '@const'
 
@@ -21,6 +23,8 @@ export class HandleOwnITgBot {
     private readonly h: lib.HelperLibService,
 
     private readonly wfrepo: repo.WorkflowRepository,
+    private readonly modelrepo: repo.ModelRepository,
+    private readonly wfsynth: WorkflowSynthService,
   ) {}
 
   async commandStart (ctx: OwnInstanceContext, next: () => Promise<void>) {
@@ -43,7 +47,7 @@ export class HandleOwnITgBot {
     }
   }
 
-  textMessage (ctx, next) {
+  async textMessage (ctx, next) {
     if (ctx.session.way !== 'own-instance') {
       return next()
     }
@@ -69,8 +73,10 @@ export class HandleOwnITgBot {
     }
 
     if (ctx.session.inputWaiting) {
-      const paramName = ctx.session.inputWaiting
-      ctx.session.workflowParams[paramName] = message
+      const { userId, workflowVariantId, inputWaiting: paramName } = ctx.session
+      const value = message
+
+      await this.wfrepo.setWorkflowVariantUserParam({ userId, workflowVariantId, paramName, value })
 
       delete ctx.session.inputWaiting
 
@@ -287,6 +293,9 @@ export class HandleOwnITgBot {
 
     const workflowVariantParams = await this.wfrepo.getWorkflowMergedWorkflowVariantParamsValueMap({ userId, workflowVariantId })
 
+    console.log('\x1b[36m', 'workflowVariantParams', workflowVariantParams, '\x1b[0m');
+    await this.tgbotlib.safeAnswerCallback(ctx)
+    return
     await this.cloudapilib.vastAiWorkflowRun({
       baseUrl: ctx.session.instance?.apiUrl,
       instanceId: ctx.session.instance?.id,
@@ -301,22 +310,42 @@ export class HandleOwnITgBot {
   }
 
   async actionWorkflowParamSelect (ctx: OwnInstanceMatchContext) {
+    const { wfParamSchema } = this.wflib
+
     const [,workflowVariantId, param] = ctx.match
-    const [paramName, value] = param.split(':')
+    const [paramName, rawValue] = param.split(':')
+
     const { userId } = ctx.session
 
     const wfvParam = await this.wfrepo.getWorkflowVariantParamByName({ workflowVariantId, paramName })
-    const wfvParamEnum = wfvParam?.enum
-    const wfvParamType = this.wflib.wfParamSchema[paramName].type
+    const wfvParamType = wfParamSchema[paramName].type
     const wfvUserParam = await this.wfrepo.findWorkflowVariantUserParam({ userId, workflowVariantId, paramName })
     const currentValue = (wfvUserParam?.value ?? wfvParam?.value ?? '❌') as string | number | boolean
 
+    let wfvParamEnum = wfvParam?.enum
+
+    if (typeof wfvParamEnum === 'string' && wfvParamEnum?.startsWith?.('$.')) {
+      const enumCompilerName = wfvParamEnum.replace('$.', '')
+      wfvParamEnum = await this.wfsynth.compileEnum(enumCompilerName)
+    }
+
     // set value
-    if (value) {
-      if (wfvParamEnum) { // value is enum index
-        await this.wfrepo.setWorkflowVariantUserParam({ userId, workflowVariantId, paramName, value: wfvParamEnum[value] })
-      } else {
-        await this.wfrepo.setWorkflowVariantUserParam({ userId, workflowVariantId, paramName, value })
+    if (rawValue) {
+      const value = wfvParamEnum ? wfvParamEnum[Number(rawValue)] : rawValue
+      // value is enum index
+      await this.wfrepo.setWorkflowVariantUserParam({ userId, workflowVariantId, paramName, value })
+
+      if (wfParamSchema[paramName].isComfyUiModel) {
+        const modelName = String(value)
+        const modelData = await this.modelrepo.getModelByName(modelName)
+
+        await this.cloudapilib.vastAiModelInfoLoad({
+          baseUrl: ctx.session.instance?.apiUrl,
+          instanceId: ctx.session.instance?.id,
+          token: ctx.session.instance?.token,
+          modelName,
+          modelData,
+        })
       }
 
       await this.view.showWorkflowRunMenu(ctx)

@@ -5,6 +5,7 @@ import { TelegrafModule } from 'nestjs-telegraf'
 
 import * as lib from '@lib'
 import * as repo from '@repo'
+import * as synth from '@synth'
 
 import { AppBaseTgBotService } from './app-base-tg-bot.service'
 import { BaseCommandTgBot } from './command/base.command.tg-bot'
@@ -46,6 +47,9 @@ import * as rpwf from './way-runpod-workflow'
     repo.TgBotSessionsStoreRepositoryModule,
     repo.WorkflowRepositoryModule,
     repo.UserRepositoryModule,
+    repo.ModelRepositoryModule,
+
+    synth.WorkflowSynthModule,
 
     lib.HelperLibModule,
   ],

@@ -148,7 +148,14 @@ export class WorkflowRepository {
 
     const result: Record<string, any> = workflowVariantParams.reduce((acc, curr) => {
       const { paramName } = curr
-      acc[paramName] = workflowVariantUserParamsMap[paramName] ?? curr.value ?? wfParamSchema[paramName].default
+
+      let value: any
+      value = workflowVariantUserParamsMap[paramName]?.value
+      value ??= workflowVariantUserParamsMap[paramName]
+      value ??= curr.value
+      value ??= wfParamSchema[paramName].default
+
+      acc[paramName] = value
       return acc
     }, {})
 
@@ -173,6 +180,19 @@ export class WorkflowRepository {
 
   async setWorkflowVariantUserParam ({ userId, workflowVariantId, paramName, value }: { userId: number, workflowVariantId: number | string, paramName: string, value: any }) {
     workflowVariantId = Number(workflowVariantId)
+    const { wfParamSchema } = this.wflib
+
+    if (wfParamSchema[paramName].type === 'number') {
+      value = parseFloat(value)
+    }
+
+    if (wfParamSchema[paramName].type === 'integer') {
+      value = parseInt(value, 10)
+    }
+
+    if (wfParamSchema[paramName].type === 'boolean') {
+      value = value === true || String(value).toLowerCase() === 'true'
+    }
 
     await this.prisma.workflowVariantUserParams.upsert({
       where: {

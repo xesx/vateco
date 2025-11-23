@@ -16,8 +16,8 @@ export function workflowRunMenu ({ workflowVariantId, wfvParams, prefixAction, b
   const sortedParams = Object.values(wfvParams)
     .filter(wfvParam => wfvParam.user)
     .sort((wfvParamA, wfvParamB) => {
-      const positionA = wfvParamA.positionX ? [wfvParamA.positionX, wfvParamA.positionY ?? undefined] : null
-      const positionB = wfvParamB.positionX ? [wfvParamB.positionX, wfvParamB.positionY ?? undefined] : null
+      const positionA = Number.isInteger(wfvParamA.positionX) ? [wfvParamA.positionX, wfvParamA.positionY ?? undefined] : null
+      const positionB = Number.isInteger(wfvParamB.positionX) ? [wfvParamB.positionX, wfvParamB.positionY ?? undefined] : null
 
       // If both positions are undefined, sort by name
       if (!positionA && !positionB) {
@@ -38,9 +38,11 @@ export function workflowRunMenu ({ workflowVariantId, wfvParams, prefixAction, b
       const [bX = 9000, bY = 9000] = positionB ?? []
 
       if (aX === bX) {
+        // @ts-expect-error todo
         return aY - bY
       }
 
+      // @ts-expect-error todo
       return aX - bX
     })
 
@@ -54,7 +56,7 @@ export function workflowRunMenu ({ workflowVariantId, wfvParams, prefixAction, b
     }
 
     if (typeof value === 'object') {
-      value = param.value || value
+      value = value.label ?? value.value
     }
 
     value = String(value).length > 15 ? String(value).slice(0, 13) + '...' : String(value)

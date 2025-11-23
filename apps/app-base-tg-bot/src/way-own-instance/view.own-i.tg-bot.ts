@@ -66,7 +66,6 @@ export class ViewOwnITgBot {
       throw new Error('Workflow variant ID not set in session')
     }
 
-    console.log('\x1b[36m', 'ctx.chat', ctx.chat, '\x1b[0m')
     const workflowVariant = await this.wfrepo.getWorkflowVariant(workflowVariantId)
 
     const wfvParams = await this.wfrepo.getWorkflowMergedWorkflowVariantParams({
