@@ -83,10 +83,8 @@ export class WorkflowLibService {
       }
     })
 
-    console.log('\x1b[36m', 'workflowTemplateParams', workflowTemplateParams, '\x1b[0m')
     let counter = 0
     while (compiledParamsSet.size < workflowTemplateParams.length) {
-      console.log('\x1b[36m', 'compiledParamsSet', compiledParamsSet, '\x1b[0m')
       counter++
       if (counter > 10) {
         throw new Error('WorkflowLibService_compileWorkflowParams_48 Too many iterations compiling params, possible circular dependency')

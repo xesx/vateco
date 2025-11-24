@@ -28,10 +28,6 @@ import * as job from './job'
   providers: [
     CloudCronService,
     HelperAppCloudCronService,
-    // job.WorkflowLoadCronJob,
-    // job.WorkflowRunCronJob,
-    // job.WorkflowProgressCronJob,
-    // job.CheckOutputCronJob,
     ...Object.values(job),
   ],
 })

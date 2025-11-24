@@ -48,7 +48,9 @@ export class HandleOwnITgBot {
   }
 
   async textMessage (ctx, next) {
-    if (ctx.session.way !== 'own-instance') {
+    const { way, userId, workflowVariantId } = ctx.session
+
+    if (way !== 'own-instance') {
       return next()
     }
 
@@ -67,13 +69,26 @@ export class HandleOwnITgBot {
     }
 
     if (message === '📝 Show prompt') {
-      const prompt = ctx.session.workflowParams?.positivePrompt || 'N/A'
-      const message = this.msglib.genMessageForCopy(prompt)
+      const positivePromptUserParam = await this.wfrepo.findWorkflowVariantUserParam({ userId, workflowVariantId, paramName: 'positivePrompt' })
+      if (positivePromptUserParam) {
+        const message = this.msglib.genMessageForCopy(positivePromptUserParam.value as string)
+        return this.tgbotlib.reply(ctx, message , { parse_mode: 'HTML' })
+      }
+
+      const positivePromptParam = await this.wfrepo.getWorkflowVariantParamByName({ workflowVariantId, paramName: 'positivePrompt' })
+
+      if (positivePromptParam) {
+        const message = this.msglib.genMessageForCopy(positivePromptParam.value as string)
+        return this.tgbotlib.reply(ctx, message , { parse_mode: 'HTML' })
+      }
+
+      const message = this.msglib.genMessageForCopy('N/A')
       return this.tgbotlib.reply(ctx, message , { parse_mode: 'HTML' })
     }
 
     if (ctx.session.inputWaiting) {
-      const { userId, workflowVariantId, inputWaiting: paramName } = ctx.session
+      const { inputWaiting: paramName } = ctx.session
+
       const value = message
 
       await this.wfrepo.setWorkflowVariantUserParam({ userId, workflowVariantId, paramName, value })
@@ -83,10 +98,13 @@ export class HandleOwnITgBot {
       return this.view.showWorkflowRunMenu(ctx)
     }
 
-    if (ctx.session.workflowParams?.positivePrompt) {
-      ctx.session.workflowParams.positivePrompt = message
-      return this.actionWorkflowRun(ctx)
-      // return this.view.showWorkflowRunMenu(ctx)
+    if (workflowVariantId) {
+      const positivePromptParam = await this.wfrepo.getWorkflowVariantParamByName({ workflowVariantId, paramName: 'positivePrompt' })
+
+      if (positivePromptParam) {
+        await this.wfrepo.setWorkflowVariantUserParam({ userId, workflowVariantId, paramName: 'positivePrompt', value: message })
+        return await this.actionWorkflowRun(ctx)
+      }
     }
 
     return next()
@@ -293,9 +311,6 @@ export class HandleOwnITgBot {
 
     const workflowVariantParams = await this.wfrepo.getWorkflowMergedWorkflowVariantParamsValueMap({ userId, workflowVariantId })
 
-    // console.log('\x1b[36m', 'workflowVariantParams', workflowVariantParams, '\x1b[0m');
-    // await this.tgbotlib.safeAnswerCallback(ctx)
-    // return
     await this.cloudapilib.vastAiWorkflowRun({
       baseUrl: ctx.session.instance?.apiUrl,
       instanceId: ctx.session.instance?.id,
