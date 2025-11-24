@@ -111,33 +111,45 @@ export class HandleOwnITgBot {
   }
 
   async photo (ctx, next) {
-    if (ctx.session.way === 'own-instance') {
+    const { way, userId, workflowVariantId } = ctx.session
+    let paramName = ctx.session.inputWaiting
+
+    if (way === 'own-instance') {
       return next()
     }
 
-    let paramKey = ctx.session.inputWaiting
+    if (!paramName) {
+      const imageWorkflowVariantParams = await this.wfrepo.findWorkflowVariantParamsByNameStartsWith({
+        workflowVariantId,
+        startsWith: 'image',
+      })
 
-    if (!paramKey) {
-      const imageWfParamKeys = Object.keys(ctx.session.workflowParams)
-        .filter(key => key.includes('image'))
-      paramKey = imageWfParamKeys[0]
+      paramName = imageWorkflowVariantParams[0]?.paramName
     }
 
-    const fileId = this.tgbotlib.getImageFileIdFromMessage({ message: ctx.message })
-    console.log('HandleOwnITgBot_photo_23 fileId', fileId)
+    if (!paramName) {
+      const fileId = this.tgbotlib.getImageFileIdFromMessage({ message: ctx.message })
+      console.log('HandleOwnITgBot_photo_23 fileId', fileId)
 
-    // TODO more than one image param?
-    if (fileId) {
-      ctx.session.workflowParams[paramKey] = fileId
+      if (fileId) {
+        // TODO more than one image param?
+        await this.wfrepo.setWorkflowVariantUserParam({
+          userId,
+          workflowVariantId,
+          paramName,
+          value: fileId,
+        })
+      }
+
+      delete ctx.session.inputWaiting
     }
 
-    delete ctx.session.inputWaiting
     await this.tgbotlib.safeAnswerCallback(ctx)
   }
 
-  actionOffer (ctx: OwnInstanceContext) {
+  async actionOffer (ctx: OwnInstanceContext) {
     ctx.session.offer = ctx.session.offer || {}
-    this.view.showOfferParamsMenu(ctx)
+    await this.view.showOfferParamsMenu(ctx)
   }
 
   async actionSetSearchOfferParams (ctx: OwnInstanceMatchContext) {
@@ -151,7 +163,7 @@ export class HandleOwnITgBot {
 
     if (value) {
       Object.assign(ctx.session.offer || {}, { [name]: value })
-      this.view.showOfferParamsMenu(ctx)
+      await this.view.showOfferParamsMenu(ctx)
     } else {
       await ctx.editMessageText(`Select "${name}":`, this.tgbotlib.generateInlineKeyboard(menuMap[name]))
       await this.tgbotlib.safeAnswerCallback(ctx)
