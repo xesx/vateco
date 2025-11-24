@@ -25,17 +25,6 @@ export class AppCliService {
         this[key].register(program)
       }
     })
-    // регистрируем команды
-    // this.test.register(program)
-    // this.installComfyuiV0.register(program)
-    // this.startComfyui.register(program)
-
-    // program
-    //   .command('hello <name>')
-    //   .description('Сказать привет')
-    //   .action((name) => {
-    //     console.log(`Привет, ${name}!`)
-    //   })
 
     await program.parseAsync(argv)
   }

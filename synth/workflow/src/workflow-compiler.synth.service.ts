@@ -27,4 +27,20 @@ export class WorkflowCompilerSynthService {
 
     return arr
   }
+
+  async loraEnum (i) {
+    const models = await this.modelrepo.findModelsByComfyUiDir('loras')
+
+    const arr = models
+      .map(model => ({
+        label: model.label || model.name,
+        value: model.name,
+      }))
+
+    if (i) {
+      return arr[i]
+    }
+
+    return arr
+  }
 }

@@ -6,8 +6,6 @@ import { Injectable, Logger } from '@nestjs/common'
 import * as lib from '@lib'
 import * as synth from '@synth'
 
-import modelMap from '@model'
-
 import { HelperAppCloudCronService } from '../helper.app-cloud-cron.service'
 
 type TWorkflowTask = {

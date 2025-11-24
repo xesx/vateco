@@ -349,7 +349,7 @@ export class HandleOwnITgBot {
     const wfvUserParam = await this.wfrepo.findWorkflowVariantUserParam({ userId, workflowVariantId, paramName })
     const currentValue = (wfvUserParam?.value ?? wfvParam?.value ?? '❌') as string | number | boolean
 
-    let wfvParamEnum = wfvParam?.enum
+    let wfvParamEnum = wfvParam?.enum ?? wfParamSchema[paramName].enum
 
     if (typeof wfvParamEnum === 'string' && wfvParamEnum?.startsWith?.('$.')) {
       const enumCompilerName = wfvParamEnum.replace('$.', '')
@@ -382,9 +382,32 @@ export class HandleOwnITgBot {
     // suggest value form enum
     if (wfvParamEnum && Array.isArray(wfvParamEnum)) {
       const message = `Set parameter *"${paramName}"*\nCurrent value: *"${currentValue}"*`
-      const enumOptions: [string, string][][] = wfvParamEnum
+
+      const maxLineLength = 30
+      const enumOptions: [string, string][][] = []
+      let currentRow: any[] = []
+      let currentLength = 0
+
+      wfvParamEnum
         .map((value: any) => typeof value === 'object' ? value.label : String(value))
-        .map((value, i) => [[value, `act:own-i:wf:${workflowVariantId}:param:${paramName}:${i}`]])
+        .forEach((value, i) => {
+          const button = [value, `act:own-i:wf:${workflowVariantId}:param:${paramName}:${i}`]
+          const buttonLength = value.length + 2 // запас на формат Telegram
+
+          // Если не помещается — перенос
+          if (currentLength + buttonLength > maxLineLength) {
+            enumOptions.push(currentRow)
+            currentRow = []
+            currentLength = 0
+          }
+
+          currentRow.push(button)
+          currentLength += buttonLength
+        })
+
+      enumOptions.push(currentRow)
+      currentRow = []
+      currentLength = 0
 
       enumOptions.push([['Back', `act:own-i:wf:${workflowVariantId}`]])
 
@@ -417,7 +440,7 @@ export class HandleOwnITgBot {
   }
 
   async actionWorkflowSelect (ctx: OwnInstanceMatchContext) {
-    const step = ctx.session.step
+    const { step, workflowVariantId } = ctx.session
 
     if (!['running', 'loading'].includes(step)) {
       ctx.deleteMessage()
@@ -425,19 +448,20 @@ export class HandleOwnITgBot {
     }
 
     const [,workflowVariantIdStr] = ctx.match
-    const workflowVariantId = Number(workflowVariantIdStr)
 
-    ctx.session.workflowVariantId = workflowVariantId
+    if (workflowVariantId !== Number(workflowVariantIdStr)) {
+      ctx.session.workflowVariantId = Number(workflowVariantIdStr)
 
-    const workflowVariant = await this.wfrepo.getWorkflowVariant(workflowVariantId)
-    const workflowTemplate = await this.wfrepo.getWorkflowTemplate(workflowVariant.workflowTemplateId)
+      const workflowVariant = await this.wfrepo.getWorkflowVariant(ctx.session.workflowVariantId)
+      const workflowTemplate = await this.wfrepo.getWorkflowTemplate(workflowVariant.workflowTemplateId)
 
-    await this.cloudapilib.vastAiWorkflowTemplateLoad({
-      baseUrl: ctx.session.instance?.apiUrl,
-      instanceId: ctx.session.instance?.id,
-      token: ctx.session.instance?.token,
-      workflowTemplate,
-    })
+      await this.cloudapilib.vastAiWorkflowTemplateLoad({
+        baseUrl: ctx.session.instance?.apiUrl,
+        instanceId: ctx.session.instance?.id,
+        token: ctx.session.instance?.token,
+        workflowTemplate,
+      })
+    }
 
     await this.view.showWorkflowRunMenu(ctx)
 

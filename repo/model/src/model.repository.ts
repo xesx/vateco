@@ -10,6 +10,19 @@ export class ModelRepository {
     private readonly prisma: lib.PrismaLibService,
   ) {}
 
+  async createModel ({ name, comfyUiDirectory, comfyUiFileName, label }: { name: string, comfyUiDirectory: string, comfyUiFileName: string, label: string }) {
+    const model = await this.prisma.models.create({
+      data: {
+        name,
+        comfyUiDirectory,
+        comfyUiFileName,
+        label,
+      },
+    })
+
+    return model.id
+  }
+
   async findModelsByComfyUiDir (comfyUiDirectory: string) {
     return await this.prisma.models.findMany({
       where: { comfyUiDirectory },
