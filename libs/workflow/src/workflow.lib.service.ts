@@ -77,6 +77,12 @@ export class WorkflowLibService {
       workflowTemplateParams.push(key)
     }
 
+    Object.keys(params).forEach((key) => {
+      if (!workflowTemplateParams.includes(key)) {
+        workflowTemplateParams.push(key)
+      }
+    })
+
     console.log('\x1b[36m', 'workflowTemplateParams', workflowTemplateParams, '\x1b[0m')
     let counter = 0
     while (compiledParamsSet.size < workflowTemplateParams.length) {
