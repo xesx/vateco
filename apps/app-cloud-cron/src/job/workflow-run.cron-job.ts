@@ -34,7 +34,7 @@ export class WorkflowRunCronJob {
 
   async handle () {
     const { l } = this
-    const { GENERATE_PROGRESS_TASKS_DIR, GENERATE_TASKS_DIR, WORKFLOW_DIR } = this.appcloudsynth
+    const { GENERATE_PROGRESS_TASKS_DIR, GENERATE_TASKS_DIR, WORKFLOW_DIR, MODEL_INFO_DIR } = this.appcloudsynth
     const { wfParamSchema } = this.wflib
     const TG_CHAT_ID = String(process.env.TG_CHAT_ID) // todo
 
@@ -97,11 +97,19 @@ export class WorkflowRunCronJob {
       })
 
       for (const modelName of modelsForDownload) {
-        const model = modelMap[modelName] // todo
-        const [repo] = Object.keys(model.huggingfaceLink)
-        const srcFilename = model.huggingfaceLink[repo]
+        const modelInfoFilePath = join(MODEL_INFO_DIR, `${modelName}.json`)
+
+        if (!fs.existsSync(modelInfoFilePath)) {
+          l.warn(`handleRunWorkflowJob_130 Model info file not found: ${modelInfoFilePath}`)
+          continue
+        }
+
+        const model: any = JSON.parse(fs.readFileSync(modelInfoFilePath, 'utf8'))
+
+        const [{ repo, file }] = model.huggingfaceLinks
+        const srcFilename = file
         const dstFilename = model.comfyUiFileName
-        const dstDir = `ComfyUI/models/${model.comfyUiDir}`
+        const dstDir = `ComfyUI/models/${model.comfyUiDirectory}`
 
         await this.appcloudsynth.loadFileFromHF({ chatId: TG_CHAT_ID, repo, srcFilename, dstFilename, dstDir })
       }
