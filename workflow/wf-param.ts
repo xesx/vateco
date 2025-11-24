@@ -1,5 +1,3 @@
-import modelMap from '@model'
-
 type TParam = {
   type: 'string' | 'integer' | 'boolean' | 'number'
   default?: string | number | boolean
@@ -91,13 +89,6 @@ const params: Record<string, TParam> = {
     default: '❓',
     isComfyUiModel: true,
     multiple: 20,
-    compile: (model) => {
-      if (['N/A', '❓'].includes(model)) {
-        return ''
-      }
-
-      return modelMap[model].comfyUiFileName
-    },
   },
   loraEnabled: {
     type: 'boolean',
@@ -120,13 +111,6 @@ const params: Record<string, TParam> = {
     isComfyUiModel: true,
     default: '❓',
     multiple: 5,
-    compile: (model) => {
-      if (['N/A', '❓'].includes(model)) {
-        return ''
-      }
-
-      return modelMap[model].comfyUiFileName
-    },
   },
   negativePrompt: {
     type: 'string',

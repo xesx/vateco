@@ -88,6 +88,17 @@ export class WorkflowRunCronJob {
         if (wfParamSchema[key].isComfyUiModel) {
           // workflow.params[key].default = value
           modelsForDownload.push(value)
+
+          const modelInfoFilePath = join(MODEL_INFO_DIR, `${value}.json`)
+
+          if (!fs.existsSync(modelInfoFilePath)) {
+            l.warn(`handleRunWorkflowJob_64 Model info file not found: ${modelInfoFilePath}`)
+            return
+          }
+
+          const model: any = JSON.parse(fs.readFileSync(modelInfoFilePath, 'utf8'))
+          workflowVariantParams[key] = model.comfyUiFileName
+          return
         }
 
         if (key.startsWith('image') && typeof value === 'string') {
@@ -100,7 +111,7 @@ export class WorkflowRunCronJob {
         const modelInfoFilePath = join(MODEL_INFO_DIR, `${modelName}.json`)
 
         if (!fs.existsSync(modelInfoFilePath)) {
-          l.warn(`handleRunWorkflowJob_130 Model info file not found: ${modelInfoFilePath}`)
+          l.warn(`handleRunWorkflowJob_73 Model info file not found: ${modelInfoFilePath}`)
           continue
         }
 
