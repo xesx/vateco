@@ -3,9 +3,8 @@ import { ConfigModule } from '@nestjs/config'
 
 import * as lib from '@lib'
 import * as synth from '@synth'
-import * as repo from '@repo'
 
-import { AppCliService } from './app-cli.service'
+import { AppCloudCliService } from './app-cloud-cli.service'
 
 import * as command from './command'
 
@@ -22,15 +21,12 @@ import * as command from './command'
     lib.HuggingfaceLibModule,
     lib.WorkflowLibModule,
     lib.VastLibModule,
-    lib.PrismaLibModule,
-
-    repo.ModelRepositoryModule,
 
     synth.CloudAppSynthModule,
   ],
   providers: [
-    AppCliService,
+    AppCloudCliService,
     ...Object.values(command),
   ],
 })
-export class AppCliModule {}
+export class AppCloudCliModule {}

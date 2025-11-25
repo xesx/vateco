@@ -10,8 +10,8 @@ export class ModelRepository {
     private readonly prisma: lib.PrismaLibService,
   ) {}
 
-  async createModel ({ name, comfyUiDirectory, comfyUiFileName, label }: { name: string, comfyUiDirectory: string, comfyUiFileName: string, label: string }) {
-    const model = await this.prisma.models.create({
+  async createModel ({ name, comfyUiDirectory, comfyUiFileName, label, trx = this.prisma }: { name: string, comfyUiDirectory: string, comfyUiFileName: string, label: string, trx?: lib.PrismaLibService }) {
+    const model = await trx.models.create({
       data: {
         name,
         comfyUiDirectory,
@@ -21,6 +21,25 @@ export class ModelRepository {
     })
 
     return model.id
+  }
+
+  async createMolelHuggingfaceLink ({ modelId, repo, file, trx = this.prisma }: { modelId: number, repo: string, file: string, trx?: lib.PrismaLibService }) {
+    await trx.modelHuggingfaceLinks.create({
+      data: {
+        modelId,
+        repo,
+        file,
+      },
+    })
+  }
+
+  async createModelTag ({ modelId, tag, trx = this.prisma }: { modelId: number, tag: string, trx?: lib.PrismaLibService }) {
+    await trx.modelTags.create({
+      data: {
+        modelId,
+        tag,
+      },
+    })
   }
 
   async findModelsByComfyUiDir (comfyUiDirectory: string) {

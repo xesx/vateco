@@ -4,21 +4,19 @@ import { Command } from 'commander'
 import * as command from './command'
 
 @Injectable()
-export class AppCliService {
+export class AppCloudCliService {
   constructor(
     private readonly _cli01: command.TestCli,
     private readonly _cli02: command.InstallComfyuiV0Cli,
     private readonly _cli03: command.StartComfyuiCli,
-    private readonly _cli04: command.WfCompileCli,
-    private readonly _cli05: command.ModelCreateCli,
   ) {}
 
   async run(argv: string[]) {
     const program = new Command()
 
     program
-      .name('vateco-cli')
-      .description('CLI на NestJS')
+      .name('cloud-cli')
+      .description('CLI for Cloud App on NestJS')
       .version('1.0.0')
 
     Object.keys(this).forEach(key => {

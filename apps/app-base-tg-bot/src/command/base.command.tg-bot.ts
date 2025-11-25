@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common'
 import { Telegraf } from 'telegraf'
 import { InjectBot } from 'nestjs-telegraf'
 import { session } from 'telegraf'
+import { message } from 'telegraf/filters'
 
 import * as repo from '@repo'
 
@@ -38,6 +39,8 @@ export class BaseCommandTgBot {
 
     this.bot.command('start', (ctx, next) => this.handleStart(ctx, next))
     this.bot.action('act:main-menu', (ctx) => this.tgbotsrv.actionMainMenu(ctx))
+
+    this.bot.on(message('text'), (ctx, next) => this.tgbotsrv.textMessage(ctx, next))
   }
 
   private async initSession(ctx) {

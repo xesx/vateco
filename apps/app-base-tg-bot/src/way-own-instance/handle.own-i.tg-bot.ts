@@ -54,6 +54,10 @@ export class HandleOwnITgBot {
       return next()
     }
 
+    if (ctx.message.text.startsWith('https://')) {
+      // todo
+    }
+
     const message = ctx.message.text
       .replace(/\r\n/g, '\n')     // Windows → Unix переносы
       .replace(/\n+/g, ' ')       // убираем лишние переводы строк
