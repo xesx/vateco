@@ -11,6 +11,7 @@ export class AppCliService {
     private readonly _cli03: command.StartComfyuiCli,
     private readonly _cli04: command.WfCompileCli,
     private readonly _cli05: command.ModelCreateCli,
+    private readonly _cli06: command.WorkflowTemplateCreateCli,
   ) {}
 
   async run(argv: string[]) {
