@@ -444,7 +444,8 @@ export class HandleOwnITgBot {
   }
 
   async actionWorkflowSelect (ctx: OwnInstanceMatchContext) {
-    const { step, workflowVariantId } = ctx.session
+    const { wfParamSchema } = this.wflib
+    const { step, workflowVariantId, userId } = ctx.session
 
     if (!['running', 'loading'].includes(step)) {
       ctx.deleteMessage()
@@ -465,6 +466,23 @@ export class HandleOwnITgBot {
         token: ctx.session.instance?.token,
         workflowTemplate,
       })
+    }
+
+    const workflowVariantParams = await this.wfrepo.getWorkflowMergedWorkflowVariantParamsValueMap({ userId, workflowVariantId })
+
+    for (const [paramName, value] of Object.entries(workflowVariantParams)) {
+      if (wfParamSchema[paramName].isComfyUiModel) {
+        const modelName = String(value.value ?? value)
+        const modelData = await this.modelrepo.getModelByName(modelName)
+
+        await this.cloudapilib.vastAiModelInfoLoad({
+          baseUrl: ctx.session.instance?.apiUrl,
+          instanceId: ctx.session.instance?.id,
+          token: ctx.session.instance?.token,
+          modelName,
+          modelData,
+        })
+      }
     }
 
     await this.view.showWorkflowRunMenu(ctx)

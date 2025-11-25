@@ -40,7 +40,7 @@ export class BaseCommandTgBot {
     this.bot.command('start', (ctx, next) => this.handleStart(ctx, next))
     this.bot.action('act:main-menu', (ctx) => this.tgbotsrv.actionMainMenu(ctx))
 
-    this.bot.on(message('text'), (ctx, next) => this.tgbotsrv.textMessage(ctx, next))
+    this.bot.hears(/^https:\/\/huggingface\.co\/\S+/i, (ctx, next) => this.tgbotsrv.createModelByHuggingfaceLink(ctx, next))
   }
 
   private async initSession(ctx) {
@@ -55,11 +55,11 @@ export class BaseCommandTgBot {
     ctx.session.step ??= 'start'
   }
 
-  private handleStart(ctx: TAppBaseTgBotContext, next) {
+  private async handleStart (ctx: TAppBaseTgBotContext, next) {
     const step = ctx.session.step || '__undefined__'
 
     if (step === 'start') {
-      this.tgbotsrv.showMainMenu(ctx)
+      await this.tgbotsrv.showMainMenu(ctx)
     } else {
       return next()
     }

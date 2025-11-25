@@ -170,6 +170,8 @@ export class WorkflowRunCronJob {
           fs.writeFileSync(join(GENERATE_PROGRESS_TASKS_DIR, progressFilename), JSON.stringify(content, null, 2), "utf8")
         } catch (error) {
           l.error('handleRunWorkflowJob_85 Error', this.h.herr.parseAxiosError(error))
+          const message = this.msglib.genCodeMessage(`Error during workflow "${workflowVariantId}" execution: ${error.message}`)
+          await this.tgbotlib.sendMessage({ chatId: TG_CHAT_ID, text: message })
         }
       }
     }

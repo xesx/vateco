@@ -22,16 +22,16 @@ export class AppBaseTgBotService {
     }, 2000)
   }
 
-  actionMainMenu (ctx: TAppBaseTgBotContext) {
-    this.tgbotlib.safeAnswerCallback(ctx)
+  async actionMainMenu (ctx: TAppBaseTgBotContext) {
+    await this.tgbotlib.safeAnswerCallback(ctx)
     this.resetSession(ctx)
-    this.showMainMenu(ctx)
+    await this.showMainMenu(ctx)
   }
 
-  showMainMenu (ctx: TAppBaseTgBotContext) {
+  async showMainMenu (ctx: TAppBaseTgBotContext) {
     const message = 'Main menu:'
     const keyboard = this.tgbotlib.generateInlineKeyboard(MAIN_MENU)
-    this.tgbotlib.reply(ctx, message, keyboard)
+    await this.tgbotlib.reply(ctx, message, keyboard)
   }
 
   resetSession(ctx: TAppBaseTgBotContext) {
@@ -42,7 +42,7 @@ export class AppBaseTgBotService {
     }
   }
 
-  async textMessage (ctx, next) {
+  async createModelByHuggingfaceLink (ctx, next) {
     const { text: message } = ctx.message
 
     if (message.startsWith('https://huggingface.co/')) {
