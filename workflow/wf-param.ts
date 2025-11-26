@@ -178,17 +178,19 @@ const params: Record<string, TParam> = {
   },
   negativePrompt: {
     type: 'string',
-    default:
-      'Bad quality, low quality, blurry, watermark, text, error, jpeg artifacts, ugly, duplicate, morbid, mutilated, out of frame, extra fingers, mutated hands and fingers, poorly drawn hands and fingers, poorly drawn face, deformed, blurry, dehydrated, bad proportions, extra limbs, cloned face, disfigured, gross proportions, malformed limbs, missing arms, missing legs, fused fingers, too many fingers, long neck',
+    default: 'Bad quality, low quality, blurry, watermark, text, error, jpeg artifacts, ugly, duplicate, morbid, mutilated, out of frame, extra fingers, mutated hands and fingers, poorly drawn hands and fingers, poorly drawn face, deformed, blurry, dehydrated, bad proportions, extra limbs, cloned face, disfigured, gross proportions, malformed limbs, missing arms, missing legs, fused fingers, too many fingers, long neck',
     label: 'Negative Prompt',
-    description:
-      'The negative prompt to avoid certain elements in the image generation',
+    description: 'The negative prompt to avoid certain elements in the image generation',
+    positionX: 9000,
+    positionY: 1,
   },
   positivePrompt: {
     type: 'string',
     default: '',
     description: 'The positive prompt to guide the image generation',
     label: 'Positive Prompt',
+    positionX: 9000,
+    positionY: 0,
   },
   sampler: {
     type: 'string',

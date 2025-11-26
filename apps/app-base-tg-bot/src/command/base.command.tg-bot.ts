@@ -37,6 +37,16 @@ export class BaseCommandTgBot {
       return await next()
     })
 
+    bot.use(async (ctx, next) => {
+      try {
+        return await next()
+      } catch (err) {
+        console.error('BaseCommandTgBot_bot_use_57 Error processing update:', err)
+
+        return ctx.reply(`An error occurred: ${err.message}`)
+      }
+    })
+
     this.bot.command('start', (ctx, next) => this.handleStart(ctx, next))
     this.bot.action('act:main-menu', (ctx) => this.tgbotsrv.actionMainMenu(ctx))
 
