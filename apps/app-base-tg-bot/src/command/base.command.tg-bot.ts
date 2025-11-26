@@ -2,8 +2,9 @@ import { Injectable } from '@nestjs/common'
 import { Telegraf } from 'telegraf'
 import { InjectBot } from 'nestjs-telegraf'
 import { session } from 'telegraf'
-import { message } from 'telegraf/filters'
+// import { message } from 'telegraf/filters'
 
+import * as lib from '@lib'
 import * as repo from '@repo'
 
 import { TAppBaseTgBotContext } from '../types'
@@ -16,6 +17,7 @@ export class BaseCommandTgBot {
     @InjectBot() private readonly bot: Telegraf<TAppBaseTgBotContext>,
     private readonly tgbotsrv: AppBaseTgBotService,
     private readonly userrepo: repo.UserRepository,
+    private readonly tgbotlib: lib.TgBotLibService,
     store: repo.TgBotSessionsStoreRepository,
   ) {
     bot.use(session({ store }))
@@ -43,7 +45,8 @@ export class BaseCommandTgBot {
       } catch (err) {
         console.error('BaseCommandTgBot_bot_use_57 Error processing update:', err)
 
-        return ctx.reply(`An error occurred: ${err.message}`)
+        await this.tgbotlib.safeAnswerCallback(ctx)
+        return await ctx.reply(`An error occurred: ${err.message}`)
       }
     })
 

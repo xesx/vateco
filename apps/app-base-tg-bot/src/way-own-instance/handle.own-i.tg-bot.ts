@@ -445,7 +445,7 @@ export class HandleOwnITgBot {
 
   async actionWorkflowSelect (ctx: OwnInstanceMatchContext) {
     const { wfParamSchema } = this.wflib
-    const { step, workflowVariantId, userId } = ctx.session
+    const { step, userId } = ctx.session
 
     if (!['running', 'loading'].includes(step)) {
       ctx.deleteMessage()
@@ -454,7 +454,7 @@ export class HandleOwnITgBot {
 
     const [,workflowVariantIdStr] = ctx.match
 
-    if (workflowVariantId !== Number(workflowVariantIdStr)) {
+    if (ctx.session.workflowVariantId !== Number(workflowVariantIdStr)) {
       ctx.session.workflowVariantId = Number(workflowVariantIdStr)
 
       const workflowVariant = await this.wfrepo.getWorkflowVariant(ctx.session.workflowVariantId)
@@ -467,6 +467,8 @@ export class HandleOwnITgBot {
         workflowTemplate,
       })
     }
+
+    const { workflowVariantId } = ctx.session
 
     const workflowVariantParams = await this.wfrepo.getWorkflowMergedWorkflowVariantParamsValueMap({ userId, workflowVariantId })
 

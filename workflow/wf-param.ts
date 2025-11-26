@@ -116,6 +116,8 @@ const params: Record<string, TParam> = {
     description: 'Number of items to generate',
     label: 'Generation Number',
     isMetaParam: true,
+    positionX: 0,
+    positionY: 0,
   },
   guidance: {
     type: 'number',
@@ -129,6 +131,8 @@ const params: Record<string, TParam> = {
     default: 512,
     description: 'Height of the generated image in pixels',
     label: 'Height',
+    positionX: 10,
+    positionY: 6,
     compile: (height) => {
       height = parseInt(height, 10)
 
@@ -145,6 +149,8 @@ const params: Record<string, TParam> = {
     default: '❓',
     description: 'image name or URL',
     label: 'Image',
+    positionX: 10,
+    positionY: 0,
   },
   lora: {
     type: 'string',
@@ -153,13 +159,15 @@ const params: Record<string, TParam> = {
     default: '❓',
     isComfyUiModel: true,
     multiple: 20,
+    positionY: 1,
   },
   loraEnabled: {
     type: 'boolean',
     description: 'Is LoRa enabled for generation',
     default: false,
-    label: 'Lora enabled',
+    label: 'Lora on',
     multiple: 20,
+    positionY: 0,
   },
   loraStrength: {
     type: 'number',
@@ -167,6 +175,7 @@ const params: Record<string, TParam> = {
     default: 1.0,
     label: 'Lora Strength',
     multiple: 20,
+    positionY: 2,
   },
   model: {
     type: 'string',
@@ -274,6 +283,8 @@ const params: Record<string, TParam> = {
     default: 512,
     description: 'Width of the generated image in pixels',
     label: 'Width',
+    positionX: 10,
+    positionY: 5,
     compile: (width) => {
       width = parseInt(width, 10)
 
