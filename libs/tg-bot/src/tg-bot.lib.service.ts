@@ -234,4 +234,13 @@ export class TgBotLibService {
 
     return Buffer.from(tgRes.data)
   }
+
+  async importFileBufferByFileId ({ fileId }: { fileId: string }): Promise<Buffer> {
+    const fileLink = await this.bot.telegram.getFileLink(fileId)
+
+    // Качаем  с Telegram
+    const tgRes = await axios.get(fileLink.href, { responseType: 'arraybuffer' })
+
+    return Buffer.from(tgRes.data)
+  }
 }

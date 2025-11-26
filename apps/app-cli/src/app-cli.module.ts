@@ -25,6 +25,7 @@ import * as command from './command'
     lib.PrismaLibModule,
 
     repo.ModelRepositoryModule,
+    repo.WorkflowRepositoryModule,
 
     synth.CloudAppSynthModule,
     synth.WorkflowSynthModule,

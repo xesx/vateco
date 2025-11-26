@@ -13,6 +13,97 @@ export class WorkflowRepository {
     private readonly wflib: lib.WorkflowLibService,
   ) {}
 
+  async createWorkflowTemplate ({ name, description, schema, trx = this.prisma }: { name?: string, description?: string, schema?: Record<string, any>, workflow?: Record<string, any>, trx?: lib.PrismaLibService }): Promise<number> {
+    if (!schema) {
+      throw new Error('createWorkflowTemplate_39 Schema is required')
+    }
+
+    name = name?.trim().replace(/\s+/g, '').toLowerCase()
+
+    if (!name || name.length > 100) {
+      throw new Error('createWorkflowTemplate_43 Name is too long, max 100 characters')
+    }
+
+    description = description?.trim() || ''
+
+    const result = await trx.workflowTemplates.create({
+      data: {
+        name,
+        description,
+        schema,
+      },
+    })
+
+    return result.id
+  }
+
+  async createWorkflowVariant ({ workflowTemplateId, name, description, trx = this.prisma }: { workflowTemplateId: number, name: string, description?: string, trx?: lib.PrismaLibService  }): Promise<number> {
+    name = name?.trim() || ''
+
+    if (name.length > 100) {
+      throw new Error('createWorkflowVariant_66 Name is too long, max 100 characters')
+    }
+
+    description = description?.trim() || ''
+
+    const result = await trx.workflowVariants.create({
+      data: {
+        workflowTemplateId,
+        name,
+        description,
+      },
+    })
+
+    return result.id
+  }
+
+  async createWorkflowVariantTag ({ workflowVariantId, tag, trx = this.prisma }: { workflowVariantId: number, tag: string, trx?: lib.PrismaLibService }) {
+    tag = tag?.trim().toLowerCase()
+
+    if (!tag || tag.length > 50) {
+      throw new Error('createWorkflowVariantTag_84 Tag is too long, max 50 characters')
+    }
+
+    await trx.workflowVariantTags.create({
+      data: {
+        workflowVariantId,
+        tag,
+      },
+    })
+  }
+
+  async createWorkflowVariantParam ({ workflowVariantId, paramName, label, value, positionX, positionY, user, trx = this.prisma }: { workflowVariantId: number, paramName: string, label?: string, value?: any, positionX?: number, positionY?: number, user?: boolean, trx?: lib.PrismaLibService }) {
+    const { wfParamSchema } = this.wflib
+
+    paramName = paramName?.trim() || ''
+
+    if (!paramName || paramName.length > 100) {
+      throw new Error('createWorkflowVariantParam_13 Param name is too long, max 100 characters')
+    }
+
+    if (!wfParamSchema[paramName]) {
+      throw new Error(`createWorkflowVariantParam_19 Unknown workflow parameter name: ${paramName}`)
+    }
+
+    label = label?.trim() || ''
+
+    if (label.length > 200) {
+      throw new Error('createWorkflowVariantParam_111 Label is too long, max 200 characters')
+    }
+
+    await trx.workflowVariantParams.create({
+      data: {
+        workflowVariantId,
+        paramName,
+        label,
+        user: user ?? false,
+        value,
+        positionX,
+        positionY,
+      },
+    })
+  }
+
   async findWorkflowVariantsByTags (tags: string[]) {
     const workflows = await this.prisma.$queryRaw<WorkflowVariants[]>`
       SELECT wv.*

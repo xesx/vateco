@@ -35,6 +35,8 @@ const params: Record<string, TParam> = {
     default: 1,
     description: 'CFG Scale for generation',
     label: 'CFG',
+    positionX: 8500,
+    positionY: 1,
   },
   checkpointModel: {
     type: 'string',
@@ -64,6 +66,8 @@ const params: Record<string, TParam> = {
     default: 1,
     description: 'CLIP Skip value for generation',
     label: 'CLIP Skip',
+    positionX: 8500,
+    positionY: 2,
     compile: (clipSkip) => {
       clipSkip = parseInt(clipSkip, 10)
       clipSkip = Math.min(Math.max(Math.abs(clipSkip), 1), 24) // between 1 and 14
@@ -159,6 +163,7 @@ const params: Record<string, TParam> = {
     default: '❓',
     isComfyUiModel: true,
     multiple: 20,
+    positionX: 1000,
     positionY: 1,
   },
   loraEnabled: {
@@ -167,6 +172,7 @@ const params: Record<string, TParam> = {
     default: false,
     label: 'Lora on',
     multiple: 20,
+    positionX: 1000,
     positionY: 0,
   },
   loraStrength: {
@@ -175,6 +181,7 @@ const params: Record<string, TParam> = {
     default: 1.0,
     label: 'Lora Strength',
     multiple: 20,
+    positionX: 1000,
     positionY: 2,
   },
   model: {
@@ -207,6 +214,8 @@ const params: Record<string, TParam> = {
     default: 'euler',
     description: 'The sampler to use for image generation',
     label: 'Sampler',
+    positionX: 8000,
+    positionY: 0,
   },
   scheduler: {
     type: 'string',
@@ -214,6 +223,8 @@ const params: Record<string, TParam> = {
     default: 'normal',
     description: 'The scheduler to use for image generation',
     label: 'Scheduler',
+    positionX: 8000,
+    positionY: 1,
   },
   seedType: {
     type: 'string',
@@ -244,6 +255,8 @@ const params: Record<string, TParam> = {
     default: 20,
     description: 'Number of steps for the image generation process',
     label: 'Steps',
+    positionX: 8500,
+    positionY: 0,
   },
   t5Model: {
     type: 'string',

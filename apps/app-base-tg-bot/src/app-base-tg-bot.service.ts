@@ -4,6 +4,7 @@ import { TAppBaseTgBotContext } from './types'
 
 import * as lib from '@lib'
 import * as repo from '@repo'
+import * as synth from '@synth'
 
 import {
   MAIN_MENU,
@@ -16,6 +17,7 @@ export class AppBaseTgBotService {
   constructor(
     private readonly tgbotlib: lib.TgBotLibService,
     private readonly modelrepo: repo.ModelRepository,
+    private readonly wfsynth: synth.WorkflowSynthService,
   ) {
     setTimeout(() => {
       tgbotlib.sendMessage({ chatId: '185857068:185857068', text: '!!! DEPLOY !!!' })
@@ -92,5 +94,32 @@ export class AppBaseTgBotService {
     }
 
     return next()
+  }
+
+  async createWorkflowTemplateByFile (ctx, next) {
+    const caption = ctx.message.caption
+
+    if (!caption?.startsWith('/wft-create')) {
+      return next()
+    }
+
+    const [,rawName, description] = caption.split('\n')
+
+    const fileId = ctx.message.document.file_id
+    const fileName = ctx.message.document.file_name
+
+    const fileBuffer = await this.tgbotlib.importFileBufferByFileId({ fileId })
+    const rawWorkflow = JSON.parse(fileBuffer.toString('utf-8'))
+
+    const name = rawName || fileName
+
+    const workflowTemplateId = await this.wfsynth.cookAndCreateWorkflowTemplate({
+      name: name || fileName || `unnamed-workflow-${Date.now()}`,
+      description,
+      rawWorkflow,
+    })
+
+    await ctx.reply(`Workflow template created with ID: ${workflowTemplateId}`)
+    await this.tgbotlib.safeAnswerCallback(ctx)
   }
 }

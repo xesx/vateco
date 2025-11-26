@@ -10,6 +10,7 @@ import * as repo from '@repo'
   imports: [
     lib.WorkflowLibModule,
     repo.ModelRepositoryModule,
+    repo.WorkflowRepositoryModule,
   ],
   providers: [
     WorkflowSynthService,

@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common'
 
 import * as lib from '@lib'
+import * as repo from '@repo'
 
 import { WorkflowCompilerSynthService } from './workflow-compiler.synth.service'
 import { WorkflowCookSynthService } from './workflow-cook.synth.service'
@@ -15,10 +16,21 @@ export class WorkflowSynthService {
     private readonly wflib: lib.WorkflowLibService,
     private readonly compiler: WorkflowCompilerSynthService,
     private readonly cook: WorkflowCookSynthService,
+    private readonly wfrepo: repo.WorkflowRepository,
   ) {}
 
   async compileEnum (name: string) {
     return await this.compiler[name]()
+  }
+
+  async cookAndCreateWorkflowTemplate ({ rawWorkflow, name, description }: { rawWorkflow: any, name: string, description?: string }) {
+    const { l } = this
+
+    const cookedWorkflow = this.cookWorkflowTemplate(rawWorkflow)
+    const workflowTemplateId = await this.wfrepo.createWorkflowTemplate({ name, description, schema: cookedWorkflow })
+
+    l.log(`WorkflowSynthService_cookAndCreateWorkflowTemplate_105 Created workflow template with ID: ${workflowTemplateId}`)
+    return workflowTemplateId
   }
 
   cookWorkflowTemplate (rawWorkflow: any) {
@@ -45,7 +57,6 @@ export class WorkflowSynthService {
         }
         cookedWorkflow[key] = this.cook[cookFunctionName](node)
       } else {
-        // console.log('\x1b[36m', 'skip', classType, title, cookFunctionName, this.cook[cookFunctionName], '\x1b[0m')
         console.log(`WorkflowSynthService_cookWorkflow_52 Skipping cook for node with class_type: ${classType}, title: ${title}`)
         cookedWorkflow[key] = node
       }

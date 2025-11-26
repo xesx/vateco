@@ -34,8 +34,8 @@ export function workflowRunMenu ({ workflowVariantId, wfvParams, prefixAction, b
 
       // Both positions are defined, sort by x first, then by y
       // undefined x or y goes to the end (9000)
-      const [aX = 9000, aY = 9000] = positionA ?? []
-      const [bX = 9000, bY = 9000] = positionB ?? []
+      const [aX = 9999, aY = 9999] = positionA ?? []
+      const [bX = 9999, bY = 9999] = positionB ?? []
 
       if (aX === bX) {
         // @ts-expect-error todo

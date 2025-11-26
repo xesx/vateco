@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common'
 import { Telegraf } from 'telegraf'
 import { InjectBot } from 'nestjs-telegraf'
 import { session } from 'telegraf'
-// import { message } from 'telegraf/filters'
+import { message } from 'telegraf/filters'
 
 import * as lib from '@lib'
 import * as repo from '@repo'
@@ -52,6 +52,8 @@ export class BaseCommandTgBot {
 
     this.bot.command('start', (ctx, next) => this.handleStart(ctx, next))
     this.bot.action('act:main-menu', (ctx) => this.tgbotsrv.actionMainMenu(ctx))
+
+    this.bot.on(message('document'), (ctx, next) => this.tgbotsrv.createWorkflowTemplateByFile(ctx, next))
 
     this.bot.hears(/^https:\/\/huggingface\.co\/\S+/i, (ctx, next) => this.tgbotsrv.createModelByHuggingfaceLink(ctx, next))
   }
