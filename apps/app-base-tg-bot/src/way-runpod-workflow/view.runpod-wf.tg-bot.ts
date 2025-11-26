@@ -22,16 +22,16 @@ export class ViewRunpodWfTgBot {
     ctx.session.workflowParams = {}
     this.tgbotlib.removeReplyKeyboard(ctx)
 
-    const workflows = this.wflib.findWorkflowsByTags({ tags: ['runpod'] })
-
-    const message = '*Select workflow*'
-    const keyboard = this.tgbotlib.generateInlineKeyboard(kb.workflowsMenu({
-      workflows,
-      prefixAction: 'act:rp-wf',
-      backAction: 'act:main-menu'
-    }))
-
-    this.tgbotlib.reply(ctx, message, { parse_mode: 'Markdown', ...keyboard })
+    // const workflows = this.wflib.findWorkflowsByTags({ tags: ['runpod'] })
+    //
+    // const message = '*Select workflow*'
+    // const keyboard = this.tgbotlib.generateInlineKeyboard(kb.workflowsMenu({
+    //   workflows,
+    //   prefixAction: 'act:rp-wf',
+    //   backAction: 'act:main-menu'
+    // }))
+    //
+    // this.tgbotlib.reply(ctx, message, { parse_mode: 'Markdown', ...keyboard })
   }
 
   async showWorkflowRunMenu (ctx: RunpodWfContext) {

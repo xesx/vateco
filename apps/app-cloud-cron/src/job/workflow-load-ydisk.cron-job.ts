@@ -44,46 +44,46 @@ export class WorkflowLoadYdiskCronJob {
         continue
       }
 
-      const workflow = this.wflib.getWorkflow(workflowId)
-      const models = workflow?.models
-
-      for (const model of models) {
-        const srcFs = 'ydisk:'
-        const srcRemote = `shared/comfyui/models/${model}`
-        const dstFs = '/'
-        const dstRemote = `${WORKSPACE}/ComfyUI/models/${model}`
-
-        if (fs.existsSync(dstRemote)) {
-          l.log(`Model ${model} already exists, skipping download`)
-          continue
-        }
-
-        const startTime = Date.now()
-
-        let message = this.msglib.genDownloadMessage({ name: `Model ${model}` })
-        const downloadingMessageId = await this.tgbotlib.sendMessage({ chatId: TG_CHAT_ID, text: message })
-
-        for await (const jobStats of this.rclonelib.loadFileGenerator({ srcFs, srcRemote, dstFs, dstRemote })) {
-          message = this.msglib.genDownloadMessage({
-            name: `Model ${model}`,
-            totalBytes: jobStats?.size,
-            transferredBytes: jobStats?.bytes,
-            speedInBytes: jobStats?.speed,
-            transferTimeInSec: (Date.now() - startTime) / 1000,
-            etaInSec: jobStats?.eta,
-          })
-
-          await this.tgbotlib.editMessage({ chatId: TG_CHAT_ID, messageId: downloadingMessageId, text: message })
-          await setTimeout(3000)
-        }
-      }
-
-      await this.tgbotlib.sendMessage({
-        chatId: TG_CHAT_ID,
-        text: this.msglib.genCodeMessage(`Workflow ${workflowId} loaded!`),
-      })
-
-      loadedWorkflows.add(workflowId)
+      // const workflow = this.wflib.getWorkflow(workflowId)
+      // const models = workflow?.models
+      //
+      // for (const model of models) {
+      //   const srcFs = 'ydisk:'
+      //   const srcRemote = `shared/comfyui/models/${model}`
+      //   const dstFs = '/'
+      //   const dstRemote = `${WORKSPACE}/ComfyUI/models/${model}`
+      //
+      //   if (fs.existsSync(dstRemote)) {
+      //     l.log(`Model ${model} already exists, skipping download`)
+      //     continue
+      //   }
+      //
+      //   const startTime = Date.now()
+      //
+      //   let message = this.msglib.genDownloadMessage({ name: `Model ${model}` })
+      //   const downloadingMessageId = await this.tgbotlib.sendMessage({ chatId: TG_CHAT_ID, text: message })
+      //
+      //   for await (const jobStats of this.rclonelib.loadFileGenerator({ srcFs, srcRemote, dstFs, dstRemote })) {
+      //     message = this.msglib.genDownloadMessage({
+      //       name: `Model ${model}`,
+      //       totalBytes: jobStats?.size,
+      //       transferredBytes: jobStats?.bytes,
+      //       speedInBytes: jobStats?.speed,
+      //       transferTimeInSec: (Date.now() - startTime) / 1000,
+      //       etaInSec: jobStats?.eta,
+      //     })
+      //
+      //     await this.tgbotlib.editMessage({ chatId: TG_CHAT_ID, messageId: downloadingMessageId, text: message })
+      //     await setTimeout(3000)
+      //   }
+      // }
+      //
+      // await this.tgbotlib.sendMessage({
+      //   chatId: TG_CHAT_ID,
+      //   text: this.msglib.genCodeMessage(`Workflow ${workflowId} loaded!`),
+      // })
+      //
+      // loadedWorkflows.add(workflowId)
     }
   }
 }

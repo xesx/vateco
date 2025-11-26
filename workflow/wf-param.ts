@@ -6,8 +6,11 @@ type TParam = {
   enum?: string[]
   multiple?: number
   isComfyUiModel?: boolean
+  isMetaParam?: boolean
   depends?: string[]
   compile?: (rawValue: any, params: Record<string, any>) => any
+  positionX?: number
+  positionY?: number
 }
 
 const params: Record<string, TParam> = {
@@ -21,11 +24,40 @@ const params: Record<string, TParam> = {
       return params.some || rawValue || 42
     },
   },
+  batchSize: {
+    type: 'integer',
+    default: 1,
+    description: 'The batch size for image generation',
+    label: 'Batch Size',
+  },
   cfg: {
     type: 'number',
     default: 1,
     description: 'CFG Scale for generation',
     label: 'CFG',
+  },
+  checkpointModel: {
+    type: 'string',
+    description: 'The Checkpoint model to use for generation',
+    label: 'Checkpoint Model',
+    isComfyUiModel: true,
+    default: '❓',
+    multiple: 5,
+  },
+  clipDevice: {
+    type: 'string',
+    enum: ['cpu', 'default'],
+    default: 'default',
+    description: 'The device to use for CLIP model',
+    label: 'CLIP Device',
+  },
+  clipLModel: {
+    type: 'string',
+    description: 'The CLIP-L model to use for generation',
+    label: 'CLIP-L',
+    isComfyUiModel: true,
+    default: '❓',
+    multiple: 5,
   },
   clipSkip: {
     type: 'integer',
@@ -40,6 +72,13 @@ const params: Record<string, TParam> = {
       return clipSkip
     },
   },
+  clipType: {
+    type: 'string',
+    enum: ['sdxl', 'sd3', 'flux', 'hunyuan_video', 'hidream'],
+    default: 'flux',
+    description: 'The type of CLIP model to use',
+    label: 'CLIP Type',
+  },
   denoise: {
     type: 'number',
     default: 1,
@@ -51,6 +90,13 @@ const params: Record<string, TParam> = {
 
       return denoise
     },
+  },
+  device: {
+    type: 'string',
+    enum: ['cpu', 'cuda', 'default'],
+    default: 'default',
+    description: 'The device to use',
+    label: 'Device',
   },
   filenamePrefix: {
     type: 'string',
@@ -69,18 +115,36 @@ const params: Record<string, TParam> = {
     default: 1,
     description: 'Number of items to generate',
     label: 'Generation Number',
+    isMetaParam: true,
+  },
+  guidance: {
+    type: 'number',
+    default: 3.5,
+    description: 'Guidance scale for CLIP text encoding',
+    label: 'Guidance',
+    multiple: 5,
+  },
+  height: {
+    type: 'integer',
+    default: 512,
+    description: 'Height of the generated image in pixels',
+    label: 'Height',
+    compile: (height) => {
+      height = parseInt(height, 10)
+
+      // Clamp height to be multiple of 8
+      if (height % 8 !== 0) {
+        height = Math.round(height / 8) * 8
+      }
+
+      return height
+    },
   },
   image: {
     type: 'string',
     default: '❓',
     description: 'image name or URL',
     label: 'Image',
-  },
-  fluxGuidance: {
-    type: 'number',
-    default: 2.5,
-    description: 'Flux Guidance Scale for generation',
-    label: 'Guidance',
   },
   lora: {
     type: 'string',
@@ -146,6 +210,7 @@ const params: Record<string, TParam> = {
     default: 'random',
     description: 'Type of seed to use, fixed or random',
     label: 'Seed Type',
+    isMetaParam: true,
   },
   seedValue: {
     type: 'integer',
@@ -169,6 +234,39 @@ const params: Record<string, TParam> = {
     description: 'Number of steps for the image generation process',
     label: 'Steps',
   },
+  t5Model: {
+    type: 'string',
+    description: 'The T5 model to use for generation',
+    label: 'T5',
+    isComfyUiModel: true,
+    default: '❓',
+    multiple: 5,
+  },
+  unetModel: {
+    type: 'string',
+    description: 'The UNet model to use for generation',
+    label: 'UNet Model',
+    isComfyUiModel: true,
+    default: '❓',
+    multiple: 5,
+  },
+  unetWeightDtype: {
+    type: 'string',
+    // enum: [],
+    default: 'default',
+    description: 'The weight dtype for the UNet model',
+    label: 'UNet Weight Dtype',
+    multiple: 5,
+    // depends: ['unetModel'],
+  },
+  vaeModel: {
+    type: 'string',
+    description: 'The VAE to use for generation',
+    label: 'VAE',
+    isComfyUiModel: true,
+    default: '❓',
+    multiple: 5,
+  },
   width: {
     type: 'integer',
     default: 512,
@@ -184,23 +282,7 @@ const params: Record<string, TParam> = {
 
       return width
     },
-  },
-  height: {
-    type: 'integer',
-    default: 512,
-    description: 'Height of the generated image in pixels',
-    label: 'Height',
-    compile: (height) => {
-      height = parseInt(height, 10)
-
-      // Clamp height to be multiple of 8
-      if (height % 8 !== 0) {
-        height = Math.round(height / 8) * 8
-      }
-
-      return height
-    },
-  },
+  }
 }
 
 Object.entries(params).forEach(([key, param]) => {
@@ -238,4 +320,4 @@ Object.entries(params).forEach(([key, param]) => {
   assertNoCircularDependencies(new Set<string>(), key)
 })
 
-export default params
+export const wfParamSchema = params

@@ -1,54 +1,10 @@
 import { Injectable } from '@nestjs/common'
 
-import type { TWorkflow } from './type'
-
-import workflowInfo from '../../../workflow'
+import { wfParamSchema } from '../../../workflow'
 
 @Injectable()
 export class WorkflowLibService {
-  readonly wfParamSchema = workflowInfo.param
-
-  getWorkflow (id: string): TWorkflow {
-    const workflow = workflowInfo.variant[id.toString()]
-
-    if (!workflow) {
-      throw new Error(`Workflow ${id} not found`)
-    }
-
-    Object.keys(workflow.params || {}).forEach((key) => {
-      if (workflowInfo.param[key]) {
-        workflow.params[key] = {
-          ...workflowInfo.param[key],
-          ...workflow.params[key],
-        }
-      }
-    })
-
-    return workflow
-  }
-
-  getWfParamsForSession ({ workflowId, sessionWfParams = {} }) {
-    const workflow = this.getWorkflow(workflowId)
-    const params = workflow.params
-
-    const result = {}
-
-    Object.entries(params).forEach(([name, props]) => {
-      if (props.user !== true) {
-        return
-      }
-
-      // установим значение по умолчанию, если параметр не задан
-      result[name] = sessionWfParams[name] || props?.value || props.default
-    })
-
-    return result
-  }
-
-  findWorkflowsByTags ({ tags = [] }: { tags: string[]}): TWorkflow[] {
-    return Object.values(workflowInfo.variant)
-      .filter((wf) => tags.every(tag => wf.tags.includes(tag)))
-  }
+  readonly wfParamSchema = wfParamSchema
 
   compileWorkflowV2 ({ workflow, params = {} }) {
     console.log('WorkflowLibService_compileWorkflow_10', JSON.stringify(params, null, 4))
@@ -95,7 +51,7 @@ export class WorkflowLibService {
           continue
         }
 
-        const paramInfo = workflowInfo.param[key]
+        const paramInfo = wfParamSchema[key]
         const rawValue = params[key] ?? paramInfo?.default
 
         if (paramInfo?.compile) {
@@ -129,7 +85,7 @@ export class WorkflowLibService {
     let templateStr = JSON.stringify(workflow)
 
     for (const key of Object.keys(params)) {
-      const value = params[key] ?? workflowInfo.param[key]?.default
+      const value = params[key] ?? wfParamSchema[key]?.default
 
       if (value === undefined) {
         throw new Error(`WorkflowLibService_compileWorkflow_13 Parameter <<${key}>> is required`)
@@ -150,5 +106,20 @@ export class WorkflowLibService {
     } catch (err) {
       throw new Error(`WorkflowLibService_compileWorkflow_91 Error parsing compiled template: ${err.message}\nTemplate string: ${templateStr}`)
     }
+  }
+
+  getWorkflowTemplateParamKeys (workflow: any): string[] {
+    const workflowTemplateParams: string[] = []
+    const re = new RegExp(`{{([a-zA-Z0-9]+)}}`, 'gm')
+    const matches = JSON.stringify(workflow).matchAll(re)
+
+    for (const match of matches) {
+      const key = match[1]
+      if (!workflowTemplateParams.includes(key)) {
+        workflowTemplateParams.push(key)
+      }
+    }
+
+    return workflowTemplateParams
   }
 }

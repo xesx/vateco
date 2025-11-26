@@ -33,15 +33,15 @@ export class AppAdminController {
 
   @Get('runpod/run-sync')
   async runpodRunSync (@Res() res: Response): Promise<any> {
-    const workflow = this.wf.getWorkflow('base.flux.runpod').template
-
-    const data = await this.runpod.runSync({ workflow })
-
-    const base64Data = data.output.images?.[0].data
-    const imgBuffer = Buffer.from(base64Data, 'base64')
-
-    res.setHeader('Content-Type', 'image/png')
-    res.setHeader('Content-Length', imgBuffer.length)
-    res.end(imgBuffer)
+    // const workflow = this.wf.getWorkflow('base.flux.runpod').template
+    //
+    // const data = await this.runpod.runSync({ workflow })
+    //
+    // const base64Data = data.output.images?.[0].data
+    // const imgBuffer = Buffer.from(base64Data, 'base64')
+    //
+    // res.setHeader('Content-Type', 'image/png')
+    // res.setHeader('Content-Length', imgBuffer.length)
+    // res.end(imgBuffer)
   }
 }

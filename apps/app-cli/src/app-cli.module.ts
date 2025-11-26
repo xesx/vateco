@@ -27,6 +27,7 @@ import * as command from './command'
     repo.ModelRepositoryModule,
 
     synth.CloudAppSynthModule,
+    synth.WorkflowSynthModule,
   ],
   providers: [
     AppCliService,
