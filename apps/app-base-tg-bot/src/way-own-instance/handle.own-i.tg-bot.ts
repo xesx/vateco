@@ -318,7 +318,7 @@ export class HandleOwnITgBot {
   }
 
   async actionWorkflowRun (ctx: OwnInstanceContext) {
-    const { workflowVariantId, userId } = ctx.session
+    const { workflowVariantId, userId, modelInfoLoaded } = ctx.session
 
     if (!workflowVariantId) {
       console.log('HandleOwnITgBot_actionWorkflowRun_21 No workflowId in session')
@@ -326,6 +326,31 @@ export class HandleOwnITgBot {
     }
 
     const workflowVariantParams = await this.wfrepo.getWorkflowMergedWorkflowVariantParamsValueMap({ userId, workflowVariantId })
+
+    for (const paramName in workflowVariantParams) {
+      if (this.wflib.wfParamSchema[paramName]?.isComfyUiModel) {
+        const value = workflowVariantParams[paramName]
+
+        const modelName = String(value.value ?? value)
+
+        if (modelInfoLoaded?.includes(modelName)) {
+          continue
+        }
+
+        const modelData = await this.modelrepo.getModelByName(modelName)
+
+        await this.cloudapilib.vastAiModelInfoLoad({
+          baseUrl: ctx.session.instance?.apiUrl,
+          instanceId: ctx.session.instance?.id,
+          token: ctx.session.instance?.token,
+          modelName,
+          modelData,
+        })
+
+        ctx.session.modelInfoLoaded = ctx.session.modelInfoLoaded || []
+        ctx.session.modelInfoLoaded.push(modelName)
+      }
+    }
 
     await this.cloudapilib.vastAiWorkflowRun({
       baseUrl: ctx.session.instance?.apiUrl,
@@ -445,7 +470,7 @@ export class HandleOwnITgBot {
 
   async actionWorkflowSelect (ctx: OwnInstanceMatchContext) {
     const { wfParamSchema } = this.wflib
-    const { step, userId } = ctx.session
+    const { step, userId, modelInfoLoaded } = ctx.session
 
     if (!['running', 'loading'].includes(step)) {
       ctx.deleteMessage()
@@ -475,6 +500,11 @@ export class HandleOwnITgBot {
     for (const [paramName, value] of Object.entries(workflowVariantParams)) {
       if (wfParamSchema[paramName].isComfyUiModel) {
         const modelName = String(value.value ?? value)
+
+        if (modelInfoLoaded?.includes(modelName)) {
+          continue
+        }
+
         const modelData = await this.modelrepo.getModelByName(modelName)
 
         await this.cloudapilib.vastAiModelInfoLoad({
@@ -484,6 +514,9 @@ export class HandleOwnITgBot {
           modelName,
           modelData,
         })
+
+        ctx.session.modelInfoLoaded = ctx.session.modelInfoLoaded || []
+        ctx.session.modelInfoLoaded.push(modelName)
       }
     }
 

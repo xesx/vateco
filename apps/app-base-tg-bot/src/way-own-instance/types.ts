@@ -42,5 +42,6 @@ export interface SessionData {
   way?: string
   workflowVariantId?: number
   inputWaiting?: string
+  modelInfoLoaded?: string[]
   // [key: string]: any
 }

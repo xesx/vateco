@@ -74,8 +74,6 @@ export class WorkflowRunCronJob {
       const modelsForDownload: string[] = []
       const imagesForDownload: string[] = []
 
-      console.log('\x1b[36m', 'workflowVariantParams', workflowVariantParams, '\x1b[0m')
-
       Object.entries(workflowVariantParams || {}).forEach(([key, value]) => {
         if (typeof value === 'object') {
           value = value.value
@@ -85,7 +83,6 @@ export class WorkflowRunCronJob {
           return
         }
 
-        console.log('\x1b[36m', 'wfParamSchema[key]', key, wfParamSchema[key].isComfyUiModel, '\x1b[0m')
         if (wfParamSchema[key].isComfyUiModel) {
           // workflow.params[key].default = value
           modelsForDownload.push(value)
@@ -108,7 +105,6 @@ export class WorkflowRunCronJob {
         }
       })
 
-      console.log('\x1b[36m', 'modelsForDownload', modelsForDownload, '\x1b[0m')
       for (const modelName of modelsForDownload) {
         const modelInfoFilePath = join(MODEL_INFO_DIR, `${modelName}.json`)
 
