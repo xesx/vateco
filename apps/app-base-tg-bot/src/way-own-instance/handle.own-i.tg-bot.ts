@@ -333,6 +333,10 @@ export class HandleOwnITgBot {
 
         const modelName = String(value.value ?? value)
 
+        if (['❓', 'N/A'].includes(modelName)) {
+          continue
+        }
+
         if (modelInfoLoaded?.includes(modelName)) {
           continue
         }
