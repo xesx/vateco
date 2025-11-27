@@ -14,6 +14,7 @@ export class AppCliService {
     private readonly _cli06: command.WorkflowTemplateCreateCli,
     private readonly _cli07: command.WorkflowVariantCreateCli,
     private readonly _cli08: command.WorkflowVariantDeleteCli,
+    private readonly _cli09: command.WorkflowParseCli,
   ) {}
 
   async run(argv: string[]) {

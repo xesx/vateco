@@ -7,5 +7,14 @@
   "DualCLIPLoader": "cookDualCLIPLoaderNode",
   "EmptyLatentImage": "cookEmptyLatentImageNode",
   "KSampler": "cookKSamplerNode",
-  "PrimitiveStringMultiline": "cookPrimitiveStringMultilineNode"
+  "PrimitiveStringMultiline": "cookPrimitiveStringMultilineNode",
+
+  "LoadImage": "cookLoadImageNode",
+  "LyingSigmaSampler": "cookLyingSigmaSamplerNode",
+  "BasicScheduler": "cookBasicSchedulerNode",
+  "KSamplerSelect": "cookKSamplerSelectNode",
+  "RandomNoise": "cookRandomNoiseNode",
+  "ModelSamplingFlux": "cookModelSamplingFluxNode",
+  "FluxGuidance": "cookFluxGuidanceNode",
+  "ImageScaleBy": "cookImageScaleByNode"
 }

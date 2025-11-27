@@ -10,7 +10,16 @@
   },
   "99": {
     "inputs": {
-      "text": "recolor it to orange and purple colors",
+      "text": [
+        "342",
+        0
+      ],
+      "speak_and_recognation": {
+        "__value__": [
+          false,
+          true
+        ]
+      },
       "clip": [
         "282",
         1
@@ -127,9 +136,9 @@
   },
   "251": {
     "inputs": {
-      "dishonesty_factor": -0.04,
-      "start_percent": 0.25,
-      "end_percent": 0.7,
+      "dishonesty_factor": -0.04000000000000001,
+      "start_percent": 0.25000000000000006,
+      "end_percent": 0.7000000000000002,
       "sampler": [
         "253",
         0
@@ -175,8 +184,8 @@
   },
   "275": {
     "inputs": {
-      "max_shift": 1.15,
-      "base_shift": 0.5,
+      "max_shift": 1.1500000000000001,
+      "base_shift": 0.5000000000000001,
       "width": [
         "293",
         0
@@ -228,8 +237,8 @@
   },
   "281": {
     "inputs": {
-      "max_shift": 1.15,
-      "base_shift": 0.5,
+      "max_shift": 1.1500000000000001,
+      "base_shift": 0.5000000000000001,
       "width": 1024,
       "height": 1024,
       "model": [
@@ -303,7 +312,7 @@
   "303": {
     "inputs": {
       "upscale_method": "lanczos",
-      "scale_by": 1,
+      "scale_by": 1.0000000000000002,
       "image": [
         "234",
         0
@@ -328,6 +337,21 @@
     "class_type": "VAEEncode",
     "_meta": {
       "title": "VAE Encode"
+    }
+  },
+  "342": {
+    "inputs": {
+      "value": "",
+      "speak_and_recognation": {
+        "__value__": [
+          false,
+          true
+        ]
+      }
+    },
+    "class_type": "PrimitiveStringMultiline",
+    "_meta": {
+      "title": "@positivePrompt"
     }
   }
 }

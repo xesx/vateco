@@ -94,4 +94,76 @@ export class WorkflowCookSynthService {
 
     return node
   }
+
+  cookLoadImageNode (node: any) {
+    node._meta.title = '#LoadImage'
+
+    node.inputs.image = "{{image}}" // "start-image.png"
+
+    return node
+  }
+
+  cookLyingSigmaSamplerNode (node: any) {
+    node._meta.title = '#LyingSigmaSampler'
+
+    node.inputs.dishonesty_factor = "{{dishonestyFactor}}" // -0.04000000000000001
+    node.inputs.start_percent = "{{startPercent}}" // 0.25000000000000006
+    node.inputs.end_percent = "{{endPercent}}" // 0.7000000000000002
+
+    return node
+  }
+
+  cookBasicSchedulerNode (node: any) {
+    node._meta.title = '#BasicScheduler'
+
+    node.inputs.scheduler = "{{scheduler}}" // "simple"
+    node.inputs.steps = "{{steps}}" // 15
+    node.inputs.denoise = "{{denoise}}" // 1
+
+    return node
+  }
+
+  cookKSamplerSelectNode (node: any) {
+    node._meta.title = '#KSamplerSelect'
+
+    node.inputs.sampler_name = "{{sampler}}" // "euler"
+
+    return node
+  }
+
+  cookRandomNoiseNode (node: any) {
+    node._meta.title = '#RandomNoise'
+
+    node.inputs.noise_seed = "{{seedValue}}" // 914614111060696
+
+    return node
+  }
+
+  cookModelSamplingFluxNode (node: any) {
+    node._meta.title = '#ModelSamplingFlux'
+
+    node.inputs.max_shift = "{{maxShift}}" // 1.1500000000000001
+    node.inputs.base_shift = "{{baseShift}}" // 0.5000000000000001
+    node.inputs.width = "{{width}}" // 1024
+    node.inputs.height = "{{height}}" // 1024
+
+    return node
+  }
+
+  cookFluxGuidanceNode (node: any) {
+    node._meta.title = '#FluxGuidance'
+
+    node.inputs.guidance = "{{guidance}}" // 2.5
+
+    return node
+  }
+
+  cookImageScaleByNode (node: any) {
+    node._meta.title = '#ImageScaleBy'
+
+    node.inputs.upscale_method = "{{upscaleMethod}}" // "lanczos"
+    node.inputs.scale_by = "{{scaleBy}}" // 1.0000000000000002
+
+    return node
+  }
 }

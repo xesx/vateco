@@ -312,7 +312,100 @@ const params: Record<string, TParam> = {
 
       return width
     },
-  }
+  },
+
+  dishonestyFactor: {
+    type: 'number',
+    default: -0.04,
+    description: 'Parameter for LyingSigmaSampler node, input dishonesty_factor',
+    label: 'dishonestyFactor',
+    positionX: undefined,
+    positionY: undefined,
+    enum: undefined,
+    depends: undefined,
+    multiple: undefined,
+    compile: undefined,
+  },
+
+  startPercent: {
+    type: 'number',
+    default: 0.25,
+    description: 'Parameter for LyingSigmaSampler node, input start_percent',
+    label: 'startPercent',
+    positionX: undefined,
+    positionY: undefined,
+    enum: undefined,
+    depends: undefined,
+    multiple: undefined,
+    compile: undefined,
+  },
+
+  endPercent: {
+    type: 'number',
+    default: 0.80,
+    description: 'Parameter for LyingSigmaSampler node, input end_percent',
+    label: 'endPercent',
+    positionX: undefined,
+    positionY: undefined,
+    enum: undefined,
+    depends: undefined,
+    multiple: undefined,
+    compile: undefined,
+  },
+
+  maxShift: {
+    type: 'number',
+    default: 1.1500000000000001,
+    description: 'Parameter for ModelSamplingFlux node, input max_shift',
+    label: 'maxShift',
+    positionX: undefined,
+    positionY: undefined,
+    enum: undefined,
+    depends: undefined,
+    multiple: undefined,
+    compile: undefined,
+  },
+
+  baseShift: {
+    type: 'number',
+    default: 0.50,
+    description: 'Parameter for ModelSamplingFlux node, input base_shift',
+    label: 'baseShift',
+    positionX: undefined,
+    positionY: undefined,
+    enum: undefined,
+    depends: undefined,
+    multiple: undefined,
+    compile: undefined,
+  },
+
+  upscaleMethod: {
+    type: 'string',
+    default: 'lanczos',
+    description: 'Parameter for ImageScaleBy node, input upscale_method',
+    label: 'upscaleMethod',
+    isComfyUiModel: false,
+    isMetaParam: false,
+    positionX: undefined,
+    positionY: undefined,
+    enum: undefined,
+    depends: undefined,
+    multiple: undefined,
+    compile: undefined,
+  },
+
+  scaleBy: {
+    type: 'number',
+    default: 1.00,
+    description: 'Parameter for ImageScaleBy node, input scale_by',
+    label: 'scaleBy',
+    positionX: undefined,
+    positionY: undefined,
+    enum: undefined,
+    depends: undefined,
+    multiple: undefined,
+    compile: undefined,
+  },
 }
 
 Object.entries(params).forEach(([key, param]) => {
