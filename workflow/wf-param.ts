@@ -179,7 +179,7 @@ const params: Record<string, TParam> = {
     type: 'number',
     description: 'The LoRa strength to use for generation',
     default: 1.0,
-    label: 'Lora Strength',
+    label: '',
     multiple: 20,
     positionX: 1000,
     positionY: 2,
@@ -231,15 +231,19 @@ const params: Record<string, TParam> = {
     enum: ['fixed', 'random'],
     default: 'random',
     description: 'Type of seed to use, fixed or random',
-    label: 'Seed Type',
+    label: '',
     isMetaParam: true,
+    positionX: 0,
+    positionY: 1,
   },
   seedValue: {
     type: 'integer',
     default: 42,
     description: 'The seed value to use when Seed Type is fixed',
-    label: 'Seed Value',
+    label: 'seed',
     depends: ['seedType'],
+    positionX: 0,
+    positionY: 2,
     compile: (seedValue, { seedType }) => {
       if (seedType === 'random') {
         const seed = Math.floor(Math.random() * 4294967296) // 0..2^32-1

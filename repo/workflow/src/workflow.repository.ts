@@ -72,7 +72,7 @@ export class WorkflowRepository {
     })
   }
 
-  async createWorkflowVariantParam ({ workflowVariantId, paramName, label, value, positionX, positionY, user, trx = this.prisma }: { workflowVariantId: number, paramName: string, label?: string, value?: any, positionX?: number, positionY?: number, user?: boolean, trx?: lib.PrismaLibService }) {
+  async createWorkflowVariantParam ({ workflowVariantId, paramName, label, value, positionX, positionY, user, enumValues, trx = this.prisma }: { workflowVariantId: number, paramName: string, label?: string, value?: any, positionX?: number, positionY?: number, user?: boolean, enumValues?: any[], trx?: lib.PrismaLibService }) {
     const { wfParamSchema } = this.wflib
 
     paramName = paramName?.trim() || ''
@@ -97,10 +97,29 @@ export class WorkflowRepository {
         paramName,
         label,
         user: user ?? false,
+        'enum': enumValues,
         value,
         positionX,
         positionY,
       },
+    })
+  }
+
+  async deleteWorkflowVariant ({ workflowVariantId, trx = this.prisma }: { workflowVariantId: number, trx?: lib.PrismaLibService }) {
+    await trx.workflowVariants.delete({
+      where: { id: workflowVariantId },
+    })
+  }
+
+  async deleteWorkflowVariantParams ({ workflowVariantId, trx = this.prisma }: { workflowVariantId: number, trx?: lib.PrismaLibService }) {
+    await trx.workflowVariantParams.deleteMany({
+      where: { workflowVariantId },
+    })
+  }
+
+  async deleteWorkflowVariantTags ({ workflowVariantId, trx = this.prisma }: { workflowVariantId: number, trx?: lib.PrismaLibService }) {
+    await trx.workflowVariantTags.deleteMany({
+      where: { workflowVariantId },
     })
   }
 

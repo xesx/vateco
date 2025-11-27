@@ -82,16 +82,15 @@ export class WorkflowCookSynthService {
     return node
   }
 
-  cookPositivePromptNode (node: any) {
-    node.inputs.value = "{{positivePrompt}}"
-    node._meta.title = '#PositivePrompt'
+  cookPrimitiveStringMultilineNode (node: any) {
+    const title = node._meta.title
 
-    return node
-  }
+    if (!title.startsWith('@')) {
+      return node
+    }
 
-  cookNegativePromptNode (node: any) {
-    node.inputs.value = "{{negativePrompt}}"
-    node._meta.title = '#NegativePrompt'
+    const paramKey = title.slice(1)
+    node.inputs.value = `{{${paramKey}}}`
 
     return node
   }

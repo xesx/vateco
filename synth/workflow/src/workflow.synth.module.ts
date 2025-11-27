@@ -9,6 +9,7 @@ import * as repo from '@repo'
 @Module({
   imports: [
     lib.WorkflowLibModule,
+    lib.TgBotLibModule,
     repo.ModelRepositoryModule,
     repo.WorkflowRepositoryModule,
   ],

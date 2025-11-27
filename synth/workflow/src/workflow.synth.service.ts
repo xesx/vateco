@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common'
 
 import * as lib from '@lib'
 import * as repo from '@repo'
+import * as kb from '@kb'
 
 import { WorkflowCompilerSynthService } from './workflow-compiler.synth.service'
 import { WorkflowCookSynthService } from './workflow-cook.synth.service'
@@ -14,9 +15,11 @@ export class WorkflowSynthService {
 
   constructor(
     private readonly wflib: lib.WorkflowLibService,
+    private readonly tgbotlib: lib.TgBotLibService,
+
+    private readonly wfrepo: repo.WorkflowRepository,
     private readonly compiler: WorkflowCompilerSynthService,
     private readonly cook: WorkflowCookSynthService,
-    private readonly wfrepo: repo.WorkflowRepository,
   ) {}
 
   async compileEnum (name: string) {
@@ -41,15 +44,7 @@ export class WorkflowSynthService {
       const classType = node.class_type
       const title = node._meta?.title || ''
 
-      let cookFunctionName = cookNodeMap[classType]
-
-      if (title.startsWith('@')) {
-        cookFunctionName = cookNodeMap[title]
-
-        if (!cookFunctionName) {
-          throw new Error(`WorkflowSynthService_cookWorkflow_41 No cook function mapped for special node title: ${title}`)
-        }
-      }
+      const cookFunctionName = cookNodeMap[classType]
 
       if (cookFunctionName) {
         if (typeof this.cook[cookFunctionName] !== 'function') {
@@ -79,5 +74,11 @@ export class WorkflowSynthService {
     }
 
     return true
+  }
+
+  async generateWorkflowVariantRunMenu ({ workflowVariantId, userId, prefixAction = 'empty', backAction = 'empty' }: { workflowVariantId: number, userId: number, prefixAction?: string, backAction?: string }) {
+    const wfvParams = await this.wfrepo.getWorkflowMergedWorkflowVariantParams({ userId, workflowVariantId })
+
+    return this.tgbotlib.generateInlineKeyboard(kb.workflowRunMenu({ workflowVariantId, wfvParams, prefixAction, backAction }))
   }
 }

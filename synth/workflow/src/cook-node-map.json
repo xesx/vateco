@@ -1,7 +1,4 @@
 {
-  "@positivePrompt": "cookPositivePromptNode",
-  "@negativePrompt": "cookNegativePromptNode",
-
   "Power Lora Loader (rgthree)": "cookRgfreePowerLoraLoaderNode",
   "VAELoader": "cookVaeLoaderNode",
   "UNETLoader": "cookUnetLoaderNode",
@@ -9,5 +6,6 @@
   "SaveImage": "cookSaveImageNode",
   "DualCLIPLoader": "cookDualCLIPLoaderNode",
   "EmptyLatentImage": "cookEmptyLatentImageNode",
-  "KSampler": "cookKSamplerNode"
+  "KSampler": "cookKSamplerNode",
+  "PrimitiveStringMultiline": "cookPrimitiveStringMultilineNode"
 }

@@ -24,9 +24,10 @@ export class WorkflowVariantCreateCli {
         const prisma = this.wfrepo['prisma']
 
         const workflowTemplate = await this.wfrepo.getWorkflowTemplate(Number(workflowTemplateId))
-        console.log('\x1b[36m', 'workflowTemplate', workflowTemplate, '\x1b[0m')
         const paramKeys = this.wflib.getWorkflowTemplateParamKeys(workflowTemplate)
-        console.log('\x1b[36m', 'paramKeys', paramKeys, '\x1b[0m')
+        const metaParamKeys = Object.entries(wfParamSchema)
+          .filter(([, value]) => value.isMetaParam)
+          .map(([key]) => key)
 
         const workflowVariantId = await prisma.$transaction(async (trx: lib.PrismaLibService) => {
           const workflowVariantId = await this.wfrepo.createWorkflowVariant({
@@ -42,22 +43,33 @@ export class WorkflowVariantCreateCli {
             trx,
           })
 
-          for (const paramKey of paramKeys) {
+          let defaultPositionX = 7000
+
+          for (const paramKey of [...metaParamKeys, ...paramKeys]) {
             const paramSchema = wfParamSchema[paramKey]
 
             if (!paramSchema) {
               throw new Error(`No schema found for workflow parameter: ${paramKey}`)
             }
 
+            const endDigitMatch = paramKey.match(/\d+$/)
+            const index = endDigitMatch ? parseInt(endDigitMatch[0], 10) : 0
+
+            const positionX = (paramSchema.positionX ?? defaultPositionX) + index
+
             await this.wfrepo.createWorkflowVariantParam({
               workflowVariantId,
               paramName: paramKey,
               label: paramSchema.label || paramKey,
               value: paramSchema.default,
-              positionX: paramSchema.positionX || 7000,
+              user: true,
+              enumValues: paramSchema.enum,
+              positionX,
               positionY: paramSchema.positionY || 0,
               trx,
             })
+
+            defaultPositionX += 10
           }
 
           return workflowVariantId

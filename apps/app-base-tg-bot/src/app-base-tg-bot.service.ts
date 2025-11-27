@@ -17,6 +17,7 @@ export class AppBaseTgBotService {
   constructor(
     private readonly tgbotlib: lib.TgBotLibService,
     private readonly modelrepo: repo.ModelRepository,
+    private readonly wfrepo: repo.WorkflowRepository,
     private readonly wfsynth: synth.WorkflowSynthService,
   ) {
     setTimeout(() => {
@@ -34,6 +35,22 @@ export class AppBaseTgBotService {
     const message = 'Main menu:'
     const keyboard = this.tgbotlib.generateInlineKeyboard(MAIN_MENU)
     await this.tgbotlib.reply(ctx, message, keyboard)
+  }
+
+  async showWorkflowVariantRunMenu (ctx) {
+    const [, workflowVariantIdStr] = ctx.message.text.split(' ')
+    const workflowVariantId = parseInt(workflowVariantIdStr, 10)
+    const userId = ctx.session.userId
+
+    if (isNaN(workflowVariantId)) {
+      throw new Error('Invalid workflow variant ID. Usage: #wf-show <workflowVariantId>')
+    }
+
+    const workflowVariant = await this.wfrepo.getWorkflowVariant(workflowVariantId)
+    const keyboard = await this.wfsynth.generateWorkflowVariantRunMenu({ workflowVariantId, userId, })
+
+    await this.tgbotlib.reply(ctx, `Workflow variant ${workflowVariant.name}`, keyboard)
+    await this.tgbotlib.safeAnswerCallback(ctx)
   }
 
   resetSession(ctx: TAppBaseTgBotContext) {
@@ -99,7 +116,7 @@ export class AppBaseTgBotService {
   async createWorkflowTemplateByFile (ctx, next) {
     const caption = ctx.message.caption
 
-    if (!caption?.startsWith('/wft-create')) {
+    if (!caption?.startsWith('_wft_create')) {
       return next()
     }
 
