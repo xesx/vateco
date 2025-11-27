@@ -501,6 +501,10 @@ export class HandleOwnITgBot {
       if (wfParamSchema[paramName].isComfyUiModel) {
         const modelName = String(value.value ?? value)
 
+        if (['❓', 'N/A'].includes(modelName)) {
+          continue
+        }
+
         if (modelInfoLoaded?.includes(modelName)) {
           continue
         }

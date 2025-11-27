@@ -159,7 +159,7 @@ const params: Record<string, TParam> = {
   lora: {
     type: 'string',
     description: 'The LoRa to use for generation',
-    label: 'Lora',
+    label: '',
     default: '❓',
     isComfyUiModel: true,
     multiple: 20,
@@ -240,7 +240,7 @@ const params: Record<string, TParam> = {
     type: 'integer',
     default: 42,
     description: 'The seed value to use when Seed Type is fixed',
-    label: 'seed',
+    label: '',
     depends: ['seedType'],
     positionX: 0,
     positionY: 2,
