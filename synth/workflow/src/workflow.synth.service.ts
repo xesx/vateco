@@ -81,4 +81,78 @@ export class WorkflowSynthService {
 
     return this.tgbotlib.generateInlineKeyboard(kb.workflowRunMenu({ workflowVariantId, wfvParams, prefixAction, backAction }))
   }
+
+  async createWorkflowVariant ({ workflowTemplateId, name, description }: { workflowTemplateId: number, name?: string, description?: string }) {
+    const { l } = this
+    const { wfParamSchema } = this.wflib
+    const prisma = this.wfrepo['prisma']
+
+    const workflowTemplate = await this.wfrepo.getWorkflowTemplate(Number(workflowTemplateId))
+    const paramKeys = this.wflib.getWorkflowTemplateParamKeys(workflowTemplate)
+    const metaParamKeys = Object.entries(wfParamSchema)
+      .filter(([, value]) => value.isMetaParam)
+      .map(([key]) => key)
+
+    const workflowVariantId = await prisma.$transaction(async (trx: lib.PrismaLibService) => {
+      const workflowVariantId = await this.wfrepo.createWorkflowVariant({
+        workflowTemplateId: Number(workflowTemplateId),
+        name: name ?? workflowTemplate.name,
+        description: description ?? workflowTemplate.description ?? '',
+        trx,
+      })
+
+      await this.wfrepo.createWorkflowVariantTag({ workflowVariantId, tag: 'new', trx })
+
+      let defaultPositionX = 7000
+
+      for (const paramKey of [...metaParamKeys, ...paramKeys]) {
+        const paramSchema = wfParamSchema[paramKey]
+
+        if (!paramSchema) {
+          throw new Error(`No schema found for workflow parameter: ${paramKey}`)
+        }
+
+        const endDigitMatch = paramKey.match(/\d+$/)
+        const index = endDigitMatch ? parseInt(endDigitMatch[0], 10) : 0
+
+        const positionX = (paramSchema.positionX ?? defaultPositionX) + index
+
+        await this.wfrepo.createWorkflowVariantParam({
+          workflowVariantId,
+          paramName: paramKey,
+          label: paramSchema.label || paramKey,
+          value: paramSchema.default,
+          user: true,
+          enumValues: paramSchema.enum,
+          positionX,
+          positionY: paramSchema.positionY || 0,
+          trx,
+        })
+
+        defaultPositionX += 10
+      }
+
+      return workflowVariantId
+    })
+
+    l.log(`WorkflowSynthService_createWorkflowVariant_99 Created workflow variant with ID: ${workflowVariantId}`)
+
+    return workflowVariantId
+  }
+
+  async deleteWorkflowVariant (workflowVariantId: number) {
+    const { l } = this
+
+    const prisma = this.wfrepo['prisma']
+
+    await this.wfrepo.getWorkflowVariant(workflowVariantId)
+
+    await prisma.$transaction(async (trx: lib.PrismaLibService) => {
+      await this.wfrepo.deleteWorkflowVariantTags({ workflowVariantId, trx })
+      await this.wfrepo.deleteWorkflowVariantParams({ workflowVariantId, trx })
+      await this.wfrepo.deleteWorkflowVariant({ workflowVariantId, trx })
+    })
+
+    l.log(`WorkflowSynthService_deleteWorkflowVariant_113 Deleted workflow variant with ID: ${workflowVariantId}`)
+  }
 }

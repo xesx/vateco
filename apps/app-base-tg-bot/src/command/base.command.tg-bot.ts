@@ -55,10 +55,13 @@ export class BaseCommandTgBot {
     this.bot.command('start', (ctx, next) => this.handleStart(ctx, next))
     this.bot.action('act:main-menu', (ctx) => this.tgbotsrv.actionMainMenu(ctx))
 
+    this.bot.hears(/^https:\/\/huggingface\.co\/\S+/i, (ctx, next) => this.tgbotsrv.createModelByHuggingfaceLink(ctx, next))
+
     this.bot.on(message('document'), (ctx, next) => this.tgbotsrv.createWorkflowTemplateByFile(ctx, next)) // _wft_create
 
-    this.bot.hears(/^https:\/\/huggingface\.co\/\S+/i, (ctx, next) => this.tgbotsrv.createModelByHuggingfaceLink(ctx, next))
-    this.bot.hears(/^_wf_show/, (ctx) => this.tgbotsrv.showWorkflowVariantRunMenu(ctx))
+    this.bot.hears(/^_wfv_create/, (ctx) => this.tgbotsrv.createWorkflowVariant(ctx))
+    this.bot.hears(/^_wfv_delete/, (ctx) => this.tgbotsrv.deleteWorkflowVariant(ctx))
+    this.bot.hears(/^_wfv_show/, (ctx) => this.tgbotsrv.showWorkflowVariantRunMenu(ctx))
   }
 
   private async initSession(ctx) {

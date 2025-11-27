@@ -139,4 +139,32 @@ export class AppBaseTgBotService {
     await ctx.reply(`Workflow template created with ID: ${workflowTemplateId}`)
     await this.tgbotlib.safeAnswerCallback(ctx)
   }
+
+  async createWorkflowVariant (ctx) {
+    const [, workflowTemplateIdStr] = ctx.message.text.split(/\s+/)
+    const workflowTemplateId = parseInt(workflowTemplateIdStr, 10)
+
+    if (isNaN(workflowTemplateId)) {
+      throw new Error('Invalid workflow template ID. Usage: #wfv_create <workflowTemplateId>')
+    }
+
+    const workflowVariantId = await this.wfsynth.createWorkflowVariant({ workflowTemplateId })
+
+    await ctx.reply(`Workflow variant created with ID: ${workflowVariantId}`)
+    await this.tgbotlib.safeAnswerCallback(ctx)
+  }
+
+  async deleteWorkflowVariant (ctx) {
+    const [, workflowVariantIdStr] = ctx.message.text.split(/\s+/)
+    const workflowVariantId = parseInt(workflowVariantIdStr, 10)
+
+    if (isNaN(workflowVariantId)) {
+      throw new Error('Invalid workflow variant ID. Usage: #wfv_delete <workflowVariantId>')
+    }
+
+    await this.wfsynth.deleteWorkflowVariant(workflowVariantId)
+
+    await ctx.reply(`Workflow variant with ID: ${workflowVariantId} deleted`)
+    await this.tgbotlib.safeAnswerCallback(ctx)
+  }
 }
