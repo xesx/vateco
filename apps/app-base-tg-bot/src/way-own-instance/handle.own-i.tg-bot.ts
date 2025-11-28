@@ -131,7 +131,7 @@ export class HandleOwnITgBot {
       paramName = imageWorkflowVariantParams[0]?.paramName
     }
 
-    if (!paramName) {
+    if (paramName) {
       const fileId = this.tgbotlib.getImageFileIdFromMessage({ message: ctx.message })
       console.log('HandleOwnITgBot_photo_23 fileId', fileId)
 

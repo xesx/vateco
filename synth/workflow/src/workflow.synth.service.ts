@@ -12,6 +12,7 @@ import * as cookNodeMap from './cook-node-map.json'
 @Injectable()
 export class WorkflowSynthService {
   private readonly l = new Logger(WorkflowSynthService.name)
+  readonly cookNodeMap = cookNodeMap
 
   constructor(
     private readonly wflib: lib.WorkflowLibService,

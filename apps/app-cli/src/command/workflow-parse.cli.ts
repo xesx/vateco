@@ -12,22 +12,22 @@ const IGNORE_INPUT_KEYS = [
   'PowerLoraLoaderHeaderWidget',
 ]
 
-const IGNORE_NODE_CLASSES = [
-  'Power Lora Loader (rgthree)',
-  'PrimitiveStringMultiline',
-  'SaveImage',
-  'UNETLoader',
-  'VAELoader',
-  'DualCLIPLoader',
-  'VAELoader',
-  'UNETLoader',
-  'CLIPTextEncodeFlux',
-  'SaveImage',
-  'DualCLIPLoader',
-  'EmptyLatentImage',
-  'KSampler',
-  'PrimitiveStringMultiline',
-]
+// const IGNORE_NODE_CLASSES = [
+//   'Power Lora Loader (rgthree)',
+//   'PrimitiveStringMultiline',
+//   'SaveImage',
+//   'UNETLoader',
+//   'VAELoader',
+//   'DualCLIPLoader',
+//   'VAELoader',
+//   'UNETLoader',
+//   'CLIPTextEncodeFlux',
+//   'SaveImage',
+//   'DualCLIPLoader',
+//   'EmptyLatentImage',
+//   'KSampler',
+//   'PrimitiveStringMultiline',
+// ]
 
 function toCamelCase (str: string): string {
   return str.replace(/([-_ ][a-z])/gi, (group) =>
@@ -42,7 +42,7 @@ function toCamelCase (str: string): string {
 export class WorkflowParseCli {
   constructor(
     private readonly wflib: lib.WorkflowLibService,
-    private readonly synthwf: synth.WorkflowSynthService,
+    private readonly wfsynth: synth.WorkflowSynthService,
     private readonly modelrepo: repo.ModelRepository,
   ) {}
 
@@ -53,6 +53,8 @@ export class WorkflowParseCli {
       .description('Parse workflow')
       .action(async (options) => {
         const { file } = options
+
+        const IGNORE_NODE_CLASSES = Object.keys(this.wfsynth.cookNodeMap)
 
         if (!fs.existsSync(file)) {
           throw new Error(`File not found: ${file}`)
