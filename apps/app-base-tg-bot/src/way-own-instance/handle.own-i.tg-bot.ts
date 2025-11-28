@@ -318,7 +318,8 @@ export class HandleOwnITgBot {
   }
 
   async actionWorkflowRun (ctx: OwnInstanceContext) {
-    const { workflowVariantId, userId, modelInfoLoaded } = ctx.session
+    const { workflowVariantId, userId, instance } = ctx.session
+    const modelInfoLoaded = instance?.modelInfoLoaded || []
 
     if (!workflowVariantId) {
       console.log('HandleOwnITgBot_actionWorkflowRun_21 No workflowId in session')
@@ -351,8 +352,10 @@ export class HandleOwnITgBot {
           modelData,
         })
 
-        ctx.session.modelInfoLoaded = ctx.session.modelInfoLoaded || []
-        ctx.session.modelInfoLoaded.push(modelName)
+        if (ctx.session.instance) {
+          ctx.session.instance.modelInfoLoaded = ctx.session.instance.modelInfoLoaded || []
+          ctx.session.instance?.modelInfoLoaded.push(modelName)
+        }
       }
     }
 
@@ -474,7 +477,8 @@ export class HandleOwnITgBot {
 
   async actionWorkflowSelect (ctx: OwnInstanceMatchContext) {
     const { wfParamSchema } = this.wflib
-    const { step, userId, modelInfoLoaded } = ctx.session
+    const { step, userId, instance } = ctx.session
+    const modelInfoLoaded = instance?.modelInfoLoaded || []
 
     if (!['running', 'loading'].includes(step)) {
       ctx.deleteMessage()
@@ -523,8 +527,10 @@ export class HandleOwnITgBot {
           modelData,
         })
 
-        ctx.session.modelInfoLoaded = ctx.session.modelInfoLoaded || []
-        ctx.session.modelInfoLoaded.push(modelName)
+        if (ctx.session.instance) {
+          ctx.session.instance.modelInfoLoaded = ctx.session.instance.modelInfoLoaded || []
+          ctx.session.instance?.modelInfoLoaded.push(modelName)
+        }
       }
     }
 

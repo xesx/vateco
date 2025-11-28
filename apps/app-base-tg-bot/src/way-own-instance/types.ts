@@ -30,6 +30,7 @@ export interface Instance {
   ip?: string
   apiPort?: string
   apiUrl?: string
+  modelInfoLoaded?: string[]
   // [key: string]: any
 }
 
@@ -42,6 +43,5 @@ export interface SessionData {
   way?: string
   workflowVariantId?: number
   inputWaiting?: string
-  modelInfoLoaded?: string[]
   // [key: string]: any
 }
