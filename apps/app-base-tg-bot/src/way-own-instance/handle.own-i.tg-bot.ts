@@ -118,7 +118,7 @@ export class HandleOwnITgBot {
     const { way, userId, workflowVariantId } = ctx.session
     let paramName = ctx.session.inputWaiting
 
-    if (way === 'own-instance') {
+    if (way !== 'own-instance') {
       return next()
     }
 
