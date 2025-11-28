@@ -30,7 +30,10 @@ export class WorkflowLibService {
 
     for (const match of matches) {
       const key = match[1]
-      workflowTemplateParams.push(key)
+
+      if (!workflowTemplateParams.includes(key)) {
+        workflowTemplateParams.push(key)
+      }
     }
 
     Object.keys(params).forEach((key) => {
