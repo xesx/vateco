@@ -5,12 +5,14 @@ import { message } from 'telegraf/filters'
 import { OwnInstanceContext } from './types'
 import { ViewOwnITgBot } from './view.own-i.tg-bot'
 import { HandleOwnITgBot } from './handle.own-i.tg-bot'
+import { ActionOwnITgBot } from './action.own-i.tg-bot'
 
 
 export class WayOwnITgBot {
   constructor(
     @InjectBot() private readonly bot: Telegraf<OwnInstanceContext>,
     private readonly view: ViewOwnITgBot,
+    private readonly act: ActionOwnITgBot,
     private readonly handle: HandleOwnITgBot,
   ) {
     this.bot.action(/^act:own-i(.*)$/, (ctx, next) => this.initSession(ctx, next))
@@ -30,10 +32,21 @@ export class WayOwnITgBot {
     this.bot.action('act:own-i:instance:status', (ctx) => this.handle.actionInstanceStatus(ctx))
     this.bot.action('act:own-i:instance:destroy', (ctx) => this.handle.actionInstanceDestroy(ctx))
 
-    this.bot.action('act:own-i:wf:variants', (ctx) => this.view.showWorkflowVariants(ctx))
-    this.bot.action(/act:own-i:wf:([^:]+)$/, (ctx) => this.handle.actionWorkflowSelect(ctx))
+    this.bot.action('act:own-i:wfv:list', (ctx) => this.act.actionWfvList(ctx))
+    this.bot.action(/act:own-i:wfv:([0-9]+)$/, (ctx) => this.act.actionWfvSelect(ctx))
+    this.bot.action(/act:own-i:wfvp:([0-9]+)$/, (ctx) => this.act.actionWfvParamSelect(ctx))
+
+    // -------------------------------------------
     this.bot.action(/act:own-i:wf:([^:]+):param:(.+)$/, (ctx) => this.handle.actionWorkflowParamSelect(ctx))
+
+    // this.bot.action(/act:own-i:wfvp:([0-9]+)$/, (ctx) => this.handle.actionWfvParamSelect(ctx))
+    // this.bot.action(/act:own-i:wfvp:([0-9]+)$/, (ctx) => this.handle.actionWfvParamSet(ctx))
+    // this.bot.action(/act:own-i:wfvp:([0-9]+):enum:([0-9]+)$/, (ctx) => this.handle.actionWfvParamEnumItemSelect(ctx))
+    // this.bot.action(/act:own-i:wfvp:([0-9]+):enum:([0-9]+):set$/, (ctx) => this.handle.actionWfvParamEnumSet(ctx))
+    // this.bot.action(/act:own-i:wfv:([0-9]+):run$/, (ctx) => this.handle.actionWfvRun(ctx))
+
     this.bot.action(/act:own-i:wf:([^:]+):run$/, (ctx) => this.handle.actionWorkflowRun(ctx))
+    // this.bot.action(/act:own-i:wf:([0-9]+):run$/, (ctx) => this.handle.actionWfvRun(ctx))
 
     this.bot.action('act:own-i:use-img-as-input', (ctx) => this.handle.actionUseImageAsInput(ctx))
     this.bot.action(/act:own-i:use-img-as-input:([^:]+)$/, (ctx) => this.handle.actionUseImageAsInput(ctx))

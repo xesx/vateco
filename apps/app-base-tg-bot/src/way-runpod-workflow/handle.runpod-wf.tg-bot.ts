@@ -159,7 +159,7 @@ export class HandleRunpodWfTgBot {
 
     await this.view.showWorkflowRunMenu(ctx)
 
-    const replyKeyboard = this.tgbotlib.generateReplyKeyboard(kb.WORKFLOW_REPLY)
+    const replyKeyboard = this.tgbotlib.generateReplyKeyboard(kb.WORKFLOW_VARIANT_REPLY)
     await ctx.sendMessage('Use for fast work ⤵', replyKeyboard)
   }
 }

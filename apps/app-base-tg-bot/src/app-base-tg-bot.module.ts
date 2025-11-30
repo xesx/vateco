@@ -61,6 +61,7 @@ import * as rpwf from './way-runpod-workflow'
 
     owni.WayOwnITgBot,
     owni.HandleOwnITgBot,
+    owni.ActionOwnITgBot,
     owni.ViewOwnITgBot,
 
     rpwf.WayOwnITgBot,

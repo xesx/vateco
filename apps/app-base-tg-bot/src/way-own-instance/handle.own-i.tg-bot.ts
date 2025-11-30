@@ -38,7 +38,7 @@ export class HandleOwnITgBot {
       await this.view.showOfferParamsMenu(ctx)
     } else if (['loading', 'running'].includes(step)) {
       if (ctx.session.workflowVariantId) {
-        await this.view.showWorkflowRunMenu(ctx)
+        await this.view.showWfvRunMenu(ctx)
       } else {
         await this.view.showInstanceManageMenu(ctx)
       }
@@ -69,7 +69,7 @@ export class HandleOwnITgBot {
     }
 
     if (message === '🎛 Params') {
-      return this.view.showWorkflowRunMenu(ctx)
+      return await this.view.showWfvRunMenu(ctx)
     }
 
     if (message === '📝 Show prompt') {
@@ -99,7 +99,7 @@ export class HandleOwnITgBot {
 
       delete ctx.session.inputWaiting
 
-      return this.view.showWorkflowRunMenu(ctx)
+      return this.view.showWfvRunMenu(ctx)
     }
 
     if (workflowVariantId) {
@@ -326,7 +326,7 @@ export class HandleOwnITgBot {
       return this.tgbotlib.safeAnswerCallback(ctx)
     }
 
-    const workflowVariantParams = await this.wfrepo.getWorkflowMergedWorkflowVariantParamsValueMap({ userId, workflowVariantId })
+    const workflowVariantParams = await this.wfrepo.getMergedWorkflowVariantParamsValueMap({ userId, workflowVariantId })
 
     for (const paramName in workflowVariantParams) {
       if (this.wflib.wfParamSchema[paramName]?.isComfyUiModel) {
@@ -411,7 +411,7 @@ export class HandleOwnITgBot {
         })
       }
 
-      await this.view.showWorkflowRunMenu(ctx)
+      await this.view.showWfvRunMenu(ctx)
       return
     }
 
@@ -503,7 +503,7 @@ export class HandleOwnITgBot {
 
     const { workflowVariantId } = ctx.session
 
-    const workflowVariantParams = await this.wfrepo.getWorkflowMergedWorkflowVariantParamsValueMap({ userId, workflowVariantId })
+    const workflowVariantParams = await this.wfrepo.getMergedWorkflowVariantParamsValueMap({ userId, workflowVariantId })
 
     for (const [paramName, value] of Object.entries(workflowVariantParams)) {
       if (wfParamSchema[paramName].isComfyUiModel) {
@@ -534,9 +534,9 @@ export class HandleOwnITgBot {
       }
     }
 
-    await this.view.showWorkflowRunMenu(ctx)
+    await this.view.showWfvRunMenu(ctx)
 
-    const replyKeyboard = this.tgbotlib.generateReplyKeyboard(kb.WORKFLOW_REPLY)
+    const replyKeyboard = this.tgbotlib.generateReplyKeyboard(kb.WORKFLOW_VARIANT_REPLY)
     await ctx.sendMessage('Use for fast work ⤵', replyKeyboard)
   }
 

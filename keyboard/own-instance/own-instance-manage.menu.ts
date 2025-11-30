@@ -5,7 +5,7 @@ export function ownInstanceManageMenu(step?: string): [string, string][][] {
   ] as [string, string][][]
 
   if (step === 'running') {
-    keyboardDescription.push([[`Select workflow`, 'act:own-i:wf:variants']])
+    keyboardDescription.push([[`Select workflow`, 'act:own-i:wfv:list']])
   }
 
   return keyboardDescription

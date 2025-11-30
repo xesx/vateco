@@ -61,7 +61,7 @@ export class BaseCommandTgBot {
 
     this.bot.hears(/^_wfv_create/, (ctx) => this.tgbotsrv.createWorkflowVariant(ctx))
     this.bot.hears(/^_wfv_delete/, (ctx) => this.tgbotsrv.deleteWorkflowVariant(ctx))
-    this.bot.hears(/^_wfv_show/, (ctx) => this.tgbotsrv.showWorkflowVariantRunMenu(ctx))
+    this.bot.hears(/^_wfv_menu/, (ctx) => this.tgbotsrv.showWorkflowVariantRunMenu(ctx))
   }
 
   private async initSession(ctx) {

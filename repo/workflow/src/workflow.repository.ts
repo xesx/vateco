@@ -175,6 +175,18 @@ export class WorkflowRepository {
     return result
   }
 
+  async getWorkflowVariantParamById (id: number) {
+    const result = await this.prisma.workflowVariantParams.findUnique({
+      where: { id },
+    })
+
+    if (!result) {
+      throw new Error(`getWorkflowVariantParamById_103 Workflow variant param with ID ${id} not found`)
+    }
+
+    return result
+  }
+
   async findWorkflowVariantParamsByNameStartsWith ({ workflowVariantId, startsWith }: { workflowVariantId: number | string, startsWith: string }) {
     workflowVariantId = Number(workflowVariantId)
 
@@ -250,7 +262,7 @@ export class WorkflowRepository {
     return workflowVariant
   }
 
-  async getWorkflowMergedWorkflowVariantParamsValueMap ({ userId, workflowVariantId }) {
+  async getMergedWorkflowVariantParamsValueMap ({ userId, workflowVariantId }) {
     const { wfParamSchema } = this.wflib
 
     const workflowVariantUserParamsMap = await this.getWorkflowVariantUserParamsMap({ userId, workflowVariantId })

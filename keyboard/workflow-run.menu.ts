@@ -1,6 +1,7 @@
 type TArgs = {
   workflowVariantId: number | string
   wfvParams: {
+    id: number
     positionX: number | null
     positionY: number | null
     label: string | null
@@ -47,7 +48,6 @@ export function workflowRunMenu ({ workflowVariantId, wfvParams, prefixAction, b
     })
 
   const keyboard = sortedParams.reduce((acc: [string, string][][], param, i) => {
-    const name = param.paramName
     let value = param.value
 
     if (typeof value === 'boolean' || ['false', 'true'].includes(String(value).toLowerCase())) {
@@ -65,7 +65,7 @@ export function workflowRunMenu ({ workflowVariantId, wfvParams, prefixAction, b
     const prevParam = i > 0 ? sortedParams[i - 1] : undefined
     const prevX = prevParam?.positionX
 
-    const action = `${prefixAction}:wf:${workflowVariantId}:param:${name}`
+    const action = `${prefixAction}:wfvp:${param.id}`
     const label = param.label + `(${value})`
 
     if (prevX !== undefined && x !== undefined && x === prevX) {
