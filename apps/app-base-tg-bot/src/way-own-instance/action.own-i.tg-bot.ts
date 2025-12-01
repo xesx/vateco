@@ -88,8 +88,6 @@ export class ActionOwnITgBot {
       }
     }
 
-    // const keyboard = await this.wfsynth.generateWorkflowVariantRunMenu({ workflowVariantId, userId, })
-
     await this.view.showWfvRunMenu(ctx)
     await this.view.showWfvReplyMenu(ctx)
 
@@ -100,8 +98,6 @@ export class ActionOwnITgBot {
     const { wfParamSchema } = this.wflib
 
     const [,workflowVariantParamId] = ctx.match
-    // const [paramName, rawValue] = param.split(':')
-
     const { userId } = ctx.session
 
     const wfvParam = await this.wfrepo.getWorkflowVariantParamById(Number(workflowVariantParamId))
@@ -119,29 +115,6 @@ export class ActionOwnITgBot {
       wfvParamEnum = await this.wfsynth.compileEnum(enumCompilerName)
     }
 
-    // set value
-    // if (rawValue) {
-    //   const value = wfvParamEnum ? wfvParamEnum[Number(rawValue)] : rawValue
-    //   // value is enum index
-    //   await this.wfrepo.setWorkflowVariantUserParam({ userId, workflowVariantId, paramName, value })
-    //
-    //   if (wfParamSchema[paramName].isComfyUiModel) {
-    //     const modelName = String(value.value ?? value)
-    //     const modelData = await this.modelrepo.getModelByName(modelName)
-    //
-    //     await this.cloudapilib.vastAiModelInfoLoad({
-    //       baseUrl: ctx.session.instance?.apiUrl,
-    //       instanceId: ctx.session.instance?.id,
-    //       token: ctx.session.instance?.token,
-    //       modelName,
-    //       modelData,
-    //     })
-    //   }
-    //
-    //   await this.view.showWfvRunMenu(ctx)
-    //   return
-    // }
-
     // suggest value form enum
     if (wfvParamEnum && Array.isArray(wfvParamEnum)) {
       const message = `Set parameter *"${paramName}"*\nCurrent value: *"${currentValue}"*`
@@ -154,7 +127,7 @@ export class ActionOwnITgBot {
       wfvParamEnum
         .map((value: any) => typeof value === 'object' ? value.label : String(value))
         .forEach((value, i) => {
-          const button = [value, `act:own-i:wf:${workflowVariantId}:param:${paramName}:${i}`]
+          const button = [value, `act:own-i:wfvp:${workflowVariantParamId}:set:${i}`]
           const buttonLength = value.length + 2 // запас на формат Telegram
 
           // Если не помещается — перенос
@@ -172,7 +145,7 @@ export class ActionOwnITgBot {
       currentRow = []
       currentLength = 0
 
-      enumOptions.push([['Back', `act:own-i:wf:${workflowVariantId}`]])
+      enumOptions.push([['Back', `act:own-i:wfv:${workflowVariantId}`]])
 
       const keyboard = this.tgbotlib.generateInlineKeyboard(enumOptions)
       await this.tgbotlib.reply(ctx, message, keyboard)
@@ -184,10 +157,10 @@ export class ActionOwnITgBot {
       const message = `Set parameter *"${paramName}"*\nCurrent value: *"${currentValue}"*`
       const keyboard = this.tgbotlib.generateInlineKeyboard([
         [
-          ['True', `act:own-i:wf:${workflowVariantId}:param:${paramName}:true`],
-          ['False', `act:own-i:wf:${workflowVariantId}:param:${paramName}:false`]
+          ['True', `act:own-i:wfvp:${workflowVariantParamId}:set:true`],
+          ['False', `act:own-i:wfvp:${workflowVariantParamId}:set:false`],
         ],
-        [['Back', `act:own-i:wf:${workflowVariantId}`]],
+        [['Back', `act:own-i:wfv:${workflowVariantId}`]],
       ])
       await this.tgbotlib.reply(ctx, message, keyboard)
       return
@@ -197,7 +170,139 @@ export class ActionOwnITgBot {
     ctx.session.inputWaiting = paramName
     await this.tgbotlib.safeAnswerCallback(ctx)
 
-    const message = this.msglib.genCodeMessage(String(currentValue))
+    const message = this.msglib.genCodeMessage(String(currentValue) || '❌')
     await this.tgbotlib.reply(ctx, message , { parse_mode: 'HTML' })
+  }
+
+  async actionWfvParamSet (ctx: OwnInstanceMatchContext) {
+    const [,workflowVariantParamId, rawValue] = ctx.match
+    const { userId, step } = ctx.session
+
+    const wfvParam = await this.wfrepo.getWorkflowVariantParamById(Number(workflowVariantParamId))
+    const paramName = wfvParam.paramName
+    const workflowVariantId = wfvParam.workflowVariantId
+    let wfvParamEnum = wfvParam.enum
+
+    let value: any = rawValue
+
+    if (typeof wfvParamEnum === 'string' && wfvParamEnum?.startsWith?.('$.')) {
+      const enumCompilerName = wfvParamEnum.replace('$.', '')
+      wfvParamEnum = await this.wfsynth.compileEnum(enumCompilerName)
+    }
+
+    // value is enum index
+    if (wfvParamEnum && Array.isArray(wfvParamEnum)) {
+      value = wfvParamEnum[Number(rawValue)]
+    } else if (this.wflib.wfParamSchema[paramName].type === 'boolean') {
+      value = rawValue === 'true'
+    }
+
+    await this.wfrepo.setWorkflowVariantUserParam({ userId, workflowVariantId, paramName, value })
+
+    if (this.wflib.wfParamSchema[paramName].isComfyUiModel && step === 'running') {
+      const modelName = String(value.value ?? value)
+      const modelData = await this.modelrepo.getModelByName(modelName)
+
+      await this.cloudapilib.vastAiModelInfoLoad({
+        baseUrl: ctx.session.instance?.apiUrl,
+        instanceId: ctx.session.instance?.id,
+        token: ctx.session.instance?.token,
+        modelName,
+        modelData,
+      })
+    }
+
+    await this.view.showWfvRunMenu(ctx)
+    await this.tgbotlib.safeAnswerCallback(ctx)
+  }
+
+  async actionWfvRun (ctx: OwnInstanceContext) {
+    const { workflowVariantId, userId, instance } = ctx.session
+    const modelInfoLoaded = instance?.modelInfoLoaded || []
+
+    if (!workflowVariantId) {
+      console.log('ActionOwnITgBot_actionWfvRun_21 No workflowId in session')
+      return this.tgbotlib.safeAnswerCallback(ctx)
+    }
+
+    const workflowVariantParams = await this.wfrepo.getMergedWorkflowVariantParamsValueMap({ userId, workflowVariantId })
+
+    for (const paramName in workflowVariantParams) {
+      if (this.wflib.wfParamSchema[paramName]?.isComfyUiModel) {
+        const value = workflowVariantParams[paramName]
+
+        const modelName = String(value.value ?? value)
+
+        if (['❓', 'N/A'].includes(modelName)) {
+          continue
+        }
+
+        if (modelInfoLoaded?.includes(modelName)) {
+          continue
+        }
+
+        const modelData = await this.modelrepo.getModelByName(modelName)
+
+        await this.cloudapilib.vastAiModelInfoLoad({
+          baseUrl: ctx.session.instance?.apiUrl,
+          instanceId: ctx.session.instance?.id,
+          token: ctx.session.instance?.token,
+          modelName,
+          modelData,
+        })
+
+        if (ctx.session.instance) {
+          ctx.session.instance.modelInfoLoaded = ctx.session.instance.modelInfoLoaded || []
+          ctx.session.instance?.modelInfoLoaded.push(modelName)
+        }
+      }
+    }
+
+    await this.cloudapilib.vastAiWorkflowRun({
+      baseUrl: ctx.session.instance?.apiUrl,
+      instanceId: ctx.session.instance?.id,
+      token: ctx.session.instance?.token,
+      count: workflowVariantParams.generationNumber || 1,
+      workflowVariantId,
+      workflowVariantParams,
+      chatId: ctx.session.telegramId,
+    })
+
+    await this.tgbotlib.safeAnswerCallback(ctx)
+  }
+
+  async actionUseImageAsInput (ctx: OwnInstanceMatchContext) {
+    const { workflowVariantId, userId } = ctx.session
+
+    if (!workflowVariantId) {
+      return this.tgbotlib.safeAnswerCallback(ctx)
+    }
+
+    const imageWorkflowVariantParams = await this.wfrepo.findWorkflowVariantParamsByNameStartsWith({
+      workflowVariantId,
+      startsWith: 'image',
+    })
+
+    if (!imageWorkflowVariantParams.length) {
+      return await this.tgbotlib.safeAnswerCallback(ctx)
+    }
+
+    const fileId = this.tgbotlib.getImageFileIdFromMessage({ message: ctx.update?.callback_query?.message })
+    console.log('HandleOwnITgBot_actionUseImageAsInput_23 fileId', fileId)
+
+    if (fileId) {
+      // TODO more than one image param?
+      await this.wfrepo.setWorkflowVariantUserParam({
+        userId,
+        workflowVariantId,
+        paramName: imageWorkflowVariantParams[0].paramName,
+        value: fileId,
+      })
+    } else {
+      console.log('HandleOwnITgBot_actionUseImageAsInput_34 No fileId found in message')
+      await ctx.reply('No image found in message')
+    }
+
+    await this.tgbotlib.safeAnswerCallback(ctx)
   }
 }

@@ -78,7 +78,7 @@ export function workflowRunMenu ({ workflowVariantId, wfvParams, prefixAction, b
   }, [])
     .concat([[
       ['⬅️ Back', backAction],
-      ['🚀 Generate', `${prefixAction}:wf:${workflowVariantId}:run`],
+      ['🚀 Generate', `${prefixAction}:wfv:${workflowVariantId}:run`],
     ]])
 
   return keyboard as [string, string][][]

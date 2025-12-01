@@ -35,21 +35,24 @@ export class WayOwnITgBot {
     this.bot.action('act:own-i:wfv:list', (ctx) => this.act.actionWfvList(ctx))
     this.bot.action(/act:own-i:wfv:([0-9]+)$/, (ctx) => this.act.actionWfvSelect(ctx))
     this.bot.action(/act:own-i:wfvp:([0-9]+)$/, (ctx) => this.act.actionWfvParamSelect(ctx))
+    this.bot.action(/act:own-i:wfvp:([0-9]+):set:(.+)$/, (ctx) => this.act.actionWfvParamSet(ctx))
+
+    this.bot.action(/act:own-i:wfv:([0-9]+):run$/, (ctx) => this.act.actionWfvRun(ctx))
+
+    this.bot.action('act:own-i:use-img-as-input', (ctx) => this.act.actionUseImageAsInput(ctx))
 
     // -------------------------------------------
-    this.bot.action(/act:own-i:wf:([^:]+):param:(.+)$/, (ctx) => this.handle.actionWorkflowParamSelect(ctx))
+    // this.bot.action(/act:own-i:wf:([^:]+):param:(.+)$/, (ctx) => this.handle.actionWorkflowParamSelect(ctx))
 
     // this.bot.action(/act:own-i:wfvp:([0-9]+)$/, (ctx) => this.handle.actionWfvParamSelect(ctx))
-    // this.bot.action(/act:own-i:wfvp:([0-9]+)$/, (ctx) => this.handle.actionWfvParamSet(ctx))
+    // this.bot.action(/act:own-i:wfvp:([0-9]+):set:(.+)$/, (ctx) => this.handle.actionWfvParamSet(ctx))
     // this.bot.action(/act:own-i:wfvp:([0-9]+):enum:([0-9]+)$/, (ctx) => this.handle.actionWfvParamEnumItemSelect(ctx))
     // this.bot.action(/act:own-i:wfvp:([0-9]+):enum:([0-9]+):set$/, (ctx) => this.handle.actionWfvParamEnumSet(ctx))
     // this.bot.action(/act:own-i:wfv:([0-9]+):run$/, (ctx) => this.handle.actionWfvRun(ctx))
 
-    this.bot.action(/act:own-i:wf:([^:]+):run$/, (ctx) => this.handle.actionWorkflowRun(ctx))
+    // this.bot.action(/act:own-i:wf:([^:]+):run$/, (ctx) => this.handle.actionWorkflowRun(ctx))
     // this.bot.action(/act:own-i:wf:([0-9]+):run$/, (ctx) => this.handle.actionWfvRun(ctx))
 
-    this.bot.action('act:own-i:use-img-as-input', (ctx) => this.handle.actionUseImageAsInput(ctx))
-    this.bot.action(/act:own-i:use-img-as-input:([^:]+)$/, (ctx) => this.handle.actionUseImageAsInput(ctx))
   }
 
   private async initSession (ctx: OwnInstanceContext, next: () => Promise<void>) {
