@@ -52,7 +52,6 @@ export class ViewRunpodWfTgBot {
     const message = `Workflow ${workflowVariant.name}`
 
     const keyboard = this.tgbotlib.generateInlineKeyboard(kb.workflowRunMenu({
-      workflowVariantId: workflowId,
       wfvParams,
       prefixAction: `act:rp-wf`,
       backAction: 'act:rp-wf:wf:variants'

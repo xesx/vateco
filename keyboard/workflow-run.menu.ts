@@ -1,5 +1,4 @@
 type TArgs = {
-  workflowVariantId: number | string
   wfvParams: {
     id: number
     positionX: number | null
@@ -13,7 +12,7 @@ type TArgs = {
   prefixAction: string
 }
 
-export function workflowRunMenu ({ workflowVariantId, wfvParams, prefixAction, backAction }: TArgs): [string, string][][] {
+export function workflowRunMenu ({ wfvParams, prefixAction, backAction }: TArgs): [string, string][][] {
   const sortedParams = Object.values(wfvParams)
     .filter(wfvParam => wfvParam.user)
     .sort((wfvParamA, wfvParamB) => {
@@ -78,7 +77,7 @@ export function workflowRunMenu ({ workflowVariantId, wfvParams, prefixAction, b
   }, [])
     .concat([[
       ['⬅️ Back', backAction],
-      ['🚀 Generate', `${prefixAction}:wfv:${workflowVariantId}:run`],
+      ['🚀 Generate', `${prefixAction}:wfv:run`],
     ]])
 
   return keyboard as [string, string][][]

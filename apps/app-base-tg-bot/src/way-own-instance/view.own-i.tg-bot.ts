@@ -11,6 +11,8 @@ import * as kb from '@kb'
 export class ViewOwnITgBot {
   constructor(
     private readonly tgbotlib: lib.TgBotLibService,
+    private readonly msglib: lib.MessageLibService,
+
     private readonly wfrepo: repo.WorkflowRepository,
   ) {}
 
@@ -66,7 +68,6 @@ export class ViewOwnITgBot {
 
     const message = `Workflow ${workflowVariant.name}`
     const keyboard = this.tgbotlib.generateInlineKeyboard(kb.workflowRunMenu({
-      workflowVariantId,
       wfvParams,
       prefixAction: `act:own-i`,
       backAction: 'act:own-i:wfv:list'
@@ -79,5 +80,30 @@ export class ViewOwnITgBot {
   async showWfvReplyMenu (ctx) {
     const replyKeyboard = this.tgbotlib.generateReplyKeyboard(kb.WORKFLOW_VARIANT_REPLY)
     await ctx.sendMessage('Use for fast work ⤵', replyKeyboard)
+  }
+
+  async showCurrentPositivePrompt (ctx: OwnInstanceContext) {
+    const { userId, workflowVariantId } = ctx.session
+
+    if (!workflowVariantId) {
+      throw new Error('Workflow variant ID not set in session')
+    }
+
+    const positivePromptUserParam = await this.wfrepo.findWorkflowVariantUserParam({ userId, workflowVariantId, paramName: 'positivePrompt' })
+
+    if (positivePromptUserParam) {
+      const message = this.msglib.genMessageForCopy(positivePromptUserParam.value as string)
+      return this.tgbotlib.reply(ctx, message , { parse_mode: 'HTML' })
+    }
+
+    const positivePromptParam = await this.wfrepo.getWorkflowVariantParamByName({ workflowVariantId, paramName: 'positivePrompt' })
+
+    if (positivePromptParam) {
+      const message = this.msglib.genMessageForCopy(positivePromptParam.value as string)
+      return this.tgbotlib.reply(ctx, message , { parse_mode: 'HTML' })
+    }
+
+    const message = this.msglib.genMessageForCopy('N/A')
+    await this.tgbotlib.reply(ctx, message , { parse_mode: 'HTML' })
   }
 }

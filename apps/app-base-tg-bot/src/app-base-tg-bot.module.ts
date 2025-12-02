@@ -60,15 +60,14 @@ import * as rpwf from './way-runpod-workflow'
     BaseCommandTgBot,
 
     owni.WayOwnITgBot,
-    owni.HandleOwnITgBot,
+    owni.CommonHandlerOwnITgBot,
     owni.ActionOwnITgBot,
     owni.ViewOwnITgBot,
+    owni.TextMessageHandlerOwnITgBot,
 
     rpwf.WayOwnITgBot,
     rpwf.HandleRunpodWfTgBot,
     rpwf.ViewRunpodWfTgBot,
-
-    // CommonHandlerTgBot,
   ],
 })
 
