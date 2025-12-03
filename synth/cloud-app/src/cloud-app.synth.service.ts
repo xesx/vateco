@@ -131,14 +131,31 @@ export class CloudAppSynthService {
       }, 2000)
 
       await new Promise((resolve, reject) => {
-        const child = spawn(`${COMFY_UI_DIR}/venv/bin/comfy`, [
+        const command = `${COMFY_UI_DIR}/venv/bin/comfy`
+        const args = [
           '--skip-prompt',
           '--workspace', COMFY_UI_DIR,
           'model', 'download',
           '--url', `https://civitai.com/models/${civitaiId}?modelVersionId=${civitaiVersionId}`,
-          '--relative-path ', './models/' + dstDir,
+          '--relative-path', './models/' + dstDir,
           '--set-civitai-api-token', this.civitailib.CIVITAI_TOKEN || '',
-        ], { env: { ...process.env } })
+        ]
+
+        console.log('Запускаем команду:')
+        console.log(command, args.join(' '))
+
+        const child = spawn(command, args, { env: { ...process.env } })
+        // const child = spawn(`${COMFY_UI_DIR}/venv/bin/comfy`, [
+        //   '--skip-prompt',
+        //   '--workspace', COMFY_UI_DIR,
+        //   'model', 'download',
+        //   '--url', `https://civitai.com/models/${civitaiId}?modelVersionId=${civitaiVersionId}`,
+        //   '--relative-path ', './models/' + dstDir,
+        //   '--set-civitai-api-token', this.civitailib.CIVITAI_TOKEN || '',
+        // ], { env: { ...process.env } })
+
+        child.stdout.setEncoding('utf8')
+        child.stderr.setEncoding('utf8')
 
         child.stdout.setEncoding('utf8')
         child.stderr.setEncoding('utf8')
