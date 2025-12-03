@@ -32,9 +32,17 @@ export class TestCli {
   register(program) {
     program
       .command('test <name>')
-      .description('Сказать привет')
-      .action(name => {
-        console.log(`Привет cloud cli, ${name}!`)
+      .description('test cli')
+      .action(async name => {
+        console.log(`Hello from cloud cli, ${name}!`)
+
+        await this.appcloudsynth.loadModelFromCivitai({
+          chatId: '185857068',
+          civitaiId: '1318945',
+          civitaiVersionId: '2319122',
+          filename: 'oneObsession_v18.safetensors',
+          dstDir: 'checkpoints',
+        })
       })
   }
 }

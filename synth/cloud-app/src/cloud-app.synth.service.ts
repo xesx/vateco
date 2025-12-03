@@ -147,7 +147,7 @@ export class CloudAppSynthService {
           if (code === 0) {
             resolve(true)
           } else {
-            const error = new Error(`HuggingfaceLibService_download_87 hf download exited with code ${code}`)
+            const error = new Error(`CloudAppSynthService_loadModelFromCivitai_87 civitai download exited with code ${code}`)
             reject(error)
           }
         })
