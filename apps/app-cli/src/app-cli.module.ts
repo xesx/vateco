@@ -23,6 +23,7 @@ import * as command from './command'
     lib.WorkflowLibModule,
     lib.VastLibModule,
     lib.PrismaLibModule,
+    lib.CivitaiLibModule,
 
     repo.ModelRepositoryModule,
     repo.WorkflowRepositoryModule,

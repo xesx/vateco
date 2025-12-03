@@ -19,6 +19,7 @@ export class AppBaseTgBotService {
     private readonly modelrepo: repo.ModelRepository,
     private readonly wfrepo: repo.WorkflowRepository,
     private readonly wfsynth: synth.WorkflowSynthService,
+    private readonly civitailib: lib.CivitaiLibService,
   ) {
     setTimeout(() => {
       tgbotlib.sendMessage({ chatId: '185857068:185857068', text: '!!! DEPLOY !!!' })
@@ -100,7 +101,7 @@ export class AppBaseTgBotService {
           trx,
         })
 
-        await this.modelrepo.createMolelHuggingfaceLink({ modelId, repo, file, trx })
+        await this.modelrepo.createModelHuggingfaceLink({ modelId, repo, file, trx })
 
         await this.modelrepo.createModelTag({ modelId, tag: 'new', trx })
 
@@ -116,7 +117,7 @@ export class AppBaseTgBotService {
   async createModelByCivitaiLink (ctx, next) {
     const { text: message } = ctx.message
 
-    if (!message.startsWith('https://civitai.com/')) {
+    if (!message.startsWith('https://civitai.com')) {
       return next()
     }
 
@@ -124,7 +125,53 @@ export class AppBaseTgBotService {
       return await ctx.reply('Civitai link must include modelVersionId parameter.')
     }
 
+    const [link, dir] = message
+      .split('\n')
+      .map(item => item.trim())
+
+    if (!COMFYUI_MODEL_DIRS.includes(dir)) {
+      return await ctx.reply(`Invalid ComfyUI directory. Must be one of: ${COMFYUI_MODEL_DIRS.join(', ')}`)
+    }
+
     // https://civitai.com/models/24350?modelVersionId=2315492
+    const civitaiId = new URL(link).pathname.split('/models/')[1].split('?')[0]
+    const civitaiVersionId = new URL(link).searchParams.get('modelVersionId')
+
+    if (!civitaiId || !civitaiVersionId) {
+      return await ctx.reply('Invalid Civitai link.')
+    }
+
+    console.log('civitaiId', civitaiId)
+    console.log('civitaiVersionId', civitaiVersionId)
+
+    const info = await this.civitailib.importModelVersionData({ modelVersionId: civitaiVersionId })
+
+    const name = `${info.model.name}_${info.name}`.toLowerCase().replace(/[^0-9a-z]/g, '_')
+    const file = info.files.find(i => i.primary)?.name || info.files[0]?.name
+
+    const prisma = this.modelrepo['prisma']
+
+    try {
+      const modelId = await prisma.$transaction(async (trx: lib.PrismaLibService) => {
+        const modelId = await this.modelrepo.createModel({
+          name,
+          comfyUiDirectory: dir,
+          comfyUiFileName: file.split('/').at(-1),
+          label: name,
+          trx,
+        })
+
+        await this.modelrepo.createModelCivitaiLink({ modelId, civitaiId, civitaiVersionId, trx })
+
+        await this.modelrepo.createModelTag({ modelId, tag: 'new', trx })
+
+        return modelId
+      })
+
+      return await ctx.reply('Model created with ID: ' + modelId)
+    } catch (error) {
+      return await ctx.reply('Error creating model: ' + error.message)
+    }
   }
 
   async createWorkflowTemplateByFile (ctx, next) {

@@ -45,6 +45,23 @@ export class AppCloudApiController {
     console.log(`appCloudApiDownloadTask_99 Download task content: ${content}`)
   }
 
+  @Post('civitai/download')
+  appCloudApiCivitaiDownloadTask (@Body() body: { chatId: string, civitaiId: number, civitaiVersionId: number, filename: string, dstDir: string }): any {
+    const { DOWNLOAD_TASKS_DIR } = this.appcloudsynth
+
+    if (!fs.existsSync(DOWNLOAD_TASKS_DIR)) {
+      fs.mkdirSync(DOWNLOAD_TASKS_DIR)
+    }
+
+    const filename = `civitai_download_${Date.now()}.json`
+    const filePath = join(DOWNLOAD_TASKS_DIR, filename)
+
+    const content = JSON.stringify(body)
+    fs.writeFileSync(filePath, content, "utf8")
+
+    console.log(`appCloudApiCivitaiDownloadTask_99 Download task content: ${content}`)
+  }
+
   @Post('workflow/load')
   appCloudApiWorkflowLoad(@Body() body: { workflowId: string }): any {
     const filePath = join(this.WORKSPACE, 'load.json')

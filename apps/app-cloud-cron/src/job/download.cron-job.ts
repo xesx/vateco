@@ -43,15 +43,14 @@ export class DownloadCronJob {
 
       if (taskFile.startsWith('hf_download_')) {
         const { chatId, repo, srcFilename, dstFilename, dstDir } = JSON.parse(fileContent)
-        await this.appcloudsynth.loadFileFromHF({
-          chatId,
-          repo,
-          srcFilename,
-          dstFilename,
-          dstDir
-        })
 
+        await this.appcloudsynth.loadFileFromHF({ chatId, repo, srcFilename, dstFilename, dstDir })
         l.log(`DownloadCronJob_95 Huggingface file "${repo}/${srcFilename}" downloaded to "${dstDir}/${dstFilename}" for chatId ${chatId}`)
+      } else if (taskFile.startsWith('civitai_download_')) {
+        const { chatId, civitaiId, civitaiVersionId, filename, dstDir } = JSON.parse(fileContent)
+
+        await this.appcloudsynth.loadModelFromCivitai({ chatId, civitaiId, civitaiVersionId, filename, dstDir })
+        l.log(`DownloadCronJob_103 Civitai file "civitai.com/models/${civitaiId}/versions/${civitaiVersionId}" downloaded to "${dstDir}/${filename}" for chatId ${chatId}`)
       }
 
       fs.unlinkSync(taskFilePath)

@@ -43,6 +43,7 @@ import * as rpwf from './way-runpod-workflow'
     lib.RcloneLibModule,
     lib.WorkflowLibModule,
     lib.RunpodLibModule,
+    lib.CivitaiLibModule,
 
     repo.TgBotSessionsStoreRepositoryModule,
     repo.WorkflowRepositoryModule,

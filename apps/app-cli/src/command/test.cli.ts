@@ -26,6 +26,7 @@ export class TestCli {
     private readonly msglib: lib.MessageLibService,
     private readonly h: lib.HelperLibService,
     private readonly hflib: lib.HuggingfaceLibService,
+    private readonly civitailib: lib.CivitaiLibService,
     private readonly modelrepo: repo.ModelRepository,
 
     private readonly wfsynth: synth.WorkflowSynthService,
@@ -39,8 +40,10 @@ export class TestCli {
       .action(async (name) => {
         console.log(`Привет, ${name}!`)
 
-        const models = await this.wfsynth.compileEnum('modelEnum:checkpoints:["illustrious","sd"]:')
-        console.log('\x1b[36m', 'models', models, '\x1b[0m')
+        const info = await this.civitailib.importModelVersionData({ modelVersionId: 2319122 })
+        console.log('\x1b[36m', 'info', info, '\x1b[0m')
+        // const models = await this.wfsynth.compileEnum('modelEnum:checkpoints:["illustrious","sd"]:')
+        // console.log('\x1b[36m', 'models', models, '\x1b[0m')
         // const models = await this.modelrepo.findModels({
         //   comfyUiDirectory: 'checkpoints',
         //   tags: ['illustrious', 'sd'],

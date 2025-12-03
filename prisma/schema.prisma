@@ -123,6 +123,7 @@ model Models {
   meta             Json     @default("{}") @map("meta")
 
   huggingfaceLinks ModelHuggingfaceLinks[]
+  civitaiLinks     ModelCivitaiLinks[]
   tags             ModelTags[]
 
   @@map("models")
@@ -140,6 +141,20 @@ model ModelHuggingfaceLinks {
 
   @@unique([repo, file])
   @@map("model_huggingface_links")
+}
+
+model ModelCivitaiLinks {
+  id               Int      @id @default(autoincrement()) @map("id")
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @default(now()) @updatedAt @map("updated_at")
+  modelId          Int      @map("model_id")
+  civitaiId        String   @map("civitai_id")
+  civitaiVersionId String   @map("civitai_version_id")
+
+  model Models @relation(fields: [modelId], references: [id])
+
+  @@unique([civitaiId, civitaiVersionId])
+  @@map("model_civitai_links")
 }
 
 model ModelTags {

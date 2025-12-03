@@ -26,12 +26,22 @@ export class ModelRepository {
     return model.id
   }
 
-  async createMolelHuggingfaceLink ({ modelId, repo, file, trx = this.prisma }: { modelId: number, repo: string, file: string, trx?: lib.PrismaLibService }) {
+  async createModelHuggingfaceLink ({ modelId, repo, file, trx = this.prisma }: { modelId: number, repo: string, file: string, trx?: lib.PrismaLibService }) {
     await trx.modelHuggingfaceLinks.create({
       data: {
         modelId,
         repo,
         file,
+      },
+    })
+  }
+
+  async createModelCivitaiLink ({ modelId, civitaiId, civitaiVersionId, trx = this.prisma }: { modelId: number, civitaiId: string, civitaiVersionId: string, trx?: lib.PrismaLibService }) {
+    await trx.modelCivitaiLinks.create({
+      data: {
+        modelId,
+        civitaiId,
+        civitaiVersionId,
       },
     })
   }
@@ -84,6 +94,9 @@ export class ModelRepository {
       include: {
         huggingfaceLinks: {
           select: { repo: true, file: true, },
+        },
+        civitaiLinks: {
+          select: { civitaiId: true, civitaiVersionId: true, },
         },
       },
     })

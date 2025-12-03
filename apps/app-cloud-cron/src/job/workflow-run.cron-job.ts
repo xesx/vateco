@@ -115,12 +115,26 @@ export class WorkflowRunCronJob {
 
         const model: any = JSON.parse(fs.readFileSync(modelInfoFilePath, 'utf8'))
 
-        const [{ repo, file }] = model.huggingfaceLinks
-        const srcFilename = file
-        const dstFilename = model.comfyUiFileName
-        const dstDir = `ComfyUI/models/${model.comfyUiDirectory}`
+        const [hfLink] = model.huggingfaceLinks || []
+        const [civitaiLink] = model.civitaiLinks || []
 
-        await this.appcloudsynth.loadFileFromHF({ chatId: TG_CHAT_ID, repo, srcFilename, dstFilename, dstDir })
+        if (hfLink) {
+          const { repo, file } = hfLink
+          const srcFilename = file
+          const dstFilename = model.comfyUiFileName
+          const dstDir = `ComfyUI/models/${model.comfyUiDirectory}`
+
+          await this.appcloudsynth.loadFileFromHF({ chatId: TG_CHAT_ID, repo, srcFilename, dstFilename, dstDir })
+        } else if (civitaiLink) {
+          const { civitaiId, civitaiVersionId } = civitaiLink
+          const filename = model.comfyUiFileName
+          const dstDir = `ComfyUI/models/${model.comfyUiDirectory}`
+
+          await this.appcloudsynth.loadModelFromCivitai({ chatId: TG_CHAT_ID, civitaiId, civitaiVersionId, filename, dstDir })
+        } else {
+          l.warn(`handleRunWorkflowJob_100 No download link found for model ${modelName}`)
+        }
+
       }
 
       for (const fileId of imagesForDownload) {

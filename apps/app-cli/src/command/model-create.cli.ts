@@ -52,7 +52,7 @@ export class ModelCreateCli {
               trx,
             })
 
-            await this.modelrepo.createMolelHuggingfaceLink({ modelId, repo, file, trx })
+            await this.modelrepo.createModelHuggingfaceLink({ modelId, repo, file, trx })
 
             await this.modelrepo.createModelTag({ modelId, tag: 'new', trx })
 

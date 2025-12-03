@@ -8,6 +8,7 @@ import * as lib from '@lib'
     lib.MessagesLibModule,
     lib.TgBotLibModule,
     lib.HuggingfaceLibModule,
+    lib.CivitaiLibModule,
     lib.HelperLibModule,
   ],
   providers: [CloudAppSynthService],
