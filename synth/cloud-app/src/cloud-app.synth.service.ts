@@ -131,7 +131,7 @@ export class CloudAppSynthService {
       }, 2000)
 
       await new Promise((resolve, reject) => {
-        const child = spawn('comfy', [
+        const child = spawn(`${COMFY_UI_DIR}/venv/bin/comfy`, [
           '--skip-prompt',
           '--workspace', COMFY_UI_DIR,
           'model', 'download',

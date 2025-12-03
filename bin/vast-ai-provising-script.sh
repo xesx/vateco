@@ -10,7 +10,7 @@ source ./vateco/bin/import-secrets.sh
 
 # Packages are installed after nodes so we can fix them...
 APT_PACKAGES=(
-    "fzf"
+#    "fzf"
 )
 
 PIP_PACKAGES=(
