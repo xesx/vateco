@@ -24,7 +24,13 @@ export class WorkflowSynthService {
   ) {}
 
   async compileEnum (name: string) {
-    return await this.compiler[name]()
+    const [enumFuncName, ...args] = name.split(':')
+
+    if (typeof this.compiler[enumFuncName] !== 'function') {
+      throw new Error(`WorkflowSynthService_compileEnum_39 Enum function not found: ${enumFuncName}, ${name}`)
+    }
+
+    return await this.compiler[enumFuncName](...args)
   }
 
   async cookAndCreateWorkflowTemplate ({ rawWorkflow, name, description }: { rawWorkflow: any, name: string, description?: string }) {

@@ -1,6 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common'
+import { Prisma } from '@prisma/client'
 
 import * as lib from '@lib'
+
+import type { Models } from '@prisma/client'
 
 @Injectable()
 export class ModelRepository {
@@ -40,6 +43,27 @@ export class ModelRepository {
         tag,
       },
     })
+  }
+
+  async findModels ({ comfyUiDirectory, tags, trx = this.prisma }: { comfyUiDirectory: string, tags: string[], trx?: lib.PrismaLibService }) {
+    // Проверка, что tags не пустой — иначе запрос сломается
+    if (tags.length === 0) {
+      return []
+    }
+
+    const tagPlaceholders = Prisma.join(tags.map(tag => Prisma.sql`${tag}`), ', ')
+
+    return await trx.$queryRaw<Models[]>`
+      SELECT m.*
+        FROM models AS m
+       INNER JOIN model_tags AS mt
+               ON mt.model_id = m.id
+              AND mt.tag IN (${tagPlaceholders})
+       WHERE 1=1
+         AND m.comfy_ui_directory = ${comfyUiDirectory}
+       GROUP BY m.id
+      HAVING COUNT(*) = ${tags.length};
+    `
   }
 
   async findModelsByComfyUiDir (comfyUiDirectory: string) {
