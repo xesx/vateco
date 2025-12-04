@@ -75,7 +75,7 @@ export class CloudAppSynthService {
     const { l, COMFY_UI_DIR } = this
 
     const fullDstDirName = `${COMFY_UI_DIR}/models/${dstDir}`
-    const fullDstFilename = `${dstDir}/${filename}`
+    const fullDstFilename = `${fullDstDirName}/${filename}`
 
     l.log(`CloudAppSynthService_loadModelFromCivitai_00 Loading model from Civitai is not implemented yet: civitaiId=${civitaiId}, civitaiVersionId=${civitaiVersionId}, dst=${fullDstFilename}`)
 
