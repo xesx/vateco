@@ -128,7 +128,7 @@ export class WorkflowRunCronJob {
         } else if (civitaiLink) {
           const { civitaiId, civitaiVersionId } = civitaiLink
           const filename = model.comfyUiFileName
-          const dstDir = `ComfyUI/models/${model.comfyUiDirectory}`
+          const dstDir = model.comfyUiDirectory
 
           await this.appcloudsynth.loadModelFromCivitai({ chatId: TG_CHAT_ID, civitaiId, civitaiVersionId, filename, dstDir })
         } else {
