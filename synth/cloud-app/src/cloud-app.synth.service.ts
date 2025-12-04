@@ -138,7 +138,7 @@ export class CloudAppSynthService {
           'model', 'download',
           '--url', `https://civitai.com/models/${civitaiId}?modelVersionId=${civitaiVersionId}`,
           '--relative-path', './models/' + dstDir,
-          '----filename', filename,
+          '--filename', filename,
           '--set-civitai-api-token', this.civitailib.CIVITAI_TOKEN || '',
         ]
 
