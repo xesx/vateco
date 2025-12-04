@@ -138,21 +138,14 @@ export class CloudAppSynthService {
           'model', 'download',
           '--url', `https://civitai.com/models/${civitaiId}?modelVersionId=${civitaiVersionId}`,
           '--relative-path', './models/' + dstDir,
+          '----filename', filename,
           '--set-civitai-api-token', this.civitailib.CIVITAI_TOKEN || '',
         ]
 
-        console.log('Запускаем команду:')
+        console.log('start command:')
         console.log(command, args.join(' '))
 
         const child = spawn(command, args, { env: { ...process.env } })
-        // const child = spawn(`${COMFY_UI_DIR}/venv/bin/comfy`, [
-        //   '--skip-prompt',
-        //   '--workspace', COMFY_UI_DIR,
-        //   'model', 'download',
-        //   '--url', `https://civitai.com/models/${civitaiId}?modelVersionId=${civitaiVersionId}`,
-        //   '--relative-path ', './models/' + dstDir,
-        //   '--set-civitai-api-token', this.civitailib.CIVITAI_TOKEN || '',
-        // ], { env: { ...process.env } })
 
         child.stdout.setEncoding('utf8')
         child.stderr.setEncoding('utf8')
