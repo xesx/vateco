@@ -2,6 +2,7 @@ import * as fs from 'fs'
 import { setTimeout } from 'timers/promises'
 import { join } from 'path'
 
+import * as sharp from 'sharp'
 import { Injectable, Logger } from '@nestjs/common'
 
 import * as lib from '@lib'
@@ -56,6 +57,10 @@ export class CheckOutputCronJob {
         l.warn(`CheckOutputCronJob_handleCheckOutputJob_37 Deleted zero-size image: ${image}`)
         continue
       }
+
+      const all = await sharp(imagePath).metadata()
+      console.log('\x1b[36m', 'all', all, '\x1b[0m')
+      console.log('\x1b[36m', 'prompt', all?.comments?.find?.(i => i.keyword === 'prompt')?.text, '\x1b[0m')
 
       const buffer = fs.readFileSync(imagePath)
 
