@@ -95,8 +95,14 @@ export class TgBotLibService {
   }
 
   // Метод для отправки сообщения по chatId
-  async sendMessageV2 (chatId: number | string, text: string): Promise<void> {
-    await this.bot.telegram.sendMessage(chatId, text)
+  async sendMessageV2 ({ ctx, chatId, message = 'undefined message', extra = {} }: { ctx?: any, chatId?: string, message?: string, extra: any }): Promise<void> {
+    if (ctx) {
+      await this.reply(ctx, message, extra)
+    } else if (chatId) {
+      await this.bot.telegram.sendMessage(chatId, message, extra)
+    } else {
+      throw new Error('Either ctx or chatId must be provided')
+    }
   }
 
   async sendMediaGroup (chatId, media) {

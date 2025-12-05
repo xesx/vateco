@@ -66,9 +66,9 @@ import * as rpwf from './way-runpod-workflow'
     owni.ViewOwnITgBot,
     owni.TextMessageHandlerOwnITgBot,
 
-    rpwf.WayOwnITgBot,
-    rpwf.HandleRunpodWfTgBot,
-    rpwf.ViewRunpodWfTgBot,
+    // rpwf.WayOwnITgBot,
+    // rpwf.HandleRunpodWfTgBot,
+    // rpwf.ViewRunpodWfTgBot,
   ],
 })
 

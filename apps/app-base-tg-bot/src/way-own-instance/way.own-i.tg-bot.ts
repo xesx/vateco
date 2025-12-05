@@ -60,6 +60,7 @@ export class WayOwnITgBot {
   }
 
   private async initSession (ctx: OwnInstanceContext, next: () => Promise<void>) {
+    console.log('\x1b[36m', 'ctx', ctx, '\x1b[0m')
     ctx.session.way = 'own-instance'
     ctx.session.offer ??= {}
 

@@ -13,6 +13,8 @@ type TArgs = {
 }
 
 export function workflowRunMenu ({ wfvParams, prefixAction, backAction }: TArgs): [string, string][][] {
+  prefixAction = (prefixAction === '' || prefixAction.endsWith(':')) ? prefixAction : `${prefixAction}:`
+
   const sortedParams = Object.values(wfvParams)
     .filter(wfvParam => wfvParam.user)
     .sort((wfvParamA, wfvParamB) => {
@@ -64,7 +66,7 @@ export function workflowRunMenu ({ wfvParams, prefixAction, backAction }: TArgs)
     const prevParam = i > 0 ? sortedParams[i - 1] : undefined
     const prevX = prevParam?.positionX
 
-    const action = `${prefixAction}:wfvp:${param.id}`
+    const action = `${prefixAction}wfvp:${param.id}`
     const label = param.label + `(${value})`
 
     if (prevX !== undefined && x !== undefined && x === prevX) {
@@ -77,7 +79,7 @@ export function workflowRunMenu ({ wfvParams, prefixAction, backAction }: TArgs)
   }, [])
     .concat([[
       ['⬅️ Back', backAction],
-      ['🚀 Generate', `${prefixAction}:wfv:run`],
+      ['🚀 Generate', `${prefixAction}wfv:run`],
     ]])
 
   return keyboard as [string, string][][]

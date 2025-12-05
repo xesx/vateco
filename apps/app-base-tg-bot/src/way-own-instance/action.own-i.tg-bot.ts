@@ -212,15 +212,19 @@ export class ActionOwnITgBot {
   }
 
   async actionWfvSelect (ctx: OwnInstanceMatchContext) {
-    const { wfParamSchema } = this.wflib
+    const { step } = ctx.session
 
-    const { step, userId, instance } = ctx.session
-    const modelInfoLoaded = instance?.modelInfoLoaded || []
+    // const { wfParamSchema } = this.wflib
+    //
+    // const { step, userId, instance } = ctx.session
+    // const modelInfoLoaded = instance?.modelInfoLoaded || []
 
     const [,workflowVariantIdStr] = ctx.match
 
-    const workflowVariantId = Number(workflowVariantIdStr)
-    ctx.session.workflowVariantId = workflowVariantId
+    // const workflowVariantId = Number(workflowVariantIdStr)
+    // ctx.session.workflowVariantId = workflowVariantId
+
+    ctx.session.workflowVariantId = Number(workflowVariantIdStr)
 
     if (step === 'running') {
       const workflowVariant = await this.wfrepo.getWorkflowVariant(ctx.session.workflowVariantId)
@@ -233,34 +237,34 @@ export class ActionOwnITgBot {
         workflowTemplate,
       })
 
-      const wfvMergedParamsMap = await this.wfrepo.getMergedWorkflowVariantParamsValueMap({ userId, workflowVariantId })
+      // const wfvMergedParamsMap = await this.wfrepo.getMergedWorkflowVariantParamsValueMap({ userId, workflowVariantId })
 
-      for (const [paramName, value] of Object.entries(wfvMergedParamsMap)) {
-        const modelName = String(value.value ?? value)
-
-        if (
-          !wfParamSchema[paramName].isComfyUiModel ||
-          ['❓', 'N/A'].includes(modelName) ||
-          modelInfoLoaded?.includes(modelName)
-        ) {
-          continue
-        }
-
-        const modelData = await this.modelrepo.getModelByName(modelName)
-
-        await this.cloudapilib.vastAiModelInfoLoad({
-          baseUrl: ctx.session.instance?.apiUrl,
-          instanceId: ctx.session.instance?.id,
-          token: ctx.session.instance?.token,
-          modelName,
-          modelData,
-        })
-
-        if (ctx.session.instance) {
-          ctx.session.instance.modelInfoLoaded = ctx.session.instance.modelInfoLoaded || []
-          ctx.session.instance?.modelInfoLoaded.push(modelName)
-        }
-      }
+      // for (const [paramName, value] of Object.entries(wfvMergedParamsMap)) {
+      //   const modelName = String(value.value ?? value)
+      //
+      //   if (
+      //     !wfParamSchema[paramName].isComfyUiModel ||
+      //     ['❓', 'N/A'].includes(modelName) ||
+      //     modelInfoLoaded?.includes(modelName)
+      //   ) {
+      //     continue
+      //   }
+      //
+      //   const modelData = await this.modelrepo.getModelByName(modelName)
+      //
+      //   await this.cloudapilib.vastAiModelInfoLoad({
+      //     baseUrl: ctx.session.instance?.apiUrl,
+      //     instanceId: ctx.session.instance?.id,
+      //     token: ctx.session.instance?.token,
+      //     modelName,
+      //     modelData,
+      //   })
+      //
+      //   if (ctx.session.instance) {
+      //     ctx.session.instance.modelInfoLoaded = ctx.session.instance.modelInfoLoaded || []
+      //     ctx.session.instance?.modelInfoLoaded.push(modelName)
+      //   }
+      // }
     }
 
     await this.view.showWfvRunMenu(ctx)
@@ -292,38 +296,38 @@ export class ActionOwnITgBot {
 
     // suggest value form enum
     if (wfvParamEnum && Array.isArray(wfvParamEnum)) {
-      const message = `Set parameter *"${paramName}"*\nCurrent value: *"${currentValue}"*`
-
-      const maxLineLength = 30
-      const enumOptions: [string, string][][] = []
-      let currentRow: any[] = []
-      let currentLength = 0
-
-      wfvParamEnum
-        .map((value: any) => typeof value === 'object' ? value.label : String(value))
-        .forEach((value, i) => {
-          const button = [value, `act:own-i:wfvp:${workflowVariantParamId}:set:${i}`]
-          const buttonLength = value.length + 2 // запас на формат Telegram
-
-          // Если не помещается — перенос
-          if (currentLength + buttonLength > maxLineLength) {
-            enumOptions.push(currentRow)
-            currentRow = []
-            currentLength = 0
-          }
-
-          currentRow.push(button)
-          currentLength += buttonLength
-        })
-
-      enumOptions.push(currentRow)
-      currentRow = []
-      currentLength = 0
-
-      enumOptions.push([['Back', `act:own-i:wfv:${workflowVariantId}`]])
-
-      const keyboard = this.tgbotlib.generateInlineKeyboard(enumOptions)
-      await this.tgbotlib.reply(ctx, message, keyboard)
+      // const message = `Set parameter *"${paramName}"*\nCurrent value: *"${currentValue}"*`
+      //
+      // const maxLineLength = 30
+      // const enumOptions: [string, string][][] = []
+      // let currentRow: any[] = []
+      // let currentLength = 0
+      //
+      // wfvParamEnum
+      //   .map((value: any) => typeof value === 'object' ? value.label : String(value))
+      //   .forEach((value, i) => {
+      //     const button = [value, `act:own-i:wfvp:${workflowVariantParamId}:set:${i}`]
+      //     const buttonLength = value.length + 2 // запас на формат Telegram
+      //
+      //     // Если не помещается — перенос
+      //     if (currentLength + buttonLength > maxLineLength) {
+      //       enumOptions.push(currentRow)
+      //       currentRow = []
+      //       currentLength = 0
+      //     }
+      //
+      //     currentRow.push(button)
+      //     currentLength += buttonLength
+      //   })
+      //
+      // enumOptions.push(currentRow)
+      // currentRow = []
+      // currentLength = 0
+      //
+      // enumOptions.push([['Back', `act:own-i:wfv:${workflowVariantId}`]])
+      //
+      // const keyboard = this.tgbotlib.generateInlineKeyboard(enumOptions)
+      // await this.tgbotlib.reply(ctx, message, keyboard)
       return
     }
 
@@ -374,18 +378,18 @@ export class ActionOwnITgBot {
 
     await this.wfrepo.setWorkflowVariantUserParam({ userId, workflowVariantId, paramName, value })
 
-    if (this.wflib.wfParamSchema[paramName].isComfyUiModel && step === 'running') {
-      const modelName = String(value.value ?? value)
-      const modelData = await this.modelrepo.getModelByName(modelName)
-
-      await this.cloudapilib.vastAiModelInfoLoad({
-        baseUrl: ctx.session.instance?.apiUrl,
-        instanceId: ctx.session.instance?.id,
-        token: ctx.session.instance?.token,
-        modelName,
-        modelData,
-      })
-    }
+    // if (this.wflib.wfParamSchema[paramName].isComfyUiModel && step === 'running') {
+    //   const modelName = String(value.value ?? value)
+    //   const modelData = await this.modelrepo.getModelByName(modelName)
+    //
+    //   await this.cloudapilib.vastAiModelInfoLoad({
+    //     baseUrl: ctx.session.instance?.apiUrl,
+    //     instanceId: ctx.session.instance?.id,
+    //     token: ctx.session.instance?.token,
+    //     modelName,
+    //     modelData,
+    //   })
+    // }
 
     await this.view.showWfvRunMenu(ctx)
     await this.tgbotlib.safeAnswerCallback(ctx)

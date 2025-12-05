@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common'
 
 import * as lib from '@lib'
 import * as repo from '@repo'
+import * as synth from '@synth'
 
 import { OwnInstanceContext } from './types'
 
@@ -14,6 +15,7 @@ export class ViewOwnITgBot {
     private readonly msglib: lib.MessageLibService,
 
     private readonly wfrepo: repo.WorkflowRepository,
+    private readonly wfsynth: synth.WorkflowSynthService,
   ) {}
 
   async showOfferParamsMenu (ctx: OwnInstanceContext) {
@@ -43,17 +45,25 @@ export class ViewOwnITgBot {
   }
 
   async showWfvList (ctx: OwnInstanceContext) {
-    const workflows = await this.wfrepo.findWorkflowVariantsByTags(['own-instance'])
+    // const workflows = await this.wfrepo.findWorkflowVariantsByTags(['own-instance'])
+    //
+    // const message = '*Select workflow variant*'
+    // const keyboardSchema = kb.workflowsMenu({
+    //   workflows,
+    //   prefixAction: 'act:own-i',
+    //   backAction: 'act:own-i:instance:manage',
+    // })
+    // const keyboard = this.tgbotlib.generateInlineKeyboard(keyboardSchema)
+    //
+    // await this.tgbotlib.reply(ctx, message, { parse_mode: 'Markdown', ...keyboard })
+    //
 
-    const message = '*Select workflow variant*'
-    const keyboardSchema = kb.workflowsMenu({
-      workflows,
+    await this.wfsynth.view.showWfvList({
+      ctx,
+      tags: ['own-instance'],
       prefixAction: 'act:own-i',
-      backAction: 'act:own-i:instance:manage',
+      backAction: 'act:own-i:instance:manage'
     })
-    const keyboard = this.tgbotlib.generateInlineKeyboard(keyboardSchema)
-
-    await this.tgbotlib.reply(ctx, message, { parse_mode: 'Markdown', ...keyboard })
   }
 
   async showWfvRunMenu (ctx: OwnInstanceContext) {

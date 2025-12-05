@@ -76,6 +76,44 @@ export class ModelRepository {
     `
   }
 
+  async findUniqueModelTags (comfyUiDirectory: string): Promise<string[]> {
+    const result = await this.prisma.$queryRaw<{ tag: string }[]>`
+      SELECT DISTINCT mt.tag
+        FROM model_tags AS mt
+       INNER JOIN models AS m
+               ON mt.model_id = m.id
+       WHERE 1=1
+         AND m.comfy_ui_directory = ${comfyUiDirectory}
+       ORDER BY mt.tag ASC;
+    `
+
+    return result.map(row => row.tag)
+  }
+
+  async findUniqueModelTagsRelatedToTags (comfyUiDirectory: string, tags: string[]): Promise<string[]> {
+    if (tags.length === 0) {
+      return []
+    }
+
+    const tagPlaceholders = Prisma.join(tags.map(tag => Prisma.sql`${tag}`), ', ')
+
+    const result = await this.prisma.$queryRaw<{ tag: string }[]>`
+      SELECT DISTINCT mt2.tag
+        FROM models AS m
+       INNER JOIN model_tags AS mt1
+               ON mt1.model_id = m.id
+              AND mt1.tag IN (${tagPlaceholders})
+       INNER JOIN model_tags AS mt2
+               ON mt2.model_id = m.id
+              AND mt2.tag NOT IN (${tagPlaceholders})
+       WHERE 1=1
+         AND m.comfy_ui_directory = ${comfyUiDirectory}
+       ORDER BY mt2.tag ASC;
+    `
+
+    return result.map(row => row.tag)
+  }
+
   async findModelsByComfyUiDir (comfyUiDirectory: string) {
     return await this.prisma.models.findMany({
       where: { comfyUiDirectory },
@@ -103,6 +141,18 @@ export class ModelRepository {
 
     if (!model) {
       throw new Error(`ModelRepository_getModelByName_91 Model with name ${name} not found`)
+    }
+
+    return model
+  }
+
+  async getModelById (id: number) {
+    const model = await this.prisma.models.findUnique({
+      where: { id },
+    })
+
+    if (!model) {
+      throw new Error(`ModelRepository_getModelById_111 Model with ID ${id} not found`)
     }
 
     return model

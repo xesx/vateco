@@ -12,8 +12,8 @@ export class WorkflowCompilerSynthService {
     private readonly modelrepo: repo.ModelRepository,
   ) {}
 
-  // $.modelEnum:checkpoints:["illustrious","sd"]:
-  async modelEnum (comfyUiDirectory: string, tagsJsonArray: string, i: number) {
+  // $.enumModel:checkpoints:["illustrious","sd"]:
+  async enumModel (comfyUiDirectory: string, tagsJsonArray: string, i: number) {
     const tags: string[] = JSON.parse(tagsJsonArray)
     const models = await this.modelrepo.findModels({ comfyUiDirectory, tags })
 
@@ -30,7 +30,7 @@ export class WorkflowCompilerSynthService {
     return arr
   }
 
-  async checkpointEnum (i) {
+  async enumCheckpoint (i) {
     const models = await this.modelrepo.findModelsByComfyUiDir('checkpoints')
 
     const arr = models
@@ -46,7 +46,7 @@ export class WorkflowCompilerSynthService {
     return arr
   }
 
-  async loraEnum (i) {
+  async enumLora (i) {
     const models = await this.modelrepo.findModelsByComfyUiDir('loras')
 
     const arr = models

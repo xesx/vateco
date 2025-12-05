@@ -6,6 +6,7 @@ import { message } from 'telegraf/filters'
 
 import * as lib from '@lib'
 import * as repo from '@repo'
+import * as synth from '@synth'
 
 import { TAppBaseTgBotContext } from '../types'
 
@@ -16,8 +17,15 @@ export class BaseCommandTgBot {
   constructor(
     @InjectBot() private readonly bot: Telegraf<TAppBaseTgBotContext>,
     private readonly tgbotsrv: AppBaseTgBotService,
-    private readonly userrepo: repo.UserRepository,
     private readonly tgbotlib: lib.TgBotLibService,
+    private readonly wflib: lib.WorkflowLibService,
+    private readonly msglib: lib.MessageLibService,
+
+    private readonly wfsynth: synth.WorkflowSynthService,
+
+    private readonly wfrepo: repo.WorkflowRepository,
+    private readonly modelrepo: repo.ModelRepository,
+    private readonly userrepo: repo.UserRepository,
     store: repo.TgBotSessionsStoreRepository,
   ) {
     bot.use(session({ store }))
@@ -26,6 +34,8 @@ export class BaseCommandTgBot {
       // @ts-expect-error todo
       const { username } = ctx.chat ?? {}
 
+      // @ts-ignore
+      console.log('\x1b[36m', 'ctx.update', ctx.update?.callback_query?.data, '\x1b[0m')
       // todo: remove this in production
       if (!['alexxxalart', 'alexxxiy'].includes(username)) {
         return ctx.reply('Access denied. You are not authorized to use this bot.')
@@ -62,7 +72,18 @@ export class BaseCommandTgBot {
 
     this.bot.hears(/^_wfv_create/, (ctx) => this.tgbotsrv.createWorkflowVariant(ctx))
     this.bot.hears(/^_wfv_delete/, (ctx) => this.tgbotsrv.deleteWorkflowVariant(ctx))
-    this.bot.hears(/^_wfv_menu/, (ctx) => this.tgbotsrv.showWorkflowVariantRunMenu(ctx))
+
+    // for test
+    this.bot.hears(/^_wfv_test/, (ctx) => this.startWfvTest(ctx))
+    // this.bot.hears(/^_wfv_menu/, (ctx) => this.tgbotsrv.showWorkflowVariantRunMenu(ctx))
+    this.bot.action('wfv:list', (ctx) => this.wfvList(ctx))
+    this.bot.action(/wfv:([0-9]+)$/, (ctx) => this.wfvSelect(ctx))
+    // this.bot.action(/wfv:run$/, (ctx) => this.act.actionWfvRun(ctx))
+    this.bot.action(/wfvp:([0-9]+)$/, (ctx) => this.wfvParamSelect(ctx))
+    this.bot.action(/wfvp:([0-9]+):set:(.+)$/, (ctx) => this.wfvParamSet(ctx))
+    this.bot.action(/wfvp:([0-9]+):fset:(.+)$/, (ctx) => this.wfvParamForceSet(ctx)) // force set
+
+    this.bot.action(/wfvp:([0-9]+):mtag:(.+)$/, (ctx) => this.wfvParamModelTagMenu(ctx)) // select model with tags
   }
 
   private async initSession(ctx) {
@@ -85,5 +106,221 @@ export class BaseCommandTgBot {
     } else {
       return next()
     }
+  }
+
+
+  async wfvParamModelTagMenu (ctx) {
+    const { wfParamSchema } = this.wflib
+    const [,workflowVariantParamId, tail] = ctx.match
+
+    let tags = tail.split(':')
+    const lastTag = tags.at(-1)
+
+    if (tags.slice(0, -1).includes(lastTag)) {
+      tags = tags.filter(tag => tag !== lastTag)
+    }
+
+    const wfvParam = await this.wfrepo.getWorkflowVariantParamById(Number(workflowVariantParamId))
+    const paramName = wfvParam.paramName
+    const workflowVariantId = wfvParam.workflowVariantId
+
+    let wfvParamEnum = wfvParam?.enum ?? wfParamSchema[paramName].enum
+
+    if (typeof wfvParamEnum !== 'string' || !wfvParamEnum?.startsWith?.('$.model')) {
+      throw new Error(`wfvParamModelTagMenu_198 Unsupported enum type for workflowVariantParamId: ${workflowVariantParamId}`)
+    }
+
+    const [,comfyUiDirectory] = wfvParamEnum.replace('$.', '').split(':')
+
+    let modelTags: string[]
+
+    if (tags.length) {
+      modelTags = await this.modelrepo.findUniqueModelTagsRelatedToTags(comfyUiDirectory, tags)
+    } else {
+      modelTags = await this.modelrepo.findUniqueModelTags(comfyUiDirectory)
+    }
+
+    if (modelTags.length === 0) {
+      const models = await this.modelrepo.findModels({ comfyUiDirectory, tags })
+
+      if (models.length === 0) {
+        await this.tgbotlib.safeAnswerCallback(ctx, 'No models found with selected tags')
+        return
+      }
+
+      wfvParamEnum = models
+        .map(model => ({
+          label: model.label || model.name,
+          value: model.id,
+        }))
+
+      // console.log('\x1b[36m', 'models', models, '\x1b[0m')
+
+      await this.wfsynth.view.showWfvEnumMenu({
+        ctx,
+        message: `Select model:`,
+        enumArr: wfvParamEnum,
+        prefixAction: `wfvp:${workflowVariantParamId}:set`,
+        backAction: tags.length > 1 ? `wfvp:${workflowVariantParamId}:mtag:${tags.slice(0, -1).join(':')}` : `wfvp:${workflowVariantParamId}`,
+        useIndexAsValue: false,
+      })
+
+      return
+    }
+
+    wfvParamEnum = modelTags
+      .concat(tags)
+      .sort()
+      .map(tag => ({ label: (tags.includes(tag) ? '✅' :'❌') + tag, value: tag }))
+
+    await this.wfsynth.view.showWfvEnumMenu({
+      ctx,
+      message: `Select model tags:`,
+      enumArr: wfvParamEnum,
+      prefixAction: `wfvp:${workflowVariantParamId}:mtag:${tags.join(':')}`,
+      backAction: `wfv:${workflowVariantId}`,
+      useIndexAsValue: false,
+    })
+  }
+
+  async wfvParamForceSet (ctx) {
+    const [,workflowVariantParamId, value] = ctx.match
+    const { userId } = ctx.session
+
+    const wfvParam = await this.wfrepo.getWorkflowVariantParamById(Number(workflowVariantParamId))
+    const paramName = wfvParam.paramName
+    const workflowVariantId = wfvParam.workflowVariantId
+
+    await this.wfrepo.setWorkflowVariantUserParam({ userId, workflowVariantId, paramName, value })
+
+    await this.wfsynth.view.showWfvRunMenu({ ctx, userId, workflowVariantId, prefixAction: '', backAction: 'wfv:list' })
+    await this.tgbotlib.safeAnswerCallback(ctx)
+  }
+
+  async wfvParamSet (ctx) {
+    const [,workflowVariantParamId, rawValue] = ctx.match
+    const { userId } = ctx.session
+
+    const wfvParam = await this.wfrepo.getWorkflowVariantParamById(Number(workflowVariantParamId))
+    const paramName = wfvParam.paramName
+    const workflowVariantId = wfvParam.workflowVariantId
+    let wfvParamEnum = wfvParam.enum
+
+    let value: any = rawValue
+
+    // console.log('\x1b[36m', 'wfvParamEnum', wfvParamEnum, '\x1b[0m')
+    // console.log('\x1b[36m', 'value', value, '\x1b[0m')
+    if (typeof wfvParamEnum === 'string' && wfvParamEnum?.startsWith?.('$.model')) {
+      const model = await this.modelrepo.getModelById(Number(rawValue))
+      value = model.name
+    }
+
+    if (typeof wfvParamEnum === 'string' && wfvParamEnum?.startsWith?.('$.enum')) {
+      const enumCompilerName = wfvParamEnum.replace('$.enum', '')
+      wfvParamEnum = await this.wfsynth.compileEnum(enumCompilerName)
+    }
+
+    // value is enum index
+    if (wfvParamEnum && Array.isArray(wfvParamEnum)) {
+      value = wfvParamEnum[Number(rawValue)]
+      value = value.value ?? value
+    }
+
+    await this.wfrepo.setWorkflowVariantUserParam({ userId, workflowVariantId, paramName, value })
+
+    await this.wfsynth.view.showWfvRunMenu({ ctx, userId, workflowVariantId, prefixAction: '', backAction: 'wfv:list' })
+    await this.tgbotlib.safeAnswerCallback(ctx)
+  }
+
+  async wfvParamSelect (ctx) {
+    const { wfParamSchema } = this.wflib
+
+    const [,workflowVariantParamId] = ctx.match
+    const { userId } = ctx.session
+
+    const wfvParam = await this.wfrepo.getWorkflowVariantParamById(Number(workflowVariantParamId))
+    const paramName = wfvParam.paramName
+    const workflowVariantId = wfvParam.workflowVariantId
+
+    const wfvParamType = wfParamSchema[paramName].type
+    const wfvUserParam = await this.wfrepo.findWorkflowVariantUserParam({ userId, workflowVariantId, paramName })
+    const currentValue = (wfvUserParam?.value ?? wfvParam?.value ?? '❌') as string | number | boolean
+
+    let wfvParamEnum = wfvParam?.enum ?? wfParamSchema[paramName].enum
+
+    if (typeof wfvParamEnum === 'string' && wfvParamEnum?.startsWith?.('$.model')) {
+      const [,comfyUiDirectory] = wfvParamEnum.replace('$.', '').split(':')
+      const modelTags = await this.modelrepo.findUniqueModelTags(comfyUiDirectory)
+
+      wfvParamEnum = modelTags
+        .sort()
+        .map(tag => ({ label: '❌' + tag, value: tag }))
+
+      await this.wfsynth.view.showWfvEnumMenu({
+        ctx,
+        message: `Select model tags:`,
+        enumArr: wfvParamEnum,
+        prefixAction: `wfvp:${workflowVariantParamId}:mtag`,
+        backAction: `wfv:${workflowVariantId}`,
+        useIndexAsValue: false,
+      })
+
+      return
+    }
+
+    if (typeof wfvParamEnum === 'string' && wfvParamEnum?.startsWith?.('$.enum')) {
+      const enumCompilerName = wfvParamEnum.replace('$.', '')
+      wfvParamEnum = await this.wfsynth.compileEnum(enumCompilerName)
+    }
+
+    if (wfvParamEnum && Array.isArray(wfvParamEnum)) {
+      await this.wfsynth.view.showWfvEnumMenu({
+        ctx,
+        message: `Current value: **${String(currentValue)}** \nSelect new value:`,
+        enumArr: wfvParamEnum,
+        prefixAction: `wfvp:${workflowVariantParamId}:set`,
+        backAction: `wfv:${workflowVariantId}`,
+      })
+      return
+    }
+
+    // suggest boolean value (true/false)
+    if (wfvParamType === 'boolean') {
+      await this.wfrepo.setWorkflowVariantUserParam({ userId, workflowVariantId, paramName, value: !currentValue })
+      await this.wfsynth.view.showWfvRunMenu({ ctx, userId, workflowVariantId, prefixAction: '', backAction: 'wfv:list' })
+      return
+    }
+
+    // suggest value form text input
+    ctx.session.inputWaiting = paramName
+    await this.tgbotlib.safeAnswerCallback(ctx)
+
+    const currentValueAsCode = this.msglib.genCodeMessage(String(currentValue))
+    const message = `Current value: ${currentValueAsCode}\nSend new value for parameter <b>"${paramName}"</b>`
+
+    const keyboard = this.tgbotlib.generateInlineKeyboard([[['Back', `wfv:${workflowVariantId}`]]])
+
+    await this.tgbotlib.sendMessageV2({ ctx, message, extra: { parse_mode: 'HTML', ...keyboard } })
+  }
+
+  async wfvSelect (ctx) {
+    const { userId } = ctx.session
+    const [,workflowVariantIdStr] = ctx.match
+    const workflowVariantId = parseInt(workflowVariantIdStr, 10)
+
+    ctx.session.workflowVariantId = workflowVariantId
+    delete ctx.session.inputWaiting
+
+    await this.wfsynth.view.showWfvRunMenu({ ctx, userId, workflowVariantId, prefixAction: '', backAction: 'wfv:list' })
+  }
+
+  async wfvList (ctx) {
+    await this.wfsynth.view.showWfvList({ ctx, tags: ['own-instance'], prefixAction: '', backAction: 'act:main-menu' })
+  }
+
+  async startWfvTest (ctx) {
+    const keyboard = this.tgbotlib.generateInlineKeyboard([[['Start Test', 'wfv:list']]])
+
+    await this.tgbotlib.sendMessageV2({ ctx, message: 'press to start', extra: { parse_mode: 'Markdown', ...keyboard } })
   }
 }

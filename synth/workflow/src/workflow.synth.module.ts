@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common'
 import { WorkflowSynthService } from './workflow.synth.service'
 import { WorkflowCompilerSynthService } from './workflow-compiler.synth.service'
 import { WorkflowCookSynthService } from './workflow-cook.synth.service'
+import { WorkflowViewSynthService } from './workflow-view.synth.service'
 
 import * as lib from '@lib'
 import * as repo from '@repo'
@@ -17,6 +18,7 @@ import * as repo from '@repo'
     WorkflowSynthService,
     WorkflowCompilerSynthService,
     WorkflowCookSynthService,
+    WorkflowViewSynthService,
   ],
   exports: [WorkflowSynthService],
 })
