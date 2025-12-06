@@ -40,8 +40,10 @@ export class TestCli {
       .action(async (name) => {
         console.log(`Привет, ${name}!`)
 
-        const info = await this.civitailib.importModelVersionData({ modelVersionId: '2319122' })
-        console.log('\x1b[36m', 'info', info, '\x1b[0m')
+        const info = await this.civitailib.importModelData({ modelId: '2165923' })
+        console.log('\x1b[36m', 'info', JSON.stringify(info), '\x1b[0m')
+
+        // https://civitai.com/models/1529811/style-or-wwafr
         // const models = await this.wfsynth.compileEnum('modelEnum:checkpoints:["illustrious","sd"]:')
         // console.log('\x1b[36m', 'models', models, '\x1b[0m')
         // const models = await this.modelrepo.findModels({

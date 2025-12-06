@@ -121,21 +121,26 @@ export class AppBaseTgBotService {
       return next()
     }
 
-    if (!message.includes('modelVersionId=')) {
-      return await ctx.reply('Civitai link must include modelVersionId parameter.')
-    }
-
+    // https://civitai.com/models/24350?modelVersionId=2315492
+    // or
+    // https://civitai.com/models/1627367
+    // or
+    // https://civitai.com/models/1627367/style-messy-sketch
     const [link, dir] = message
       .split('\n')
       .map(item => item.trim())
 
+    const civitaiId = link.replace('https://civitai.com/models/', '').split('/')[0]
+    let civitaiVersionId = new URL(link).searchParams.get('modelVersionId')
+
+    if (!civitaiVersionId) {
+      const modelInfo = await this.civitailib.importModelData({ modelId: civitaiId })
+      civitaiVersionId = modelInfo.modelVersions[0]?.id?.toString?.() // last version (left on civitai page)
+    }
+
     if (!COMFYUI_MODEL_DIRS.includes(dir)) {
       return await ctx.reply(`Invalid ComfyUI directory. Must be one of: ${COMFYUI_MODEL_DIRS.join(', ')}`)
     }
-
-    // https://civitai.com/models/24350?modelVersionId=2315492
-    const civitaiId = new URL(link).pathname.split('/models/')[1].split('?')[0]
-    const civitaiVersionId = new URL(link).searchParams.get('modelVersionId')
 
     if (!civitaiId || !civitaiVersionId) {
       return await ctx.reply('Invalid Civitai link.')
@@ -161,7 +166,12 @@ export class AppBaseTgBotService {
           trx,
         })
 
-        await this.modelrepo.createModelCivitaiLink({ modelId, civitaiId, civitaiVersionId, trx })
+        await this.modelrepo.createModelCivitaiLink({
+          modelId,
+          civitaiId,
+          civitaiVersionId,
+          trx,
+        })
 
         await this.modelrepo.createModelTag({ modelId, tag: 'new', trx })
 

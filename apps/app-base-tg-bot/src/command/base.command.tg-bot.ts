@@ -34,8 +34,9 @@ export class BaseCommandTgBot {
       // @ts-expect-error todo
       const { username } = ctx.chat ?? {}
 
-      // @ts-ignore
-      console.log('\x1b[36m', 'ctx.update', ctx.update?.callback_query?.data, '\x1b[0m')
+      // @ts-expect-error for debug
+      console.log('----->>>>>>>action:', ctx.update?.callback_query?.data)
+
       // todo: remove this in production
       if (!['alexxxalart', 'alexxxiy'].includes(username)) {
         return ctx.reply('Access denied. You are not authorized to use this bot.')
