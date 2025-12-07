@@ -97,6 +97,7 @@ export class AppBaseTgBotService {
           name,
           comfyUiDirectory: dir,
           comfyUiFileName: file.split('/').at(-1),
+          baseModel: 'undefined',
           label: name,
           trx,
         })
@@ -126,7 +127,7 @@ export class AppBaseTgBotService {
     // https://civitai.com/models/1627367
     // or
     // https://civitai.com/models/1627367/style-messy-sketch
-    const [link, dir] = message
+    const [link, comfyUiDirectory] = message
       .split('\n')
       .map(item => item.trim())
 
@@ -138,7 +139,7 @@ export class AppBaseTgBotService {
       civitaiVersionId = modelInfo.modelVersions[0]?.id?.toString?.() // last version (left on civitai page)
     }
 
-    if (!COMFYUI_MODEL_DIRS.includes(dir)) {
+    if (!COMFYUI_MODEL_DIRS.includes(comfyUiDirectory)) {
       return await ctx.reply(`Invalid ComfyUI directory. Must be one of: ${COMFYUI_MODEL_DIRS.join(', ')}`)
     }
 
@@ -150,35 +151,28 @@ export class AppBaseTgBotService {
     console.log('civitaiVersionId', civitaiVersionId)
 
     const info = await this.civitailib.importModelVersionData({ modelVersionId: civitaiVersionId })
+    const file = info.files.find(i => i.primary) || info.files[0]
 
-    const name = `${info.model.name}_${info.name}`.toLowerCase().replace(/[^0-9a-z]/g, '_')
-    const file = info.files.find(i => i.primary)?.name || info.files[0]?.name
+    let name = info.model?.name?.toLowerCase?.().replace(/[^0-9a-z]+/g, '_') || ''
+    name += `${info.name}`.toLowerCase().replace(/[^0-9a-z]+/g, '_')
+
+    const baseModel = info.baseModel.replace(/\s+/, '_').toLowerCase() || 'undefined'
+    const comfyUiFileName = file.name
+    const label = name
 
     const prisma = this.modelrepo['prisma']
 
     try {
       const modelId = await prisma.$transaction(async (trx: lib.PrismaLibService) => {
-        const modelId = await this.modelrepo.createModel({
-          name,
-          comfyUiDirectory: dir,
-          comfyUiFileName: file.split('/').at(-1),
-          label: name,
-          trx,
-        })
-
-        await this.modelrepo.createModelCivitaiLink({
-          modelId,
-          civitaiId,
-          civitaiVersionId,
-          trx,
-        })
+        const modelId = await this.modelrepo.createModel({ name, comfyUiDirectory, baseModel, comfyUiFileName, label, trx })
+        await this.modelrepo.createModelCivitaiLink({ modelId, civitaiId, civitaiVersionId, trx })
 
         await this.modelrepo.createModelTag({ modelId, tag: 'new', trx })
 
         return modelId
       })
 
-      return await ctx.reply('Model created with ID: ' + modelId)
+      return await ctx.reply(`Model created with ID: ${modelId}\nname: ${name}\nbase model:${baseModel}\ndir: ${comfyUiDirectory}\nfile: ${comfyUiFileName}`)
     } catch (error) {
       return await ctx.reply('Error creating model: ' + error.message)
     }

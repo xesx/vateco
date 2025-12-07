@@ -217,7 +217,7 @@ export class BaseCommandTgBot {
     }
 
     if (typeof wfvParamEnum === 'string' && wfvParamEnum?.startsWith?.('$.enum')) {
-      const enumCompilerName = wfvParamEnum.replace('$.enum', '')
+      const enumCompilerName = wfvParamEnum.replace('$.', '')
       wfvParamEnum = await this.wfsynth.compileEnum(enumCompilerName)
     }
 
@@ -253,14 +253,14 @@ export class BaseCommandTgBot {
       const [,comfyUiDirectory] = wfvParamEnum.replace('$.', '').split(':')
       const modelTags = await this.modelrepo.findUniqueModelTags(comfyUiDirectory)
 
-      wfvParamEnum = modelTags
+      const enumArr = modelTags
         .sort()
         .map(tag => ({ label: '❌' + tag, value: tag }))
 
       await this.wfsynth.view.showWfvEnumMenu({
         ctx,
         message: `Select model tags:`,
-        enumArr: wfvParamEnum,
+        enumArr,
         prefixAction: `wfvp:${workflowVariantParamId}:mtag`,
         backAction: `wfv:${workflowVariantId}`,
         useIndexAsValue: false,

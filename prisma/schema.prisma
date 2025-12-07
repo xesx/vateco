@@ -116,6 +116,7 @@ model Models {
   createdAt        DateTime @default(now()) @map("created_at")
   updatedAt        DateTime @default(now()) @updatedAt @map("updated_at")
   name             String   @unique @map("name")
+  baseModel        String   @default("undefined") @map("base_model")
   comfyUiDirectory String   @map("comfy_ui_directory")
   comfyUiFileName  String   @map("comfy_ui_file_name")
   label            String   @map("label")
@@ -169,10 +170,18 @@ model ModelTags {
 }
 
 model Prompts {
-  id        Int      @id @default(autoincrement())
-  prompt    String   @db.Text
-  hash      String   @unique @db.VarChar(64) // SHA-256 = 64 hex chars
-  createdAt DateTime @default(now())
+  id        Int      @id @default(autoincrement()) @map("id")
+  prompt    String   @db.Text @map("prompt")
+  hash      String   @unique @db.VarChar(64) @map("hash")// SHA-256 = 64 hex chars
+  createdAt DateTime @default(now()) @map("created_at")
 
   @@index([hash], name: "prompt_hash_idx")
+  @@map("prompts")
+}
+
+model Tags {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+
+  @@map("tags")
 }

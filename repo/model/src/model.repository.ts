@@ -13,11 +13,12 @@ export class ModelRepository {
     private readonly prisma: lib.PrismaLibService,
   ) {}
 
-  async createModel ({ name, comfyUiDirectory, comfyUiFileName, label, trx = this.prisma }: { name: string, comfyUiDirectory: string, comfyUiFileName: string, label: string, trx?: lib.PrismaLibService }) {
+  async createModel ({ name, comfyUiDirectory, comfyUiFileName, baseModel, label, trx = this.prisma }: { name: string, comfyUiDirectory: string, comfyUiFileName: string, baseModel: string, label: string, trx?: lib.PrismaLibService }) {
     const model = await trx.models.create({
       data: {
         name,
         comfyUiDirectory,
+        baseModel,
         comfyUiFileName,
         label,
       },
@@ -88,6 +89,22 @@ export class ModelRepository {
     `
 
     return result.map(row => row.tag)
+  }
+
+  async findUniqueModelTagIds (comfyUiDirectory: string): Promise<number[]> {
+    const result = await this.prisma.$queryRaw<{ id: number }[]>`
+      SELECT DISTINCT t.id
+        FROM model_tags AS mt
+       INNER JOIN models AS m
+               ON mt.model_id = m.id
+       INNER JOIN tags AS t
+               ON t.name = mt.tag
+       WHERE 1=1
+         AND m.comfy_ui_directory = ${comfyUiDirectory}
+       ORDER BY t.id ASC;
+    `
+
+    return result.map(row => row.id)
   }
 
   async findUniqueModelTagsRelatedToTags (comfyUiDirectory: string, tags: string[]): Promise<string[]> {
