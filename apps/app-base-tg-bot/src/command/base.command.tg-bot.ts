@@ -25,6 +25,7 @@ export class BaseCommandTgBot {
 
     private readonly wfrepo: repo.WorkflowRepository,
     private readonly modelrepo: repo.ModelRepository,
+    private readonly tagrepo: repo.TagRepository,
     private readonly userrepo: repo.UserRepository,
     store: repo.TgBotSessionsStoreRepository,
   ) {
@@ -114,12 +115,17 @@ export class BaseCommandTgBot {
     const { wfParamSchema } = this.wflib
     const [,workflowVariantParamId, tail] = ctx.match
 
-    let tags = tail.split(':')
-    const lastTag = tags.at(-1)
+    const originalTagsIds = tail.split(':').map(id => Number(id))
 
-    if (tags.slice(0, -1).includes(lastTag)) {
-      tags = tags.filter(tag => tag !== lastTag)
+    let enabledTagsIds = originalTagsIds
+    const lastTagId = originalTagsIds.at(-1) || 0
+
+    if (originalTagsIds.slice(0, -1).includes(lastTagId)) {
+      enabledTagsIds = originalTagsIds.filter(id => id !== lastTagId)
     }
+
+    const enabledTags = await this.tagrepo.getTagsByIds({ ids: enabledTagsIds })
+    const enabledTagsNames = enabledTags.map(tag => tag.name)
 
     const wfvParam = await this.wfrepo.getWorkflowVariantParamById(Number(workflowVariantParamId))
     const paramName = wfvParam.paramName
@@ -133,16 +139,17 @@ export class BaseCommandTgBot {
 
     const [,comfyUiDirectory] = wfvParamEnum.replace('$.', '').split(':')
 
-    let modelTags: string[]
+    let modelTagsNames: string[]
 
-    if (tags.length) {
-      modelTags = await this.modelrepo.findUniqueModelTagsRelatedToTags(comfyUiDirectory, tags)
+    if (enabledTags.length) {
+      modelTagsNames = await this.modelrepo.findUniqueModelTagsRelatedToTags(comfyUiDirectory, enabledTagsNames)
     } else {
-      modelTags = await this.modelrepo.findUniqueModelTags(comfyUiDirectory)
+      modelTagsNames = await this.modelrepo.findUniqueModelTags(comfyUiDirectory)
     }
 
-    if (modelTags.length === 0) {
-      const models = await this.modelrepo.findModels({ comfyUiDirectory, tags })
+    // no more tags to select, show models list
+    if (modelTagsNames.length === 0) {
+      const models = await this.modelrepo.findModels({ comfyUiDirectory, tags: enabledTagsNames })
 
       if (models.length === 0) {
         await this.tgbotlib.safeAnswerCallback(ctx, 'No models found with selected tags')
@@ -162,23 +169,30 @@ export class BaseCommandTgBot {
         message: `Select model:`,
         enumArr: wfvParamEnum,
         prefixAction: `wfvp:${workflowVariantParamId}:set`,
-        backAction: tags.length > 1 ? `wfvp:${workflowVariantParamId}:mtag:${tags.slice(0, -1).join(':')}` : `wfvp:${workflowVariantParamId}`,
+        backAction: enabledTags.length > 1
+          ? `wfvp:${workflowVariantParamId}:mtag:${originalTagsIds.slice(0, -1).join(':')}`
+          : `wfvp:${workflowVariantParamId}`,
         useIndexAsValue: false,
       })
 
       return
     }
 
-    wfvParamEnum = modelTags
-      .concat(tags)
-      .sort()
-      .map(tag => ({ label: (tags.includes(tag) ? '✅' :'❌') + tag, value: tag }))
+    const modelTags = await this.tagrepo.getTagsByNames({ names: modelTagsNames })
+    const newModelTags = modelTags.concat(enabledTags)
+
+    wfvParamEnum = newModelTags
+      .sort((a, b) => a.name.localeCompare(b.name))
+      .map(tag => ({
+        label: (enabledTagsNames.includes(tag.name) ? '✅' :'❌') + tag.name,
+        value: newModelTags.find(t => t.name === tag.name)?.id || 0,
+      }))
 
     await this.wfsynth.view.showWfvEnumMenu({
       ctx,
       message: `Select model tags:`,
       enumArr: wfvParamEnum,
-      prefixAction: `wfvp:${workflowVariantParamId}:mtag:${tags.join(':')}`,
+      prefixAction: `wfvp:${workflowVariantParamId}:mtag:${enabledTagsIds.join(':')}`,
       backAction: `wfv:${workflowVariantId}`,
       useIndexAsValue: false,
     })
@@ -209,8 +223,6 @@ export class BaseCommandTgBot {
 
     let value: any = rawValue
 
-    // console.log('\x1b[36m', 'wfvParamEnum', wfvParamEnum, '\x1b[0m')
-    // console.log('\x1b[36m', 'value', value, '\x1b[0m')
     if (typeof wfvParamEnum === 'string' && wfvParamEnum?.startsWith?.('$.model')) {
       const model = await this.modelrepo.getModelById(Number(rawValue))
       value = model.name
@@ -252,10 +264,11 @@ export class BaseCommandTgBot {
     if (typeof wfvParamEnum === 'string' && wfvParamEnum?.startsWith?.('$.model')) {
       const [,comfyUiDirectory] = wfvParamEnum.replace('$.', '').split(':')
       const modelTags = await this.modelrepo.findUniqueModelTags(comfyUiDirectory)
+      const modelTagsIds = await this.tagrepo.getTagsByNames({ names: modelTags })
 
-      const enumArr = modelTags
-        .sort()
-        .map(tag => ({ label: '❌' + tag, value: tag }))
+      const enumArr = modelTagsIds
+        .sort((a, b) => a.name.localeCompare(b.name))
+        .map(tag => ({ label: '❌' + tag.name, value: tag.id }))
 
       await this.wfsynth.view.showWfvEnumMenu({
         ctx,

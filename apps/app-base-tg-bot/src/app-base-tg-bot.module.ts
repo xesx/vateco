@@ -49,6 +49,7 @@ import * as rpwf from './way-runpod-workflow'
     repo.WorkflowRepositoryModule,
     repo.UserRepositoryModule,
     repo.ModelRepositoryModule,
+    repo.TagRepositoryModule,
 
     synth.WorkflowSynthModule,
 
