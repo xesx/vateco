@@ -261,12 +261,12 @@ export class BaseCommandTgBot {
 
     let wfvParamEnum = wfvParam?.enum ?? wfParamSchema[paramName].enum
 
-    if (typeof wfvParamEnum === 'string' && wfvParamEnum?.startsWith?.('$.model')) {
+    if (typeof wfvParamEnum === 'string' && wfvParamEnum.startsWith('$.model')) {
       const [,comfyUiDirectory] = wfvParamEnum.replace('$.', '').split(':')
-      const modelTags = await this.modelrepo.findUniqueModelTags(comfyUiDirectory)
-      const modelTagsIds = await this.tagrepo.getTagsByNames({ names: modelTags })
+      const allModelTagsNames = await this.modelrepo.findUniqueModelTags(comfyUiDirectory)
+      const allModelTags = await this.tagrepo.getTagsByNames({ names: allModelTagsNames })
 
-      const enumArr = modelTagsIds
+      const enumArr = allModelTags
         .sort((a, b) => a.name.localeCompare(b.name))
         .map(tag => ({ label: '❌' + tag.name, value: tag.id }))
 
@@ -282,7 +282,7 @@ export class BaseCommandTgBot {
       return
     }
 
-    if (typeof wfvParamEnum === 'string' && wfvParamEnum?.startsWith?.('$.enum')) {
+    if (typeof wfvParamEnum === 'string' && wfvParamEnum.startsWith('$.enum')) {
       const enumCompilerName = wfvParamEnum.replace('$.', '')
       wfvParamEnum = await this.wfsynth.compileEnum(enumCompilerName)
     }
