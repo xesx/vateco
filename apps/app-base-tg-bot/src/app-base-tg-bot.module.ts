@@ -7,11 +7,14 @@ import * as lib from '@lib'
 import * as repo from '@repo'
 import * as synth from '@synth'
 
+import { MiddlewareTgBotService } from './middleware.tg-bot.service'
+import { CommandTgBotService } from './command.tg-bot.service'
+import { ActionTgBotService } from './action.tg-bot.service'
+
 import { AppBaseTgBotService } from './app-base-tg-bot.service'
 import { BaseCommandTgBot } from './command/base.command.tg-bot'
 
 import * as owni from './way-own-instance'
-import * as rpwf from './way-runpod-workflow'
 
 @Module({
   imports: [
@@ -59,6 +62,10 @@ import * as rpwf from './way-runpod-workflow'
   providers: [
     AppBaseTgBotService,
     // order is important, as handlers are executed in the order they are registered
+    MiddlewareTgBotService,
+    CommandTgBotService,
+    ActionTgBotService,
+
     BaseCommandTgBot,
 
     owni.WayOwnITgBot,

@@ -4,6 +4,10 @@ import * as lib from '@lib'
 import * as repo from '@repo'
 import * as kb from '@kb'
 
+import {
+  MAIN_MENU,
+} from '@kb'
+
 @Injectable()
 export class WorkflowViewSynthService {
   private readonly l = new Logger(WorkflowViewSynthService.name)
@@ -12,7 +16,23 @@ export class WorkflowViewSynthService {
     private readonly wflib: lib.WorkflowLibService,
     private readonly tgbotlib: lib.TgBotLibService,
     private readonly wfrepo: repo.WorkflowRepository,
+    private readonly msglib: lib.MessageLibService,
   ) {}
+
+  async showMainMenu ({ ctx, chatId }: { ctx?: any; chatId?: string }) {
+    const message = 'Main menu:'
+    const keyboard = this.tgbotlib.generateInlineKeyboard(MAIN_MENU)
+
+    await this.tgbotlib.sendMessageV2({ ctx, chatId, message, extra: { parse_mode: 'Markdown', ...keyboard } })
+  }
+
+  async showInstanceManageMenu ({ ctx, chatId }: { ctx?: any; chatId?: string }) {
+    const message = 'Manage instance:'
+    const keyboard = this.tgbotlib.generateInlineKeyboard(kb.ownInstanceManageMenu(ctx.session.step))
+
+    await this.tgbotlib.safeAnswerCallback(ctx)
+    await this.tgbotlib.sendMessageV2({ ctx, chatId, message, extra: { parse_mode: 'Markdown', ...keyboard } })
+  }
 
   async showWfvList ({ ctx, chatId, tags, prefixAction, backAction }: { ctx?: any; chatId?: string; tags: string[]; prefixAction: string; backAction: string }) {
     const workflows = await this.wfrepo.findWorkflowVariantsByTags(tags)
@@ -36,11 +56,8 @@ export class WorkflowViewSynthService {
     }))
 
     await this.tgbotlib.sendMessageV2({ ctx, chatId, message, extra: { parse_mode: 'Markdown', ...keyboard } })
+    await this.tgbotlib.safeAnswerCallback(ctx)
   }
-  //
-  // async showWfvParamSelect () {
-  //
-  // }
 
   async showWfvEnumMenu ({ ctx, chatId, message, enumArr, prefixAction, backAction, useIndexAsValue = true }
   : {
@@ -83,6 +100,17 @@ export class WorkflowViewSynthService {
     enumOptions.push([['Back', backAction]])
 
     const keyboard = this.tgbotlib.generateInlineKeyboard(enumOptions)
-    await this.tgbotlib.sendMessageV2({ ctx, chatId, message, extra: { parse_mode: 'Markdown', ...keyboard } })
+    await this.tgbotlib.sendMessageV2({ ctx, chatId, message, extra: { parse_mode: 'HTML', ...keyboard } })
+  }
+
+  async showSuggestInputWfvParamValue ({ ctx, chatId, paramName, currentValue, workflowVariantId }: { ctx?: any; chatId?: string; paramName: string; currentValue: any; workflowVariantId: number }) {
+    await this.tgbotlib.safeAnswerCallback(ctx)
+
+    const currentValueAsCode = this.msglib.genCodeMessage(String(currentValue))
+    const message = `Current value: ${currentValueAsCode}\nSend new value for parameter <b>"${paramName}"</b>`
+
+    const keyboard = this.tgbotlib.generateInlineKeyboard([[['Back', `wfv:${workflowVariantId}`]]])
+
+    await this.tgbotlib.sendMessageV2({ ctx, chatId, message, extra: { parse_mode: 'HTML', ...keyboard } })
   }
 }

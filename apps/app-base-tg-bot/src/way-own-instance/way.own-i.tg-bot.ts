@@ -26,8 +26,6 @@ export class WayOwnITgBot {
   ) {
     this.bot.action(/^act:own-i(.*)$/, (ctx, next) => this.initSession(ctx, next))
 
-    this.bot.command('start', (ctx, next) => this.commandStart(ctx, next))
-
     // this.bot.on(message('voice'), (ctx) => {
     //   ctx.reply('Голосовое сообщение получено! 🎙')
     // })
@@ -70,26 +68,6 @@ export class WayOwnITgBot {
     ctx.session.inputWaiting = undefined
 
     return await next()
-  }
-
-  async commandStart (ctx: OwnInstanceContext, next: () => Promise<void>) {
-    if (ctx.session.way !== 'own-instance') {
-      return next()
-    }
-
-    const step = ctx.session.step
-
-    if (step === 'start') {
-      await this.view.showOfferParamsMenu(ctx)
-    } else if (['loading', 'running'].includes(step)) {
-      if (ctx.session.workflowVariantId) {
-        await this.view.showWfvRunMenu(ctx)
-      } else {
-        await this.view.showInstanceManageMenu(ctx)
-      }
-    } else {
-      await this.view.showOfferParamsMenu(ctx)
-    }
   }
 
   async photo (ctx, next) {

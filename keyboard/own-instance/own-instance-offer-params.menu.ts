@@ -10,7 +10,7 @@ export function ownInstanceOfferParamsMenu({ gpu, geolocation, inDataCenterOnly 
     [[`Geolocation (${(geolocation || 'N/A')})`, 'act:own-i:offer:params:geolocation']],
     [[`In data center only (${(inDataCenterOnly || 'N/A')})`, 'act:own-i:offer:params:inDataCenterOnly']],
     [[`Start search`, 'act:own-i:offer:search']],
-    [[`⬅️ Back`, 'act:main-menu']],
+    [[`⬅️ Back`, 'main-menu']],
   ] as [string, string][][]
 
   return keyboardDescription

@@ -1,14 +1,8 @@
 import { Injectable } from '@nestjs/common'
 
-import { TAppBaseTgBotContext } from './types'
-
 import * as lib from '@lib'
 import * as repo from '@repo'
 import * as synth from '@synth'
-
-import {
-  MAIN_MENU,
-} from '@kb'
 
 const COMFYUI_MODEL_DIRS = ['checkpoints', 'clip', 'clip_vision', 'configs', 'controlnet', 'diffusers', 'diffusion_models', 'embeddings', 'gligen', 'hypernetworks', 'LLavacheckpoints', 'loras', 'photomaker', 'style_models', 'text_encoders', 'unet', 'upscale_models', 'vae', 'vae_approx']
 
@@ -24,42 +18,6 @@ export class AppBaseTgBotService {
     setTimeout(() => {
       tgbotlib.sendMessage({ chatId: '185857068:185857068', text: '!!! DEPLOY !!!' })
     }, 2000)
-  }
-
-  async actionMainMenu (ctx: TAppBaseTgBotContext) {
-    await this.tgbotlib.safeAnswerCallback(ctx)
-    this.resetSession(ctx)
-    await this.showMainMenu(ctx)
-  }
-
-  async showMainMenu (ctx: TAppBaseTgBotContext) {
-    const message = 'Main menu:'
-    const keyboard = this.tgbotlib.generateInlineKeyboard(MAIN_MENU)
-    await this.tgbotlib.reply(ctx, message, keyboard)
-  }
-
-  async showWorkflowVariantRunMenu (ctx) {
-    const [, workflowVariantIdStr] = ctx.message.text.split(' ')
-    const workflowVariantId = parseInt(workflowVariantIdStr, 10)
-    const userId = ctx.session.userId
-
-    if (isNaN(workflowVariantId)) {
-      throw new Error('Invalid workflow variant ID. Usage: #wf-show <workflowVariantId>')
-    }
-
-    const workflowVariant = await this.wfrepo.getWorkflowVariant(workflowVariantId)
-    const keyboard = await this.wfsynth.generateWorkflowVariantRunMenu({ workflowVariantId, userId, })
-
-    await this.tgbotlib.reply(ctx, `Workflow variant ${workflowVariant.name}`, keyboard)
-    await this.tgbotlib.safeAnswerCallback(ctx)
-  }
-
-  resetSession(ctx: TAppBaseTgBotContext) {
-    ctx.session = {
-      telegramId: ctx.session.telegramId,
-      userId: ctx.session.userId,
-      step: 'start',
-    }
   }
 
   async createModelByHuggingfaceLink (ctx, next) {

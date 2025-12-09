@@ -10,7 +10,17 @@ export class WorkflowCompilerSynthService {
   constructor(
     private readonly wflib: lib.WorkflowLibService,
     private readonly modelrepo: repo.ModelRepository,
+    private readonly tagrepo: repo.TagRepository,
   ) {}
+
+  async enumModelTag (comfyUiDirectory: string) {
+    const allModelTagsNames = await this.modelrepo.findUniqueModelTags(comfyUiDirectory)
+    const allModelTags = await this.tagrepo.getTagsByNames({ names: allModelTagsNames })
+
+    return allModelTags
+      .sort((a, b) => a.name.localeCompare(b.name))
+      .map(tag => ({ label: '❌' + tag.name, value: tag.id }))
+  }
 
   // $.enumModel:checkpoints:["illustrious","sd"]:
   async enumModel (comfyUiDirectory: string, tagsJsonArray: string, i: number) {

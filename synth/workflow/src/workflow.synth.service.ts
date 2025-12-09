@@ -7,6 +7,7 @@ import * as kb from '@kb'
 import { WorkflowCompilerSynthService } from './workflow-compiler.synth.service'
 import { WorkflowCookSynthService } from './workflow-cook.synth.service'
 import { WorkflowViewSynthService } from './workflow-view.synth.service'
+import { WorkflowParamSynthService } from './workflow-param.synth.service'
 
 import * as cookNodeMap from './cook-node-map.json'
 
@@ -23,9 +24,11 @@ export class WorkflowSynthService {
     private readonly compiler: WorkflowCompilerSynthService,
     private readonly cook: WorkflowCookSynthService,
     readonly view: WorkflowViewSynthService,
+    readonly param: WorkflowParamSynthService,
   ) {}
 
   async compileEnum (name: string) {
+    name = name.replace('$.', '')
     const [enumFuncName, ...args] = name.split(':')
 
     if (typeof this.compiler[enumFuncName] !== 'function') {
