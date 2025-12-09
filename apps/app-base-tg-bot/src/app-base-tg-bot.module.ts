@@ -10,6 +10,9 @@ import * as synth from '@synth'
 import { MiddlewareTgBotService } from './middleware.tg-bot.service'
 import { CommandTgBotService } from './command.tg-bot.service'
 import { ActionTgBotService } from './action.tg-bot.service'
+import { TextTgBotService } from './text.tg-bot.service'
+import { PhotoTgBotService } from './photo.tg-bot.service'
+import { DocumentTgBotService } from './document.tg-bot.service'
 
 import { AppBaseTgBotService } from './app-base-tg-bot.service'
 import { BaseCommandTgBot } from './command/base.command.tg-bot'
@@ -67,6 +70,9 @@ import * as owni from './way-own-instance'
     MiddlewareTgBotService,
     CommandTgBotService,
     ActionTgBotService,
+    TextTgBotService,
+    PhotoTgBotService,
+    DocumentTgBotService,
 
     BaseCommandTgBot,
 
