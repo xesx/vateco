@@ -72,7 +72,7 @@ import * as owni from './way-own-instance'
 
     owni.WayOwnITgBot,
     owni.CommonHandlerOwnITgBot,
-    owni.ActionOwnITgBot,
+    // owni.ActionOwnITgBot,
     owni.ViewOwnITgBot,
     owni.TextMessageHandlerOwnITgBot,
 

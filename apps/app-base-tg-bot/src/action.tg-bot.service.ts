@@ -109,7 +109,13 @@ export class ActionTgBotService {
   }
 
   async instanceManage (ctx) {
-    await this.instancesynth.view.showInstanceManageMenu({ ctx })
+    const { instance } = ctx.session
+
+    if (instance) {
+      await this.instancesynth.view.showInstanceManageMenu({ ctx })
+    } else {
+      await this.wfsynth.view.showMainMenu({ ctx })
+    }
   }
 
   async instanceStatus (ctx) {
