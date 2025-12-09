@@ -38,7 +38,7 @@ export class ViewOwnITgBot {
 
   async showInstanceManageMenu (ctx: OwnInstanceContext) {
     const message = 'Manage instance:'
-    const keyboard = this.tgbotlib.generateInlineKeyboard(kb.ownInstanceManageMenu(ctx.session.step))
+    const keyboard = this.tgbotlib.generateInlineKeyboard(kb.ownInstanceManageMenu())
 
     await this.tgbotlib.safeAnswerCallback(ctx)
     await this.tgbotlib.reply(ctx, message, keyboard)
@@ -79,6 +79,7 @@ export class ViewOwnITgBot {
     const message = `Workflow ${workflowVariant.name}`
     const keyboard = this.tgbotlib.generateInlineKeyboard(kb.workflowRunMenu({
       wfvParams,
+      workflowVariantId,
       prefixAction: `act:own-i`,
       backAction: 'act:own-i:wfv:list'
     }))

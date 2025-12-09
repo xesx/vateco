@@ -39,20 +39,21 @@ export class ViewRunpodWfTgBot {
       throw new Error('Workflow ID not set in session')
     }
 
-    const { workflowId } = ctx.session
+    const { workflowId: workflowVariantId, } = ctx.session
 
-    const workflowVariant = await this.wfrepo.getWorkflowVariant(workflowId)
+    const workflowVariant = await this.wfrepo.getWorkflowVariant(workflowVariantId,)
     // const workflowVariantParams = await this.wfrepo.getWorkflowVariantParamsMap(workflowId)
 
     const wfvParams = await this.wfrepo.getWorkflowMergedWorkflowVariantParams({
       userId: 1,
-      workflowVariantId: workflowId,
+      workflowVariantId,
     })
 
     const message = `Workflow ${workflowVariant.name}`
 
     const keyboard = this.tgbotlib.generateInlineKeyboard(kb.workflowRunMenu({
       wfvParams,
+      workflowVariantId,
       prefixAction: `act:rp-wf`,
       backAction: 'act:rp-wf:wf:variants'
     }))

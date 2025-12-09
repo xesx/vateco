@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common'
 import { Telegraf } from 'telegraf'
 import { InjectBot } from 'nestjs-telegraf'
 
-// import * as lib from '@lib'
+import * as lib from '@lib'
 import * as repo from '@repo'
 import * as synth from '@synth'
 
@@ -12,33 +12,177 @@ import { TAppBaseTgBotContext } from './types'
 export class ActionTgBotService {
   constructor(
     @InjectBot() private readonly bot: Telegraf<TAppBaseTgBotContext>,
-    // private readonly tgbotlib: lib.TgBotLibService,
-    // private readonly wflib: lib.WorkflowLibService,
+    private readonly tgbotlib: lib.TgBotLibService,
+    private readonly wflib: lib.WorkflowLibService,
+    private readonly cloudapilib: lib.CloudApiCallLibService,
+    private readonly vastlib: lib.VastLibService,
     // private readonly msglib: lib.MessageLibService,
 
     private readonly wfsynth: synth.WorkflowSynthService,
+    private readonly offersynth: synth.OfferSynthService,
+    private readonly instancesynth: synth.InstanceSynthService,
 
-    // private readonly wfrepo: repo.WorkflowRepository,
+    private readonly wfrepo: repo.WorkflowRepository,
     private readonly modelrepo: repo.ModelRepository,
     private readonly tagrepo: repo.TagRepository,
     // private readonly userrepo: repo.UserRepository,
   ) {
-    this.bot.action('main-menu', (ctx) => this.actionMainMenu(ctx))
+    this.bot.action('main-menu', (ctx) => this.mainMenu(ctx))
+
+    this.bot.action('offer:menu', (ctx) => this.offerMenu(ctx))
+    this.bot.action(/offer:param:([a-z]+)$/i, (ctx) => this.offerParamSelect(ctx))
+    this.bot.action(/offer:param:([a-z]+):set:(.+)$/i, (ctx) => this.offerParamSet(ctx))
+    this.bot.action('offer:search', (ctx) => this.offerSearch(ctx))
+    this.bot.action(/offer:select:(.+)$/, (ctx) => this.offerSelect(ctx))
+
+    // instance:create:
+    this.bot.action(/instance:create:(.+)$/, (ctx) => this.instanceCreate(ctx))
+    this.bot.action('instance:manage', (ctx) => this.instanceManage(ctx))
+    this.bot.action('instance:status', (ctx) => this.instanceStatus(ctx))
+    this.bot.action('instance:destroy', (ctx) => this.instanceDestroy(ctx))
 
     this.bot.action('wfv:list', (ctx) => this.wfvList(ctx))
     this.bot.action(/wfv:([0-9]+)$/, (ctx) => this.wfvSelect(ctx))
-    // this.bot.action(/wfv:run$/, (ctx) => this.act.actionWfvRun(ctx))
+    this.bot.action(/wfv:([0-9]+):run$/, (ctx) => this.wfvRun(ctx))
     this.bot.action(/wfvp:([0-9]+)$/, (ctx) => this.wfvParamSelect(ctx))
     this.bot.action(/wfvp:([0-9]+):mtag:(.+)$/, (ctx) => this.wfvParamModelTagMenu(ctx)) // select model with tags
     this.bot.action(/wfvp:([0-9]+):set:(.+)$/, (ctx) => this.wfvParamSet(ctx))
     this.bot.action(/wfvp:([0-9]+):fset:(.+)$/, (ctx) => this.wfvParamForceSet(ctx)) // force set
+
+    this.bot.action('use-img-as-input', (ctx) => this.useImageAsInput(ctx))
   }
 
-  async actionMainMenu (ctx: TAppBaseTgBotContext) {
+  async mainMenu (ctx: TAppBaseTgBotContext) {
     await this.wfsynth.view.showMainMenu({ ctx })
   }
 
+  async offerMenu (ctx) {
+    ctx.session.offer = ctx.session.offer || {}
+    await this.offersynth.view.showOfferMenu(ctx)
+  }
+
+  async offerParamSelect (ctx) {
+    const [,offerParamName] = ctx.match
+    await this.offersynth.view.showOfferParamMenu({ ctx, offerParamName })
+  }
+
+  async offerParamSet (ctx) {
+    const [,offerParamName, value] = ctx.match
+
+    Object.assign(ctx.session.offer || {}, { [offerParamName]: value })
+    await this.offersynth.view.showOfferMenu(ctx)
+  }
+
+  async offerSearch (ctx) {
+    const gpu = ctx.session.offer?.gpu ?? 'any'
+    const geo = ctx.session.offer?.geolocation ?? 'any'
+    const inDataCenterOnly = ctx.session.offer?.inDataCenterOnly === 'true'
+
+    const offers = await this.offersynth.searchOffers({ geo, gpu, inDataCenterOnly })
+    await this.offersynth.view.showOffersList({ ctx, offers })
+  }
+
+  async offerSelect (ctx) {
+    const [,offerId] = ctx.match
+    Object.assign(ctx.session.offer || {}, { id: offerId })
+
+    await this.instancesynth.view.showInstanceCreateMenu({ ctx, offerId })
+  }
+
+  async instanceCreate (ctx) {
+    const [,offerId] = ctx.match
+    const { telegramId } = ctx.session
+
+    const result = await this.vastlib.createInstance({
+      offerId,
+      clientId: 'base_' + telegramId,
+      env: {
+        'TG_CHAT_ID': telegramId?.toString(),
+        // 'COMFY_UI_ARCHIVE_FILE': 'comfyui-cu128-py312-iface-v2.tar.zst',
+        'COMFY_UI_ARCHIVE_FILE': 'comfyui-cu128-py312-v3.tar.zst', // todo: make it configurable
+      },
+    })
+
+    ctx.session.instance = { id: result.new_contract }
+
+    await this.instancesynth.view.showInstanceManageMenu({ ctx })
+  }
+
+  async instanceManage (ctx) {
+    await this.instancesynth.view.showInstanceManageMenu({ ctx })
+  }
+
+  async instanceStatus (ctx) {
+    const instanceId = ctx.session.instance?.id
+
+    if (!instanceId) {
+      console.log('WayOwnInstance_actionInstanceStatus_24 No instanceId in session')
+      await this.tgbotlib.reply(ctx, 'Error getting instance status: no instance ID in session')
+      return
+    }
+
+    const {
+      token,
+      ipAddress,
+      instanceApiPort,
+      apiUrl,
+      appsMenuLink,
+      startDate,
+      durationInHrs,
+      status,
+      state,
+      gpu,
+    } = await this.instancesynth.importInstanceInfo({ instanceId })
+
+    ctx.session.instance.token = token
+    ctx.session.instance.ip = ipAddress
+    ctx.session.instance.apiPort = instanceApiPort
+    ctx.session.instance.apiUrl = apiUrl
+
+    await this.instancesynth.view.showInsatanceStatus({
+      ctx,
+      instanceId,
+      status,
+      state,
+      gpu,
+      startDate,
+      durationInHrs,
+      appsMenuLink,
+    })
+  }
+
+  async instanceDestroy (ctx) {
+    const instanceId = ctx.session.instance?.id
+    delete ctx.session.instance
+
+    try {
+      const result = await this.vastlib.destroyInstance({ instanceId })
+      console.log('HandleOwnITgBot_actionInstanceDestroy_10', result)
+    } catch (error) {
+      // console.log('HandleOwnITgBot_actionInstanceDestroy_13', this.h.herr.parseAxiosError(error))
+
+      if (error.response?.data?.error === 'no_such_instance') {
+        console.log('HandleOwnITgBot_actionInstanceDestroy_31 Instance already destroyed')
+      } else {
+        console.log('HandleOwnITgBot_actionInstanceDestroy_37 Unexpected error on destroy instance')
+        return
+      }
+    }
+
+    await this.tgbotlib.safeAnswerCallback(ctx)
+    await ctx.sendMessage('Instance destroyed')
+
+    await this.offersynth.view.showOfferMenu(ctx)
+  }
+
   async wfvList (ctx) {
+    const { instance } = ctx.session
+
+    if (instance) {
+      await this.wfsynth.view.showWfvList({ ctx, tags: ['own-instance'], prefixAction: '', backAction: 'instance:manage' })
+      return
+    }
+
     await this.wfsynth.view.showWfvList({ ctx, tags: ['own-instance'], prefixAction: '', backAction: 'main-menu' })
   }
 
@@ -195,7 +339,9 @@ export class ActionTgBotService {
 
   async wfvParamForceSet (ctx) {
     const [,wfvParamId, value] = ctx.match
-    const { userId, workflowVariantId } = ctx.session
+    const { userId } = ctx.session
+
+    const { workflowVariantId } = await this.wfsynth.param.getWfvParamInfo({ wfvParamId })
 
     await this.wfsynth.param.setWfvUserParamValue({ userId, wfvParamId, value })
     await this.wfsynth.view.showWfvRunMenu({ ctx, userId, workflowVariantId, prefixAction: '', backAction: 'wfv:list' })
@@ -203,9 +349,9 @@ export class ActionTgBotService {
 
   async wfvParamSet (ctx) {
     const [,wfvParamId, rawValue] = ctx.match
-    const { userId, workflowVariantId } = ctx.session
+    const { userId } = ctx.session
 
-    const { wfvParamEnum } = await this.wfsynth.param.getWfvUserParamInfo({ wfvParamId, userId })
+    const { wfvParamEnum, workflowVariantId } = await this.wfsynth.param.getWfvParamInfo({ wfvParamId })
 
     let value: any = rawValue
 
@@ -216,9 +362,7 @@ export class ActionTgBotService {
         if (wfvParamEnum?.startsWith?.('$.enumModelTag')) {
           const model = await this.modelrepo.getModelById(Number(rawValue))
           value = model.name
-        }
-
-        if (wfvParamEnum?.startsWith?.('$.enum')) {
+        } else if (wfvParamEnum?.startsWith?.('$.enum')) {
           enumArr = await this.wfsynth.compileEnum(wfvParamEnum)
         }
       }
@@ -232,5 +376,97 @@ export class ActionTgBotService {
 
     await this.wfsynth.param.setWfvUserParamValue({ userId, wfvParamId, value })
     await this.wfsynth.view.showWfvRunMenu({ ctx, userId, workflowVariantId, prefixAction: '', backAction: 'wfv:list' })
+  }
+
+  async wfvRun (ctx) {
+    const { wfParamSchema } = this.wflib
+
+    const { userId, instance, telegramId } = ctx.session
+    const [,workflowVariantId] = ctx.match
+    const modelInfoLoaded = instance?.modelInfoLoaded || []
+
+    if (!ctx.session.instance) {
+      console.log('ActionTgBotService_wfvRun_18 No instance in session')
+      throw new Error('WFV_RUN_ERROR_18 No instance in session')
+    }
+
+    const workflowVariantParams = await this.wfrepo.getMergedWorkflowVariantParamsValueMap({ userId, workflowVariantId })
+
+    for (const paramName in workflowVariantParams) {
+      if (!wfParamSchema[paramName]?.isComfyUiModel) {
+        continue
+      }
+
+      const value = workflowVariantParams[paramName]
+      const modelName = String(value.value ?? value)
+
+      if (['❓', 'N/A'].includes(modelName)) {
+        continue
+      }
+
+      if (modelInfoLoaded?.includes(modelName)) {
+        continue
+      }
+
+      const modelData = await this.modelrepo.getModelByName(modelName)
+
+      await this.cloudapilib.vastAiModelInfoLoad({
+        baseUrl: ctx.session.instance?.apiUrl,
+        instanceId: ctx.session.instance?.id,
+        token: ctx.session.instance?.token,
+        modelName,
+        modelData,
+      })
+
+      modelInfoLoaded.push(modelName)
+      ctx.session.instance.modelInfoLoaded = modelInfoLoaded
+    }
+
+    await this.cloudapilib.vastAiWorkflowRun({
+      baseUrl: instance.apiUrl,
+      instanceId: instance.id,
+      token: instance.token,
+      count: workflowVariantParams.generationNumber || 1,
+      workflowVariantId,
+      workflowVariantParams,
+      chatId: telegramId,
+    })
+
+    await this.tgbotlib.safeAnswerCallback(ctx)
+  }
+
+  async useImageAsInput (ctx) {
+    const { workflowVariantId, userId } = ctx.session
+
+    if (!workflowVariantId) {
+      return this.tgbotlib.safeAnswerCallback(ctx)
+    }
+
+    const imageWorkflowVariantParams = await this.wfrepo.findWorkflowVariantParamsByNameStartsWith({
+      workflowVariantId,
+      startsWith: 'image',
+    })
+
+    if (!imageWorkflowVariantParams.length) {
+      return await this.tgbotlib.safeAnswerCallback(ctx)
+    }
+
+    const fileId = this.tgbotlib.getImageFileIdFromMessage({ message: ctx.update?.callback_query?.message })
+    console.log('HandleOwnITgBot_actionUseImageAsInput_23 fileId', fileId)
+
+    if (fileId) {
+      // TODO more than one image param?
+      await this.wfrepo.setWorkflowVariantUserParam({
+        userId,
+        workflowVariantId,
+        paramName: imageWorkflowVariantParams[0].paramName,
+        value: fileId,
+      })
+    } else {
+      console.log('HandleOwnITgBot_actionUseImageAsInput_34 No fileId found in message')
+      await ctx.reply('No image found in message')
+    }
+
+    await this.tgbotlib.safeAnswerCallback(ctx)
   }
 }

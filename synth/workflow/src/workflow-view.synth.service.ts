@@ -4,10 +4,6 @@ import * as lib from '@lib'
 import * as repo from '@repo'
 import * as kb from '@kb'
 
-import {
-  MAIN_MENU,
-} from '@kb'
-
 @Injectable()
 export class WorkflowViewSynthService {
   private readonly l = new Logger(WorkflowViewSynthService.name)
@@ -21,16 +17,8 @@ export class WorkflowViewSynthService {
 
   async showMainMenu ({ ctx, chatId }: { ctx?: any; chatId?: string }) {
     const message = 'Main menu:'
-    const keyboard = this.tgbotlib.generateInlineKeyboard(MAIN_MENU)
+    const keyboard = this.tgbotlib.generateInlineKeyboard(kb.MAIN_MENU)
 
-    await this.tgbotlib.sendMessageV2({ ctx, chatId, message, extra: { parse_mode: 'Markdown', ...keyboard } })
-  }
-
-  async showInstanceManageMenu ({ ctx, chatId }: { ctx?: any; chatId?: string }) {
-    const message = 'Manage instance:'
-    const keyboard = this.tgbotlib.generateInlineKeyboard(kb.ownInstanceManageMenu(ctx.session.step))
-
-    await this.tgbotlib.safeAnswerCallback(ctx)
     await this.tgbotlib.sendMessageV2({ ctx, chatId, message, extra: { parse_mode: 'Markdown', ...keyboard } })
   }
 
@@ -51,6 +39,7 @@ export class WorkflowViewSynthService {
     const message = `Workflow ${workflowVariant.name}`
     const keyboard = this.tgbotlib.generateInlineKeyboard(kb.workflowRunMenu({
       wfvParams,
+      workflowVariantId,
       prefixAction,
       backAction,
     }))

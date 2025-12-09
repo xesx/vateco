@@ -16,6 +16,7 @@ export class CommandTgBotService {
     // private readonly wflib: lib.WorkflowLibService,
     // private readonly msglib: lib.MessageLibService,
 
+    private readonly instancesynth: synth.InstanceSynthService,
     private readonly wfsynth: synth.WorkflowSynthService,
 
     // private readonly wfrepo: repo.WorkflowRepository,
@@ -27,12 +28,10 @@ export class CommandTgBotService {
   }
 
   async commandStart (ctx) {
-    const step = ctx.session.step || 'start'
-
-    if (step === 'start') {
+    if (ctx.session.instance) {
+      await this.instancesynth.view.showInstanceManageMenu({ ctx })
+    } else {
       await this.wfsynth.view.showMainMenu({ ctx })
-    } else if (['loading', 'running'].includes(step)) {
-      await this.wfsynth.view.showInstanceManageMenu({ ctx })
     }
   }
 }

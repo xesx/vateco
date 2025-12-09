@@ -55,6 +55,8 @@ import * as owni from './way-own-instance'
     repo.TagRepositoryModule,
 
     synth.WorkflowSynthModule,
+    synth.OfferSynthModule,
+    synth.InstanceSynthModule,
 
     lib.HelperLibModule,
   ],

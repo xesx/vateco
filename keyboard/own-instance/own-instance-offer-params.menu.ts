@@ -6,10 +6,10 @@ type TArgs = {
 
 export function ownInstanceOfferParamsMenu({ gpu, geolocation, inDataCenterOnly }: TArgs): [string, string][][] {
   const keyboardDescription = [
-    [[`GPU name (${(gpu || 'N/A')})`, 'act:own-i:offer:params:gpu']],
-    [[`Geolocation (${(geolocation || 'N/A')})`, 'act:own-i:offer:params:geolocation']],
-    [[`In data center only (${(inDataCenterOnly || 'N/A')})`, 'act:own-i:offer:params:inDataCenterOnly']],
-    [[`Start search`, 'act:own-i:offer:search']],
+    [[`GPU name (${(gpu || 'N/A')})`, 'offer:param:gpu']],
+    [[`Geolocation (${(geolocation || 'N/A')})`, 'offer:param:geolocation']],
+    [[`In data center only (${(inDataCenterOnly || 'N/A')})`, 'offer:param:inDataCenterOnly']],
+    [[`Start search`, 'offer:search']],
     [[`⬅️ Back`, 'main-menu']],
   ] as [string, string][][]
 

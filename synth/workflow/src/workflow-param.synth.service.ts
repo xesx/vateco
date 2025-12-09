@@ -47,11 +47,10 @@ export class WorkflowParamSynthService {
     const paramName = wfvParam.paramName
     const workflowVariantId = wfvParam.workflowVariantId
     const wfvParamType = wfParamSchema[paramName].type
+    const wfvParamEnum = wfvParam?.enum ?? wfParamSchema[paramName].enum
 
     const wfvUserParam = await this.wfrepo.findWorkflowVariantUserParam({ userId, workflowVariantId, paramName })
     const currentValue = (wfvUserParam?.value ?? wfvParam?.value ?? '❌') as string | number | boolean
-
-    const wfvParamEnum = wfvParam?.enum ?? wfParamSchema[paramName].enum
 
     return { wfvParam, paramName, workflowVariantId, wfvParamType, currentValue, wfvParamEnum }
   }

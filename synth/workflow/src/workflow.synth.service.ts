@@ -91,7 +91,7 @@ export class WorkflowSynthService {
   async generateWorkflowVariantRunMenu ({ workflowVariantId, userId, prefixAction = 'empty', backAction = 'empty' }: { workflowVariantId: number, userId: number, prefixAction?: string, backAction?: string }) {
     const wfvParams = await this.wfrepo.getWorkflowMergedWorkflowVariantParams({ userId, workflowVariantId })
 
-    return this.tgbotlib.generateInlineKeyboard(kb.workflowRunMenu({ wfvParams, prefixAction, backAction }))
+    return this.tgbotlib.generateInlineKeyboard(kb.workflowRunMenu({ wfvParams, workflowVariantId, prefixAction, backAction }))
   }
 
   async createWorkflowVariant ({ workflowTemplateId, name, description }: { workflowTemplateId: number, name?: string, description?: string }) {

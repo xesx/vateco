@@ -1,12 +1,9 @@
-export function ownInstanceManageMenu(step?: string): [string, string][][] {
+export function ownInstanceManageMenu(): [string, string][][] {
   const keyboardDescription = [
-    [[`Check instance status`, 'act:own-i:instance:status']],
-    [[`Destroy instance`, 'act:own-i:instance:destroy']],
+    [[`Check instance status`, 'instance:status']],
+    [[`Destroy instance`, 'instance:destroy']],
+    [['Select workflow', 'wfv:list']],
   ] as [string, string][][]
-
-  if (step === 'running') {
-    keyboardDescription.push([[`Select workflow`, 'act:own-i:wfv:list']])
-  }
 
   return keyboardDescription
 }

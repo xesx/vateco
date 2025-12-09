@@ -10,8 +10,8 @@ export function ownInstanceOffersMenu(offers: any[]): [string, string][][] {
 
     return [[offerDescription, `act:own-i:offer:select:${o.id}`]]
   }).concat([[
-    ['⬅️ Back', 'act:own-i:offer'],
-    ['🔄 Refresh', 'act:own-i:offer:search'],
+    ['⬅️ Back', 'offer:menu'],
+    ['🔄 Refresh', 'offer:search'],
   ]])
 
   return keyboard as [string, string][][]
