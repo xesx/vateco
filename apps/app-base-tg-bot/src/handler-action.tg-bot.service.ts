@@ -9,7 +9,7 @@ import * as synth from '@synth'
 import { TAppBaseTgBotContext } from './types'
 
 @Injectable()
-export class ActionTgBotService {
+export class HandlerActionTgBotService {
   constructor(
     @InjectBot() private readonly bot: Telegraf<TAppBaseTgBotContext>,
     private readonly tgbotlib: lib.TgBotLibService,

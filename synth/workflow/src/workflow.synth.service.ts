@@ -21,6 +21,8 @@ export class WorkflowSynthService {
     private readonly tgbotlib: lib.TgBotLibService,
 
     private readonly wfrepo: repo.WorkflowRepository,
+    private readonly modelrepo: repo.ModelRepository,
+    private readonly cloudapilib: lib.CloudApiCallLibService,
     private readonly compiler: WorkflowCompilerSynthService,
     private readonly cook: WorkflowCookSynthService,
     readonly view: WorkflowViewSynthService,

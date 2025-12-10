@@ -3,21 +3,21 @@ import { Telegraf } from 'telegraf'
 import { InjectBot } from 'nestjs-telegraf'
 import { message } from 'telegraf/filters'
 
-// import * as lib from '@lib'
+import * as lib from '@lib'
 // import * as repo from '@repo'
 import * as synth from '@synth'
 
 import { TAppBaseTgBotContext } from './types'
 
 @Injectable()
-export class DocumentTgBotService {
+export class HandlerDocumentTgBotService {
   constructor(
     @InjectBot() private readonly bot: Telegraf<TAppBaseTgBotContext>,
-    // private readonly tgbotlib: lib.TgBotLibService,
+    private readonly tgbotlib: lib.TgBotLibService,
     // private readonly wflib: lib.WorkflowLibService,
     // private readonly msglib: lib.MessageLibService,
 
-    private readonly instancesynth: synth.InstanceSynthService,
+    // private readonly instancesynth: synth.InstanceSynthService,
     private readonly wfsynth: synth.WorkflowSynthService,
 
     // private readonly wfrepo: repo.WorkflowRepository,

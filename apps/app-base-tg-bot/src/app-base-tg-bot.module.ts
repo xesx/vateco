@@ -8,11 +8,11 @@ import * as repo from '@repo'
 import * as synth from '@synth'
 
 import { MiddlewareTgBotService } from './middleware.tg-bot.service'
-import { CommandTgBotService } from './command.tg-bot.service'
-import { ActionTgBotService } from './action.tg-bot.service'
-import { TextTgBotService } from './text.tg-bot.service'
-import { PhotoTgBotService } from './photo.tg-bot.service'
-import { DocumentTgBotService } from './document.tg-bot.service'
+import { HandlerCommandTgBotService } from './handler-command.tg-bot.service'
+import { HandlerActionTgBotService } from './handler-action.tg-bot.service'
+import { HandlerTextTgBotService } from './handler-text.tg-bot.service'
+import { HandlerPhotoTgBotService } from './handler-photo.tg-bot.service'
+import { HandlerDocumentTgBotService } from './handler-document.tg-bot.service'
 
 import { AppBaseTgBotService } from './app-base-tg-bot.service'
 import { BaseCommandTgBot } from './command/base.command.tg-bot'
@@ -68,19 +68,19 @@ import * as owni from './way-own-instance'
     AppBaseTgBotService,
     // order is important, as handlers are executed in the order they are registered
     MiddlewareTgBotService,
-    CommandTgBotService,
-    ActionTgBotService,
-    TextTgBotService,
-    PhotoTgBotService,
-    DocumentTgBotService,
+    HandlerCommandTgBotService,
+    HandlerActionTgBotService,
+    HandlerTextTgBotService,
+    HandlerPhotoTgBotService,
+    HandlerDocumentTgBotService,
 
     BaseCommandTgBot,
 
-    owni.WayOwnITgBot,
-    owni.CommonHandlerOwnITgBot,
+    // owni.WayOwnITgBot,
+    // owni.CommonHandlerOwnITgBot,
     // owni.ActionOwnITgBot,
-    owni.ViewOwnITgBot,
-    owni.TextMessageHandlerOwnITgBot,
+    // owni.ViewOwnITgBot,
+    // owni.TextMessageHandlerOwnITgBot,
 
     // rpwf.WayOwnITgBot,
     // rpwf.HandleRunpodWfTgBot,

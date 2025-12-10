@@ -32,7 +32,7 @@ export class WorkflowViewSynthService {
     await this.tgbotlib.sendMessageV2({ ctx, chatId, message, extra: { parse_mode: 'Markdown', ...keyboard } })
   }
 
-  async showWfvRunMenu ({ ctx, chatId, userId, workflowVariantId, prefixAction, backAction }: { ctx?: any; chatId?: string; userId: number; workflowVariantId: number; prefixAction: string; backAction: string }) {
+  async showWfvRunMenu ({ ctx, chatId, userId, workflowVariantId, prefixAction = '', backAction }: { ctx?: any; chatId?: string; userId: number; workflowVariantId: number; prefixAction?: string; backAction: string }) {
     const workflowVariant = await this.wfrepo.getWorkflowVariant(workflowVariantId)
     const wfvParams = await this.wfrepo.getWorkflowMergedWorkflowVariantParams({ userId, workflowVariantId })
 
@@ -101,5 +101,29 @@ export class WorkflowViewSynthService {
     const keyboard = this.tgbotlib.generateInlineKeyboard([[['Back', `wfv:${workflowVariantId}`]]])
 
     await this.tgbotlib.sendMessageV2({ ctx, chatId, message, extra: { parse_mode: 'HTML', ...keyboard } })
+  }
+
+  async showCurrentPositivePrompt ({ ctx, chatId, userId, workflowVariantId }) {
+
+    if (!workflowVariantId) {
+      throw new Error('Workflow variant ID not set in session')
+    }
+
+    const positivePromptUserParam = await this.wfrepo.findWorkflowVariantUserParam({ userId, workflowVariantId, paramName: 'positivePrompt' })
+
+    if (positivePromptUserParam) {
+      const message = this.msglib.genMessageForCopy(positivePromptUserParam.value as string)
+      return await this.tgbotlib.sendMessageV2({ ctx, chatId, message, extra: { parse_mode: 'HTML' } })
+    }
+
+    const positivePromptParam = await this.wfrepo.getWorkflowVariantParamByName({ workflowVariantId, paramName: 'positivePrompt' })
+
+    if (positivePromptParam) {
+      const message = this.msglib.genMessageForCopy(positivePromptParam.value as string)
+      return await this.tgbotlib.sendMessageV2({ ctx, chatId, message, extra: { parse_mode: 'HTML' } })
+    }
+
+    const message = this.msglib.genMessageForCopy('N/A')
+    await this.tgbotlib.sendMessageV2({ ctx, chatId, message, extra: { parse_mode: 'HTML' } })
   }
 }

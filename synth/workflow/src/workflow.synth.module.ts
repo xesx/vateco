@@ -13,6 +13,7 @@ import * as repo from '@repo'
     lib.WorkflowLibModule,
     lib.TgBotLibModule,
     lib.MessagesLibModule,
+    lib.CloudApiCallLibModule,
     repo.ModelRepositoryModule,
     repo.WorkflowRepositoryModule,
     repo.TagRepositoryModule,
