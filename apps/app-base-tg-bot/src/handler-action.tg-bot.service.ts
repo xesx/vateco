@@ -193,13 +193,24 @@ export class HandlerActionTgBotService {
   }
 
   async wfvSelect (ctx) {
-    const { userId } = ctx.session
+    const { userId, instance } = ctx.session
     const [,workflowVariantIdStr] = ctx.match
     const workflowVariantId = parseInt(workflowVariantIdStr, 10)
 
     ctx.session.workflowVariantId = workflowVariantId
     delete ctx.session.inputWaiting
 
+    if (instance) {
+      const { workflowTemplateId } = await this.wfrepo.getWorkflowVariant(workflowVariantId)
+      const workflowTemplate = await this.wfrepo.getWorkflowTemplate(workflowTemplateId)
+
+      await this.cloudapilib.vastAiWorkflowTemplateLoad({
+        baseUrl: ctx.session.instance?.apiUrl,
+        instanceId: ctx.session.instance?.id,
+        token: ctx.session.instance?.token,
+        workflowTemplate,
+      })
+    }
     await this.wfsynth.view.showWfvRunMenu({ ctx, userId, workflowVariantId, prefixAction: '', backAction: 'wfv:list' })
   }
 
