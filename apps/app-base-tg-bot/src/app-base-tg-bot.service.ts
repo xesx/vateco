@@ -24,7 +24,7 @@ export class AppBaseTgBotService {
   }
 
   async runWfv (ctx) {
-    const { workflowVariantId, userId, instance } = ctx.session
+    const { workflowVariantId, userId, instance, telegramId } = ctx.session
     const modelInfoLoaded = instance?.modelInfoLoaded || []
 
     if (!workflowVariantId) {
@@ -32,6 +32,12 @@ export class AppBaseTgBotService {
       return this.tgbotlib.safeAnswerCallback(ctx)
     }
 
+    if (!instance) {
+      console.log('AppBaseTgBotService_runWfv No instance in session')
+      throw new Error('WFV_RUN_ERROR No instance available. Please create and start an instance first.')
+    }
+
+    const { id: instanceId, apiUrl: baseUrl, token } = instance
     const workflowVariantParams = await this.wfrepo.getMergedWorkflowVariantParamsValueMap({ userId, workflowVariantId })
 
     for (const paramName in workflowVariantParams) {
@@ -50,13 +56,7 @@ export class AppBaseTgBotService {
 
         const modelData = await this.modelrepo.getModelByName(modelName)
 
-        await this.cloudapilib.vastAiModelInfoLoad({
-          baseUrl: ctx.session.instance?.apiUrl,
-          instanceId: ctx.session.instance?.id,
-          token: ctx.session.instance?.token,
-          modelName,
-          modelData,
-        })
+        await this.cloudapilib.vastAiModelInfoLoad({ baseUrl, instanceId, token, modelName, modelData })
 
         if (ctx.session.instance) {
           ctx.session.instance.modelInfoLoaded = ctx.session.instance.modelInfoLoaded || []
@@ -65,15 +65,12 @@ export class AppBaseTgBotService {
       }
     }
 
-    await this.cloudapilib.vastAiWorkflowRun({
-      baseUrl: ctx.session.instance?.apiUrl,
-      instanceId: ctx.session.instance?.id,
-      token: ctx.session.instance?.token,
-      count: workflowVariantParams.generationNumber || 1,
-      workflowVariantId,
-      workflowVariantParams,
-      chatId: ctx.session.telegramId,
-    })
+    const { workflowTemplateId } = await this.wfrepo.getWorkflowVariant(workflowVariantId)
+
+    const count = workflowVariantParams.generationNumber || 1
+    const chatId = telegramId
+
+    await this.cloudapilib.vastAiWorkflowRun({ baseUrl, instanceId, token, count, workflowTemplateId, workflowVariantParams, chatId })
 
     await this.tgbotlib.safeAnswerCallback(ctx)
   }

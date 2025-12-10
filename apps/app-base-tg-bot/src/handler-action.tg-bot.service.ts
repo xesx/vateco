@@ -7,11 +7,14 @@ import * as repo from '@repo'
 import * as synth from '@synth'
 
 import { TAppBaseTgBotContext } from './types'
+import { AppBaseTgBotService } from './app-base-tg-bot.service'
 
 @Injectable()
 export class HandlerActionTgBotService {
   constructor(
     @InjectBot() private readonly bot: Telegraf<TAppBaseTgBotContext>,
+    private readonly tgbotsrv: AppBaseTgBotService,
+
     private readonly tgbotlib: lib.TgBotLibService,
     private readonly wflib: lib.WorkflowLibService,
     private readonly cloudapilib: lib.CloudApiCallLibService,
@@ -211,6 +214,7 @@ export class HandlerActionTgBotService {
         workflowTemplate,
       })
     }
+
     await this.wfsynth.view.showWfvRunMenu({ ctx, userId, workflowVariantId, prefixAction: '', backAction: 'wfv:list' })
   }
 
@@ -396,60 +400,7 @@ export class HandlerActionTgBotService {
   }
 
   async wfvRun (ctx) {
-    const { wfParamSchema } = this.wflib
-
-    const { userId, instance, telegramId } = ctx.session
-    const [,workflowVariantId] = ctx.match
-    const modelInfoLoaded = instance?.modelInfoLoaded || []
-
-    if (!ctx.session.instance) {
-      console.log('ActionTgBotService_wfvRun_18 No instance in session')
-      throw new Error('WFV_RUN_ERROR_18 No instance in session')
-    }
-
-    const workflowVariantParams = await this.wfrepo.getMergedWorkflowVariantParamsValueMap({ userId, workflowVariantId })
-
-    for (const paramName in workflowVariantParams) {
-      if (!wfParamSchema[paramName]?.isComfyUiModel) {
-        continue
-      }
-
-      const value = workflowVariantParams[paramName]
-      const modelName = String(value.value ?? value)
-
-      if (['❓', 'N/A'].includes(modelName)) {
-        continue
-      }
-
-      if (modelInfoLoaded?.includes(modelName)) {
-        continue
-      }
-
-      const modelData = await this.modelrepo.getModelByName(modelName)
-
-      await this.cloudapilib.vastAiModelInfoLoad({
-        baseUrl: ctx.session.instance?.apiUrl,
-        instanceId: ctx.session.instance?.id,
-        token: ctx.session.instance?.token,
-        modelName,
-        modelData,
-      })
-
-      modelInfoLoaded.push(modelName)
-      ctx.session.instance.modelInfoLoaded = modelInfoLoaded
-    }
-
-    await this.cloudapilib.vastAiWorkflowRun({
-      baseUrl: instance.apiUrl,
-      instanceId: instance.id,
-      token: instance.token,
-      count: workflowVariantParams.generationNumber || 1,
-      workflowVariantId,
-      workflowVariantParams,
-      chatId: telegramId,
-    })
-
-    await this.tgbotlib.safeAnswerCallback(ctx)
+    await this.tgbotsrv.runWfv(ctx)
   }
 
   async useImageAsInput (ctx) {

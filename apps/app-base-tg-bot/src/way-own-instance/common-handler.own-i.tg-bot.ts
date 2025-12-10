@@ -45,9 +45,9 @@ export class CommonHandlerOwnITgBot {
         const modelData = await this.modelrepo.getModelByName(modelName)
 
         await this.cloudapilib.vastAiModelInfoLoad({
-          baseUrl: ctx.session.instance?.apiUrl,
-          instanceId: ctx.session.instance?.id,
-          token: ctx.session.instance?.token,
+          baseUrl: instance?.apiUrl,
+          instanceId: instance?.id,
+          token: instance?.token,
           modelName,
           modelData,
         })
@@ -59,15 +59,15 @@ export class CommonHandlerOwnITgBot {
       }
     }
 
-    await this.cloudapilib.vastAiWorkflowRun({
-      baseUrl: ctx.session.instance?.apiUrl,
-      instanceId: ctx.session.instance?.id,
-      token: ctx.session.instance?.token,
-      count: workflowVariantParams.generationNumber || 1,
-      workflowVariantId,
-      workflowVariantParams,
-      chatId: ctx.session.telegramId,
-    })
+    // await this.cloudapilib.vastAiWorkflowRun({
+    //   baseUrl: ctx.session.instance?.apiUrl,
+    //   instanceId: ctx.session.instance?.id,
+    //   token: ctx.session.instance?.token,
+    //   count: workflowVariantParams.generationNumber || 1,
+    //   workflowVariantId,
+    //   workflowVariantParams,
+    //   chatId: ctx.session.telegramId,
+    // })
 
     await this.tgbotlib.safeAnswerCallback(ctx)
   }

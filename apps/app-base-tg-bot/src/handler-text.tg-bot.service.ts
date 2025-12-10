@@ -54,7 +54,7 @@ export class HandlerTextTgBotService {
   }
 
   async textAnyOther (ctx, next) {
-    const { userId, workflowVariantId, instance } = ctx.session
+    const { userId, workflowVariantId } = ctx.session
 
     const message = ctx.message.text
       .replace(/\r\n/g, '\n')     // Windows → Unix переносы
