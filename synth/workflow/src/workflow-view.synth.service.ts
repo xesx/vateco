@@ -24,6 +24,11 @@ export class WorkflowViewSynthService {
     await this.tgbotlib.sendMessageV2({ ctx, chatId, message, extra: { parse_mode: 'Markdown', ...keyboard } })
   }
 
+  async showWfvReplyMenu (ctx) {
+    const replyKeyboard = this.tgbotlib.generateReplyKeyboard(kb.WORKFLOW_VARIANT_REPLY)
+    await ctx.sendMessage('Use for fast work ⤵', replyKeyboard)
+  }
+
   async showWfvList ({ ctx, chatId, tags, prefixAction, backAction }: { ctx?: any; chatId?: string; tags: string[]; prefixAction: string; backAction: string }) {
     const workflows = await this.wfrepo.findWorkflowVariantsByTags(tags)
 

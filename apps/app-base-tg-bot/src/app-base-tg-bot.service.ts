@@ -170,7 +170,7 @@ export class AppBaseTgBotService {
     name += `${info.name}`.toLowerCase().replace(/[^0-9a-z]+/g, '_')
 
     const baseModel = info.baseModel.replace(/\s+/, '_').toLowerCase() || 'undefined'
-    const comfyUiFileName = file.name
+    const comfyUiFileName = file.name.replace(/\s+/, '_').toLowerCase()
     const label = name
 
     const prisma = this.modelrepo['prisma']

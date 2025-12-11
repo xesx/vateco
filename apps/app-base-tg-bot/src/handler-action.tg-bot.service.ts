@@ -47,6 +47,7 @@ export class HandlerActionTgBotService {
     this.bot.action('wfv:list', (ctx) => this.wfvList(ctx))
     this.bot.action(/wfv:([0-9]+)$/, (ctx) => this.wfvSelect(ctx))
     this.bot.action(/wfv:([0-9]+):run$/, (ctx) => this.wfvRun(ctx))
+    this.bot.action(/wfv:([0-9]+):info$/, (ctx) => this.wfvInfo(ctx))
     this.bot.action(/wfvp:([0-9]+)$/, (ctx) => this.wfvParamSelect(ctx))
     this.bot.action(/wfvp:([0-9]+):mtag:(.+):search:([0-9]+)$/, (ctx) => this.wfvParamModelsSearch(ctx)) // select model with tags
     this.bot.action(/wfvp:([0-9]+):mtag:(.+)$/, (ctx) => this.wfvParamModelTagMenu(ctx)) // select model with tags
@@ -217,6 +218,7 @@ export class HandlerActionTgBotService {
     }
 
     await this.wfsynth.view.showWfvRunMenu({ ctx, userId, workflowVariantId, prefixAction: '', backAction: 'wfv:list' })
+    await this.wfsynth.view.showWfvReplyMenu(ctx)
   }
 
   async wfvParamSelect (ctx) {
@@ -279,6 +281,44 @@ export class HandlerActionTgBotService {
     // suggest value form text input
     ctx.session.inputWaiting = paramName
     await this.wfsynth.view.showSuggestInputWfvParamValue({ ctx, paramName, currentValue, workflowVariantId })
+  }
+
+  async wfvInfo (ctx) {
+    const { userId } = ctx.session
+    const [,workflowVariantIdStr] = ctx.match
+
+    const workflowVariantId = parseInt(workflowVariantIdStr, 10)
+    const workflowVariant = await this.wfrepo.getWorkflowVariant(workflowVariantId)
+
+    let message = `<i>${workflowVariant.description || 'No description available.'}</i>`
+
+    message += `\n\nWorkflow Variant Name: <b>${workflowVariant.name}</b>`
+    message += `\nWorkflow Variant ID: <code>${workflowVariant.id}</code>`
+
+    const wfvParams = await this.wfrepo.getWorkflowMergedWorkflowVariantParams({ userId, workflowVariantId })
+
+    for (const param of wfvParams) {
+      if (!param.isComfyUiModel) {
+        continue
+      }
+
+      const value = param.value?.value || param.value
+
+      if (!value || value.length < 3) { // todo
+        continue
+      }
+      const model = await this.modelrepo.getModelByName(value as string)
+      const modelCivitaiLink = model.civitaiLinks?.[0]
+      const civitaiLinkText = modelCivitaiLink ? `https://civitai.com/models/${modelCivitaiLink.civitaiId}?modelVersionId=${modelCivitaiLink.civitaiVersionId}` : 'N/A'
+
+      message += `\n\nModel Parameter: <b>${param.paramName}</b>`
+      message += `\nModel Name: <b>${model.label}</b> (<i>${model.name}</i>, ID: <code>${model.id}</code>)`
+      message += `\nComfyUI Directory: <code>${model.comfyUiDirectory}</code>`
+      message += `\nBase Model: <code>${model.baseModel}</code>`
+      message += `\nCivitAI Link: <a href="${civitaiLinkText}">CivitAi Link</a>`
+    }
+
+    await this.tgbotlib.sendMessageV2({ ctx, message, extra: { parse_mode: 'HTML' } })
   }
 
   async wfvParamModelTagMenu (ctx) {

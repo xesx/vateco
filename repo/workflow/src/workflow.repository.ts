@@ -290,14 +290,19 @@ export class WorkflowRepository {
     const workflowVariantUserParamsMap = await this.getWorkflowVariantUserParamsMap({ userId, workflowVariantId })
     const workflowVariantParams = await this.getWorkflowVariantParams(workflowVariantId)
 
-    workflowVariantParams.forEach(param => {
+    const mergedParams = workflowVariantParams.map(param => {
       const { paramName } = param
-      param.value = workflowVariantUserParamsMap[paramName] ?? param.value ?? wfParamSchema[paramName].default
-      param.label = param.label ?? wfParamSchema[paramName].label
-      param.enum = param.enum ?? wfParamSchema[paramName].enum ?? null
+
+      return {
+        ...param,
+        value: workflowVariantUserParamsMap[paramName] ?? param.value ?? wfParamSchema[paramName].default,
+        label: param.label ?? wfParamSchema[paramName].label,
+        enum: param.enum ?? wfParamSchema[paramName].enum ?? null,
+        isComfyUiModel: wfParamSchema[paramName].isComfyUiModel || false,
+      }
     })
 
-    return workflowVariantParams
+    return mergedParams
   }
 
   async setWorkflowVariantUserParam ({ userId, workflowVariantId, paramName, value }: { userId: number, workflowVariantId: number | string, paramName: string, value: any }) {
