@@ -41,7 +41,7 @@ export class WorkflowCompilerSynthService {
   }
 
   async enumCheckpoint (i) {
-    const models = await this.modelrepo.findModelsByComfyUiDir('checkpoints')
+    const models = await this.modelrepo.findModelsByComfyUiDir({ comfyUiDirectory: 'checkpoints' })
 
     const arr = models
       .map(model => ({
@@ -57,7 +57,7 @@ export class WorkflowCompilerSynthService {
   }
 
   async enumLora (i) {
-    const models = await this.modelrepo.findModelsByComfyUiDir('loras')
+    const models = await this.modelrepo.findModelsByComfyUiDir({ comfyUiDirectory: 'loras' })
 
     const arr = models
       .map(model => ({

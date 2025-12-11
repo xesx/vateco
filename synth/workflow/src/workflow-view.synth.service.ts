@@ -11,8 +11,10 @@ export class WorkflowViewSynthService {
   constructor(
     private readonly wflib: lib.WorkflowLibService,
     private readonly tgbotlib: lib.TgBotLibService,
-    private readonly wfrepo: repo.WorkflowRepository,
     private readonly msglib: lib.MessageLibService,
+
+    private readonly wfrepo: repo.WorkflowRepository,
+    private readonly modelrepo: repo.ModelRepository,
   ) {}
 
   async showMainMenu ({ ctx, chatId }: { ctx?: any; chatId?: string }) {
@@ -48,17 +50,18 @@ export class WorkflowViewSynthService {
     await this.tgbotlib.safeAnswerCallback(ctx)
   }
 
-  async showWfvEnumMenu ({ ctx, chatId, message, enumArr, prefixAction, backAction, useIndexAsValue = true }
+  async showWfvEnumMenu ({ ctx, chatId, message, enumArr, prefixAction, backAction, extraActions, useIndexAsValue = true }
   : {
     ctx?: any;
     chatId?: string;
     message: string;
     enumArr: any[];
     prefixAction: string;
-    backAction: string;
+    backAction?: string;
+    extraActions?: [string, string][];
     useIndexAsValue?: boolean;
   }) {
-    const maxLineLength = 30
+    const maxLineLength = 28
     const enumOptions: [string, string][][] = []
     let currentRow: any[] = []
     let currentLength = 0
@@ -69,7 +72,7 @@ export class WorkflowViewSynthService {
       .map((value: any) => typeof value === 'object' ? value : { value, label: value })
       .forEach(({ value, label }, i) => {
         const button = [label, `${prefixAction}${useIndexAsValue ? i : value}`]
-        const buttonLength = value.length + 2 // запас на формат Telegram
+        const buttonLength = label.length + 2 // запас на формат Telegram
 
         // Если не помещается — перенос
         if (currentLength + buttonLength > maxLineLength) {
@@ -86,7 +89,15 @@ export class WorkflowViewSynthService {
     currentRow = []
     currentLength = 0
 
-    enumOptions.push([['Back', backAction]])
+    if (extraActions) {
+      extraActions.forEach(action => {
+        enumOptions.push([action])
+      })
+    }
+
+    if (backAction) {
+      enumOptions.push([['Back', backAction]])
+    }
 
     const keyboard = this.tgbotlib.generateInlineKeyboard(enumOptions)
     await this.tgbotlib.sendMessageV2({ ctx, chatId, message, extra: { parse_mode: 'HTML', ...keyboard } })
@@ -125,5 +136,44 @@ export class WorkflowViewSynthService {
 
     const message = this.msglib.genMessageForCopy('N/A')
     await this.tgbotlib.sendMessageV2({ ctx, chatId, message, extra: { parse_mode: 'HTML' } })
+  }
+
+  async showModelsList ({ ctx, chatId, comfyUiDirectory, tags, page, prefixAction, backAction }
+  : {
+    ctx?: any
+    chatId?: string
+    comfyUiDirectory: string
+    tags: string[]
+    page?: number // todo
+    prefixAction: string
+    backAction: string
+  }) {
+    let models
+
+    if (tags.length === 0) {
+      models = await this.modelrepo.findModelsByComfyUiDir({ comfyUiDirectory })
+    } else {
+      models = await this.modelrepo.findModels({ comfyUiDirectory, tags })
+    }
+
+    if (models.length === 0) {
+      throw new Error('No models found with selected tags')
+    }
+
+    const enumArr = models
+      .map(model => ({
+        label: model.label || model.name,
+        value: model.id,
+      }))
+
+    await this.showWfvEnumMenu({
+      ctx,
+      chatId,
+      message: `Select model:`,
+      enumArr,
+      prefixAction,
+      backAction,
+      useIndexAsValue: false,
+    })
   }
 }

@@ -48,6 +48,7 @@ export class HandlerActionTgBotService {
     this.bot.action(/wfv:([0-9]+)$/, (ctx) => this.wfvSelect(ctx))
     this.bot.action(/wfv:([0-9]+):run$/, (ctx) => this.wfvRun(ctx))
     this.bot.action(/wfvp:([0-9]+)$/, (ctx) => this.wfvParamSelect(ctx))
+    this.bot.action(/wfvp:([0-9]+):mtag:(.+):search:([0-9]+)$/, (ctx) => this.wfvParamModelsSearch(ctx)) // select model with tags
     this.bot.action(/wfvp:([0-9]+):mtag:(.+)$/, (ctx) => this.wfvParamModelTagMenu(ctx)) // select model with tags
     this.bot.action(/wfvp:([0-9]+):set:(.+)$/, (ctx) => this.wfvParamSet(ctx))
     this.bot.action(/wfvp:([0-9]+):fset:(.+)$/, (ctx) => this.wfvParamForceSet(ctx)) // force set
@@ -242,7 +243,11 @@ export class HandlerActionTgBotService {
             message: `Select model tags:`,
             enumArr,
             prefixAction: `wfvp:${wfvParamId}:mtag`,
-            backAction: `wfv:${workflowVariantId}`,
+            // backAction: `wfv:${workflowVariantId}`,
+            extraActions: [
+              ['Search', `wfvp:${wfvParamId}:mtag:all:search:0`],
+              ['Back', `wfv:${workflowVariantId}`]
+            ],
             useIndexAsValue: false,
           })
 
@@ -312,27 +317,14 @@ export class HandlerActionTgBotService {
 
     // no more tags to select, show models list
     if (modelTagsNames.length === 0) {
-      const models = await this.modelrepo.findModels({ comfyUiDirectory, tags: enabledTagsNames })
-
-      if (models.length === 0) {
-        throw new Error('No models found with selected tags')
-      }
-
-      const enumArr = models
-        .map(model => ({
-          label: model.label || model.name,
-          value: model.id,
-        }))
-
-      await this.wfsynth.view.showWfvEnumMenu({
+      await this.wfsynth.view.showModelsList({
         ctx,
-        message: `Select model:`,
-        enumArr,
+        comfyUiDirectory,
+        tags: enabledTagsNames,
         prefixAction: `wfvp:${wfvParamId}:set`,
         backAction: enabledTags.length > 1
           ? `wfvp:${wfvParamId}:mtag:${originalTagsIds.slice(0, -1).join(':')}`
           : `wfvp:${wfvParamId}`,
-        useIndexAsValue: false,
       })
 
       return
@@ -353,8 +345,50 @@ export class HandlerActionTgBotService {
       message: `Select model tags:`,
       enumArr,
       prefixAction: `wfvp:${wfvParamId}:mtag:${enabledTagsIds.join(':')}`,
-      backAction: `wfv:${workflowVariantId}`,
+      // backAction: `wfv:${workflowVariantId}`,
+      extraActions: [
+        ['Search', `wfvp:${wfvParamId}:mtag:${enabledTagsIds.join(':')}:search:0`],
+        ['Back', `wfv:${workflowVariantId}`]
+      ],
       useIndexAsValue: false,
+    })
+  }
+
+  async wfvParamModelsSearch (ctx) {
+    let [,wfvParamId, tagsIds, page] = ctx.match
+
+    wfvParamId = Number(wfvParamId)
+    page = Number(page)
+
+    if (tagsIds === 'all') {
+      tagsIds = []
+    } else {
+      tagsIds = tagsIds.split(':').map(id => Number(id))
+    }
+
+    const {
+      // workflowVariantId,
+      wfvParamEnum
+    } = await this.wfsynth.param.getWfvParamInfo({ wfvParamId })
+
+    if (!wfvParamEnum || typeof wfvParamEnum !== 'string' || !wfvParamEnum?.startsWith?.('$.enumModelTag')) {
+      throw new Error(`wfvParamModelsSearch_261 No enum for workflowVariantParamId: ${wfvParamId}`)
+    }
+
+    const [,comfyUiDirectory] = wfvParamEnum.split(':')
+
+    const tags = await this.tagrepo.getTagsByIds({ ids: tagsIds })
+    const tagsNames = tags.map(tag => tag.name)
+
+    await this.wfsynth.view.showModelsList({
+      ctx,
+      comfyUiDirectory,
+      tags: tagsNames,
+      page,
+      prefixAction: `wfvp:${wfvParamId}:set`,
+      backAction: tagsIds.length > 0
+        ? `wfvp:${wfvParamId}:mtag:${tagsIds.join(':')}`
+        : `wfvp:${wfvParamId}`,
     })
   }
 

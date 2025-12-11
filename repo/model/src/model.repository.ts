@@ -56,7 +56,7 @@ export class ModelRepository {
     })
   }
 
-  async findModels ({ comfyUiDirectory, tags, trx = this.prisma }: { comfyUiDirectory: string, tags: string[], trx?: lib.PrismaLibService }) {
+  async findModels ({ comfyUiDirectory, tags, limit = 20, page = 0, trx = this.prisma }: { comfyUiDirectory: string, tags: string[], limit?: number, page?: number, trx?: lib.PrismaLibService }): Promise<Models[]> {
     // Проверка, что tags не пустой — иначе запрос сломается
     if (tags.length === 0) {
       return []
@@ -73,7 +73,10 @@ export class ModelRepository {
        WHERE 1=1
          AND m.comfy_ui_directory = ${comfyUiDirectory}
        GROUP BY m.id
-      HAVING COUNT(*) = ${tags.length};
+      HAVING COUNT(*) = ${tags.length}
+      ORDER BY m.name ASC
+      LIMIT ${limit}
+      OFFSET ${page * limit};
     `
   }
 
@@ -115,23 +118,27 @@ export class ModelRepository {
     const tagPlaceholders = Prisma.join(tags.map(tag => Prisma.sql`${tag}`), ', ')
 
     const result = await this.prisma.$queryRaw<{ tag: string }[]>`
-      SELECT DISTINCT mt2.tag
-        FROM models AS m
-       INNER JOIN model_tags AS mt1
-               ON mt1.model_id = m.id
-              AND mt1.tag IN (${tagPlaceholders})
-       INNER JOIN model_tags AS mt2
-               ON mt2.model_id = m.id
-              AND mt2.tag NOT IN (${tagPlaceholders})
+      SELECT DISTINCT tag
+        FROM model_tags
        WHERE 1=1
-         AND m.comfy_ui_directory = ${comfyUiDirectory}
-       ORDER BY mt2.tag ASC;
+         AND NOT tag  IN (${tagPlaceholders})
+         AND model_id IN (
+            SELECT m.id
+              FROM models AS m
+             INNER JOIN model_tags AS mt
+                     ON mt.model_id = m.id
+                    AND mt.tag  IN (${tagPlaceholders})
+             WHERE 1=1
+               AND m.comfy_ui_directory = ${comfyUiDirectory}
+             GROUP BY m.id
+            HAVING COUNT(*) = ${tags.length}
+         )
     `
 
     return result.map(row => row.tag)
   }
 
-  async findModelsByComfyUiDir (comfyUiDirectory: string) {
+  async findModelsByComfyUiDir ({ comfyUiDirectory, limit = 20, page = 0 }: { comfyUiDirectory: string, limit?: number, page?: number }) {
     return await this.prisma.models.findMany({
       where: { comfyUiDirectory },
       include: {
@@ -139,7 +146,9 @@ export class ModelRepository {
           select: { repo: true, file: true, },
         },
       },
-      orderBy: { name: 'asc' }
+      orderBy: { name: 'asc' },
+      take: limit,
+      skip: page * limit,
     })
   }
 
