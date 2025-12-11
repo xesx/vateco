@@ -54,7 +54,8 @@ export class HandlerActionTgBotService {
     this.bot.action(/wfvp:([0-9]+):set:(.+)$/, (ctx) => this.wfvParamSet(ctx))
     this.bot.action(/wfvp:([0-9]+):fset:(.+)$/, (ctx) => this.wfvParamForceSet(ctx)) // force set
 
-    this.bot.action('use-img-as-input', (ctx) => this.useImageAsInput(ctx))
+    this.bot.action('image:use-as-input', (ctx) => this.imageUseAsInput(ctx))
+    this.bot.action('image:delete', (ctx) => this.imageDelete(ctx))
   }
 
   async mainMenu (ctx: TAppBaseTgBotContext) {
@@ -477,7 +478,7 @@ export class HandlerActionTgBotService {
     await this.tgbotsrv.runWfv(ctx)
   }
 
-  async useImageAsInput (ctx) {
+  async imageUseAsInput (ctx) {
     const { workflowVariantId, userId } = ctx.session
 
     if (!workflowVariantId) {
@@ -494,7 +495,7 @@ export class HandlerActionTgBotService {
     }
 
     const fileId = this.tgbotlib.getImageFileIdFromMessage({ message: ctx.update?.callback_query?.message })
-    console.log('HandleOwnITgBot_actionUseImageAsInput_23 fileId', fileId)
+    console.log('HandlerActionTgBotService_imageUseAsInput_23 fileId', fileId)
 
     if (fileId) {
       // TODO more than one image param?
@@ -505,10 +506,15 @@ export class HandlerActionTgBotService {
         value: fileId,
       })
     } else {
-      console.log('HandleOwnITgBot_actionUseImageAsInput_34 No fileId found in message')
+      console.log('HandlerActionTgBotService_imageUseAsInput_34 No fileId found in message')
       await ctx.reply('No image found in message')
     }
 
     await this.tgbotlib.safeAnswerCallback(ctx)
+  }
+
+  async imageDelete (ctx) {
+    const messageId = ctx.update?.callback_query?.message?.message_id
+    await ctx.deleteMessage(messageId)
   }
 }

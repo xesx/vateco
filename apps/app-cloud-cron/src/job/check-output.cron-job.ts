@@ -72,9 +72,10 @@ export class CheckOutputCronJob {
 
       l.log(`CheckOutputCronJob_handleCheckOutputJob_45 Sending image ${image} to Telegram chat ${TG_CHAT_ID}`)
       try {
-        const keyboard = this.tgbotlib.generateInlineKeyboard([
-          [[`Use it as input`, 'act:own-i:use-img-as-input']],
-        ])
+        const keyboard = this.tgbotlib.generateInlineKeyboard([[
+          [`Use it`, 'image:use-as-input'],
+          ['Delete', 'image:delete']
+        ]])
 
         await this.tgbotlib.sendPhoto({ chatId: TG_CHAT_ID, photo: buffer, inlineKeyboard: keyboard.reply_markup })
       } catch (error) {
