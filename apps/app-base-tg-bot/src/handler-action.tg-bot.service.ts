@@ -104,7 +104,7 @@ export class HandlerActionTgBotService {
       env: {
         'TG_CHAT_ID': telegramId?.toString(),
         // 'COMFY_UI_ARCHIVE_FILE': 'comfyui-cu128-py312-iface-v2.tar.zst',
-        'COMFY_UI_ARCHIVE_FILE': 'comfyui-cu128-py312-v3.tar.zst', // todo: make it configurable
+        'COMFY_UI_ARCHIVE_FILE': 'comfyui-cu128-py312-v4.tar.zst', // todo: make it configurable
       },
     })
 
