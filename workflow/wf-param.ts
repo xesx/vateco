@@ -3,7 +3,7 @@ type TParam = {
   default?: string | number | boolean
   description: string
   label: string
-  enum?: string[]
+  enum?: string[] | number[]
   multiple?: number
   isComfyUiModel?: boolean
   isMetaParam?: boolean
@@ -24,6 +24,18 @@ const params: Record<string, TParam> = {
       return params.some || rawValue || 42
     },
   },
+  baseShift: {
+    type: 'number',
+    default: 0.50,
+    description: 'Parameter for ModelSamplingFlux node, input base_shift',
+    label: 'baseShift',
+    positionX: undefined,
+    positionY: undefined,
+    enum: undefined,
+    depends: undefined,
+    multiple: undefined,
+    compile: undefined,
+  },
   batchSize: {
     type: 'integer',
     default: 1,
@@ -37,6 +49,18 @@ const params: Record<string, TParam> = {
     label: 'CFG',
     positionX: 8500,
     positionY: 1,
+  },
+  cfgNormStrength: {
+    type: 'number',
+    default: 1,
+    description: 'Parameter for CFGNorm node, input strength',
+    label: 'strength',
+    positionX: undefined,
+    positionY: undefined,
+    enum: undefined,
+    depends: undefined,
+    multiple: undefined,
+    compile: undefined,
   },
   checkpointModel: {
     type: 'string',
@@ -78,7 +102,7 @@ const params: Record<string, TParam> = {
   },
   clipType: {
     type: 'string',
-    enum: ['sdxl', 'sd3', 'flux', 'hunyuan_video', 'hidream'],
+    enum: ['stable_diffusion', 'stable_cascade', 'sd3', 'stable_audio', 'mochi', 'ltxv', 'pixart', 'cosmos', 'lumina2', 'wan', 'hidream', 'chroma', 'ace', 'omnigen2', 'qwen_image', 'hunyuan_image', 'flux2', 'ovis'],
     default: 'flux',
     description: 'The type of CLIP model to use',
     label: 'CLIP Type',
@@ -101,6 +125,30 @@ const params: Record<string, TParam> = {
     default: 'default',
     description: 'The device to use',
     label: 'Device',
+  },
+  dishonestyFactor: {
+    type: 'number',
+    default: -0.04,
+    description: 'Parameter for LyingSigmaSampler node, input dishonesty_factor',
+    label: 'dishonestyFactor',
+    positionX: undefined,
+    positionY: undefined,
+    enum: undefined,
+    depends: undefined,
+    multiple: undefined,
+    compile: undefined,
+  },
+  endPercent: {
+    type: 'number',
+    default: 0.80,
+    description: 'Parameter for LyingSigmaSampler node, input end_percent',
+    label: 'endPercent',
+    positionX: undefined,
+    positionY: undefined,
+    enum: undefined,
+    depends: undefined,
+    multiple: undefined,
+    compile: undefined,
   },
   filenamePrefix: {
     type: 'string',
@@ -184,6 +232,30 @@ const params: Record<string, TParam> = {
     positionX: 1000,
     positionY: 2,
   },
+  maxShift: {
+    type: 'number',
+    default: 1.1500000000000001,
+    description: 'Parameter for ModelSamplingFlux node, input max_shift',
+    label: 'maxShift',
+    positionX: undefined,
+    positionY: undefined,
+    enum: undefined,
+    depends: undefined,
+    multiple: undefined,
+    compile: undefined,
+  },
+  megapixels: {
+    type: 'number',
+    default: 1,
+    description: 'Parameter for ImageScaleToTotalPixels node, input megapixels',
+    label: 'megapixels',
+    positionX: undefined,
+    positionY: undefined,
+    enum: [1, 1.5, 2, 2.5, 3, 4],
+    depends: undefined,
+    multiple: undefined,
+    compile: undefined,
+  },
   model: {
     type: 'string',
     description: 'The model to use for generation',
@@ -191,6 +263,18 @@ const params: Record<string, TParam> = {
     isComfyUiModel: true,
     default: '❓',
     multiple: 5,
+  },
+  modelSamplingAuraFlowShift: {
+    type: 'number',
+    default: 3,
+    description: 'Parameter for ModelSamplingAuraFlow node, input shift',
+    label: 'shift',
+    positionX: undefined,
+    positionY: undefined,
+    enum: undefined,
+    depends: undefined,
+    multiple: undefined,
+    compile: undefined,
   },
   negativePrompt: {
     type: 'string',
@@ -210,12 +294,24 @@ const params: Record<string, TParam> = {
   },
   sampler: {
     type: 'string',
-    enum: ['euler', 'euler_ancestral', 'dpmpp_2m', 'heun', 'uni_pc', 'lcm'],
+    enum: ['euler','euler_cfg_pp','euler_ancestral','euler_ancestral_cfg_pp','heun','heunpp2','dpm_2','dpm_2_ancestral','lms','dpm_fast','dpm_adaptive','dpmpp_2s_ancestral','dpmpp_2s_ancestral_cfg_pp','dpmpp_sde','dpmpp_sde_gpu','dpmpp_2m','dpmpp_2m_cfg_pp','dpmpp_2m_sde','dpmpp_2m_sde_gpu','dpmpp_2m_sde_heun','dpmpp_2m_sde_heun_gpu','dpmpp_3m_sde','dpmpp_3m_sde_gpu','ddpm','lcm','ipndm','ipndm_v','deis','res_multistep','res_multistep_cfg_pp','res_multistep_ancestral','res_multistep_ancestral_cfg_pp','gradient_estimation','gradient_estimation_cfg_pp','er_sde','seeds_2','seeds_3','sa_solver','sa_solver_pece','ddim','uni_pc','uni_pc_bh2',],
     default: 'euler',
     description: 'The sampler to use for image generation',
     label: 'Sampler',
     positionX: 8000,
     positionY: 0,
+  },
+  scaleBy: {
+    type: 'number',
+    default: 1.00,
+    description: 'Parameter for ImageScaleBy node, input scale_by',
+    label: 'scaleBy',
+    positionX: undefined,
+    positionY: undefined,
+    enum: undefined,
+    depends: undefined,
+    multiple: undefined,
+    compile: undefined,
   },
   scheduler: {
     type: 'string',
@@ -254,6 +350,18 @@ const params: Record<string, TParam> = {
       return seed >>> 0
     },
   },
+  startPercent: {
+    type: 'number',
+    default: 0.25,
+    description: 'Parameter for LyingSigmaSampler node, input start_percent',
+    label: 'startPercent',
+    positionX: undefined,
+    positionY: undefined,
+    enum: undefined,
+    depends: undefined,
+    multiple: undefined,
+    compile: undefined,
+  },
   steps: {
     type: 'integer',
     default: 20,
@@ -287,6 +395,20 @@ const params: Record<string, TParam> = {
     multiple: 5,
     // depends: ['unetModel'],
   },
+  upscaleMethod: {
+    type: 'string',
+    default: 'lanczos',
+    description: 'Parameter for ImageScaleBy node, input upscale_method',
+    label: 'upscaleMethod',
+    isComfyUiModel: false,
+    isMetaParam: false,
+    positionX: undefined,
+    positionY: undefined,
+    enum: undefined,
+    depends: undefined,
+    multiple: undefined,
+    compile: undefined,
+  },
   vaeModel: {
     type: 'string',
     description: 'The VAE to use for generation',
@@ -312,100 +434,7 @@ const params: Record<string, TParam> = {
 
       return width
     },
-  },
-
-  dishonestyFactor: {
-    type: 'number',
-    default: -0.04,
-    description: 'Parameter for LyingSigmaSampler node, input dishonesty_factor',
-    label: 'dishonestyFactor',
-    positionX: undefined,
-    positionY: undefined,
-    enum: undefined,
-    depends: undefined,
-    multiple: undefined,
-    compile: undefined,
-  },
-
-  startPercent: {
-    type: 'number',
-    default: 0.25,
-    description: 'Parameter for LyingSigmaSampler node, input start_percent',
-    label: 'startPercent',
-    positionX: undefined,
-    positionY: undefined,
-    enum: undefined,
-    depends: undefined,
-    multiple: undefined,
-    compile: undefined,
-  },
-
-  endPercent: {
-    type: 'number',
-    default: 0.80,
-    description: 'Parameter for LyingSigmaSampler node, input end_percent',
-    label: 'endPercent',
-    positionX: undefined,
-    positionY: undefined,
-    enum: undefined,
-    depends: undefined,
-    multiple: undefined,
-    compile: undefined,
-  },
-
-  maxShift: {
-    type: 'number',
-    default: 1.1500000000000001,
-    description: 'Parameter for ModelSamplingFlux node, input max_shift',
-    label: 'maxShift',
-    positionX: undefined,
-    positionY: undefined,
-    enum: undefined,
-    depends: undefined,
-    multiple: undefined,
-    compile: undefined,
-  },
-
-  baseShift: {
-    type: 'number',
-    default: 0.50,
-    description: 'Parameter for ModelSamplingFlux node, input base_shift',
-    label: 'baseShift',
-    positionX: undefined,
-    positionY: undefined,
-    enum: undefined,
-    depends: undefined,
-    multiple: undefined,
-    compile: undefined,
-  },
-
-  upscaleMethod: {
-    type: 'string',
-    default: 'lanczos',
-    description: 'Parameter for ImageScaleBy node, input upscale_method',
-    label: 'upscaleMethod',
-    isComfyUiModel: false,
-    isMetaParam: false,
-    positionX: undefined,
-    positionY: undefined,
-    enum: undefined,
-    depends: undefined,
-    multiple: undefined,
-    compile: undefined,
-  },
-
-  scaleBy: {
-    type: 'number',
-    default: 1.00,
-    description: 'Parameter for ImageScaleBy node, input scale_by',
-    label: 'scaleBy',
-    positionX: undefined,
-    positionY: undefined,
-    enum: undefined,
-    depends: undefined,
-    multiple: undefined,
-    compile: undefined,
-  },
+  }
 }
 
 Object.entries(params).forEach(([key, param]) => {

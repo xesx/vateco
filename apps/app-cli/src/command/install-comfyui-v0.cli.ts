@@ -54,7 +54,7 @@ export class InstallComfyuiV0Cli {
           await this.tgbotlib.sendMessage({ chatId, text: this.msglib.genCodeMessage('ComfyUI starting...') })
           await this.comfyuilib.startComfyUI()
 
-          const keyboard = this.tgbotlib.generateInlineKeyboard(kb.ownInstanceManageMenu('running'))
+          const keyboard = this.tgbotlib.generateInlineKeyboard(kb.ownInstanceManageMenu())
           const text = 'Manage your ComfyUI instance:'
           await this.tgbotlib.sendInlineKeyboard({ chatId, text, keyboard })
         } catch (error) {

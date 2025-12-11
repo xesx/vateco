@@ -166,4 +166,49 @@ export class WorkflowCookSynthService {
 
     return node
   }
+
+  cookCFGNormNode (node: any) {
+    node._meta.title = '#CFGNorm'
+
+    node.inputs.strength = "{{cfgNormStrength}}" // 1
+
+    return node
+  }
+
+  cookCLIPLoaderNode (node: any) {
+    node._meta.title = '#CLIPLoader'
+
+    node.inputs.clip_name = "{{clipLModel}}" // qwen_2.5_vl_7b_fp8_scaled.safetensors"
+    node.inputs.type = "{{clipType}}" // "qwen_image"
+    node.inputs.device = "{{clipDevice}}" // "default"
+
+    return node
+  }
+
+  cookModelSamplingAuraFlowNode (node: any) {
+    node._meta.title = '#ModelSamplingAuraFlow'
+
+    node.inputs.shift = "{{modelSamplingAuraFlowShift}}" // 3
+
+    return node
+  }
+
+  cookEmptySD3LatentImageNode (node: any) {
+    node._meta.title = '#EmptySD3LatentImage'
+
+    node.inputs.width = "{{width}}" // 2560
+    node.inputs.height = "{{height}}" // 1440
+    node.inputs.batch_size = "{{batchSize}}" // 1
+
+    return node
+  }
+
+  cookImageScaleToTotalPixelsNode (node: any) {
+    node._meta.title = '#ImageScaleToTotalPixels'
+
+    node.inputs.upscale_method = "{{upscaleMethod}}" // "lanczos"
+    node.inputs.megapixels = "{{megapixels}}" // 1
+
+    return node
+  }
 }

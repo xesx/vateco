@@ -32,8 +32,8 @@ export class WorkflowTemplateCreateCli {
         // const result = this.synthwf.cookWorkflowTemplate(rawWorkflow)
         const result = await this.synthwf.cookAndCreateWorkflowTemplate({
           rawWorkflow,
-          name: 'flux-with-lora-v1',
-          description: 'Base flux workflow with LoRA support',
+          name: 'qwen-image-edit-v1',
+          description: 'Qwen image edit base workflow with LoRA support',
         })
 
         console.log('\x1b[36m', 'content', JSON.stringify(result, null, 4), '\x1b[0m')

@@ -13,7 +13,7 @@ export class ModelRepository {
     private readonly prisma: lib.PrismaLibService,
   ) {}
 
-  async createModel ({ name, comfyUiDirectory, comfyUiFileName, baseModel, label, trx = this.prisma }: { name: string, comfyUiDirectory: string, comfyUiFileName: string, baseModel: string, label: string, trx?: lib.PrismaLibService }) {
+  async createModel ({ name, comfyUiDirectory, comfyUiFileName, baseModel, label, trx = this.prisma }: { name: string, comfyUiDirectory: string, comfyUiFileName: string, baseModel?: string, label: string, trx?: lib.PrismaLibService }) {
     const model = await trx.models.create({
       data: {
         name,

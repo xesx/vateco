@@ -51,7 +51,7 @@ export class WorkflowParseCli {
       .command('parse-workflow')
       .option('-f, --file <string>', 'Parse workflow file path')
       .description('Parse workflow')
-      .action(async (options) => {
+      .action((options) => {
         const { file } = options
 
         const IGNORE_NODE_CLASSES = Object.keys(this.wfsynth.cookNodeMap)
@@ -126,7 +126,7 @@ export class WorkflowParseCli {
           for (const inputKey in sagnificantNodes[node].inputs) {
             const inputValue = sagnificantNodes[node].inputs[inputKey]
             const wfParamKey = toCamelCase(inputKey)
-            func += `  node.inputs.${inputKey} = "{{${wfParamKey}}" // ${JSON.stringify(inputValue)}\n`
+            func += `  node.inputs.${inputKey} = "{{${wfParamKey}}}" // ${JSON.stringify(inputValue)}\n`
 
             // type: 'string' | 'integer' | 'boolean' | 'number'
             // default?: string | number | boolean

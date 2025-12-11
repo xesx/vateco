@@ -16,5 +16,10 @@
   "RandomNoise": "cookRandomNoiseNode",
   "ModelSamplingFlux": "cookModelSamplingFluxNode",
   "FluxGuidance": "cookFluxGuidanceNode",
-  "ImageScaleBy": "cookImageScaleByNode"
+  "ImageScaleBy": "cookImageScaleByNode",
+  "CFGNorm": "cookCFGNormNode",
+  "CLIPLoader": "cookCLIPLoaderNode",
+  "ModelSamplingAuraFlow": "cookModelSamplingAuraFlowNode",
+  "EmptySD3LatentImage": "cookEmptySD3LatentImageNode",
+  "ImageScaleToTotalPixels": "cookImageScaleToTotalPixelsNode"
 }

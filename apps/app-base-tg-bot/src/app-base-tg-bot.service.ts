@@ -223,7 +223,7 @@ export class AppBaseTgBotService {
     const workflowTemplateId = parseInt(workflowTemplateIdStr, 10)
 
     if (isNaN(workflowTemplateId)) {
-      throw new Error('Invalid workflow template ID. Usage: #wfv_create <workflowTemplateId>')
+      throw new Error('Invalid workflow template ID. Usage: _wfv_create <workflowTemplateId>')
     }
 
     const workflowVariantId = await this.wfsynth.createWorkflowVariant({ workflowTemplateId })
@@ -237,7 +237,7 @@ export class AppBaseTgBotService {
     const workflowVariantId = parseInt(workflowVariantIdStr, 10)
 
     if (isNaN(workflowVariantId)) {
-      throw new Error('Invalid workflow variant ID. Usage: #wfv_delete <workflowVariantId>')
+      throw new Error('Invalid workflow variant ID. Usage: _wfv_delete <workflowVariantId>')
     }
 
     await this.wfsynth.deleteWorkflowVariant(workflowVariantId)
