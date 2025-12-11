@@ -30,7 +30,7 @@ export class CivitaiLibService {
       return response.data
     } catch (error) {
       console.log('CivitaiLibService_importModelVersionData_34 Error import model version data', error, error.message)
-      throw new Error('CivitaiLibService_importModelVersionData_35 Error importing model version data from Civitai')
+      throw new Error('CivitaiLibService_importModelVersionData_35 Error importing model version data from Civitai: error' + error.message)
     }
   }
 
