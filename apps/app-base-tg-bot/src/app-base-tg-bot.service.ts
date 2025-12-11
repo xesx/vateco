@@ -144,7 +144,7 @@ export class AppBaseTgBotService {
       .split('\n')
       .map(item => item.trim())
 
-    const civitaiId = link.replace('https://civitai.com/models/', '').split('/')[0]
+    const civitaiId = link.replace('https://civitai.com/models/', '').split('?')[0]
     let civitaiVersionId = new URL(link).searchParams.get('modelVersionId')
 
     if (!civitaiVersionId) {

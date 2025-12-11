@@ -114,7 +114,7 @@ export class WorkflowViewSynthService {
     await this.tgbotlib.sendMessageV2({ ctx, chatId, message, extra: { parse_mode: 'HTML', ...keyboard } })
   }
 
-  async showCurrentPositivePrompt ({ ctx, chatId, userId, workflowVariantId }) {
+  async showCurrentPositivePrompt ({ ctx, chatId, userId, workflowVariantId }: { ctx?: any; chatId?: string; userId: number; workflowVariantId: number }) {
 
     if (!workflowVariantId) {
       throw new Error('Workflow variant ID not set in session')

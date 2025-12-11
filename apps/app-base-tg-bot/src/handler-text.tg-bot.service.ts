@@ -40,7 +40,9 @@ export class HandlerTextTgBotService {
   }
 
   async textShowPrompt (ctx) {
-    await this.wfsynth.view.showCurrentPositivePrompt(ctx)
+    const { userId, workflowVariantId } = ctx.session
+
+    await this.wfsynth.view.showCurrentPositivePrompt({ ctx, userId, workflowVariantId })
   }
 
   async textParams (ctx) {
@@ -50,6 +52,7 @@ export class HandlerTextTgBotService {
     if (instance) {
       backAction = 'instance:manage'
     }
+
     await this.wfsynth.view.showWfvRunMenu({ ctx, userId, workflowVariantId, backAction })
   }
 
