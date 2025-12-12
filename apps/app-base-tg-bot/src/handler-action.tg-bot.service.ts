@@ -55,7 +55,8 @@ export class HandlerActionTgBotService {
     this.bot.action(/wfvp:([0-9]+):fset:(.+)$/, (ctx) => this.wfvParamForceSet(ctx)) // force set
 
     this.bot.action('image:use-as-input', (ctx) => this.imageUseAsInput(ctx))
-    this.bot.action('image:delete', (ctx) => this.imageDelete(ctx))
+
+    this.bot.action('message:delete', (ctx) => this.messageDelete(ctx))
   }
 
   async mainMenu (ctx: TAppBaseTgBotContext) {
@@ -104,8 +105,8 @@ export class HandlerActionTgBotService {
       clientId: 'base_' + telegramId,
       env: {
         'TG_CHAT_ID': telegramId?.toString(),
-        // 'COMFY_UI_ARCHIVE_FILE': 'comfyui-cu128-py312-iface-v2.tar.zst',
-        'COMFY_UI_ARCHIVE_FILE': 'comfyui-cu128-py312-v4.tar.zst', // todo: make it configurable
+        // 'COMFY_UI_ARCHIVE_FILE': 'comfyui-cu128-py312-v4.tar.zst',
+        'COMFY_UI_ARCHIVE_FILE': 'comfyui-cu128-py312-iface-v4.tar.zst', // todo: make it configurable
       },
     })
 
@@ -513,7 +514,7 @@ export class HandlerActionTgBotService {
     await this.tgbotlib.safeAnswerCallback(ctx)
   }
 
-  async imageDelete (ctx) {
+  async messageDelete (ctx) {
     const messageId = ctx.update?.callback_query?.message?.message_id
     await ctx.deleteMessage(messageId)
   }

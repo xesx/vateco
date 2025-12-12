@@ -211,4 +211,111 @@ export class WorkflowCookSynthService {
 
     return node
   }
+
+  cookPulidFluxModelLoaderNode (node: any) {
+    node._meta.title = '#PulidFluxModelLoader'
+
+    node.inputs.pulid_file = "{{pulidModel}}" // "pulid_flux_v0.9.1.safetensors"
+
+    return node
+  }
+
+  cookPulidFluxInsightFaceLoaderNode (node: any) {
+    node._meta.title = '#PulidFluxInsightFaceLoader'
+
+    node.inputs.provider = "{{pulidFluxInsightFaceProvider}}" // "CPU"
+
+    return node
+  }
+
+  cookApplyPulidFluxNode (node: any) {
+    node._meta.title = '#ApplyPulidFlux'
+
+    node.inputs.weight = "{{pulidFluxWeight}}" // 1
+    node.inputs.start_at = "{{pulidFluxStartAt}}" // 0
+    node.inputs.end_at = "{{pulidFluxEndAt}}" // 1
+    node.inputs.fusion = "{{pulidFluxFusion}}" // "mean"
+    node.inputs.fusion_weight_max = "{{pulidFluxFusionWeightMax}}" // 1
+    node.inputs.fusion_weight_min = "{{pulidFluxFusionWeightMin}}" // 0
+    node.inputs.train_step = "{{pulidFluxTrainStep}}" // 1000
+    node.inputs.use_gray = "{{pulidFluxUseGray}}" // true
+
+    return node
+  }
+
+  cookCheckpointLoaderSimpleNode (node: any) {
+    node._meta.title = '#CheckpointLoaderSimple'
+
+    node.inputs.ckpt_name = "{{checkpointModel}}" // "il_honeys_10.safetensors"
+
+    return node
+  }
+
+  cookInstantIDModelLoaderNode (node: any) {
+    node._meta.title = '#InstantIDModelLoader'
+
+    node.inputs.instantid_file = "{{instantIdModel}}" // "ip-adapter.bin"
+
+    return node
+  }
+
+  cookInstantIDFaceAnalysisNode (node: any) {
+    node._meta.title = '#InstantIDFaceAnalysis'
+
+    node.inputs.provider = "{{instantIdProvider}}" // "CUDA"
+
+    return node
+  }
+
+  cookApplyInstantIDNode (node: any) {
+    node._meta.title = '#ApplyInstantID'
+
+    node.inputs.weight = "{{instantIdWeight}}" // 0.8
+    node.inputs.start_at = "{{instantIdStartAt}}" // 0.02
+    node.inputs.end_at = "{{instantIdEndAt}}" // 1
+
+    return node
+  }
+
+  cookControlNetLoaderNode (node: any) {
+    node._meta.title = '#ControlNetLoader'
+
+    node.inputs.control_net_name = "{{controlnetModel}}" // "diffusion_pytorch_model.safetensors"
+
+    return node
+  }
+
+
+  cookCLIPVisionLoaderNode (node: any) {
+    node._meta.title = '#CLIPVisionLoader'
+
+    node.inputs.clip_name = "{{clipVisionModel}}" // "sigclip_vision_patch14_384.safetensors"
+
+    return node
+  }
+
+  cookStyleModelLoaderNode (node: any) {
+    node._meta.title = '#StyleModelLoader'
+
+    node.inputs.style_model_name = "{{styleModel}}" // "flux1-redux-dev.safetensors"
+
+    return node
+  }
+
+  cookCLIPVisionEncodeNode (node: any) {
+    node._meta.title = '#CLIPVisionEncode'
+
+    node.inputs.crop = "{{clipVisionEncodeCrop}}" // "center"
+
+    return node
+  }
+
+  cookStyleModelApplyNode (node: any) {
+    node._meta.title = '#StyleModelApply'
+
+    node.inputs.strength = "{{styleModelAStrength}}" // 1
+    node.inputs.strength_type = "{{styleModelStrengthType}}" // "multiply"
+
+    return node
+  }
 }

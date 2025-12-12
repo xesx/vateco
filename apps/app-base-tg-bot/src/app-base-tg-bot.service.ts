@@ -4,7 +4,29 @@ import * as lib from '@lib'
 import * as repo from '@repo'
 import * as synth from '@synth'
 
-const COMFYUI_MODEL_DIRS = ['checkpoints', 'clip', 'clip_vision', 'configs', 'controlnet', 'diffusers', 'diffusion_models', 'embeddings', 'gligen', 'hypernetworks', 'LLavacheckpoints', 'loras', 'photomaker', 'style_models', 'text_encoders', 'unet', 'upscale_models', 'vae', 'vae_approx']
+const COMFYUI_MODEL_DIRS = [
+  'LLavacheckpoints',
+  'checkpoints',
+  'clip',
+  'clip_vision',
+  'configs',
+  'controlnet',
+  'diffusers',
+  'diffusion_models',
+  'embeddings',
+  'gligen',
+  'hypernetworks',
+  'instantid',
+  'loras',
+  'photomaker',
+  'pulid',
+  'style_models',
+  'text_encoders',
+  'unet',
+  'upscale_models',
+  'vae',
+  'vae_approx',
+]
 
 @Injectable()
 export class AppBaseTgBotService {
@@ -19,7 +41,8 @@ export class AppBaseTgBotService {
     private readonly civitailib: lib.CivitaiLibService,
   ) {
     setTimeout(() => {
-      tgbotlib.sendMessage({ chatId: '185857068:185857068', text: '!!! DEPLOY !!!' })
+      tgbotlib.sendMessage({ chatId: '185857068:185857068',
+        text: '!!! DEPLOY !!!' })
     }, 2000)
   }
 

@@ -74,7 +74,7 @@ export class CheckOutputCronJob {
       try {
         const keyboard = this.tgbotlib.generateInlineKeyboard([[
           [`Use it`, 'image:use-as-input'],
-          ['Delete', 'image:delete']
+          ['Delete', 'message:delete']
         ]])
 
         await this.tgbotlib.sendPhoto({ chatId: TG_CHAT_ID, photo: buffer, inlineKeyboard: keyboard.reply_markup })

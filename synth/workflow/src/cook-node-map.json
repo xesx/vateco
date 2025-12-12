@@ -8,7 +8,6 @@
   "EmptyLatentImage": "cookEmptyLatentImageNode",
   "KSampler": "cookKSamplerNode",
   "PrimitiveStringMultiline": "cookPrimitiveStringMultilineNode",
-
   "LoadImage": "cookLoadImageNode",
   "LyingSigmaSampler": "cookLyingSigmaSamplerNode",
   "BasicScheduler": "cookBasicSchedulerNode",
@@ -21,5 +20,18 @@
   "CLIPLoader": "cookCLIPLoaderNode",
   "ModelSamplingAuraFlow": "cookModelSamplingAuraFlowNode",
   "EmptySD3LatentImage": "cookEmptySD3LatentImageNode",
-  "ImageScaleToTotalPixels": "cookImageScaleToTotalPixelsNode"
+  "ImageScaleToTotalPixels": "cookImageScaleToTotalPixelsNode",
+  "PulidFluxModelLoader": "cookPulidFluxModelLoaderNode",
+  "PulidFluxInsightFaceLoader": "cookPulidFluxInsightFaceLoaderNode",
+  "ApplyPulidFlux": "cookApplyPulidFluxNode",
+  "CheckpointLoaderSimple": "cookCheckpointLoaderSimpleNode",
+  "InstantIDModelLoader": "cookInstantIDModelLoaderNode",
+  "InstantIDFaceAnalysis": "cookInstantIDFaceAnalysisNode",
+  "ApplyInstantID": "cookApplyInstantIDNode",
+  "ControlNetLoader": "cookControlNetLoaderNode",
+  "CLIPTextEncode": "cookCLIPTextEncodeNode",
+  "CLIPVisionLoader": "cookCLIPVisionLoaderNode",
+  "StyleModelLoader": "cookStyleModelLoaderNode",
+  "CLIPVisionEncode": "cookCLIPVisionEncodeNode",
+  "StyleModelApply": "cookStyleModelApplyNode"
 }
