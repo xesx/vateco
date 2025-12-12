@@ -29,7 +29,6 @@
   "InstantIDFaceAnalysis": "cookInstantIDFaceAnalysisNode",
   "ApplyInstantID": "cookApplyInstantIDNode",
   "ControlNetLoader": "cookControlNetLoaderNode",
-  "CLIPTextEncode": "cookCLIPTextEncodeNode",
   "CLIPVisionLoader": "cookCLIPVisionLoaderNode",
   "StyleModelLoader": "cookStyleModelLoaderNode",
   "CLIPVisionEncode": "cookCLIPVisionEncodeNode",
