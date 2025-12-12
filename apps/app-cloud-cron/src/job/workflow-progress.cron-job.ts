@@ -73,7 +73,13 @@ export class WorkflowProgressCronJob {
       })
 
       wsClient.on('message', async (data) => {
-        const message: TWsMessage = JSON.parse(data.toString())
+        let message: TWsMessage
+
+        try {
+          message = JSON.parse(data.toString())
+        } catch (error) {
+          return
+        }
 
         if (message.type === 'status') {
           if (message.data?.status?.exec_info?.queue_remaining <= 0) {
