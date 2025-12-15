@@ -318,4 +318,12 @@ export class WorkflowCookSynthService {
 
     return node
   }
+
+  cookClipSetLastLayer (node: any) {
+    node._meta.title = '#ClipSetLastLayer'
+
+    node.inputs.stop_at_clip_layer = "{{clipSkip}}" // -1
+
+    return node
+  }
 }

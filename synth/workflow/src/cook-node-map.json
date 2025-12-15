@@ -32,5 +32,6 @@
   "CLIPVisionLoader": "cookCLIPVisionLoaderNode",
   "StyleModelLoader": "cookStyleModelLoaderNode",
   "CLIPVisionEncode": "cookCLIPVisionEncodeNode",
-  "StyleModelApply": "cookStyleModelApplyNode"
+  "StyleModelApply": "cookStyleModelApplyNode",
+  "CLIPSetLastLayer": "cookClipSetLastLayer"
 }

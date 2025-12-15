@@ -31,7 +31,7 @@ export class MiddlewareTgBotService {
       console.error('BaseCommandTgBot_bot_use_57 Error processing update:', err)
 
       await this.tgbotlib.safeAnswerCallback(ctx)
-      return await ctx.reply(`An error occurred: ${err.message}`)
+      return await ctx.reply(`An error occurred: ${err.message.slice(0, 300)}...`)
     }
   }
 
