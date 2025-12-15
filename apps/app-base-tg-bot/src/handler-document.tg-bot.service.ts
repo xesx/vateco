@@ -63,7 +63,12 @@ export class HandlerDocumentTgBotService {
       return next()
     }
 
-    const [,workflowTemplateId] = caption.split('\n')
+    const [,workflowTemplateIdStr] = caption.split('\n')
+    const workflowTemplateId = parseInt(workflowTemplateIdStr, 10)
+
+    if (isNaN(workflowTemplateId)) {
+      throw new Error('Invalid workflow template ID. Usage: _wft_update <workflowTemplateId>')
+    }
 
     const fileId = ctx.message.document.file_id
 
