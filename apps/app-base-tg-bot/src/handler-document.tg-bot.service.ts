@@ -25,10 +25,11 @@ export class HandlerDocumentTgBotService {
     // private readonly tagrepo: repo.TagRepository,
     // private readonly userrepo: repo.UserRepository,
   ) {
-    this.bot.on(message('document'), (ctx, next) => this.document(ctx, next)) // _wft_create
+    this.bot.on(message('document'), (ctx, next) => this.workflowTemplateCreate(ctx, next)) // _wft_create
+    this.bot.on(message('document'), (ctx, next) => this.workflowTemplateUpdate(ctx, next)) // _wft_update [id]
   }
 
-  async document (ctx, next) {
+  async workflowTemplateCreate (ctx, next) {
     const caption = ctx.message.caption
 
     if (!caption?.startsWith('_wft_create')) {
@@ -52,6 +53,26 @@ export class HandlerDocumentTgBotService {
     })
 
     await ctx.reply(`Workflow template created with ID: ${workflowTemplateId}`)
+    await this.tgbotlib.safeAnswerCallback(ctx)
+  }
+
+  async workflowTemplateUpdate (ctx, next) {
+    const caption = ctx.message.caption
+
+    if (!caption?.startsWith('_wft_update')) {
+      return next()
+    }
+
+    const [,workflowTemplateId] = caption.split('\n')
+
+    const fileId = ctx.message.document.file_id
+
+    const fileBuffer = await this.tgbotlib.importFileBufferByFileId({ fileId })
+    const rawWorkflow = JSON.parse(fileBuffer.toString('utf-8'))
+
+    await this.wfsynth.cookAndUpdateWorkflowTemplate({ workflowTemplateId, rawWorkflow })
+
+    await ctx.reply(`Workflow template ${workflowTemplateId} updated`)
     await this.tgbotlib.safeAnswerCallback(ctx)
   }
 }

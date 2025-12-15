@@ -37,6 +37,19 @@ export class WorkflowRepository {
     return result.id
   }
 
+  async setWorkflowTemplateSchema ({ id, schema, trx = this.prisma }: { id: number, schema?: Record<string, any>, trx?: lib.PrismaLibService }) {
+    if (!schema) {
+      throw new Error('setWorkflowTemplateSchema_63 Schema is required')
+    }
+
+    await trx.workflowTemplates.update({
+      where: { id },
+      data: {
+        schema,
+      },
+    })
+  }
+
   async createWorkflowVariant ({ workflowTemplateId, name, description, trx = this.prisma }: { workflowTemplateId: number, name: string, description?: string, trx?: lib.PrismaLibService  }): Promise<number> {
     name = name?.trim() || ''
 

@@ -50,6 +50,15 @@ export class WorkflowSynthService {
     return workflowTemplateId
   }
 
+  async cookAndUpdateWorkflowTemplate ({ workflowTemplateId, rawWorkflow }: { workflowTemplateId: number, rawWorkflow: any }) {
+    const { l } = this
+
+    const schema = this.cookWorkflowTemplate(rawWorkflow)
+    await this.wfrepo.setWorkflowTemplateSchema({ id: workflowTemplateId, schema })
+
+    l.log(`WorkflowSynthService_cookAndUpdateWorkflowTemplate_105 Update workflow template with ID: ${workflowTemplateId}`)
+  }
+
   cookWorkflowTemplate (rawWorkflow: any) {
     const cookedWorkflow = {}
 
