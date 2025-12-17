@@ -28,6 +28,7 @@ export class TestCli {
     private readonly hflib: lib.HuggingfaceLibService,
     private readonly civitailib: lib.CivitaiLibService,
     private readonly modelrepo: repo.ModelRepository,
+    private readonly openailib: lib.OpenaiLibService,
 
     private readonly wfsynth: synth.WorkflowSynthService,
     private readonly appcloudsynth: synth.CloudAppSynthService,
@@ -40,8 +41,14 @@ export class TestCli {
       .action(async (name) => {
         console.log(`Привет, ${name}!`)
 
-        const info = await this.civitailib.importModelData({ modelId: '2165923' })
-        console.log('\x1b[36m', 'info', JSON.stringify(info), '\x1b[0m')
+        const response = await this.openailib.improveImagePrompt({
+          prompt: 'A beautiful landscape with mountains and a river',
+          modelHint: 'flux',
+        })
+
+        console.log('\x1b[36m', 'response', response, '\x1b[0m')
+        // const info = await this.civitailib.importModelData({ modelId: '2165923' })
+        // console.log('\x1b[36m', 'info', JSON.stringify(info), '\x1b[0m')
 
         // https://civitai.com/models/1529811/style-or-wwafr
         // const models = await this.wfsynth.compileEnum('modelEnum:checkpoints:["illustrious","sd"]:')

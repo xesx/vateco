@@ -24,6 +24,7 @@ import * as command from './command'
     lib.VastLibModule,
     lib.PrismaLibModule,
     lib.CivitaiLibModule,
+    lib.OpenaiLibModule,
 
     repo.ModelRepositoryModule,
     repo.WorkflowRepositoryModule,
