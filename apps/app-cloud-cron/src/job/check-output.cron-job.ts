@@ -42,7 +42,7 @@ export class CheckOutputCronJob {
     }
 
     for (const txt of txts) {
-      const txtPath = join(OUTPUT_DIR, 'txt', txt)
+      const txtPath = join(OUTPUT_DIR, txt)
 
       const isStable = await this.waitForFileStable(txtPath, 500, 10)
 
