@@ -326,4 +326,33 @@ export class WorkflowCookSynthService {
 
     return node
   }
+
+  cookAILabQwenVLNode (node: any) {
+    node._meta.title = '#AILab_QwenVL'
+
+    node.inputs.model_name = "{{qwenVlModelName}}" // "Qwen3-VL-4B-Instruct"
+    node.inputs.quantization = "{{qwenVlQuantization}}" // "None (FP16)"
+    // node.inputs.attention_mode = "{{qwenVlAttentionMode}}" // "auto"
+    node.inputs.preset_prompt = "{{qwenVlPresetPrompt}}" // "🎬 Cinematic Description"
+    node.inputs.custom_prompt = "{{qwenVlCustomPrompt}}" // ""
+    node.inputs.max_tokens = "{{qwenVlMaxTokens}}" // 256
+    node.inputs.keep_model_loaded = "{{qwenVlKeepModelLoaded}}" // true
+    node.inputs.seed = "{{seedValue}}" // 2693883156
+
+    return node
+  }
+
+  cookSaveTextFileNode (node: any) {
+    node._meta.title = '#Save Text File'
+
+    node.inputs.path = "./output" // "./output"
+    node.inputs.filename_prefix = "{{filenamePrefix}}" // "res"
+    node.inputs.filename_delimiter = "_" // "_"
+    node.inputs.filename_number_padding = 5 // 4
+    node.inputs.file_extension = ".txt" // ".txt"
+    node.inputs.encoding = "utf-8" // "utf-8"
+    node.inputs.filename_suffix = "" // ""
+
+    return node
+  }
 }
