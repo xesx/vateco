@@ -71,7 +71,7 @@ export class CheckOutputCronJob {
           ['Delete', 'message:delete']
         ]])
 
-        const message = this.msglib.genCodeMessage(buffer.toString('utf-8'))
+        const message = this.msglib.genMessageForCopy(buffer.toString('utf-8'))
         await this.tgbotlib.sendMessageV2({
           chatId: TG_CHAT_ID,
           message,
