@@ -332,7 +332,7 @@ export class WorkflowCookSynthService {
 
     node.inputs.model_name = "{{qwenVlModelName}}" // "Qwen3-VL-4B-Instruct"
     node.inputs.quantization = "{{qwenVlQuantization}}" // "None (FP16)"
-    // node.inputs.attention_mode = "{{qwenVlAttentionMode}}" // "auto"
+    node.inputs.attention_mode = "auto" // "{{qwenVlAttentionMode}}" // "auto"
     node.inputs.preset_prompt = "{{qwenVlPresetPrompt}}" // "🎬 Cinematic Description"
     node.inputs.custom_prompt = "{{qwenVlCustomPrompt}}" // ""
     node.inputs.max_tokens = "{{qwenVlMaxTokens}}" // 256

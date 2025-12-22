@@ -33,5 +33,7 @@
   "StyleModelLoader": "cookStyleModelLoaderNode",
   "CLIPVisionEncode": "cookCLIPVisionEncodeNode",
   "StyleModelApply": "cookStyleModelApplyNode",
-  "CLIPSetLastLayer": "cookClipSetLastLayer"
+  "CLIPSetLastLayer": "cookClipSetLastLayer",
+  "AILab_QwenVL": "cookAILabQwenVLNode",
+  "Save Text File": "cookSaveTextFileNode"
 }
