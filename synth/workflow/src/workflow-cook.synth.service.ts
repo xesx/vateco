@@ -355,4 +355,23 @@ export class WorkflowCookSynthService {
 
     return node
   }
+
+  cookControlNetApplyAdvancedNode (node: any) {
+    node._meta.title = '#ControlNetApplyAdvanced'
+
+    node.inputs.strength = "{{controlNetStrength}}" // 0.95
+    node.inputs.start_percent = "{{controlNetStartPercent}}" // 0
+    node.inputs.end_percent = "{{controlNetEndPercent}}" // 0.7
+
+    return node
+  }
+
+  cookAIOPreprocessorNode (node: any) {
+    node._meta.title = '#AIO_Preprocessor'
+
+    node.inputs.preprocessor = "{{controlNetPreprocessor}}" // "DepthAnythingPreprocessor"
+    node.inputs.resolution = "{{controlNetResolution}}" // 1024
+
+    return node
+  }
 }

@@ -35,5 +35,7 @@
   "StyleModelApply": "cookStyleModelApplyNode",
   "CLIPSetLastLayer": "cookClipSetLastLayer",
   "AILab_QwenVL": "cookAILabQwenVLNode",
-  "Save Text File": "cookSaveTextFileNode"
+  "Save Text File": "cookSaveTextFileNode",
+  "ControlNetApplyAdvanced": "cookControlNetApplyAdvancedNode",
+  "AIO_Preprocessor": "cookAIOPreprocessorNode"
 }
