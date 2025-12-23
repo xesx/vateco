@@ -3,7 +3,8 @@ type TParam = {
   default?: string | number | boolean
   description: string
   label: string
-  enum?: string[] | number[]
+  enum?: string[] | number[] | string
+  user?: boolean,
   multiple?: number
   isComfyUiModel?: boolean
   isMetaParam?: boolean
@@ -39,6 +40,7 @@ const params: Record<string, TParam> = {
   batchSize: {
     type: 'integer',
     default: 1,
+    user: false,
     description: 'The batch size for image generation',
     label: 'Batch Size',
   },
@@ -66,6 +68,7 @@ const params: Record<string, TParam> = {
     type: 'string',
     description: 'The Checkpoint model to use for generation',
     label: 'Checkpoint Model',
+    enum: '$.enumModelTag:checkpoints',
     isComfyUiModel: true,
     default: '❓',
     multiple: 5,
@@ -74,6 +77,7 @@ const params: Record<string, TParam> = {
     type: 'string',
     enum: ['cpu', 'default'],
     default: 'default',
+    user: false,
     description: 'The device to use for CLIP model',
     label: 'CLIP Device',
   },
@@ -110,6 +114,7 @@ const params: Record<string, TParam> = {
   denoise: {
     type: 'number',
     default: 1,
+    user: false,
     description: 'Denoise strength for image-to-image generation',
     label: 'Denoise',
     compile: (denoise) => {
@@ -122,6 +127,7 @@ const params: Record<string, TParam> = {
   device: {
     type: 'string',
     enum: ['cpu', 'cuda', 'default'],
+    user: false,
     default: 'default',
     description: 'The device to use',
     label: 'Device',
@@ -155,6 +161,7 @@ const params: Record<string, TParam> = {
     default: 'img',
     description: 'Prefix for the generated image filenames',
     label: 'Filename Prefix',
+    user: false,
     compile: (filenamePrefix) => {
       filenamePrefix = String(filenamePrefix || 'img')
       filenamePrefix = `${filenamePrefix}_${Date.now()}`
@@ -183,6 +190,7 @@ const params: Record<string, TParam> = {
     default: 512,
     description: 'Height of the generated image in pixels',
     label: 'Height',
+    enum: [512, 768, 1024, 1280, 1400, 1536, 2048],
     positionX: 10,
     positionY: 6,
     compile: (height) => {
@@ -209,6 +217,7 @@ const params: Record<string, TParam> = {
     description: 'The LoRa to use for generation',
     label: '',
     default: '❓',
+    enum: '$.enumModelTag:loras',
     isComfyUiModel: true,
     multiple: 20,
     positionX: 1000,
@@ -295,7 +304,50 @@ const params: Record<string, TParam> = {
   },
   sampler: {
     type: 'string',
-    enum: ['euler','euler_cfg_pp','euler_ancestral','euler_ancestral_cfg_pp','heun','heunpp2','dpm_2','dpm_2_ancestral','lms','dpm_fast','dpm_adaptive','dpmpp_2s_ancestral','dpmpp_2s_ancestral_cfg_pp','dpmpp_sde','dpmpp_sde_gpu','dpmpp_2m','dpmpp_2m_cfg_pp','dpmpp_2m_sde','dpmpp_2m_sde_gpu','dpmpp_2m_sde_heun','dpmpp_2m_sde_heun_gpu','dpmpp_3m_sde','dpmpp_3m_sde_gpu','ddpm','lcm','ipndm','ipndm_v','deis','res_multistep','res_multistep_cfg_pp','res_multistep_ancestral','res_multistep_ancestral_cfg_pp','gradient_estimation','gradient_estimation_cfg_pp','er_sde','seeds_2','seeds_3','sa_solver','sa_solver_pece','ddim','uni_pc','uni_pc_bh2',],
+    enum: [
+      'euler',
+      // 'euler_cfg_pp',
+      'euler_ancestral',
+      // 'euler_ancestral_cfg_pp',
+      'heun',
+      // 'heunpp2',
+      // 'dpm_2',
+      // 'dpm_2_ancestral',
+      // 'lms',
+      // 'dpm_fast',
+      // 'dpm_adaptive',
+      // 'dpmpp_2s_ancestral',
+      // 'dpmpp_2s_ancestral_cfg_pp',
+      'dpmpp_sde',
+      // 'dpmpp_sde_gpu',
+      'dpmpp_2m',
+      // 'dpmpp_2m_cfg_pp',
+      'dpmpp_2m_sde',
+      // 'dpmpp_2m_sde_gpu',
+      // 'dpmpp_2m_sde_heun',
+      // 'dpmpp_2m_sde_heun_gpu',
+      // 'dpmpp_3m_sde',
+      // 'dpmpp_3m_sde_gpu',
+      // 'ddpm',
+      'lcm',
+      // 'ipndm',
+      // 'ipndm_v',
+      // 'deis',
+      // 'res_multistep',
+      // 'res_multistep_cfg_pp',
+      // 'res_multistep_ancestral',
+      // 'res_multistep_ancestral_cfg_pp',
+      // 'gradient_estimation',
+      // 'gradient_estimation_cfg_pp',
+      // 'er_sde',
+      // 'seeds_2',
+      // 'seeds_3',
+      // 'sa_solver',
+      // 'sa_solver_pece',
+      'ddim',
+      'uni_pc',
+      // 'uni_pc_bh2',
+    ],
     default: 'euler',
     description: 'The sampler to use for image generation',
     label: 'Sampler',
@@ -368,6 +420,7 @@ const params: Record<string, TParam> = {
     default: 20,
     description: 'Number of steps for the image generation process',
     label: 'Steps',
+    enum: [3, 5, 8, 15, 20, 25, 30, 35, 40, 45, 50, 60, 70, 80, 90, 100],
     positionX: 8500,
     positionY: 0,
   },
@@ -414,6 +467,7 @@ const params: Record<string, TParam> = {
     type: 'string',
     description: 'The VAE to use for generation',
     label: 'VAE',
+    user: false,
     isComfyUiModel: true,
     default: '❓',
     multiple: 5,
@@ -423,6 +477,7 @@ const params: Record<string, TParam> = {
     default: 512,
     description: 'Width of the generated image in pixels',
     label: 'Width',
+    enum: [512, 768, 1024, 1280, 1400, 1536, 2048],
     positionX: 10,
     positionY: 5,
     compile: (width) => {
@@ -442,6 +497,7 @@ const params: Record<string, TParam> = {
     default: "pulid_flux_v0.9.1.safetensors",
     description: 'Parameter for PulidFluxModelLoader node, input pulid_file',
     label: 'pulidFile',
+    user: false,
     isComfyUiModel: true,
     isMetaParam: false,
     positionX: undefined,
@@ -607,6 +663,7 @@ const params: Record<string, TParam> = {
     default: 'CUDA',
     description: 'Parameter for InstantIDFaceAnalysis node, input provider',
     label: 'device',
+    user: false,
     isComfyUiModel: false,
     isMetaParam: false,
     positionX: undefined,
@@ -853,6 +910,7 @@ const params: Record<string, TParam> = {
   qwenVlKeepModelLoaded: {
     type: 'boolean',
     default: true,
+    user: false,
     description: 'Parameter for AILab_QwenVL node, input keep_model_loaded',
     label: 'keepModelLoaded',
     positionX: undefined,

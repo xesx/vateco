@@ -85,7 +85,7 @@ export class WorkflowRepository {
     })
   }
 
-  async createWorkflowVariantParam ({ workflowVariantId, paramName, label, value, positionX, positionY, user, enumValues, trx = this.prisma }: { workflowVariantId: number, paramName: string, label?: string, value?: any, positionX?: number, positionY?: number, user?: boolean, enumValues?: any[], trx?: lib.PrismaLibService }) {
+  async createWorkflowVariantParam ({ workflowVariantId, paramName, label, value, positionX, positionY, user, enumValues, trx = this.prisma }: { workflowVariantId: number, paramName: string, label?: string, value?: any, positionX?: number, positionY?: number, user?: boolean, enumValues?: any[] | string, trx?: lib.PrismaLibService }) {
     const { wfParamSchema } = this.wflib
 
     paramName = paramName?.trim() || ''

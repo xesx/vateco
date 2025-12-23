@@ -145,7 +145,7 @@ export class WorkflowSynthService {
           paramName: paramKey,
           label: paramSchema.label || paramKey,
           value: paramSchema.default,
-          user: true,
+          user: paramSchema.user ?? true,
           enumValues: paramSchema.enum,
           positionX,
           positionY: paramSchema.positionY || 0,

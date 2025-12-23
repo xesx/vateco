@@ -74,9 +74,16 @@ export class WorkflowCookSynthService {
   }
 
   cookEmptyLatentImageNode (node: any) {
-    node.inputs.width = "{{width}}"
-    node.inputs.height = "{{height}}"
+    if (!Array.isArray(node.inputs.width)) {
+      node.inputs.width = "{{width}}"
+    }
+
+    if (!Array.isArray(node.inputs.height)) {
+      node.inputs.height = "{{height}}"
+    }
+
     node.inputs.batch_size = "{{batchSize}}"
+
     node._meta.title = '#EmptyLatentImage'
 
     return node
