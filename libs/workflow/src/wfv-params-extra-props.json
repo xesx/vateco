@@ -1,4 +1,63 @@
 {
+  "CheckpointLoaderSimple:ckpt_name": {
+    "label": "Model",
+    "type": "string",
+    "default": "❓",
+    "enum": "$.enumModelTag:checkpoints",
+    "isComfyUiModel": true
+  },
+  "ControlNetLoader:control_net_name": {
+    "label": "CNet",
+    "type": "string",
+    "default": "❓",
+    "enum": "$.enumModel:controlnet:[\"sd\"]",
+    "isComfyUiModel": true
+  },
+  "UNETLoader:unet_name": {
+    "label": "Model",
+    "type": "string",
+    "default": "❓",
+    "enum": "$.enumModelTag:diffusion_models",
+    "isComfyUiModel": true
+  },
+  "VAELoader:vae_name": {
+    "label": "VAE",
+    "type": "string",
+    "default": "❓",
+    "enum": "$.enumModelTag:vae",
+    "user": false,
+    "isComfyUiModel": true
+  },
+  "DualCLIPLoader:clip_name1": {
+    "label": "ClipL",
+    "type": "string",
+    "default": "❓",
+    "enum": "$.enumModelTag:clip",
+    "isComfyUiModel": true
+  },
+  "DualCLIPLoader:clip_name2": {
+    "label": "T5",
+    "type": "string",
+    "default": "❓",
+    "enum": "$.enumModelTag:clip",
+    "isComfyUiModel": true
+  },
+  "PulidFluxModelLoader:pulid_file": {
+    "label": "Pulid Model",
+    "type": "string",
+    "user": false,
+    "default": "❓",
+    "enum": "$.enumModelTag:pulid",
+    "isComfyUiModel": true
+  },
+  "InstantIDModelLoader:instantid_file": {
+    "label": "InstantID Model",
+    "type": "string",
+    "user": false,
+    "default": "❓",
+    "enum": "$.enumModelTag:instantid",
+    "isComfyUiModel": true
+  },
   "AIO_Preprocessor:preprocessor": {
     "label": "CN PreProc",
     "enum": [
