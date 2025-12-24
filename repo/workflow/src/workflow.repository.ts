@@ -86,7 +86,7 @@ export class WorkflowRepository {
   }
 
   async createWorkflowVariantParam ({ workflowVariantId, paramName, label, value, positionX, positionY, user, enumValues, trx = this.prisma }: { workflowVariantId: number, paramName: string, label?: string, value?: any, positionX?: number, positionY?: number, user?: boolean, enumValues?: any[] | string, trx?: lib.PrismaLibService }) {
-    const { wfParamSchema } = this.wflib
+    // const { wfParamSchema } = this.wflib
 
     paramName = paramName?.trim() || ''
 
@@ -94,9 +94,9 @@ export class WorkflowRepository {
       throw new Error('createWorkflowVariantParam_13 Param name is too long, max 100 characters')
     }
 
-    if (!wfParamSchema[paramName]) {
-      throw new Error(`createWorkflowVariantParam_19 Unknown workflow parameter name: ${paramName}`)
-    }
+    // if (!wfParamSchema[paramName]) {
+    //   throw new Error(`createWorkflowVariantParam_19 Unknown workflow parameter name: ${paramName}`)
+    // }
 
     label = label?.trim() || ''
 
@@ -298,20 +298,20 @@ export class WorkflowRepository {
   }
 
   async getWorkflowMergedWorkflowVariantParams ({ userId, workflowVariantId }) {
-    const { wfParamSchema } = this.wflib
-
     const workflowVariantUserParamsMap = await this.getWorkflowVariantUserParamsMap({ userId, workflowVariantId })
     const workflowVariantParams = await this.getWorkflowVariantParams(workflowVariantId)
 
     const mergedParams = workflowVariantParams.map(param => {
       const { paramName } = param
 
+      const wfvParamSchema = this.wflib.getWfvParamSchema(paramName)
+
       return {
         ...param,
-        value: workflowVariantUserParamsMap[paramName] ?? param.value ?? wfParamSchema[paramName].default,
-        label: param.label ?? wfParamSchema[paramName].label,
-        enum: param.enum ?? wfParamSchema[paramName].enum ?? null,
-        isComfyUiModel: wfParamSchema[paramName].isComfyUiModel || false,
+        value: workflowVariantUserParamsMap[paramName] ?? param.value ?? wfvParamSchema.default,
+        label: param.label ?? wfvParamSchema.label,
+        enum: param.enum ?? wfvParamSchema.enum ?? null,
+        isComfyUiModel: wfvParamSchema.isComfyUiModel || false,
       }
     })
 
@@ -320,17 +320,18 @@ export class WorkflowRepository {
 
   async setWorkflowVariantUserParam ({ userId, workflowVariantId, paramName, value }: { userId: number, workflowVariantId: number | string, paramName: string, value: any }) {
     workflowVariantId = Number(workflowVariantId)
-    const { wfParamSchema } = this.wflib
 
-    if (wfParamSchema[paramName].type === 'number') {
+    const wfvParamSchema = this.wflib.getWfvParamSchema(paramName)
+
+    if (wfvParamSchema.type === 'number') {
       value = parseFloat(value)
     }
 
-    if (wfParamSchema[paramName].type === 'integer') {
+    if (wfvParamSchema.type === 'integer') {
       value = parseInt(value, 10)
     }
 
-    if (wfParamSchema[paramName].type === 'boolean') {
+    if (wfvParamSchema.type === 'boolean') {
       value = value === true || String(value).toLowerCase() === 'true'
     }
 

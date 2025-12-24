@@ -28,26 +28,29 @@ export class WorkflowParamSynthService {
   ) {}
 
   async getWfvParamInfo ({ wfvParamId }: { wfvParamId: number | string }) {
-    const { wfParamSchema } = this.wflib
-
     const wfvParam = await this.wfrepo.getWorkflowVariantParamById(Number(wfvParamId))
     const paramName = wfvParam.paramName
-    const workflowVariantId = wfvParam.workflowVariantId
-    const wfvParamType = wfParamSchema[paramName].type
 
-    const wfvParamEnum = wfvParam?.enum ?? wfParamSchema[paramName].enum
+    const wfvParamSchema = this.wflib.getWfvParamSchema(paramName)
+    const workflowVariantId = wfvParam.workflowVariantId
+    const wfvParamType = wfvParamSchema.type
+
+    const wfvParamEnum = wfvParam?.enum ?? wfvParamSchema.enum
 
     return { wfvParam, paramName, workflowVariantId, wfvParamType, wfvParamEnum }
   }
 
   async getWfvUserParamInfo ({ wfvParamId, userId }: { wfvParamId: number | string; userId: number }) {
-    const { wfParamSchema } = this.wflib
+    // const { wfParamSchema } = this.wflib
 
     const wfvParam = await this.wfrepo.getWorkflowVariantParamById(Number(wfvParamId))
     const paramName = wfvParam.paramName
+
+    const wfvParamSchema = this.wflib.getWfvParamSchema(paramName)
+
     const workflowVariantId = wfvParam.workflowVariantId
-    const wfvParamType = wfParamSchema[paramName].type
-    const wfvParamEnum = wfvParam?.enum ?? wfParamSchema[paramName].enum
+    const wfvParamType = wfvParamSchema.type
+    const wfvParamEnum = wfvParam?.enum ?? wfvParamSchema.enum
 
     const wfvUserParam = await this.wfrepo.findWorkflowVariantUserParam({ userId, workflowVariantId, paramName })
     const currentValue = (wfvUserParam?.value ?? wfvParam?.value ?? '❌') as string | number | boolean

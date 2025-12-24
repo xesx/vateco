@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common'
 
 import * as lib from '@lib'
+
 // import * as repo from '@repo'
 
 @Injectable()
@@ -11,10 +12,44 @@ export class WorkflowCookSynthService {
     private readonly wflib: lib.WorkflowLibService,
   ) {}
 
-  cookRgfreePowerLoraLoaderNode (node: any) {
-    node.inputs.lora_1 = { on: '{{loraEnabled1}}', lora: '{{lora1}}', strength: '{{loraStrength1}}'}
-    node.inputs.lora_2 = { on: '{{loraEnabled2}}', lora: '{{lora2}}', strength: '{{loraStrength2}}'}
-    node.inputs.lora_3 = { on: '{{loraEnabled3}}', lora: '{{lora3}}', strength: '{{loraStrength3}}'}
+  cookDefaultNode (node: any, id: string) {
+    const classType = node.class_type
+    const title = node._meta.title || ''
+    const classTypeSchema = this.wflib.getWfNodeClassTypeSchema(classType)
+
+    if (!classTypeSchema) {
+      throw new Error(`WorkflowCookSynthService_cookDefaultNode_13 Unknown class_type: ${classType} for node title: ${title}`)
+    }
+
+    const inputRequired = Object.entries(classTypeSchema.input.required || {})
+    const inputOptional = Object.entries(classTypeSchema.input.optional || {})
+
+    for (const input of [...inputRequired, ...inputOptional]) {
+      const [name, schema] = input
+      const [type, meta] = schema as any[]
+
+      if (!['INT', 'FLOAT', 'STRING', 'BOOLEAN'].includes(type) && !Array.isArray(type)) {
+        continue
+      }
+
+      // if input is set from another node, skip
+      if (Array.isArray(node.inputs[name])) {
+        continue
+      }
+
+      node.inputs[name] = `{{${classType}:${name}:${id}}}`
+    }
+
+    return node
+  }
+
+  cookRgfreePowerLoraLoaderNode (node: any, id: string) {
+    const classType = node.class_type
+
+    node.inputs.lora_1 = { on: `{{${classType}:loraEnabled1:${id}}}`, lora: `{{${classType}:lora1:${id}}}`, strength: `{{${classType}:loraStrength1:${id}}}`}
+    node.inputs.lora_2 = { on: `{{${classType}:loraEnabled2:${id}}}`, lora: `{{${classType}:lora2:${id}}}`, strength: `{{${classType}:loraStrength2:${id}}}`}
+    node.inputs.lora_3 = { on: `{{${classType}:loraEnabled3:${id}}}`, lora: `{{${classType}:lora3:${id}}}`, strength: `{{${classType}:loraStrength3:${id}}}`}
+
     node._meta.title = '#loraLoader'
 
     return node

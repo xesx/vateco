@@ -1,0 +1,53 @@
+{
+  "AIO_Preprocessor:preprocessor": {
+    "label": "CN PreProc",
+    "enum": [
+      "none",
+      "CannyEdgePreprocessor",
+      "DepthAnythingPreprocessor",
+      "AnimalPosePreprocessor",
+      "LineArtPreprocessor",
+      "AnimeLineArtPreprocessor",
+      "OpenposePreprocessor",
+      "ScribblePreprocessor",
+      "ShufflePreprocessor",
+      "TilePreprocessor"
+    ]
+  },
+  "KSampler:sampler_name": {
+    "label": "sampler",
+    "enum": [
+      "euler",
+      "euler_ancestral",
+      "heun",
+      "dpmpp_sde",
+      "dpmpp_2m",
+      "dpmpp_2m_sde",
+      "lcm",
+      "ddim",
+      "uni_p"
+    ],
+    "default": "euler"
+  },
+  "Power Lora Loader (rgthree):loraEnabled1": { "label": "lora1", "type": "boolean", "default": false, "positionX": 1000, "positionY": 0 },
+  "Power Lora Loader (rgthree):loraEnabled2": { "label": "lora2", "type": "boolean", "default": false, "positionX": 1001, "positionY": 0 },
+  "Power Lora Loader (rgthree):loraEnabled3": { "label": "lora3", "type": "boolean", "default": false, "positionX": 1002, "positionY": 0 },
+  "Power Lora Loader (rgthree):lora1": { "label": "", "type": "string", "default": "❓", "enum": "$.enumModelTag:loras", "isComfyUiModel": true, "positionX": 1000, "positionY": 1 },
+  "Power Lora Loader (rgthree):lora2": { "label": "", "type": "string", "default": "❓", "enum": "$.enumModelTag:loras", "isComfyUiModel": true, "positionX": 1001, "positionY": 1 },
+  "Power Lora Loader (rgthree):lora3": { "label": "", "type": "string", "default": "❓", "enum": "$.enumModelTag:loras", "isComfyUiModel": true, "positionX": 1002, "positionY": 1 },
+  "Power Lora Loader (rgthree):loraStrength1": { "label": "", "type": "float", "default": 0.8, "enum": [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1], "positionX": 1000, "positionY": 2 },
+  "Power Lora Loader (rgthree):loraStrength2": { "label": "", "type": "float", "default": 0.8, "enum": [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1], "positionX": 1001, "positionY": 2 },
+  "Power Lora Loader (rgthree):loraStrength3": { "label": "", "type": "float", "default": 0.8, "enum": [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1], "positionX": 1002, "positionY": 2 },
+  "LoadImage:image": {
+    "label": "Img",
+    "type": "string",
+    "default": "❓",
+    "positionX": 1100,
+    "positionY": 0
+  },
+  "SaveImage:filename_prefix": {
+    "user": false,
+    "type": "string",
+    "default": "r_"
+  }
+}

@@ -29,11 +29,11 @@ export class WorkflowTemplateCreateCli {
 
         const rawWorkflow = JSON.parse(fs.readFileSync(file, 'utf-8'))
 
-        // const result = this.synthwf.cookWorkflowTemplate(rawWorkflow)
-        const result = await this.synthwf.cookAndCreateWorkflowTemplate({
+        const result = this.synthwf.cookWorkflowTemplateV2(rawWorkflow)
+        await this.synthwf.cookAndCreateWorkflowTemplate({
           rawWorkflow,
-          name: 'qwen-image-edit-v1',
-          description: 'Qwen image edit base workflow with LoRA support',
+          name: 'test-wft-1',
+          description: 'test workflow controlnet',
         })
 
         console.log('\x1b[36m', 'content', JSON.stringify(result, null, 4), '\x1b[0m')

@@ -10,6 +10,7 @@ import { WorkflowViewSynthService } from './workflow-view.synth.service'
 import { WorkflowParamSynthService } from './workflow-param.synth.service'
 
 import * as cookNodeMap from './cook-node-map.json'
+import * as cookSpecialNodeMap from './cook-special-node-map.json'
 
 @Injectable()
 export class WorkflowSynthService {
@@ -43,7 +44,7 @@ export class WorkflowSynthService {
   async cookAndCreateWorkflowTemplate ({ rawWorkflow, name, description }: { rawWorkflow: any, name: string, description?: string }) {
     const { l } = this
 
-    const cookedWorkflow = this.cookWorkflowTemplate(rawWorkflow)
+    const cookedWorkflow = this.cookWorkflowTemplateV2(rawWorkflow)
     const workflowTemplateId = await this.wfrepo.createWorkflowTemplate({ name, description, schema: cookedWorkflow })
 
     l.log(`WorkflowSynthService_cookAndCreateWorkflowTemplate_105 Created workflow template with ID: ${workflowTemplateId}`)
@@ -53,7 +54,7 @@ export class WorkflowSynthService {
   async cookAndUpdateWorkflowTemplate ({ workflowTemplateId, rawWorkflow }: { workflowTemplateId: number, rawWorkflow: any }) {
     const { l } = this
 
-    const schema = this.cookWorkflowTemplate(rawWorkflow)
+    const schema = this.cookWorkflowTemplateV2(rawWorkflow)
     await this.wfrepo.setWorkflowTemplateSchema({ id: workflowTemplateId, schema })
 
     l.log(`WorkflowSynthService_cookAndUpdateWorkflowTemplate_105 Update workflow template with ID: ${workflowTemplateId}`)
@@ -85,6 +86,26 @@ export class WorkflowSynthService {
     return cookedWorkflow
   }
 
+  cookWorkflowTemplateV2 (rawWorkflow: any) {
+    const cookedWorkflow = {}
+
+    for (const id in rawWorkflow) {
+      const node = rawWorkflow[id]
+      const classType = node.class_type
+
+      if (cookSpecialNodeMap[classType]) {
+        const cookFunctionName = cookNodeMap[classType]
+        cookedWorkflow[id] = this.cook[cookFunctionName](node, id)
+      } else {
+        cookedWorkflow[id] = this.cook.cookDefaultNode(node, id)
+      }
+    }
+
+    // this.validateWorkflowTemplate(cookedWorkflow)
+
+    return cookedWorkflow
+  }
+
   validateWorkflowTemplate (workflowTemplate: any) {
     const { wfParamSchema } = this.wflib
 
@@ -107,14 +128,11 @@ export class WorkflowSynthService {
 
   async createWorkflowVariant ({ workflowTemplateId, name, description }: { workflowTemplateId: number, name?: string, description?: string }) {
     const { l } = this
-    const { wfParamSchema } = this.wflib
+    const { wfMetaParamSchema } = this.wflib
     const prisma = this.wfrepo['prisma']
 
     const workflowTemplate = await this.wfrepo.getWorkflowTemplate(Number(workflowTemplateId))
     const paramKeys = this.wflib.getWorkflowTemplateParamKeys(workflowTemplate)
-    const metaParamKeys = Object.entries(wfParamSchema)
-      .filter(([, value]) => value.isMetaParam)
-      .map(([key]) => key)
 
     const workflowVariantId = await prisma.$transaction(async (trx: lib.PrismaLibService) => {
       const workflowVariantId = await this.wfrepo.createWorkflowVariant({
@@ -126,33 +144,71 @@ export class WorkflowSynthService {
 
       await this.wfrepo.createWorkflowVariantTag({ workflowVariantId, tag: 'new', trx })
 
-      let defaultPositionX = 7000
+      let defaultPositionX = 4000
 
-      for (const paramKey of [...metaParamKeys, ...paramKeys]) {
-        const paramSchema = wfParamSchema[paramKey]
+      for (const metaParamKey in wfMetaParamSchema) {
+        const metaParamSchema = wfMetaParamSchema[metaParamKey]
 
-        if (!paramSchema) {
-          throw new Error(`No schema found for workflow parameter: ${paramKey}`)
+        if (!metaParamSchema) {
+          throw new Error(`WorkflowSynthService_createWorkflowVariant_23 No schema found for meta workflow parameter: ${metaParamKey}`)
         }
-
-        const endDigitMatch = paramKey.match(/\d+$/)
-        const index = endDigitMatch ? parseInt(endDigitMatch[0], 10) : 0
-
-        const positionX = (paramSchema.positionX ?? defaultPositionX) + index
 
         await this.wfrepo.createWorkflowVariantParam({
           workflowVariantId,
-          paramName: paramKey,
-          label: paramSchema.label || paramKey,
-          value: paramSchema.default,
-          user: paramSchema.user ?? true,
-          enumValues: paramSchema.enum,
-          positionX,
-          positionY: paramSchema.positionY || 0,
+          paramName: metaParamKey,
+          label: metaParamSchema.label || metaParamKey,
+          value: metaParamSchema.default,
+          user: metaParamSchema.user ?? true,
+          enumValues: metaParamSchema.enum,
+          positionX: metaParamSchema.positionX ?? defaultPositionX,
+          positionY: metaParamSchema.positionY || 0,
           trx,
         })
 
         defaultPositionX += 10
+      }
+
+      for (const paramKey of paramKeys) {
+        const [classType, inputName, id] = paramKey.split(':')
+        const meta = this.wflib.getWfNodeParamByFullName(paramKey)
+
+        // const node = workflowTemplate[id]
+        // const title = node._meta?.title || ''
+
+        // const endDigitMatch = inputName.match(/\d+$/)
+        // const index = endDigitMatch ? parseInt(endDigitMatch[0], 10) : 0
+
+        const positionX = meta.positionX ?? defaultPositionX
+        const positionY = meta.positionY || 0
+        const label = meta.label || inputName
+        const enumValues = meta.enum
+        const defaultValue = meta?.default
+
+        const test = {
+            paramName: paramKey,
+            label,
+            value: defaultValue,
+            user: meta.user ?? true,
+            enumValues,
+            positionX,
+            positionY,
+          }
+
+        console.log('\x1b[36m', 'test', test, '\x1b[0m')
+
+        await this.wfrepo.createWorkflowVariantParam({
+          workflowVariantId,
+          paramName: paramKey,
+          label,
+          value: defaultValue,
+          user: meta.user ?? true,
+          enumValues,
+          positionX,
+          positionY,
+          trx,
+        })
+
+        defaultPositionX += 100
       }
 
       return workflowVariantId

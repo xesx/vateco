@@ -70,6 +70,7 @@ export class WorkflowViewSynthService {
     const enumOptions: [string, string][][] = []
     let currentRow: any[] = []
     let currentLength = 0
+    let currentItemsInRow = 0
 
     prefixAction = prefixAction.endsWith(':') ? prefixAction : `${prefixAction}:`
 
@@ -80,14 +81,16 @@ export class WorkflowViewSynthService {
         const buttonLength = label.length + 2 // запас на формат Telegram
 
         // Если не помещается — перенос
-        if (currentLength + buttonLength > maxLineLength) {
+        if (currentLength + buttonLength > maxLineLength || currentItemsInRow >= 8) {
           enumOptions.push(currentRow)
           currentRow = []
           currentLength = 0
+          currentItemsInRow = 0
         }
 
         currentRow.push(button)
         currentLength += buttonLength
+        currentItemsInRow += 1
       })
 
     enumOptions.push(currentRow)

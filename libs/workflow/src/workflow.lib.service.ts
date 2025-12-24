@@ -1,10 +1,71 @@
 import { Injectable } from '@nestjs/common'
 
 import { wfParamSchema } from '../../../workflow'
+import * as comfyuiObjectInfo from './object-info.json'
+import * as wfMetaParamSchema from './meta-params.json'
+import * as wfParamsExtraProps from './wfv-params-extra-props.json'
 
 @Injectable()
 export class WorkflowLibService {
+  readonly comfyuiObjectInfo = comfyuiObjectInfo
+  readonly wfMetaParamSchema = wfMetaParamSchema
+  readonly wfParamsExtraProps = wfParamsExtraProps
+
   readonly wfParamSchema = wfParamSchema
+
+  getWfNodeClassTypeSchema (classType: string): any {
+    return this.comfyuiObjectInfo[classType]
+  }
+
+  getMetaParam (name) {
+    return this.wfMetaParamSchema[name]
+  }
+
+  getWfvParamSchema (name: string): any {
+    return this.getMetaParam(name) ?? this.getWfNodeParamByFullName(name)
+  }
+
+  getWfNodeParamByFullName (fullName: string): any {
+    const [classType, paramName] = fullName.split(':')
+    const classInfo = this.getWfNodeClassTypeSchema(classType)
+
+    if (!classInfo) {
+      throw new Error(`WorkflowLibService_getWfNodeParamByFullName_27 Class type not found: ${classType}`)
+    }
+
+    const paramInfo = classInfo.input.required?.[paramName] || classInfo.input.optional?.[paramName]
+    const extra = wfParamsExtraProps[`${classType}:${paramName}`]
+
+    if (!paramInfo && !extra) {
+      throw new Error(`WorkflowLibService_getWfNodeParamByFullName_32 Param not found: ${paramName} in class type: ${classType}`)
+    }
+
+    const [originalType, meta] = paramInfo || ['any', {}]
+
+    let type = extra?.type
+
+    if (!type) {
+      if (originalType === 'INT') type = 'integer'
+      if (originalType === 'FLOAT') type = 'number'
+      if (originalType === 'BOOLEAN') type = 'boolean'
+
+      if (originalType === 'STRING' || Array.isArray(originalType)) {
+        type = 'string'
+      }
+    }
+
+    if (!type) {
+      throw new Error(`WorkflowLibService_getWfNodeParamByFullName_42 Unknown param type: ${originalType} for param: ${paramName} in class type: ${classType}`)
+    }
+
+    let enumValues = extra?.enum
+
+    if (!enumValues && Array.isArray(originalType) && originalType.length > 0) {
+      enumValues = originalType
+    }
+
+    return { ...meta, ...extra, type, enum: enumValues }
+  }
 
   compileWorkflowV2 ({ workflow, params = {} }) {
     console.log('WorkflowLibService_compileWorkflow_10', JSON.stringify(params, null, 4))
@@ -114,14 +175,12 @@ export class WorkflowLibService {
 
   getWorkflowTemplateParamKeys (workflow: any): string[] {
     const workflowTemplateParams: string[] = []
-    const re = new RegExp(`{{([a-zA-Z0-9]+)}}`, 'gm')
+    const re = new RegExp(`{{([^"]+)}}`, 'gm')
     const matches = JSON.stringify(workflow).matchAll(re)
 
     for (const match of matches) {
       const key = match[1]
-      if (!workflowTemplateParams.includes(key)) {
-        workflowTemplateParams.push(key)
-      }
+      workflowTemplateParams.push(key)
     }
 
     return workflowTemplateParams

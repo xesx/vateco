@@ -1,0 +1,24 @@
+{
+  "generationNumber": {
+    "type": "integer",
+    "default": 1,
+    "description": "Number of items to generate",
+    "label": "Generation Number",
+    "isMetaParam": true,
+    "positionX": 0,
+    "positionY": 0
+  },
+  "seedType": {
+    "type": "string",
+    "enum": [
+      "fixed",
+      "random"
+    ],
+    "default": "random",
+    "description": "The random seed used for creating the noise.",
+    "label": "",
+    "isMetaParam": true,
+    "positionX": 0,
+    "positionY": 1
+  }
+}
