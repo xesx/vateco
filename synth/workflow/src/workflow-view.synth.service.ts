@@ -128,14 +128,13 @@ export class WorkflowViewSynthService {
       throw new Error('Workflow variant ID not set in session')
     }
 
-    const positivePromptUserParam = await this.wfrepo.findWorkflowVariantUserParam({ userId, workflowVariantId, paramName: 'positivePrompt' })
+    const positivePromptParam = await this.wfrepo.getWorkflowVariantParamByLabel({ workflowVariantId, label: 'prompt' })
+    const positivePromptUserParam = await this.wfrepo.findWorkflowVariantUserParam({ userId, workflowVariantId, paramName: positivePromptParam.paramName })
 
     if (positivePromptUserParam) {
       const message = this.msglib.genMessageForCopy(positivePromptUserParam.value as string)
       return await this.tgbotlib.sendMessageV2({ ctx, chatId, message, extra: { parse_mode: 'HTML' } })
     }
-
-    const positivePromptParam = await this.wfrepo.getWorkflowVariantParamByName({ workflowVariantId, paramName: 'positivePrompt' })
 
     if (positivePromptParam) {
       const message = this.msglib.genMessageForCopy(positivePromptParam.value as string)
