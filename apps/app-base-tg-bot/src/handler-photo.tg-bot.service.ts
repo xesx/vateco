@@ -35,7 +35,7 @@ export class HandlerPhotoTgBotService {
     if (!paramName) {
       const imageWorkflowVariantParams = await this.wfrepo.findWorkflowVariantParamsByNameStartsWith({
         workflowVariantId,
-        startsWith: 'image',
+        startsWith: 'LoadImage:image:',
       })
 
       paramName = imageWorkflowVariantParams[0]?.paramName
@@ -58,6 +58,6 @@ export class HandlerPhotoTgBotService {
       delete ctx.session.inputWaiting
     }
 
-    await this.tgbotlib.safeAnswerCallback(ctx)
+    return this.wfsynth.view.showWfvRunMenu({ ctx, userId, workflowVariantId, backAction: 'wfv:list' })
   }
 }

@@ -46,14 +46,8 @@ export class HandlerTextTgBotService {
   }
 
   async textParams (ctx) {
-    const { userId, workflowVariantId, instance } = ctx.session
-    let backAction = 'main-menu'
-
-    if (instance) {
-      backAction = 'instance:manage'
-    }
-
-    await this.wfsynth.view.showWfvRunMenu({ ctx, userId, workflowVariantId, backAction })
+    const { userId, workflowVariantId } = ctx.session
+    await this.wfsynth.view.showWfvRunMenu({ ctx, userId, workflowVariantId, backAction: 'wfv:list' })
   }
 
   async textAnyOther (ctx, next) {
@@ -74,14 +68,20 @@ export class HandlerTextTgBotService {
 
       delete ctx.session.inputWaiting
 
-      return this.wfsynth.view.showWfvRunMenu({ ctx, userId, workflowVariantId, backAction: 'instance:manage' })
+      return this.wfsynth.view.showWfvRunMenu({ ctx, userId, workflowVariantId, backAction: 'wfv:list' })
     }
 
     if (workflowVariantId) {
-      const positivePromptParam = await this.wfrepo.getWorkflowVariantParamByName({ workflowVariantId, paramName: 'positivePrompt' })
+      const positivePromptParam = await this.wfrepo.getWorkflowVariantParamByLabel({ workflowVariantId, label: 'prompt' })
 
       if (positivePromptParam) {
-        await this.wfrepo.setWorkflowVariantUserParam({ userId, workflowVariantId, paramName: 'positivePrompt', value: message })
+        await this.wfrepo.setWorkflowVariantUserParam({
+          userId,
+          workflowVariantId,
+          paramName: positivePromptParam.paramName,
+          value: message,
+        })
+
         return await this.tgbotsrv.runWfv(ctx)
       }
     }

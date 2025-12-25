@@ -68,7 +68,7 @@ export class WayOwnITgBot {
     if (!paramName) {
       const imageWorkflowVariantParams = await this.wfrepo.findWorkflowVariantParamsByNameStartsWith({
         workflowVariantId,
-        startsWith: 'image',
+        startsWith: 'LoadImage:image:',
       })
 
       paramName = imageWorkflowVariantParams[0]?.paramName

@@ -194,6 +194,23 @@ export class WorkflowRepository {
     return result
   }
 
+  async getWorkflowVariantParamByLabel ({ workflowVariantId, label }: { workflowVariantId: number | string, label: string }): Promise<WorkflowVariantParams> {
+    workflowVariantId = Number(workflowVariantId)
+
+    const result = await this.prisma.workflowVariantParams.findFirst({
+      where: {
+        workflowVariantId,
+        label,
+      },
+    })
+
+    if (!result) {
+      throw new Error(`getWorkflowVariantParamByName_91 Workflow variant param with label ${label} not found for workflow variant ID ${workflowVariantId}`)
+    }
+
+    return result
+  }
+
   async getWorkflowVariantParamById (id: number) {
     const result = await this.prisma.workflowVariantParams.findUnique({
       where: { id },

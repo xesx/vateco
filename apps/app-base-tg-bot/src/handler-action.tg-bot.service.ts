@@ -488,7 +488,7 @@ export class HandlerActionTgBotService {
 
     const imageWorkflowVariantParams = await this.wfrepo.findWorkflowVariantParamsByNameStartsWith({
       workflowVariantId,
-      startsWith: 'image',
+      startsWith: 'LoadImage:image:',
     })
 
     if (!imageWorkflowVariantParams.length) {
