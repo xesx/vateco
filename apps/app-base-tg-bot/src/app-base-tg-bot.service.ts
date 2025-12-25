@@ -63,6 +63,8 @@ export class AppBaseTgBotService {
     const { id: instanceId, apiUrl: baseUrl, token } = instance
     const workflowVariantParams = await this.wfrepo.getMergedWorkflowVariantParamsValueMap({ userId, workflowVariantId })
 
+    const models: string[] = []
+
     for (const paramName in workflowVariantParams) {
       const [, name] = paramName.split(':')
       const wfvParamSchema = this.wflib.getWfvParamSchema(paramName)
@@ -74,6 +76,8 @@ export class AppBaseTgBotService {
         if (['❓', 'N/A'].includes(modelName)) {
           continue
         }
+
+        models.push(modelName)
 
         const modelData = await this.modelrepo.getModelByName(modelName)
         workflowVariantParams[paramName] = modelData?.comfyUiFileName || null
@@ -100,7 +104,7 @@ export class AppBaseTgBotService {
     const count = workflowVariantParams.generationNumber || 1
     const chatId = telegramId
 
-    await this.cloudapilib.vastAiWorkflowRun({ baseUrl, instanceId, token, count, workflowTemplateId, workflowVariantParams, chatId })
+    await this.cloudapilib.vastAiWorkflowRun({ baseUrl, instanceId, token, count, workflowTemplateId, workflowVariantParams, models, chatId })
 
     await this.tgbotlib.safeAnswerCallback(ctx)
   }

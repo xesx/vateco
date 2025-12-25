@@ -13,6 +13,7 @@ type TWorkflowTask = {
   workflowVariantId: string
   count?: number
   workflowVariantParams: Record<string, any>
+  models: string[]
 }
 
 @Injectable()
@@ -33,7 +34,6 @@ export class WorkflowRunCronJob {
   async handle () {
     const { l } = this
     const { GENERATE_PROGRESS_TASKS_DIR, GENERATE_TASKS_DIR, WORKFLOW_DIR, MODEL_INFO_DIR } = this.appcloudsynth
-    const { wfParamSchema } = this.wflib
     const TG_CHAT_ID = String(process.env.TG_CHAT_ID) // todo
 
     if (!fs.existsSync(GENERATE_TASKS_DIR)) {
@@ -58,12 +58,11 @@ export class WorkflowRunCronJob {
         continue
       }
 
-      const { chatId, workflowVariantId, count = 1, workflowVariantParams } = taskData
+      const { chatId, workflowVariantId, count = 1, workflowVariantParams, models } = taskData
       fs.unlinkSync(taskFilePath)
 
       l.log(`🕐 Run workflow cron job executed, found "${workflowVariantId}" workflow to run ${count} times`)
 
-      // const workflow = this.wflib.getWorkflow(workflowId)
       const workflow = JSON.parse(fs.readFileSync(join(WORKFLOW_DIR, `${workflowVariantId}.json`), 'utf8'))
 
       if (!workflow) {
@@ -71,7 +70,6 @@ export class WorkflowRunCronJob {
         continue
       }
 
-      const modelsForDownload: string[] = []
       const imagesForDownload: string[] = []
 
       Object.entries(workflowVariantParams || {}).forEach(([key, value]) => {
@@ -83,29 +81,13 @@ export class WorkflowRunCronJob {
           return
         }
 
-        if (wfParamSchema[key].isComfyUiModel) {
-          // workflow.params[key].default = value
-          modelsForDownload.push(value)
-
-          const modelInfoFilePath = join(MODEL_INFO_DIR, `${value}.json`)
-
-          if (!fs.existsSync(modelInfoFilePath)) {
-            l.warn(`handleRunWorkflowJob_64 Model info file not found: ${modelInfoFilePath}`)
-            return
-          }
-
-          const model: any = JSON.parse(fs.readFileSync(modelInfoFilePath, 'utf8'))
-          workflowVariantParams[key] = model.comfyUiFileName
-          return
-        }
-
         if (key.startsWith('image') && typeof value === 'string') {
           imagesForDownload.push(value) // value is fileId from tg bot chat
           workflowVariantParams[key] = `${value}.jpg`
         }
       })
 
-      for (const modelName of modelsForDownload) {
+      for (const modelName of models) {
         const modelInfoFilePath = join(MODEL_INFO_DIR, `${modelName}.json`)
 
         if (!fs.existsSync(modelInfoFilePath)) {
@@ -142,18 +124,13 @@ export class WorkflowRunCronJob {
         const imagePath = join(uploadPath, `${fileId}.jpg`)
 
         if (fs.existsSync(imagePath)) {
-          // fileBuffer = fs.readFileSync(join(this.appcloudsynth.CACHE_DIR, fileId))
-          // fs.writeFileSync(imagePath, fileBuffer)
           l.log(`handleRunWorkflowJob_150 Image loaded from cache and saved to ${imagePath}`)
-          // continue
         } else {
           const imageBuffer = await this.tgbotlib.importImageBufferByFileId({ fileId })
-          // fs.writeFileSync(join(this.appcloudsynth.CACHE_DIR, fileId), fileBuffer)
+
           l.log(`handleRunWorkflowJob_156 Image downloaded from Telegram and saved to cache`)
           fs.writeFileSync(imagePath, imageBuffer)
         }
-
-        // fs.writeFileSync(imagePath, fileBuffer)
       }
 
       // const message = this.msglib.genCodeMessage('Generation in progress...')
