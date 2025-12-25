@@ -52,7 +52,9 @@ export class HandlerDocumentTgBotService {
       rawWorkflow,
     })
 
-    await ctx.reply(`Workflow template created with ID: ${workflowTemplateId}`)
+    const workflowVariantId = await this.wfsynth.createWorkflowVariant({ workflowTemplateId })
+
+    await ctx.reply(`Workflow template created with ID: ${workflowTemplateId}\nWorkflow variant created with ID: ${workflowVariantId}`)
     await this.tgbotlib.safeAnswerCallback(ctx)
   }
 

@@ -192,11 +192,11 @@ export class HandlerActionTgBotService {
     const { instance } = ctx.session
 
     if (instance) {
-      await this.wfsynth.view.showWfvList({ ctx, tags: ['own-instance'], prefixAction: '', backAction: 'instance:manage' })
+      await this.wfsynth.view.showWfvList({ ctx, tags: ['own-instance', 'new'], prefixAction: '', backAction: 'instance:manage' })
       return
     }
 
-    await this.wfsynth.view.showWfvList({ ctx, tags: ['own-instance'], prefixAction: '', backAction: 'main-menu' })
+    await this.wfsynth.view.showWfvList({ ctx, tags: ['own-instance', 'new'], prefixAction: '', backAction: 'main-menu' })
   }
 
   async wfvSelect (ctx) {
