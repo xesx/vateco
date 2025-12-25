@@ -64,20 +64,23 @@ export class AppBaseTgBotService {
     const workflowVariantParams = await this.wfrepo.getMergedWorkflowVariantParamsValueMap({ userId, workflowVariantId })
 
     for (const paramName in workflowVariantParams) {
-      if (this.wflib.wfParamSchema[paramName]?.isComfyUiModel) {
-        const value = workflowVariantParams[paramName]
+      const [, name] = paramName.split(':')
+      const wfvParamSchema = this.wflib.getWfvParamSchema(paramName)
 
+      if (wfvParamSchema.isComfyUiModel) {
+        const value = workflowVariantParams[paramName]
         const modelName = String(value.value ?? value)
 
         if (['❓', 'N/A'].includes(modelName)) {
           continue
         }
 
+        const modelData = await this.modelrepo.getModelByName(modelName)
+        workflowVariantParams[paramName] = modelData?.comfyUiFileName || null
+
         if (modelInfoLoaded?.includes(modelName)) {
           continue
         }
-
-        const modelData = await this.modelrepo.getModelByName(modelName)
 
         await this.cloudapilib.vastAiModelInfoLoad({ baseUrl, instanceId, token, modelName, modelData })
 
@@ -85,6 +88,10 @@ export class AppBaseTgBotService {
           ctx.session.instance.modelInfoLoaded = ctx.session.instance.modelInfoLoaded || []
           ctx.session.instance?.modelInfoLoaded.push(modelName)
         }
+      }
+
+      if (name === 'seed' && workflowVariantParams.seedType === 'random') {
+        workflowVariantParams[paramName] = this.wflib.generateSeed()
       }
     }
 

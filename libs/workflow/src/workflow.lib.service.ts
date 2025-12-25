@@ -185,4 +185,9 @@ export class WorkflowLibService {
 
     return workflowTemplateParams
   }
+
+  generateSeed () {
+    const seed = Math.floor(Math.random() * 4294967296)
+    return seed >>> 0
+  }
 }
