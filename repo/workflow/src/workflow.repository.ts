@@ -130,6 +130,12 @@ export class WorkflowRepository {
     })
   }
 
+  async deleteWorkflowVariantAllUserParams ({ workflowVariantId, trx = this.prisma }: { workflowVariantId: number, trx?: lib.PrismaLibService }) {
+    await trx.workflowVariantUserParams.deleteMany({
+      where: { workflowVariantId },
+    })
+  }
+
   async deleteWorkflowVariantTags ({ workflowVariantId, trx = this.prisma }: { workflowVariantId: number, trx?: lib.PrismaLibService }) {
     await trx.workflowVariantTags.deleteMany({
       where: { workflowVariantId },

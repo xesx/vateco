@@ -3,7 +3,7 @@
     "type": "integer",
     "default": 1,
     "description": "Number of items to generate",
-    "label": "Generation Number",
+    "label": "GenCount",
     "isMetaParam": true,
     "positionX": 0,
     "positionY": 0

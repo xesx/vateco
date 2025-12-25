@@ -156,12 +156,12 @@ export class WorkflowSynthService {
         await this.wfrepo.createWorkflowVariantParam({
           workflowVariantId,
           paramName: metaParamKey,
-          label: metaParamSchema.label || metaParamKey,
+          label: metaParamSchema.label ?? metaParamKey,
           value: metaParamSchema.default,
           user: metaParamSchema.user ?? true,
           enumValues: metaParamSchema.enum,
           positionX: metaParamSchema.positionX ?? defaultPositionX,
-          positionY: metaParamSchema.positionY || 0,
+          positionY: metaParamSchema.positionY ?? 0,
           trx,
         })
 
@@ -172,15 +172,15 @@ export class WorkflowSynthService {
         const [classType, inputName, id] = paramKey.split(':')
         const meta = this.wflib.getWfNodeParamByFullName(paramKey)
 
-        // const node = workflowTemplate[id]
-        // const title = node._meta?.title || ''
+        const node = workflowTemplate.schema?.[id]
+        const title = node._meta?.title || ''
 
         // const endDigitMatch = inputName.match(/\d+$/)
         // const index = endDigitMatch ? parseInt(endDigitMatch[0], 10) : 0
 
         const positionX = meta.positionX ?? defaultPositionX
-        const positionY = meta.positionY || 0
-        const label = meta.label || inputName
+        const positionY = meta.positionY ?? 0
+        const label = title.startsWith('@') ? title.replace('@', '') : (meta.label ?? inputName)
         const enumValues = meta.enum
         const defaultValue = meta?.default
 

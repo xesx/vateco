@@ -68,7 +68,7 @@ export function workflowRunMenu ({ wfvParams, prefixAction, workflowVariantId, b
     const prevX = prevParam?.positionX
 
     const action = `${prefixAction}wfvp:${param.id}`
-    const label = param.label + `(${value})`
+    const label = param.label ? param.label + `(${value})` : `${value}`
 
     if (prevX !== undefined && x !== undefined && x === prevX) {
       acc[acc.length - 1].push([label, action])

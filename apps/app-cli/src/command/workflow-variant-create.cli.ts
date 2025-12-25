@@ -24,6 +24,7 @@ export class WorkflowVariantCreateCli {
 
         const wfvId = await this.synthwf.createWorkflowVariant({ workflowTemplateId, name: 'test-wfv', description: 'some test description' })
         console.log('\x1b[36m', 'wfvId', wfvId, '\x1b[0m')
+        await this.wfrepo.createWorkflowVariantTag({ workflowVariantId: wfvId, tag: 'own-instance' })
 
       })
   }

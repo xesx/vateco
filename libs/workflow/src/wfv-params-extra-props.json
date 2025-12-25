@@ -4,21 +4,24 @@
     "type": "string",
     "default": "❓",
     "enum": "$.enumModelTag:checkpoints",
-    "isComfyUiModel": true
+    "isComfyUiModel": true,
+    "positionX": 10
   },
   "ControlNetLoader:control_net_name": {
     "label": "CNet",
     "type": "string",
     "default": "❓",
     "enum": "$.enumModel:controlnet:[\"sd\"]",
-    "isComfyUiModel": true
+    "isComfyUiModel": true,
+    "positionX": 20
   },
   "UNETLoader:unet_name": {
     "label": "Model",
     "type": "string",
     "default": "❓",
     "enum": "$.enumModelTag:diffusion_models",
-    "isComfyUiModel": true
+    "isComfyUiModel": true,
+    "positionX": 10
   },
   "VAELoader:vae_name": {
     "label": "VAE",
@@ -59,7 +62,7 @@
     "isComfyUiModel": true
   },
   "AIO_Preprocessor:preprocessor": {
-    "label": "CN PreProc",
+    "label": "CNet PreProc",
     "enum": [
       "none",
       "CannyEdgePreprocessor",
@@ -71,7 +74,48 @@
       "ScribblePreprocessor",
       "ShufflePreprocessor",
       "TilePreprocessor"
-    ]
+    ],
+    "positionX": 21,
+    "positionY": 0
+  },
+  "AIO_Preprocessor:resolution": {
+    "label": "res",
+    "enum": [512, 768, 1024, 1280, 1536, 1792],
+    "positionX": 21,
+    "positionY": 5
+  },
+  "ControlNetApplyAdvanced:strength": {
+    "label": "CNet St.",
+    "default": 1,
+    "enum": [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1],
+    "positionX": 50,
+    "positionY": 0
+  },
+  "ControlNetApplyAdvanced:start_percent": {
+    "label": "start",
+    "default": 0,
+    "enum": [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1],
+    "positionX": 50,
+    "positionY": 5
+  },
+  "ControlNetApplyAdvanced:end_percent": {
+    "label": "end",
+    "default": 1,
+    "enum": [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1],
+    "positionX": 50,
+    "positionY": 10
+  },
+  "CLIPTextEncode:text": {
+    "label": "Prompt",
+    "default": "❓",
+    "positionX": 9000,
+    "positionY": 0
+  },
+  "KSampler:seed": {
+    "label": "",
+    "default": 42,
+    "positionX": 0,
+    "positionY": 10
   },
   "KSampler:sampler_name": {
     "label": "sampler",
@@ -86,7 +130,58 @@
       "ddim",
       "uni_p"
     ],
-    "default": "euler"
+    "default": "euler",
+    "positionX": 8000,
+    "positionY": 0
+  },
+  "KSampler:scheduler": {
+    "label": "scheduler",
+    "default": "normal",
+    "positionX": 8000,
+    "positionY": 1
+  },
+  "KSampler:denoise": {
+    "label": "denoise",
+    "default": 1,
+    "user": false,
+    "positionX": 8000,
+    "positionY": 10
+  },
+  "KSampler:steps": {
+    "label": "steps",
+    "default": 20,
+    "positionX": 8100,
+    "positionY": 0
+  },
+  "KSampler:cfg": {
+    "label": "cfg",
+    "default": 1,
+    "positionX": 8100,
+    "positionY": 5
+  },
+  "EmptyLatentImage:batch_size": {
+    "user": false
+  },
+  "EmptyLatentImage:width": {
+    "label": "width",
+    "default": 1024,
+    "enum": [512, 640, 768, 896, 1024, 1280, 1536, 1792, 2048],
+    "positionX": 1010,
+    "positionY": 0
+  },
+  "EmptyLatentImage:height": {
+    "label": "height",
+    "default": 1024,
+    "enum": [512, 640, 768, 896, 1024, 1280, 1536, 1792, 2048],
+    "positionX": 1010,
+    "positionY": 1
+  },
+  "CLIPSetLastLayer:stop_at_clip_layer": {
+    "label": "clip skip",
+    "default": -1,
+    "enum": [-1, -2, -3, -4, -5],
+    "positionX": 8100,
+    "positionY": 10
   },
   "Power Lora Loader (rgthree):loraEnabled1": { "label": "lora1", "type": "boolean", "default": false, "positionX": 1000, "positionY": 0 },
   "Power Lora Loader (rgthree):loraEnabled2": { "label": "lora2", "type": "boolean", "default": false, "positionX": 1001, "positionY": 0 },
@@ -101,7 +196,7 @@
     "label": "Img",
     "type": "string",
     "default": "❓",
-    "positionX": 1100,
+    "positionX": 500,
     "positionY": 0
   },
   "SaveImage:filename_prefix": {
