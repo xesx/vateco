@@ -1,4 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common'
+import { Prisma } from '@prisma/client'
+
 
 import * as lib from '@lib'
 
@@ -149,7 +151,7 @@ export class WorkflowRepository {
        INNER JOIN workflow_variants AS wv
                ON wv.id = wvt.workflow_variant_id
        WHERE 1=1
-         AND wvt.tag in (${tags.join(',')})
+         AND wvt.tag in (${Prisma.join(tags)})
        GROUP BY wv.id
       HAVING COUNT(*) = ${tags.length}
     `
@@ -164,7 +166,7 @@ export class WorkflowRepository {
        INNER JOIN workflow_variants AS wv
                ON wv.id = wvt.workflow_variant_id
        WHERE 1=1
-         AND wvt.tag IN (${tags.join(',')})
+         AND wvt.tag IN (${Prisma.join(tags)})
     `
 
     return workflows
