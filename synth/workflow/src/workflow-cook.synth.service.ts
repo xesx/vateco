@@ -28,7 +28,7 @@ export class WorkflowCookSynthService {
       const [name, schema] = input
       const [type, meta] = schema as any[]
 
-      if (!['INT', 'FLOAT', 'STRING', 'BOOLEAN'].includes(type) && !Array.isArray(type)) {
+      if (!['INT', 'FLOAT', 'STRING', 'BOOLEAN', 'COMBO'].includes(type) && !Array.isArray(type)) {
         continue
       }
 

@@ -49,7 +49,7 @@ export class WorkflowLibService {
       if (originalType === 'FLOAT') type = 'number'
       if (originalType === 'BOOLEAN') type = 'boolean'
 
-      if (originalType === 'STRING' || Array.isArray(originalType)) {
+      if (originalType === 'STRING' || originalType === 'COMBO' || Array.isArray(originalType)) {
         type = 'string'
       }
     }
@@ -62,6 +62,10 @@ export class WorkflowLibService {
 
     if (!enumValues && Array.isArray(originalType) && originalType.length > 0) {
       enumValues = originalType
+    }
+
+    if (!enumValues && Array.isArray(meta?.options) && meta.options.length > 0) {
+      enumValues = meta.options
     }
 
     return { ...meta, ...extra, type, enum: enumValues }
