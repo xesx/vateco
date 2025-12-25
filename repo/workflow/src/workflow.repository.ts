@@ -314,21 +314,12 @@ export class WorkflowRepository {
   }
 
   async getMergedWorkflowVariantParamsValueMap ({ userId, workflowVariantId }) {
-    const { wfParamSchema } = this.wflib
-
     const workflowVariantUserParamsMap = await this.getWorkflowVariantUserParamsMap({ userId, workflowVariantId })
     const workflowVariantParams = await this.getWorkflowVariantParams(workflowVariantId)
 
     const result: Record<string, any> = workflowVariantParams.reduce((acc, curr) => {
       const { paramName } = curr
-
-      let value: any
-      value = workflowVariantUserParamsMap[paramName]?.value
-      value ??= workflowVariantUserParamsMap[paramName]
-      value ??= curr.value
-      value ??= wfParamSchema[paramName].default
-
-      acc[paramName] = value
+      acc[paramName] = workflowVariantUserParamsMap[paramName] ?? curr.value
       return acc
     }, {})
 
