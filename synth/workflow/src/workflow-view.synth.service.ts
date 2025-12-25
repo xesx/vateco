@@ -30,7 +30,7 @@ export class WorkflowViewSynthService {
   }
 
   async showWfvList ({ ctx, chatId, tags, prefixAction, backAction }: { ctx?: any; chatId?: string; tags: string[]; prefixAction: string; backAction: string }) {
-    const workflows = await this.wfrepo.findWorkflowVariantsByTags(tags)
+    const workflows = await this.wfrepo.findWorkflowVariantsBySomeTags(tags)
 
     const message = '*Select workflow variant*'
     const keyboardSchema = kb.workflowsMenu({ workflows, prefixAction, backAction })

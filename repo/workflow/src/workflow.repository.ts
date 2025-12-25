@@ -142,7 +142,7 @@ export class WorkflowRepository {
     })
   }
 
-  async findWorkflowVariantsByTags (tags: string[]) {
+  async findWorkflowVariantsByAllTags (tags: string[]) {
     const workflows = await this.prisma.$queryRaw<WorkflowVariants[]>`
       SELECT wv.*
         FROM workflow_variant_tags AS wvt
@@ -152,6 +152,19 @@ export class WorkflowRepository {
          AND wvt.tag in (${tags.join(',')})
        GROUP BY wv.id
       HAVING COUNT(*) = ${tags.length}
+    `
+
+    return workflows
+  }
+
+  async findWorkflowVariantsBySomeTags (tags: string[]) {
+    const workflows = await this.prisma.$queryRaw<WorkflowVariants[]>`
+      SELECT DISTINCT wv.*
+        FROM workflow_variant_tags AS wvt
+       INNER JOIN workflow_variants AS wv
+               ON wv.id = wvt.workflow_variant_id
+       WHERE 1=1
+         AND wvt.tag IN (${tags.join(',')})
     `
 
     return workflows
