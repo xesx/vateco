@@ -143,6 +143,7 @@
   "KSampler:denoise": {
     "label": "denoise",
     "default": 1,
+    "enum": [0.1, 0.2, 0.35, 0.4, 0.45, 0.5, 0.6, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1],
     "user": false,
     "positionX": 8000,
     "positionY": 10
@@ -150,12 +151,14 @@
   "KSampler:steps": {
     "label": "steps",
     "default": 20,
+    "enum": [4, 8, 10, 12, 15, 20, 25, 30, 35, 40, 45, 50, 60, 70, 100],
     "positionX": 8100,
     "positionY": 0
   },
   "KSampler:cfg": {
     "label": "cfg",
     "default": 1,
+    "enum": [1, 2, 3, 4, 5, 5.5, 6, 7, 8, 9, 10, 11, 12],
     "positionX": 8100,
     "positionY": 5
   },
