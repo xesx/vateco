@@ -10,7 +10,7 @@ import { HelperAppCloudCronService } from '../helper.app-cloud-cron.service'
 
 type TWorkflowTask = {
   chatId: string
-  workflowVariantId: string
+  workflowTemplateId: string
   count?: number
   workflowVariantParams: Record<string, any>
   models: string[]
@@ -58,34 +58,17 @@ export class WorkflowRunCronJob {
         continue
       }
 
-      const { chatId, workflowVariantId, count = 1, workflowVariantParams, models } = taskData
+      const { chatId, workflowTemplateId, count = 1, workflowVariantParams, models } = taskData
       fs.unlinkSync(taskFilePath)
 
-      l.log(`🕐 Run workflow cron job executed, found "${workflowVariantId}" workflow to run ${count} times`)
+      l.log(`🕐 Run workflow cron job executed, found "${workflowTemplateId}" workflow to run ${count} times`)
 
-      const workflow = JSON.parse(fs.readFileSync(join(WORKFLOW_DIR, `${workflowVariantId}.json`), 'utf8'))
+      const workflow = JSON.parse(fs.readFileSync(join(WORKFLOW_DIR, `${workflowTemplateId}.json`), 'utf8'))
 
       if (!workflow) {
-        l.warn(`❌ Workflow ${workflowVariantId} not found`)
+        l.warn(`❌ Workflow ${workflowTemplateId} not found`)
         continue
       }
-
-      const imagesForDownload: string[] = []
-
-      Object.entries(workflowVariantParams || {}).forEach(([key, value]) => {
-        if (typeof value === 'object') {
-          value = value.value
-        }
-
-        if (['❓', 'N/A'].includes(value)) {
-          return
-        }
-
-        if (key.startsWith('image') && typeof value === 'string') {
-          imagesForDownload.push(value) // value is fileId from tg bot chat
-          workflowVariantParams[key] = `${value}.jpg`
-        }
-      })
 
       for (const modelName of models) {
         const modelInfoFilePath = join(MODEL_INFO_DIR, `${modelName}.json`)
@@ -119,12 +102,20 @@ export class WorkflowRunCronJob {
 
       }
 
+      const imagesForDownload: string[] = []
+
+      Object.entries(workflowVariantParams || {}).forEach(([key, value]) => {
+        if (key.startsWith('LoadImage:image')) {
+          imagesForDownload.push(value) // value is fileId from tg bot chat
+        }
+      })
+
       for (const fileId of imagesForDownload) {
         const uploadPath = `/${this.appcloudsynth.COMFY_UI_DIR}/input`
-        const imagePath = join(uploadPath, `${fileId}.jpg`)
+        const imagePath = join(uploadPath, fileId)
 
         if (fs.existsSync(imagePath)) {
-          l.log(`handleRunWorkflowJob_150 Image loaded from cache and saved to ${imagePath}`)
+          l.log(`handleRunWorkflowJob_150 Image ${imagePath} already exists`)
         } else {
           const imageBuffer = await this.tgbotlib.importImageBufferByFileId({ fileId })
 
@@ -137,14 +128,14 @@ export class WorkflowRunCronJob {
       // this.tgbotlib.sendMessage({ chatId: TG_CHAT_ID, text: message })
 
       for (let i = 0; i < count; i++) {
-        l.log(`handleRunWorkflowJob_55 Running workflow ${workflowVariantId}, iteration ${i + 1} of ${count}`)
+        l.log(`handleRunWorkflowJob_55 Running workflow ${workflowTemplateId}, iteration ${i + 1} of ${count}`)
         l.log(`handleRunWorkflowJob_60 Workflow params: ${JSON.stringify(workflowVariantParams)}`)
 
-        const { workflow: compiledWorkflowSchema, params: compiledParams } = this.wflib.compileWorkflowV2({ workflow, params: workflowVariantParams })
+        const compiledWorkflowSchema = this.wflib.compileWorkflowSchema({ workflow, params: workflowVariantParams })
 
         try {
           const response = await this.comfyuilib.prompt(compiledWorkflowSchema)
-          l.log(`handleRunWorkflowJob_80 Workflow ${workflowVariantId} run completed, response: ${JSON.stringify(response)}`)
+          l.log(`handleRunWorkflowJob_80 Workflow ${workflowTemplateId} run completed, response: ${JSON.stringify(response)}`)
 
           const promptId = response.prompt_id
           const progressFilename = `${promptId}.json`
@@ -152,16 +143,16 @@ export class WorkflowRunCronJob {
           const content = {
             chatId,
             promptId,
-            workflowVariantId,
+            workflowTemplateId,
             workflowVariantParams,
-            filenamePrefix: compiledParams.filenamePrefix || '',
+            // filenamePrefix: compiledParams.filenamePrefix || '',
             workflow: compiledWorkflowSchema,
           }
 
           fs.writeFileSync(join(GENERATE_PROGRESS_TASKS_DIR, progressFilename), JSON.stringify(content, null, 2), "utf8")
         } catch (error) {
           l.error('handleRunWorkflowJob_85 Error', this.h.herr.parseAxiosError(error))
-          const message = this.msglib.genCodeMessage(`Error during workflow "${workflowVariantId}" execution: ${error.message}`)
+          const message = this.msglib.genCodeMessage(`Error during workflow "${workflowTemplateId}" execution: ${error.message}`)
           await this.tgbotlib.sendMessage({ chatId: TG_CHAT_ID, text: message })
         }
       }

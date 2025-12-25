@@ -120,7 +120,7 @@ export class AppCloudApiController {
       chatId: body.chatId,
       count: body.count || 1,
       models: body.models,
-      workflowVariantId: body.id,
+      workflowTemplateId: body.id,
       workflowVariantParams: body.params,
     }
 

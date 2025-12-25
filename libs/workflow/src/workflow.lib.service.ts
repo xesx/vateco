@@ -150,7 +150,7 @@ export class WorkflowLibService {
     let templateStr = JSON.stringify(workflow)
 
     for (const key of Object.keys(params)) {
-      const value = params[key] ?? wfParamSchema[key]?.default
+      const value = params[key]
 
       if (value === undefined) {
         throw new Error(`WorkflowLibService_compileWorkflow_13 Parameter <<${key}>> is required`)
