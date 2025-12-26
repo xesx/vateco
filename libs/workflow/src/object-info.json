@@ -50426,21 +50426,21 @@
         "latent_suffix": [
           "STRING",
           {
-            "default": "45458217_cache",
+            "default": "13166088_cache",
             "multiline": false
           }
         ],
         "image_suffix": [
           "STRING",
           {
-            "default": "82098608_cache",
+            "default": "33318666_cache",
             "multiline": false
           }
         ],
         "conditioning_suffix": [
           "STRING",
           {
-            "default": "10495799_cache",
+            "default": "20496557_cache",
             "multiline": false
           }
         ]
@@ -66534,6 +66534,3706 @@
     "description": "",
     "python_module": "custom_nodes.comfyui_controlnet_aux",
     "category": "ControlNet Preprocessors",
+    "output_node": false
+  },
+  "IPAdapter": {
+    "input": {
+      "required": {
+        "model": [
+          "MODEL"
+        ],
+        "ipadapter": [
+          "IPADAPTER"
+        ],
+        "image": [
+          "IMAGE"
+        ],
+        "weight": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": -1,
+            "max": 3,
+            "step": 0.05
+          }
+        ],
+        "start_at": [
+          "FLOAT",
+          {
+            "default": 0.0,
+            "min": 0.0,
+            "max": 1.0,
+            "step": 0.001
+          }
+        ],
+        "end_at": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": 0.0,
+            "max": 1.0,
+            "step": 0.001
+          }
+        ],
+        "weight_type": [
+          [
+            "standard",
+            "prompt is more important",
+            "style transfer"
+          ]
+        ]
+      },
+      "optional": {
+        "attn_mask": [
+          "MASK"
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "model",
+        "ipadapter",
+        "image",
+        "weight",
+        "start_at",
+        "end_at",
+        "weight_type"
+      ],
+      "optional": [
+        "attn_mask"
+      ]
+    },
+    "output": [
+      "MODEL"
+    ],
+    "output_is_list": [
+      false
+    ],
+    "output_name": [
+      "MODEL"
+    ],
+    "name": "IPAdapter",
+    "display_name": "IPAdapter",
+    "description": "",
+    "python_module": "custom_nodes.comfyui_ipadapter_plus",
+    "category": "ipadapter",
+    "output_node": false
+  },
+  "IPAdapterAdvanced": {
+    "input": {
+      "required": {
+        "model": [
+          "MODEL"
+        ],
+        "ipadapter": [
+          "IPADAPTER"
+        ],
+        "image": [
+          "IMAGE"
+        ],
+        "weight": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": -1,
+            "max": 5,
+            "step": 0.05
+          }
+        ],
+        "weight_type": [
+          [
+            "linear",
+            "ease in",
+            "ease out",
+            "ease in-out",
+            "reverse in-out",
+            "weak input",
+            "weak output",
+            "weak middle",
+            "strong middle",
+            "style transfer",
+            "composition",
+            "strong style transfer"
+          ]
+        ],
+        "combine_embeds": [
+          [
+            "concat",
+            "add",
+            "subtract",
+            "average",
+            "norm average"
+          ]
+        ],
+        "start_at": [
+          "FLOAT",
+          {
+            "default": 0.0,
+            "min": 0.0,
+            "max": 1.0,
+            "step": 0.001
+          }
+        ],
+        "end_at": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": 0.0,
+            "max": 1.0,
+            "step": 0.001
+          }
+        ],
+        "embeds_scaling": [
+          [
+            "V only",
+            "K+V",
+            "K+V w/ C penalty",
+            "K+mean(V) w/ C penalty"
+          ]
+        ]
+      },
+      "optional": {
+        "image_negative": [
+          "IMAGE"
+        ],
+        "attn_mask": [
+          "MASK"
+        ],
+        "clip_vision": [
+          "CLIP_VISION"
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "model",
+        "ipadapter",
+        "image",
+        "weight",
+        "weight_type",
+        "combine_embeds",
+        "start_at",
+        "end_at",
+        "embeds_scaling"
+      ],
+      "optional": [
+        "image_negative",
+        "attn_mask",
+        "clip_vision"
+      ]
+    },
+    "output": [
+      "MODEL"
+    ],
+    "output_is_list": [
+      false
+    ],
+    "output_name": [
+      "MODEL"
+    ],
+    "name": "IPAdapterAdvanced",
+    "display_name": "IPAdapter Advanced",
+    "description": "",
+    "python_module": "custom_nodes.comfyui_ipadapter_plus",
+    "category": "ipadapter",
+    "output_node": false
+  },
+  "IPAdapterBatch": {
+    "input": {
+      "required": {
+        "model": [
+          "MODEL"
+        ],
+        "ipadapter": [
+          "IPADAPTER"
+        ],
+        "image": [
+          "IMAGE"
+        ],
+        "weight": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": -1,
+            "max": 5,
+            "step": 0.05
+          }
+        ],
+        "weight_type": [
+          [
+            "linear",
+            "ease in",
+            "ease out",
+            "ease in-out",
+            "reverse in-out",
+            "weak input",
+            "weak output",
+            "weak middle",
+            "strong middle",
+            "style transfer",
+            "composition",
+            "strong style transfer"
+          ]
+        ],
+        "start_at": [
+          "FLOAT",
+          {
+            "default": 0.0,
+            "min": 0.0,
+            "max": 1.0,
+            "step": 0.001
+          }
+        ],
+        "end_at": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": 0.0,
+            "max": 1.0,
+            "step": 0.001
+          }
+        ],
+        "embeds_scaling": [
+          [
+            "V only",
+            "K+V",
+            "K+V w/ C penalty",
+            "K+mean(V) w/ C penalty"
+          ]
+        ],
+        "encode_batch_size": [
+          "INT",
+          {
+            "default": 0,
+            "min": 0,
+            "max": 4096
+          }
+        ]
+      },
+      "optional": {
+        "image_negative": [
+          "IMAGE"
+        ],
+        "attn_mask": [
+          "MASK"
+        ],
+        "clip_vision": [
+          "CLIP_VISION"
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "model",
+        "ipadapter",
+        "image",
+        "weight",
+        "weight_type",
+        "start_at",
+        "end_at",
+        "embeds_scaling",
+        "encode_batch_size"
+      ],
+      "optional": [
+        "image_negative",
+        "attn_mask",
+        "clip_vision"
+      ]
+    },
+    "output": [
+      "MODEL"
+    ],
+    "output_is_list": [
+      false
+    ],
+    "output_name": [
+      "MODEL"
+    ],
+    "name": "IPAdapterBatch",
+    "display_name": "IPAdapter Batch (Adv.)",
+    "description": "",
+    "python_module": "custom_nodes.comfyui_ipadapter_plus",
+    "category": "ipadapter",
+    "output_node": false
+  },
+  "IPAdapterFaceID": {
+    "input": {
+      "required": {
+        "model": [
+          "MODEL"
+        ],
+        "ipadapter": [
+          "IPADAPTER"
+        ],
+        "image": [
+          "IMAGE"
+        ],
+        "weight": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": -1,
+            "max": 3,
+            "step": 0.05
+          }
+        ],
+        "weight_faceidv2": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": -1,
+            "max": 5.0,
+            "step": 0.05
+          }
+        ],
+        "weight_type": [
+          [
+            "linear",
+            "ease in",
+            "ease out",
+            "ease in-out",
+            "reverse in-out",
+            "weak input",
+            "weak output",
+            "weak middle",
+            "strong middle",
+            "style transfer",
+            "composition",
+            "strong style transfer"
+          ]
+        ],
+        "combine_embeds": [
+          [
+            "concat",
+            "add",
+            "subtract",
+            "average",
+            "norm average"
+          ]
+        ],
+        "start_at": [
+          "FLOAT",
+          {
+            "default": 0.0,
+            "min": 0.0,
+            "max": 1.0,
+            "step": 0.001
+          }
+        ],
+        "end_at": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": 0.0,
+            "max": 1.0,
+            "step": 0.001
+          }
+        ],
+        "embeds_scaling": [
+          [
+            "V only",
+            "K+V",
+            "K+V w/ C penalty",
+            "K+mean(V) w/ C penalty"
+          ]
+        ]
+      },
+      "optional": {
+        "image_negative": [
+          "IMAGE"
+        ],
+        "attn_mask": [
+          "MASK"
+        ],
+        "clip_vision": [
+          "CLIP_VISION"
+        ],
+        "insightface": [
+          "INSIGHTFACE"
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "model",
+        "ipadapter",
+        "image",
+        "weight",
+        "weight_faceidv2",
+        "weight_type",
+        "combine_embeds",
+        "start_at",
+        "end_at",
+        "embeds_scaling"
+      ],
+      "optional": [
+        "image_negative",
+        "attn_mask",
+        "clip_vision",
+        "insightface"
+      ]
+    },
+    "output": [
+      "MODEL",
+      "IMAGE"
+    ],
+    "output_is_list": [
+      false,
+      false
+    ],
+    "output_name": [
+      "MODEL",
+      "face_image"
+    ],
+    "name": "IPAdapterFaceID",
+    "display_name": "IPAdapter FaceID",
+    "description": "",
+    "python_module": "custom_nodes.comfyui_ipadapter_plus",
+    "category": "ipadapter/faceid",
+    "output_node": false
+  },
+  "IPAAdapterFaceIDBatch": {
+    "input": {
+      "required": {
+        "model": [
+          "MODEL"
+        ],
+        "ipadapter": [
+          "IPADAPTER"
+        ],
+        "image": [
+          "IMAGE"
+        ],
+        "weight": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": -1,
+            "max": 3,
+            "step": 0.05
+          }
+        ],
+        "weight_faceidv2": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": -1,
+            "max": 5.0,
+            "step": 0.05
+          }
+        ],
+        "weight_type": [
+          [
+            "linear",
+            "ease in",
+            "ease out",
+            "ease in-out",
+            "reverse in-out",
+            "weak input",
+            "weak output",
+            "weak middle",
+            "strong middle",
+            "style transfer",
+            "composition",
+            "strong style transfer"
+          ]
+        ],
+        "combine_embeds": [
+          [
+            "concat",
+            "add",
+            "subtract",
+            "average",
+            "norm average"
+          ]
+        ],
+        "start_at": [
+          "FLOAT",
+          {
+            "default": 0.0,
+            "min": 0.0,
+            "max": 1.0,
+            "step": 0.001
+          }
+        ],
+        "end_at": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": 0.0,
+            "max": 1.0,
+            "step": 0.001
+          }
+        ],
+        "embeds_scaling": [
+          [
+            "V only",
+            "K+V",
+            "K+V w/ C penalty",
+            "K+mean(V) w/ C penalty"
+          ]
+        ]
+      },
+      "optional": {
+        "image_negative": [
+          "IMAGE"
+        ],
+        "attn_mask": [
+          "MASK"
+        ],
+        "clip_vision": [
+          "CLIP_VISION"
+        ],
+        "insightface": [
+          "INSIGHTFACE"
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "model",
+        "ipadapter",
+        "image",
+        "weight",
+        "weight_faceidv2",
+        "weight_type",
+        "combine_embeds",
+        "start_at",
+        "end_at",
+        "embeds_scaling"
+      ],
+      "optional": [
+        "image_negative",
+        "attn_mask",
+        "clip_vision",
+        "insightface"
+      ]
+    },
+    "output": [
+      "MODEL",
+      "IMAGE"
+    ],
+    "output_is_list": [
+      false,
+      false
+    ],
+    "output_name": [
+      "MODEL",
+      "face_image"
+    ],
+    "name": "IPAAdapterFaceIDBatch",
+    "display_name": "IPAdapter FaceID Batch",
+    "description": "",
+    "python_module": "custom_nodes.comfyui_ipadapter_plus",
+    "category": "ipadapter/faceid",
+    "output_node": false
+  },
+  "IPAdapterTiled": {
+    "input": {
+      "required": {
+        "model": [
+          "MODEL"
+        ],
+        "ipadapter": [
+          "IPADAPTER"
+        ],
+        "image": [
+          "IMAGE"
+        ],
+        "weight": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": -1,
+            "max": 3,
+            "step": 0.05
+          }
+        ],
+        "weight_type": [
+          [
+            "linear",
+            "ease in",
+            "ease out",
+            "ease in-out",
+            "reverse in-out",
+            "weak input",
+            "weak output",
+            "weak middle",
+            "strong middle",
+            "style transfer",
+            "composition",
+            "strong style transfer"
+          ]
+        ],
+        "combine_embeds": [
+          [
+            "concat",
+            "add",
+            "subtract",
+            "average",
+            "norm average"
+          ]
+        ],
+        "start_at": [
+          "FLOAT",
+          {
+            "default": 0.0,
+            "min": 0.0,
+            "max": 1.0,
+            "step": 0.001
+          }
+        ],
+        "end_at": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": 0.0,
+            "max": 1.0,
+            "step": 0.001
+          }
+        ],
+        "sharpening": [
+          "FLOAT",
+          {
+            "default": 0.0,
+            "min": 0.0,
+            "max": 1.0,
+            "step": 0.05
+          }
+        ],
+        "embeds_scaling": [
+          [
+            "V only",
+            "K+V",
+            "K+V w/ C penalty",
+            "K+mean(V) w/ C penalty"
+          ]
+        ]
+      },
+      "optional": {
+        "image_negative": [
+          "IMAGE"
+        ],
+        "attn_mask": [
+          "MASK"
+        ],
+        "clip_vision": [
+          "CLIP_VISION"
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "model",
+        "ipadapter",
+        "image",
+        "weight",
+        "weight_type",
+        "combine_embeds",
+        "start_at",
+        "end_at",
+        "sharpening",
+        "embeds_scaling"
+      ],
+      "optional": [
+        "image_negative",
+        "attn_mask",
+        "clip_vision"
+      ]
+    },
+    "output": [
+      "MODEL",
+      "IMAGE",
+      "MASK"
+    ],
+    "output_is_list": [
+      false,
+      false,
+      false
+    ],
+    "output_name": [
+      "MODEL",
+      "tiles",
+      "masks"
+    ],
+    "name": "IPAdapterTiled",
+    "display_name": "IPAdapter Tiled",
+    "description": "",
+    "python_module": "custom_nodes.comfyui_ipadapter_plus",
+    "category": "ipadapter/tiled",
+    "output_node": false
+  },
+  "IPAdapterTiledBatch": {
+    "input": {
+      "required": {
+        "model": [
+          "MODEL"
+        ],
+        "ipadapter": [
+          "IPADAPTER"
+        ],
+        "image": [
+          "IMAGE"
+        ],
+        "weight": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": -1,
+            "max": 3,
+            "step": 0.05
+          }
+        ],
+        "weight_type": [
+          [
+            "linear",
+            "ease in",
+            "ease out",
+            "ease in-out",
+            "reverse in-out",
+            "weak input",
+            "weak output",
+            "weak middle",
+            "strong middle",
+            "style transfer",
+            "composition",
+            "strong style transfer"
+          ]
+        ],
+        "start_at": [
+          "FLOAT",
+          {
+            "default": 0.0,
+            "min": 0.0,
+            "max": 1.0,
+            "step": 0.001
+          }
+        ],
+        "end_at": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": 0.0,
+            "max": 1.0,
+            "step": 0.001
+          }
+        ],
+        "sharpening": [
+          "FLOAT",
+          {
+            "default": 0.0,
+            "min": 0.0,
+            "max": 1.0,
+            "step": 0.05
+          }
+        ],
+        "embeds_scaling": [
+          [
+            "V only",
+            "K+V",
+            "K+V w/ C penalty",
+            "K+mean(V) w/ C penalty"
+          ]
+        ],
+        "encode_batch_size": [
+          "INT",
+          {
+            "default": 0,
+            "min": 0,
+            "max": 4096
+          }
+        ]
+      },
+      "optional": {
+        "image_negative": [
+          "IMAGE"
+        ],
+        "attn_mask": [
+          "MASK"
+        ],
+        "clip_vision": [
+          "CLIP_VISION"
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "model",
+        "ipadapter",
+        "image",
+        "weight",
+        "weight_type",
+        "start_at",
+        "end_at",
+        "sharpening",
+        "embeds_scaling",
+        "encode_batch_size"
+      ],
+      "optional": [
+        "image_negative",
+        "attn_mask",
+        "clip_vision"
+      ]
+    },
+    "output": [
+      "MODEL",
+      "IMAGE",
+      "MASK"
+    ],
+    "output_is_list": [
+      false,
+      false,
+      false
+    ],
+    "output_name": [
+      "MODEL",
+      "tiles",
+      "masks"
+    ],
+    "name": "IPAdapterTiledBatch",
+    "display_name": "IPAdapter Tiled Batch",
+    "description": "",
+    "python_module": "custom_nodes.comfyui_ipadapter_plus",
+    "category": "ipadapter/tiled",
+    "output_node": false
+  },
+  "IPAdapterEmbeds": {
+    "input": {
+      "required": {
+        "model": [
+          "MODEL"
+        ],
+        "ipadapter": [
+          "IPADAPTER"
+        ],
+        "pos_embed": [
+          "EMBEDS"
+        ],
+        "weight": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": -1,
+            "max": 3,
+            "step": 0.05
+          }
+        ],
+        "weight_type": [
+          [
+            "linear",
+            "ease in",
+            "ease out",
+            "ease in-out",
+            "reverse in-out",
+            "weak input",
+            "weak output",
+            "weak middle",
+            "strong middle",
+            "style transfer",
+            "composition",
+            "strong style transfer"
+          ]
+        ],
+        "start_at": [
+          "FLOAT",
+          {
+            "default": 0.0,
+            "min": 0.0,
+            "max": 1.0,
+            "step": 0.001
+          }
+        ],
+        "end_at": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": 0.0,
+            "max": 1.0,
+            "step": 0.001
+          }
+        ],
+        "embeds_scaling": [
+          [
+            "V only",
+            "K+V",
+            "K+V w/ C penalty",
+            "K+mean(V) w/ C penalty"
+          ]
+        ]
+      },
+      "optional": {
+        "neg_embed": [
+          "EMBEDS"
+        ],
+        "attn_mask": [
+          "MASK"
+        ],
+        "clip_vision": [
+          "CLIP_VISION"
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "model",
+        "ipadapter",
+        "pos_embed",
+        "weight",
+        "weight_type",
+        "start_at",
+        "end_at",
+        "embeds_scaling"
+      ],
+      "optional": [
+        "neg_embed",
+        "attn_mask",
+        "clip_vision"
+      ]
+    },
+    "output": [
+      "MODEL"
+    ],
+    "output_is_list": [
+      false
+    ],
+    "output_name": [
+      "MODEL"
+    ],
+    "name": "IPAdapterEmbeds",
+    "display_name": "IPAdapter Embeds",
+    "description": "",
+    "python_module": "custom_nodes.comfyui_ipadapter_plus",
+    "category": "ipadapter/embeds",
+    "output_node": false
+  },
+  "IPAdapterEmbedsBatch": {
+    "input": {
+      "required": {
+        "model": [
+          "MODEL"
+        ],
+        "ipadapter": [
+          "IPADAPTER"
+        ],
+        "pos_embed": [
+          "EMBEDS"
+        ],
+        "weight": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": -1,
+            "max": 3,
+            "step": 0.05
+          }
+        ],
+        "weight_type": [
+          [
+            "linear",
+            "ease in",
+            "ease out",
+            "ease in-out",
+            "reverse in-out",
+            "weak input",
+            "weak output",
+            "weak middle",
+            "strong middle",
+            "style transfer",
+            "composition",
+            "strong style transfer"
+          ]
+        ],
+        "start_at": [
+          "FLOAT",
+          {
+            "default": 0.0,
+            "min": 0.0,
+            "max": 1.0,
+            "step": 0.001
+          }
+        ],
+        "end_at": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": 0.0,
+            "max": 1.0,
+            "step": 0.001
+          }
+        ],
+        "embeds_scaling": [
+          [
+            "V only",
+            "K+V",
+            "K+V w/ C penalty",
+            "K+mean(V) w/ C penalty"
+          ]
+        ]
+      },
+      "optional": {
+        "neg_embed": [
+          "EMBEDS"
+        ],
+        "attn_mask": [
+          "MASK"
+        ],
+        "clip_vision": [
+          "CLIP_VISION"
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "model",
+        "ipadapter",
+        "pos_embed",
+        "weight",
+        "weight_type",
+        "start_at",
+        "end_at",
+        "embeds_scaling"
+      ],
+      "optional": [
+        "neg_embed",
+        "attn_mask",
+        "clip_vision"
+      ]
+    },
+    "output": [
+      "MODEL"
+    ],
+    "output_is_list": [
+      false
+    ],
+    "output_name": [
+      "MODEL"
+    ],
+    "name": "IPAdapterEmbedsBatch",
+    "display_name": "IPAdapter Embeds Batch",
+    "description": "",
+    "python_module": "custom_nodes.comfyui_ipadapter_plus",
+    "category": "ipadapter/embeds",
+    "output_node": false
+  },
+  "IPAdapterStyleComposition": {
+    "input": {
+      "required": {
+        "model": [
+          "MODEL"
+        ],
+        "ipadapter": [
+          "IPADAPTER"
+        ],
+        "image_style": [
+          "IMAGE"
+        ],
+        "image_composition": [
+          "IMAGE"
+        ],
+        "weight_style": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": -1,
+            "max": 5,
+            "step": 0.05
+          }
+        ],
+        "weight_composition": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": -1,
+            "max": 5,
+            "step": 0.05
+          }
+        ],
+        "expand_style": [
+          "BOOLEAN",
+          {
+            "default": false
+          }
+        ],
+        "combine_embeds": [
+          [
+            "concat",
+            "add",
+            "subtract",
+            "average",
+            "norm average"
+          ],
+          {
+            "default": "average"
+          }
+        ],
+        "start_at": [
+          "FLOAT",
+          {
+            "default": 0.0,
+            "min": 0.0,
+            "max": 1.0,
+            "step": 0.001
+          }
+        ],
+        "end_at": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": 0.0,
+            "max": 1.0,
+            "step": 0.001
+          }
+        ],
+        "embeds_scaling": [
+          [
+            "V only",
+            "K+V",
+            "K+V w/ C penalty",
+            "K+mean(V) w/ C penalty"
+          ]
+        ]
+      },
+      "optional": {
+        "image_negative": [
+          "IMAGE"
+        ],
+        "attn_mask": [
+          "MASK"
+        ],
+        "clip_vision": [
+          "CLIP_VISION"
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "model",
+        "ipadapter",
+        "image_style",
+        "image_composition",
+        "weight_style",
+        "weight_composition",
+        "expand_style",
+        "combine_embeds",
+        "start_at",
+        "end_at",
+        "embeds_scaling"
+      ],
+      "optional": [
+        "image_negative",
+        "attn_mask",
+        "clip_vision"
+      ]
+    },
+    "output": [
+      "MODEL"
+    ],
+    "output_is_list": [
+      false
+    ],
+    "output_name": [
+      "MODEL"
+    ],
+    "name": "IPAdapterStyleComposition",
+    "display_name": "IPAdapter Style & Composition SDXL",
+    "description": "",
+    "python_module": "custom_nodes.comfyui_ipadapter_plus",
+    "category": "ipadapter/style_composition",
+    "output_node": false
+  },
+  "IPAdapterStyleCompositionBatch": {
+    "input": {
+      "required": {
+        "model": [
+          "MODEL"
+        ],
+        "ipadapter": [
+          "IPADAPTER"
+        ],
+        "image_style": [
+          "IMAGE"
+        ],
+        "image_composition": [
+          "IMAGE"
+        ],
+        "weight_style": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": -1,
+            "max": 5,
+            "step": 0.05
+          }
+        ],
+        "weight_composition": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": -1,
+            "max": 5,
+            "step": 0.05
+          }
+        ],
+        "expand_style": [
+          "BOOLEAN",
+          {
+            "default": false
+          }
+        ],
+        "start_at": [
+          "FLOAT",
+          {
+            "default": 0.0,
+            "min": 0.0,
+            "max": 1.0,
+            "step": 0.001
+          }
+        ],
+        "end_at": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": 0.0,
+            "max": 1.0,
+            "step": 0.001
+          }
+        ],
+        "embeds_scaling": [
+          [
+            "V only",
+            "K+V",
+            "K+V w/ C penalty",
+            "K+mean(V) w/ C penalty"
+          ]
+        ]
+      },
+      "optional": {
+        "image_negative": [
+          "IMAGE"
+        ],
+        "attn_mask": [
+          "MASK"
+        ],
+        "clip_vision": [
+          "CLIP_VISION"
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "model",
+        "ipadapter",
+        "image_style",
+        "image_composition",
+        "weight_style",
+        "weight_composition",
+        "expand_style",
+        "start_at",
+        "end_at",
+        "embeds_scaling"
+      ],
+      "optional": [
+        "image_negative",
+        "attn_mask",
+        "clip_vision"
+      ]
+    },
+    "output": [
+      "MODEL"
+    ],
+    "output_is_list": [
+      false
+    ],
+    "output_name": [
+      "MODEL"
+    ],
+    "name": "IPAdapterStyleCompositionBatch",
+    "display_name": "IPAdapter Style & Composition Batch SDXL",
+    "description": "",
+    "python_module": "custom_nodes.comfyui_ipadapter_plus",
+    "category": "ipadapter/style_composition",
+    "output_node": false
+  },
+  "IPAdapterMS": {
+    "input": {
+      "required": {
+        "model": [
+          "MODEL"
+        ],
+        "ipadapter": [
+          "IPADAPTER"
+        ],
+        "image": [
+          "IMAGE"
+        ],
+        "weight": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": -1,
+            "max": 5,
+            "step": 0.05
+          }
+        ],
+        "weight_faceidv2": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": -1,
+            "max": 5.0,
+            "step": 0.05
+          }
+        ],
+        "weight_type": [
+          [
+            "linear",
+            "ease in",
+            "ease out",
+            "ease in-out",
+            "reverse in-out",
+            "weak input",
+            "weak output",
+            "weak middle",
+            "strong middle",
+            "style transfer",
+            "composition",
+            "strong style transfer"
+          ]
+        ],
+        "combine_embeds": [
+          [
+            "concat",
+            "add",
+            "subtract",
+            "average",
+            "norm average"
+          ]
+        ],
+        "start_at": [
+          "FLOAT",
+          {
+            "default": 0.0,
+            "min": 0.0,
+            "max": 1.0,
+            "step": 0.001
+          }
+        ],
+        "end_at": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": 0.0,
+            "max": 1.0,
+            "step": 0.001
+          }
+        ],
+        "embeds_scaling": [
+          [
+            "V only",
+            "K+V",
+            "K+V w/ C penalty",
+            "K+mean(V) w/ C penalty"
+          ]
+        ],
+        "layer_weights": [
+          "STRING",
+          {
+            "default": "",
+            "multiline": true
+          }
+        ]
+      },
+      "optional": {
+        "image_negative": [
+          "IMAGE"
+        ],
+        "attn_mask": [
+          "MASK"
+        ],
+        "clip_vision": [
+          "CLIP_VISION"
+        ],
+        "insightface": [
+          "INSIGHTFACE"
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "model",
+        "ipadapter",
+        "image",
+        "weight",
+        "weight_faceidv2",
+        "weight_type",
+        "combine_embeds",
+        "start_at",
+        "end_at",
+        "embeds_scaling",
+        "layer_weights"
+      ],
+      "optional": [
+        "image_negative",
+        "attn_mask",
+        "clip_vision",
+        "insightface"
+      ]
+    },
+    "output": [
+      "MODEL"
+    ],
+    "output_is_list": [
+      false
+    ],
+    "output_name": [
+      "MODEL"
+    ],
+    "name": "IPAdapterMS",
+    "display_name": "IPAdapter Mad Scientist",
+    "description": "",
+    "python_module": "custom_nodes.comfyui_ipadapter_plus",
+    "category": "ipadapter/dev",
+    "output_node": false
+  },
+  "IPAdapterFromParams": {
+    "input": {
+      "required": {
+        "model": [
+          "MODEL"
+        ],
+        "ipadapter": [
+          "IPADAPTER"
+        ],
+        "ipadapter_params": [
+          "IPADAPTER_PARAMS"
+        ],
+        "combine_embeds": [
+          [
+            "concat",
+            "add",
+            "subtract",
+            "average",
+            "norm average"
+          ]
+        ],
+        "embeds_scaling": [
+          [
+            "V only",
+            "K+V",
+            "K+V w/ C penalty",
+            "K+mean(V) w/ C penalty"
+          ]
+        ]
+      },
+      "optional": {
+        "image_negative": [
+          "IMAGE"
+        ],
+        "clip_vision": [
+          "CLIP_VISION"
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "model",
+        "ipadapter",
+        "ipadapter_params",
+        "combine_embeds",
+        "embeds_scaling"
+      ],
+      "optional": [
+        "image_negative",
+        "clip_vision"
+      ]
+    },
+    "output": [
+      "MODEL"
+    ],
+    "output_is_list": [
+      false
+    ],
+    "output_name": [
+      "MODEL"
+    ],
+    "name": "IPAdapterFromParams",
+    "display_name": "IPAdapter from Params",
+    "description": "",
+    "python_module": "custom_nodes.comfyui_ipadapter_plus",
+    "category": "ipadapter/params",
+    "output_node": false
+  },
+  "IPAdapterUnifiedLoader": {
+    "input": {
+      "required": {
+        "model": [
+          "MODEL"
+        ],
+        "preset": [
+          [
+            "LIGHT - SD1.5 only (low strength)",
+            "STANDARD (medium strength)",
+            "VIT-G (medium strength)",
+            "PLUS (high strength)",
+            "PLUS FACE (portraits)",
+            "FULL FACE - SD1.5 only (portraits stronger)"
+          ]
+        ]
+      },
+      "optional": {
+        "ipadapter": [
+          "IPADAPTER"
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "model",
+        "preset"
+      ],
+      "optional": [
+        "ipadapter"
+      ]
+    },
+    "output": [
+      "MODEL",
+      "IPADAPTER"
+    ],
+    "output_is_list": [
+      false,
+      false
+    ],
+    "output_name": [
+      "model",
+      "ipadapter"
+    ],
+    "name": "IPAdapterUnifiedLoader",
+    "display_name": "IPAdapter Unified Loader",
+    "description": "",
+    "python_module": "custom_nodes.comfyui_ipadapter_plus",
+    "category": "ipadapter",
+    "output_node": false
+  },
+  "IPAdapterUnifiedLoaderFaceID": {
+    "input": {
+      "required": {
+        "model": [
+          "MODEL"
+        ],
+        "preset": [
+          [
+            "FACEID",
+            "FACEID PLUS - SD1.5 only",
+            "FACEID PLUS V2",
+            "FACEID PORTRAIT (style transfer)",
+            "FACEID PORTRAIT UNNORM - SDXL only (strong)"
+          ]
+        ],
+        "lora_strength": [
+          "FLOAT",
+          {
+            "default": 0.6,
+            "min": 0,
+            "max": 1,
+            "step": 0.01
+          }
+        ],
+        "provider": [
+          [
+            "CPU",
+            "CUDA",
+            "ROCM",
+            "DirectML",
+            "OpenVINO",
+            "CoreML"
+          ]
+        ]
+      },
+      "optional": {
+        "ipadapter": [
+          "IPADAPTER"
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "model",
+        "preset",
+        "lora_strength",
+        "provider"
+      ],
+      "optional": [
+        "ipadapter"
+      ]
+    },
+    "output": [
+      "MODEL",
+      "IPADAPTER"
+    ],
+    "output_is_list": [
+      false,
+      false
+    ],
+    "output_name": [
+      "MODEL",
+      "ipadapter"
+    ],
+    "name": "IPAdapterUnifiedLoaderFaceID",
+    "display_name": "IPAdapter Unified Loader FaceID",
+    "description": "",
+    "python_module": "custom_nodes.comfyui_ipadapter_plus",
+    "category": "ipadapter/faceid",
+    "output_node": false
+  },
+  "IPAdapterModelLoader": {
+    "input": {
+      "required": {
+        "ipadapter_file": [
+          []
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "ipadapter_file"
+      ]
+    },
+    "output": [
+      "IPADAPTER"
+    ],
+    "output_is_list": [
+      false
+    ],
+    "output_name": [
+      "IPADAPTER"
+    ],
+    "name": "IPAdapterModelLoader",
+    "display_name": "IPAdapter Model Loader",
+    "description": "",
+    "python_module": "custom_nodes.comfyui_ipadapter_plus",
+    "category": "ipadapter/loaders",
+    "output_node": false
+  },
+  "IPAdapterInsightFaceLoader": {
+    "input": {
+      "required": {
+        "provider": [
+          [
+            "CPU",
+            "CUDA",
+            "ROCM"
+          ]
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "provider"
+      ]
+    },
+    "output": [
+      "INSIGHTFACE"
+    ],
+    "output_is_list": [
+      false
+    ],
+    "output_name": [
+      "INSIGHTFACE"
+    ],
+    "name": "IPAdapterInsightFaceLoader",
+    "display_name": "IPAdapter InsightFace Loader",
+    "description": "",
+    "python_module": "custom_nodes.comfyui_ipadapter_plus",
+    "category": "ipadapter/loaders",
+    "output_node": false
+  },
+  "IPAdapterUnifiedLoaderCommunity": {
+    "input": {
+      "required": {
+        "model": [
+          "MODEL"
+        ],
+        "preset": [
+          [
+            "Composition"
+          ]
+        ]
+      },
+      "optional": {
+        "ipadapter": [
+          "IPADAPTER"
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "model",
+        "preset"
+      ],
+      "optional": [
+        "ipadapter"
+      ]
+    },
+    "output": [
+      "MODEL",
+      "IPADAPTER"
+    ],
+    "output_is_list": [
+      false,
+      false
+    ],
+    "output_name": [
+      "model",
+      "ipadapter"
+    ],
+    "name": "IPAdapterUnifiedLoaderCommunity",
+    "display_name": "IPAdapter Unified Loader Community",
+    "description": "",
+    "python_module": "custom_nodes.comfyui_ipadapter_plus",
+    "category": "ipadapter/loaders",
+    "output_node": false
+  },
+  "IPAdapterEncoder": {
+    "input": {
+      "required": {
+        "ipadapter": [
+          "IPADAPTER"
+        ],
+        "image": [
+          "IMAGE"
+        ],
+        "weight": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": -1.0,
+            "max": 3.0,
+            "step": 0.01
+          }
+        ]
+      },
+      "optional": {
+        "mask": [
+          "MASK"
+        ],
+        "clip_vision": [
+          "CLIP_VISION"
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "ipadapter",
+        "image",
+        "weight"
+      ],
+      "optional": [
+        "mask",
+        "clip_vision"
+      ]
+    },
+    "output": [
+      "EMBEDS",
+      "EMBEDS"
+    ],
+    "output_is_list": [
+      false,
+      false
+    ],
+    "output_name": [
+      "pos_embed",
+      "neg_embed"
+    ],
+    "name": "IPAdapterEncoder",
+    "display_name": "IPAdapter Encoder",
+    "description": "",
+    "python_module": "custom_nodes.comfyui_ipadapter_plus",
+    "category": "ipadapter/embeds",
+    "output_node": false
+  },
+  "IPAdapterCombineEmbeds": {
+    "input": {
+      "required": {
+        "embed1": [
+          "EMBEDS"
+        ],
+        "method": [
+          [
+            "concat",
+            "add",
+            "subtract",
+            "average",
+            "norm average",
+            "max",
+            "min"
+          ]
+        ]
+      },
+      "optional": {
+        "embed2": [
+          "EMBEDS"
+        ],
+        "embed3": [
+          "EMBEDS"
+        ],
+        "embed4": [
+          "EMBEDS"
+        ],
+        "embed5": [
+          "EMBEDS"
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "embed1",
+        "method"
+      ],
+      "optional": [
+        "embed2",
+        "embed3",
+        "embed4",
+        "embed5"
+      ]
+    },
+    "output": [
+      "EMBEDS"
+    ],
+    "output_is_list": [
+      false
+    ],
+    "output_name": [
+      "EMBEDS"
+    ],
+    "name": "IPAdapterCombineEmbeds",
+    "display_name": "IPAdapter Combine Embeds",
+    "description": "",
+    "python_module": "custom_nodes.comfyui_ipadapter_plus",
+    "category": "ipadapter/embeds",
+    "output_node": false
+  },
+  "IPAdapterNoise": {
+    "input": {
+      "required": {
+        "type": [
+          [
+            "fade",
+            "dissolve",
+            "gaussian",
+            "shuffle"
+          ]
+        ],
+        "strength": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": 0,
+            "max": 1,
+            "step": 0.05
+          }
+        ],
+        "blur": [
+          "INT",
+          {
+            "default": 0,
+            "min": 0,
+            "max": 32,
+            "step": 1
+          }
+        ]
+      },
+      "optional": {
+        "image_optional": [
+          "IMAGE"
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "type",
+        "strength",
+        "blur"
+      ],
+      "optional": [
+        "image_optional"
+      ]
+    },
+    "output": [
+      "IMAGE"
+    ],
+    "output_is_list": [
+      false
+    ],
+    "output_name": [
+      "IMAGE"
+    ],
+    "name": "IPAdapterNoise",
+    "display_name": "IPAdapter Noise",
+    "description": "",
+    "python_module": "custom_nodes.comfyui_ipadapter_plus",
+    "category": "ipadapter/utils",
+    "output_node": false
+  },
+  "PrepImageForClipVision": {
+    "input": {
+      "required": {
+        "image": [
+          "IMAGE"
+        ],
+        "interpolation": [
+          [
+            "LANCZOS",
+            "BICUBIC",
+            "HAMMING",
+            "BILINEAR",
+            "BOX",
+            "NEAREST"
+          ]
+        ],
+        "crop_position": [
+          [
+            "top",
+            "bottom",
+            "left",
+            "right",
+            "center",
+            "pad"
+          ]
+        ],
+        "sharpening": [
+          "FLOAT",
+          {
+            "default": 0.0,
+            "min": 0,
+            "max": 1,
+            "step": 0.05
+          }
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "image",
+        "interpolation",
+        "crop_position",
+        "sharpening"
+      ]
+    },
+    "output": [
+      "IMAGE"
+    ],
+    "output_is_list": [
+      false
+    ],
+    "output_name": [
+      "IMAGE"
+    ],
+    "name": "PrepImageForClipVision",
+    "display_name": "Prep Image For ClipVision",
+    "description": "",
+    "python_module": "custom_nodes.comfyui_ipadapter_plus",
+    "category": "ipadapter/utils",
+    "output_node": false
+  },
+  "IPAdapterSaveEmbeds": {
+    "input": {
+      "required": {
+        "embeds": [
+          "EMBEDS"
+        ],
+        "filename_prefix": [
+          "STRING",
+          {
+            "default": "IP_embeds"
+          }
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "embeds",
+        "filename_prefix"
+      ]
+    },
+    "output": [],
+    "output_is_list": [],
+    "output_name": [],
+    "name": "IPAdapterSaveEmbeds",
+    "display_name": "IPAdapter Save Embeds",
+    "description": "",
+    "python_module": "custom_nodes.comfyui_ipadapter_plus",
+    "category": "ipadapter/embeds",
+    "output_node": true
+  },
+  "IPAdapterLoadEmbeds": {
+    "input": {
+      "required": {
+        "embeds": [
+          []
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "embeds"
+      ]
+    },
+    "output": [
+      "EMBEDS"
+    ],
+    "output_is_list": [
+      false
+    ],
+    "output_name": [
+      "EMBEDS"
+    ],
+    "name": "IPAdapterLoadEmbeds",
+    "display_name": "IPAdapter Load Embeds",
+    "description": "",
+    "python_module": "custom_nodes.comfyui_ipadapter_plus",
+    "category": "ipadapter/embeds",
+    "output_node": false
+  },
+  "IPAdapterWeights": {
+    "input": {
+      "required": {
+        "weights": [
+          "STRING",
+          {
+            "default": "1.0, 0.0",
+            "multiline": true
+          }
+        ],
+        "timing": [
+          [
+            "custom",
+            "linear",
+            "ease_in_out",
+            "ease_in",
+            "ease_out",
+            "random"
+          ],
+          {
+            "default": "linear"
+          }
+        ],
+        "frames": [
+          "INT",
+          {
+            "default": 0,
+            "min": 0,
+            "max": 9999,
+            "step": 1
+          }
+        ],
+        "start_frame": [
+          "INT",
+          {
+            "default": 0,
+            "min": 0,
+            "max": 9999,
+            "step": 1
+          }
+        ],
+        "end_frame": [
+          "INT",
+          {
+            "default": 9999,
+            "min": 0,
+            "max": 9999,
+            "step": 1
+          }
+        ],
+        "add_starting_frames": [
+          "INT",
+          {
+            "default": 0,
+            "min": 0,
+            "max": 9999,
+            "step": 1
+          }
+        ],
+        "add_ending_frames": [
+          "INT",
+          {
+            "default": 0,
+            "min": 0,
+            "max": 9999,
+            "step": 1
+          }
+        ],
+        "method": [
+          [
+            "full batch",
+            "shift batches",
+            "alternate batches"
+          ],
+          {
+            "default": "full batch"
+          }
+        ]
+      },
+      "optional": {
+        "image": [
+          "IMAGE"
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "weights",
+        "timing",
+        "frames",
+        "start_frame",
+        "end_frame",
+        "add_starting_frames",
+        "add_ending_frames",
+        "method"
+      ],
+      "optional": [
+        "image"
+      ]
+    },
+    "output": [
+      "FLOAT",
+      "FLOAT",
+      "INT",
+      "IMAGE",
+      "IMAGE",
+      "WEIGHTS_STRATEGY"
+    ],
+    "output_is_list": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      false
+    ],
+    "output_name": [
+      "weights",
+      "weights_invert",
+      "total_frames",
+      "image_1",
+      "image_2",
+      "weights_strategy"
+    ],
+    "name": "IPAdapterWeights",
+    "display_name": "IPAdapter Weights",
+    "description": "",
+    "python_module": "custom_nodes.comfyui_ipadapter_plus",
+    "category": "ipadapter/weights",
+    "output_node": false
+  },
+  "IPAdapterCombineWeights": {
+    "input": {
+      "required": {
+        "weights_1": [
+          "FLOAT",
+          {
+            "default": 0.0,
+            "min": 0.0,
+            "max": 1.0,
+            "step": 0.05
+          }
+        ],
+        "weights_2": [
+          "FLOAT",
+          {
+            "default": 0.0,
+            "min": 0.0,
+            "max": 1.0,
+            "step": 0.05
+          }
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "weights_1",
+        "weights_2"
+      ]
+    },
+    "output": [
+      "FLOAT",
+      "INT"
+    ],
+    "output_is_list": [
+      false,
+      false
+    ],
+    "output_name": [
+      "weights",
+      "count"
+    ],
+    "name": "IPAdapterCombineWeights",
+    "display_name": "IPAdapter Combine Weights",
+    "description": "",
+    "python_module": "custom_nodes.comfyui_ipadapter_plus",
+    "category": "ipadapter/utils",
+    "output_node": false
+  },
+  "IPAdapterWeightsFromStrategy": {
+    "input": {
+      "required": {
+        "weights_strategy": [
+          "WEIGHTS_STRATEGY"
+        ]
+      },
+      "optional": {
+        "image": [
+          "IMAGE"
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "weights_strategy"
+      ],
+      "optional": [
+        "image"
+      ]
+    },
+    "output": [
+      "FLOAT",
+      "FLOAT",
+      "INT",
+      "IMAGE",
+      "IMAGE",
+      "WEIGHTS_STRATEGY"
+    ],
+    "output_is_list": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      false
+    ],
+    "output_name": [
+      "weights",
+      "weights_invert",
+      "total_frames",
+      "image_1",
+      "image_2",
+      "weights_strategy"
+    ],
+    "name": "IPAdapterWeightsFromStrategy",
+    "display_name": "IPAdapter Weights From Strategy",
+    "description": "",
+    "python_module": "custom_nodes.comfyui_ipadapter_plus",
+    "category": "ipadapter/weights",
+    "output_node": false
+  },
+  "IPAdapterPromptScheduleFromWeightsStrategy": {
+    "input": {
+      "required": {
+        "weights_strategy": [
+          "WEIGHTS_STRATEGY"
+        ],
+        "prompt": [
+          "STRING",
+          {
+            "default": "",
+            "multiline": true
+          }
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "weights_strategy",
+        "prompt"
+      ]
+    },
+    "output": [
+      "STRING"
+    ],
+    "output_is_list": [
+      false
+    ],
+    "output_name": [
+      "prompt_schedule"
+    ],
+    "name": "IPAdapterPromptScheduleFromWeightsStrategy",
+    "display_name": "Prompt Schedule From Weights Strategy",
+    "description": "",
+    "python_module": "custom_nodes.comfyui_ipadapter_plus",
+    "category": "ipadapter/weights",
+    "output_node": false
+  },
+  "IPAdapterRegionalConditioning": {
+    "input": {
+      "required": {
+        "image": [
+          "IMAGE"
+        ],
+        "image_weight": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": -1.0,
+            "max": 3.0,
+            "step": 0.05
+          }
+        ],
+        "prompt_weight": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": 0.0,
+            "max": 10.0,
+            "step": 0.05
+          }
+        ],
+        "weight_type": [
+          [
+            "linear",
+            "ease in",
+            "ease out",
+            "ease in-out",
+            "reverse in-out",
+            "weak input",
+            "weak output",
+            "weak middle",
+            "strong middle",
+            "style transfer",
+            "composition",
+            "strong style transfer"
+          ]
+        ],
+        "start_at": [
+          "FLOAT",
+          {
+            "default": 0.0,
+            "min": 0.0,
+            "max": 1.0,
+            "step": 0.001
+          }
+        ],
+        "end_at": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": 0.0,
+            "max": 1.0,
+            "step": 0.001
+          }
+        ]
+      },
+      "optional": {
+        "mask": [
+          "MASK"
+        ],
+        "positive": [
+          "CONDITIONING"
+        ],
+        "negative": [
+          "CONDITIONING"
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "image",
+        "image_weight",
+        "prompt_weight",
+        "weight_type",
+        "start_at",
+        "end_at"
+      ],
+      "optional": [
+        "mask",
+        "positive",
+        "negative"
+      ]
+    },
+    "output": [
+      "IPADAPTER_PARAMS",
+      "CONDITIONING",
+      "CONDITIONING"
+    ],
+    "output_is_list": [
+      false,
+      false,
+      false
+    ],
+    "output_name": [
+      "IPADAPTER_PARAMS",
+      "POSITIVE",
+      "NEGATIVE"
+    ],
+    "name": "IPAdapterRegionalConditioning",
+    "display_name": "IPAdapter Regional Conditioning",
+    "description": "",
+    "python_module": "custom_nodes.comfyui_ipadapter_plus",
+    "category": "ipadapter/params",
+    "output_node": false
+  },
+  "IPAdapterCombineParams": {
+    "input": {
+      "required": {
+        "params_1": [
+          "IPADAPTER_PARAMS"
+        ],
+        "params_2": [
+          "IPADAPTER_PARAMS"
+        ]
+      },
+      "optional": {
+        "params_3": [
+          "IPADAPTER_PARAMS"
+        ],
+        "params_4": [
+          "IPADAPTER_PARAMS"
+        ],
+        "params_5": [
+          "IPADAPTER_PARAMS"
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "params_1",
+        "params_2"
+      ],
+      "optional": [
+        "params_3",
+        "params_4",
+        "params_5"
+      ]
+    },
+    "output": [
+      "IPADAPTER_PARAMS"
+    ],
+    "output_is_list": [
+      false
+    ],
+    "output_name": [
+      "IPADAPTER_PARAMS"
+    ],
+    "name": "IPAdapterCombineParams",
+    "display_name": "IPAdapter Combine Params",
+    "description": "",
+    "python_module": "custom_nodes.comfyui_ipadapter_plus",
+    "category": "ipadapter/params",
+    "output_node": false
+  },
+  "ReActorFaceSwap": {
+    "input": {
+      "required": {
+        "enabled": [
+          "BOOLEAN",
+          {
+            "default": true,
+            "label_off": "OFF",
+            "label_on": "ON"
+          }
+        ],
+        "input_image": [
+          "IMAGE"
+        ],
+        "swap_model": [
+          []
+        ],
+        "facedetection": [
+          [
+            "retinaface_resnet50",
+            "retinaface_mobile0.25",
+            "YOLOv5l",
+            "YOLOv5n"
+          ]
+        ],
+        "face_restore_model": [
+          [
+            "none",
+            "codeformer-v0.1.0.pth",
+            "GFPGANv1.3.pth",
+            "GFPGANv1.4.pth",
+            "GPEN-BFR-512.onnx"
+          ]
+        ],
+        "face_restore_visibility": [
+          "FLOAT",
+          {
+            "default": 1,
+            "min": 0.1,
+            "max": 1,
+            "step": 0.05
+          }
+        ],
+        "codeformer_weight": [
+          "FLOAT",
+          {
+            "default": 0.5,
+            "min": 0.0,
+            "max": 1,
+            "step": 0.05
+          }
+        ],
+        "detect_gender_input": [
+          [
+            "no",
+            "female",
+            "male"
+          ],
+          {
+            "default": "no"
+          }
+        ],
+        "detect_gender_source": [
+          [
+            "no",
+            "female",
+            "male"
+          ],
+          {
+            "default": "no"
+          }
+        ],
+        "input_faces_index": [
+          "STRING",
+          {
+            "default": "0"
+          }
+        ],
+        "source_faces_index": [
+          "STRING",
+          {
+            "default": "0"
+          }
+        ],
+        "console_log_level": [
+          [
+            0,
+            1,
+            2
+          ],
+          {
+            "default": 1
+          }
+        ]
+      },
+      "optional": {
+        "source_image": [
+          "IMAGE"
+        ],
+        "face_model": [
+          "FACE_MODEL"
+        ],
+        "face_boost": [
+          "FACE_BOOST"
+        ]
+      },
+      "hidden": {
+        "faces_order": "FACES_ORDER"
+      }
+    },
+    "input_order": {
+      "required": [
+        "enabled",
+        "input_image",
+        "swap_model",
+        "facedetection",
+        "face_restore_model",
+        "face_restore_visibility",
+        "codeformer_weight",
+        "detect_gender_input",
+        "detect_gender_source",
+        "input_faces_index",
+        "source_faces_index",
+        "console_log_level"
+      ],
+      "optional": [
+        "source_image",
+        "face_model",
+        "face_boost"
+      ],
+      "hidden": [
+        "faces_order"
+      ]
+    },
+    "output": [
+      "IMAGE",
+      "FACE_MODEL",
+      "IMAGE"
+    ],
+    "output_is_list": [
+      false,
+      false,
+      false
+    ],
+    "output_name": [
+      "SWAPPED_IMAGE",
+      "FACE_MODEL",
+      "ORIGINAL_IMAGE"
+    ],
+    "name": "ReActorFaceSwap",
+    "display_name": "ReActor 🌌 Fast Face Swap",
+    "description": "",
+    "python_module": "custom_nodes.comfyui-reactor-node",
+    "category": "🌌 ReActor",
+    "output_node": false
+  },
+  "ReActorFaceSwapOpt": {
+    "input": {
+      "required": {
+        "enabled": [
+          "BOOLEAN",
+          {
+            "default": true,
+            "label_off": "OFF",
+            "label_on": "ON"
+          }
+        ],
+        "input_image": [
+          "IMAGE"
+        ],
+        "swap_model": [
+          []
+        ],
+        "facedetection": [
+          [
+            "retinaface_resnet50",
+            "retinaface_mobile0.25",
+            "YOLOv5l",
+            "YOLOv5n"
+          ]
+        ],
+        "face_restore_model": [
+          [
+            "none",
+            "codeformer-v0.1.0.pth",
+            "GFPGANv1.3.pth",
+            "GFPGANv1.4.pth",
+            "GPEN-BFR-512.onnx"
+          ]
+        ],
+        "face_restore_visibility": [
+          "FLOAT",
+          {
+            "default": 1,
+            "min": 0.1,
+            "max": 1,
+            "step": 0.05
+          }
+        ],
+        "codeformer_weight": [
+          "FLOAT",
+          {
+            "default": 0.5,
+            "min": 0.0,
+            "max": 1,
+            "step": 0.05
+          }
+        ]
+      },
+      "optional": {
+        "source_image": [
+          "IMAGE"
+        ],
+        "face_model": [
+          "FACE_MODEL"
+        ],
+        "options": [
+          "OPTIONS"
+        ],
+        "face_boost": [
+          "FACE_BOOST"
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "enabled",
+        "input_image",
+        "swap_model",
+        "facedetection",
+        "face_restore_model",
+        "face_restore_visibility",
+        "codeformer_weight"
+      ],
+      "optional": [
+        "source_image",
+        "face_model",
+        "options",
+        "face_boost"
+      ]
+    },
+    "output": [
+      "IMAGE",
+      "FACE_MODEL",
+      "IMAGE"
+    ],
+    "output_is_list": [
+      false,
+      false,
+      false
+    ],
+    "output_name": [
+      "SWAPPED_IMAGE",
+      "FACE_MODEL",
+      "ORIGINAL_IMAGE"
+    ],
+    "name": "ReActorFaceSwapOpt",
+    "display_name": "ReActor 🌌 Fast Face Swap [OPTIONS]",
+    "description": "",
+    "python_module": "custom_nodes.comfyui-reactor-node",
+    "category": "🌌 ReActor",
+    "output_node": false
+  },
+  "ReActorOptions": {
+    "input": {
+      "required": {
+        "input_faces_order": [
+          [
+            "left-right",
+            "right-left",
+            "top-bottom",
+            "bottom-top",
+            "small-large",
+            "large-small"
+          ],
+          {
+            "default": "large-small"
+          }
+        ],
+        "input_faces_index": [
+          "STRING",
+          {
+            "default": "0"
+          }
+        ],
+        "detect_gender_input": [
+          [
+            "no",
+            "female",
+            "male"
+          ],
+          {
+            "default": "no"
+          }
+        ],
+        "source_faces_order": [
+          [
+            "left-right",
+            "right-left",
+            "top-bottom",
+            "bottom-top",
+            "small-large",
+            "large-small"
+          ],
+          {
+            "default": "large-small"
+          }
+        ],
+        "source_faces_index": [
+          "STRING",
+          {
+            "default": "0"
+          }
+        ],
+        "detect_gender_source": [
+          [
+            "no",
+            "female",
+            "male"
+          ],
+          {
+            "default": "no"
+          }
+        ],
+        "console_log_level": [
+          [
+            0,
+            1,
+            2
+          ],
+          {
+            "default": 1
+          }
+        ],
+        "restore_swapped_only": [
+          "BOOLEAN",
+          {
+            "default": true,
+            "label_off": "no",
+            "label_on": "yes"
+          }
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "input_faces_order",
+        "input_faces_index",
+        "detect_gender_input",
+        "source_faces_order",
+        "source_faces_index",
+        "detect_gender_source",
+        "console_log_level",
+        "restore_swapped_only"
+      ]
+    },
+    "output": [
+      "OPTIONS"
+    ],
+    "output_is_list": [
+      false
+    ],
+    "output_name": [
+      "OPTIONS"
+    ],
+    "name": "ReActorOptions",
+    "display_name": "ReActor 🌌 Options",
+    "description": "",
+    "python_module": "custom_nodes.comfyui-reactor-node",
+    "category": "🌌 ReActor",
+    "output_node": false
+  },
+  "ReActorFaceBoost": {
+    "input": {
+      "required": {
+        "enabled": [
+          "BOOLEAN",
+          {
+            "default": true,
+            "label_off": "OFF",
+            "label_on": "ON"
+          }
+        ],
+        "boost_model": [
+          [
+            "none",
+            "codeformer-v0.1.0.pth",
+            "GFPGANv1.3.pth",
+            "GFPGANv1.4.pth",
+            "GPEN-BFR-512.onnx"
+          ]
+        ],
+        "interpolation": [
+          [
+            "Nearest",
+            "Bilinear",
+            "Bicubic",
+            "Lanczos"
+          ],
+          {
+            "default": "Bicubic"
+          }
+        ],
+        "visibility": [
+          "FLOAT",
+          {
+            "default": 1,
+            "min": 0.1,
+            "max": 1,
+            "step": 0.05
+          }
+        ],
+        "codeformer_weight": [
+          "FLOAT",
+          {
+            "default": 0.5,
+            "min": 0.0,
+            "max": 1,
+            "step": 0.05
+          }
+        ],
+        "restore_with_main_after": [
+          "BOOLEAN",
+          {
+            "default": false
+          }
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "enabled",
+        "boost_model",
+        "interpolation",
+        "visibility",
+        "codeformer_weight",
+        "restore_with_main_after"
+      ]
+    },
+    "output": [
+      "FACE_BOOST"
+    ],
+    "output_is_list": [
+      false
+    ],
+    "output_name": [
+      "FACE_BOOST"
+    ],
+    "name": "ReActorFaceBoost",
+    "display_name": "ReActor 🌌 Face Booster",
+    "description": "",
+    "python_module": "custom_nodes.comfyui-reactor-node",
+    "category": "🌌 ReActor",
+    "output_node": false
+  },
+  "ReActorMaskHelper": {
+    "input": {
+      "required": {
+        "image": [
+          "IMAGE"
+        ],
+        "swapped_image": [
+          "IMAGE"
+        ],
+        "bbox_model_name": [
+          []
+        ],
+        "bbox_threshold": [
+          "FLOAT",
+          {
+            "default": 0.5,
+            "min": 0.0,
+            "max": 1.0,
+            "step": 0.01
+          }
+        ],
+        "bbox_dilation": [
+          "INT",
+          {
+            "default": 10,
+            "min": -512,
+            "max": 512,
+            "step": 1
+          }
+        ],
+        "bbox_crop_factor": [
+          "FLOAT",
+          {
+            "default": 3.0,
+            "min": 1.0,
+            "max": 100,
+            "step": 0.1
+          }
+        ],
+        "bbox_drop_size": [
+          "INT",
+          {
+            "min": 1,
+            "max": 8192,
+            "step": 1,
+            "default": 10
+          }
+        ],
+        "sam_model_name": [
+          []
+        ],
+        "sam_dilation": [
+          "INT",
+          {
+            "default": 0,
+            "min": -512,
+            "max": 512,
+            "step": 1
+          }
+        ],
+        "sam_threshold": [
+          "FLOAT",
+          {
+            "default": 0.93,
+            "min": 0.0,
+            "max": 1.0,
+            "step": 0.01
+          }
+        ],
+        "bbox_expansion": [
+          "INT",
+          {
+            "default": 0,
+            "min": 0,
+            "max": 1000,
+            "step": 1
+          }
+        ],
+        "mask_hint_threshold": [
+          "FLOAT",
+          {
+            "default": 0.7,
+            "min": 0.0,
+            "max": 1.0,
+            "step": 0.01
+          }
+        ],
+        "mask_hint_use_negative": [
+          [
+            "False",
+            "Small",
+            "Outter"
+          ]
+        ],
+        "morphology_operation": [
+          [
+            "dilate",
+            "erode",
+            "open",
+            "close"
+          ]
+        ],
+        "morphology_distance": [
+          "INT",
+          {
+            "default": 0,
+            "min": 0,
+            "max": 128,
+            "step": 1
+          }
+        ],
+        "blur_radius": [
+          "INT",
+          {
+            "default": 9,
+            "min": 0,
+            "max": 48,
+            "step": 1
+          }
+        ],
+        "sigma_factor": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": 0.01,
+            "max": 3.0,
+            "step": 0.01
+          }
+        ]
+      },
+      "optional": {
+        "mask_optional": [
+          "MASK"
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "image",
+        "swapped_image",
+        "bbox_model_name",
+        "bbox_threshold",
+        "bbox_dilation",
+        "bbox_crop_factor",
+        "bbox_drop_size",
+        "sam_model_name",
+        "sam_dilation",
+        "sam_threshold",
+        "bbox_expansion",
+        "mask_hint_threshold",
+        "mask_hint_use_negative",
+        "morphology_operation",
+        "morphology_distance",
+        "blur_radius",
+        "sigma_factor"
+      ],
+      "optional": [
+        "mask_optional"
+      ]
+    },
+    "output": [
+      "IMAGE",
+      "MASK",
+      "IMAGE",
+      "IMAGE"
+    ],
+    "output_is_list": [
+      false,
+      false,
+      false,
+      false
+    ],
+    "output_name": [
+      "IMAGE",
+      "MASK",
+      "MASK_PREVIEW",
+      "SWAPPED_FACE"
+    ],
+    "name": "ReActorMaskHelper",
+    "display_name": "ReActor 🌌 Masking Helper",
+    "description": "",
+    "python_module": "custom_nodes.comfyui-reactor-node",
+    "category": "🌌 ReActor",
+    "output_node": false
+  },
+  "ReActorSetWeight": {
+    "input": {
+      "required": {
+        "input_image": [
+          "IMAGE"
+        ],
+        "faceswap_weight": [
+          [
+            "0%",
+            "12.5%",
+            "25%",
+            "37.5%",
+            "50%",
+            "62.5%",
+            "75%",
+            "87.5%",
+            "100%"
+          ],
+          {
+            "default": "50%"
+          }
+        ]
+      },
+      "optional": {
+        "source_image": [
+          "IMAGE"
+        ],
+        "face_model": [
+          "FACE_MODEL"
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "input_image",
+        "faceswap_weight"
+      ],
+      "optional": [
+        "source_image",
+        "face_model"
+      ]
+    },
+    "output": [
+      "IMAGE",
+      "FACE_MODEL"
+    ],
+    "output_is_list": [
+      false,
+      false
+    ],
+    "output_name": [
+      "INPUT_IMAGE",
+      "FACE_MODEL"
+    ],
+    "name": "ReActorSetWeight",
+    "display_name": "ReActor 🌌 Set Face Swap Weight",
+    "description": "",
+    "python_module": "custom_nodes.comfyui-reactor-node",
+    "category": "🌌 ReActor",
+    "output_node": true
+  },
+  "ReActorSaveFaceModel": {
+    "input": {
+      "required": {
+        "save_mode": [
+          "BOOLEAN",
+          {
+            "default": true,
+            "label_off": "OFF",
+            "label_on": "ON"
+          }
+        ],
+        "face_model_name": [
+          "STRING",
+          {
+            "default": "default"
+          }
+        ],
+        "select_face_index": [
+          "INT",
+          {
+            "default": 0,
+            "min": 0
+          }
+        ]
+      },
+      "optional": {
+        "image": [
+          "IMAGE"
+        ],
+        "face_model": [
+          "FACE_MODEL"
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "save_mode",
+        "face_model_name",
+        "select_face_index"
+      ],
+      "optional": [
+        "image",
+        "face_model"
+      ]
+    },
+    "output": [],
+    "output_is_list": [],
+    "output_name": [],
+    "name": "ReActorSaveFaceModel",
+    "display_name": "Save Face Model 🌌 ReActor",
+    "description": "",
+    "python_module": "custom_nodes.comfyui-reactor-node",
+    "category": "🌌 ReActor",
+    "output_node": true
+  },
+  "ReActorLoadFaceModel": {
+    "input": {
+      "required": {
+        "face_model": [
+          [
+            "none"
+          ]
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "face_model"
+      ]
+    },
+    "output": [
+      "FACE_MODEL",
+      "STRING"
+    ],
+    "output_is_list": [
+      false,
+      false
+    ],
+    "output_name": [
+      "FACE_MODEL",
+      "FACE_MODEL_NAME"
+    ],
+    "name": "ReActorLoadFaceModel",
+    "display_name": "Load Face Model 🌌 ReActor",
+    "description": "",
+    "python_module": "custom_nodes.comfyui-reactor-node",
+    "category": "🌌 ReActor",
+    "output_node": false
+  },
+  "ReActorBuildFaceModel": {
+    "input": {
+      "required": {
+        "save_mode": [
+          "BOOLEAN",
+          {
+            "default": true,
+            "label_off": "OFF",
+            "label_on": "ON"
+          }
+        ],
+        "send_only": [
+          "BOOLEAN",
+          {
+            "default": false,
+            "label_off": "NO",
+            "label_on": "YES"
+          }
+        ],
+        "face_model_name": [
+          "STRING",
+          {
+            "default": "default"
+          }
+        ],
+        "compute_method": [
+          [
+            "Mean",
+            "Median",
+            "Mode"
+          ],
+          {
+            "default": "Mean"
+          }
+        ]
+      },
+      "optional": {
+        "images": [
+          "IMAGE"
+        ],
+        "face_models": [
+          "FACE_MODEL"
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "save_mode",
+        "send_only",
+        "face_model_name",
+        "compute_method"
+      ],
+      "optional": [
+        "images",
+        "face_models"
+      ]
+    },
+    "output": [
+      "FACE_MODEL"
+    ],
+    "output_is_list": [
+      false
+    ],
+    "output_name": [
+      "FACE_MODEL"
+    ],
+    "name": "ReActorBuildFaceModel",
+    "display_name": "Build Blended Face Model 🌌 ReActor",
+    "description": "",
+    "python_module": "custom_nodes.comfyui-reactor-node",
+    "category": "🌌 ReActor",
+    "output_node": true
+  },
+  "ReActorMakeFaceModelBatch": {
+    "input": {
+      "required": {
+        "face_model1": [
+          "FACE_MODEL"
+        ]
+      },
+      "optional": {
+        "face_model2": [
+          "FACE_MODEL"
+        ],
+        "face_model3": [
+          "FACE_MODEL"
+        ],
+        "face_model4": [
+          "FACE_MODEL"
+        ],
+        "face_model5": [
+          "FACE_MODEL"
+        ],
+        "face_model6": [
+          "FACE_MODEL"
+        ],
+        "face_model7": [
+          "FACE_MODEL"
+        ],
+        "face_model8": [
+          "FACE_MODEL"
+        ],
+        "face_model9": [
+          "FACE_MODEL"
+        ],
+        "face_model10": [
+          "FACE_MODEL"
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "face_model1"
+      ],
+      "optional": [
+        "face_model2",
+        "face_model3",
+        "face_model4",
+        "face_model5",
+        "face_model6",
+        "face_model7",
+        "face_model8",
+        "face_model9",
+        "face_model10"
+      ]
+    },
+    "output": [
+      "FACE_MODEL"
+    ],
+    "output_is_list": [
+      false
+    ],
+    "output_name": [
+      "FACE_MODELS"
+    ],
+    "name": "ReActorMakeFaceModelBatch",
+    "display_name": "Make Face Model Batch 🌌 ReActor",
+    "description": "",
+    "python_module": "custom_nodes.comfyui-reactor-node",
+    "category": "🌌 ReActor",
+    "output_node": false
+  },
+  "ReActorRestoreFace": {
+    "input": {
+      "required": {
+        "image": [
+          "IMAGE"
+        ],
+        "facedetection": [
+          [
+            "retinaface_resnet50",
+            "retinaface_mobile0.25",
+            "YOLOv5l",
+            "YOLOv5n"
+          ]
+        ],
+        "model": [
+          [
+            "none",
+            "codeformer-v0.1.0.pth",
+            "GFPGANv1.3.pth",
+            "GFPGANv1.4.pth",
+            "GPEN-BFR-512.onnx"
+          ]
+        ],
+        "visibility": [
+          "FLOAT",
+          {
+            "default": 1,
+            "min": 0.0,
+            "max": 1,
+            "step": 0.05
+          }
+        ],
+        "codeformer_weight": [
+          "FLOAT",
+          {
+            "default": 0.5,
+            "min": 0.0,
+            "max": 1,
+            "step": 0.05
+          }
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "image",
+        "facedetection",
+        "model",
+        "visibility",
+        "codeformer_weight"
+      ]
+    },
+    "output": [
+      "IMAGE"
+    ],
+    "output_is_list": [
+      false
+    ],
+    "output_name": [
+      "IMAGE"
+    ],
+    "name": "ReActorRestoreFace",
+    "display_name": "Restore Face 🌌 ReActor",
+    "description": "",
+    "python_module": "custom_nodes.comfyui-reactor-node",
+    "category": "🌌 ReActor",
+    "output_node": false
+  },
+  "ReActorRestoreFaceAdvanced": {
+    "input": {
+      "required": {
+        "image": [
+          "IMAGE"
+        ],
+        "facedetection": [
+          [
+            "retinaface_resnet50",
+            "retinaface_mobile0.25",
+            "YOLOv5l",
+            "YOLOv5n"
+          ]
+        ],
+        "model": [
+          [
+            "none",
+            "codeformer-v0.1.0.pth",
+            "GFPGANv1.3.pth",
+            "GFPGANv1.4.pth",
+            "GPEN-BFR-512.onnx"
+          ]
+        ],
+        "visibility": [
+          "FLOAT",
+          {
+            "default": 1,
+            "min": 0.0,
+            "max": 1,
+            "step": 0.05
+          }
+        ],
+        "codeformer_weight": [
+          "FLOAT",
+          {
+            "default": 0.5,
+            "min": 0.0,
+            "max": 1,
+            "step": 0.05
+          }
+        ],
+        "face_selection": [
+          [
+            "all",
+            "filter",
+            "largest"
+          ],
+          {
+            "default": "all"
+          }
+        ]
+      },
+      "optional": {
+        "sort_by": [
+          [
+            "area",
+            "x_position",
+            "y_position",
+            "detection_confidence"
+          ],
+          {
+            "default": "area"
+          }
+        ],
+        "reverse_order": [
+          "BOOLEAN",
+          {
+            "default": false
+          }
+        ],
+        "take_start": [
+          "INT",
+          {
+            "default": 0,
+            "min": 0,
+            "max": 100,
+            "step": 1
+          }
+        ],
+        "take_count": [
+          "INT",
+          {
+            "default": 1,
+            "min": 1,
+            "max": 100,
+            "step": 1
+          }
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "image",
+        "facedetection",
+        "model",
+        "visibility",
+        "codeformer_weight",
+        "face_selection"
+      ],
+      "optional": [
+        "sort_by",
+        "reverse_order",
+        "take_start",
+        "take_count"
+      ]
+    },
+    "output": [
+      "IMAGE"
+    ],
+    "output_is_list": [
+      false
+    ],
+    "output_name": [
+      "IMAGE"
+    ],
+    "name": "ReActorRestoreFaceAdvanced",
+    "display_name": "Restore Face Advanced 🌌 ReActor",
+    "description": "",
+    "python_module": "custom_nodes.comfyui-reactor-node",
+    "category": "🌌 ReActor",
+    "output_node": false
+  },
+  "ReActorImageDublicator": {
+    "input": {
+      "required": {
+        "image": [
+          "IMAGE"
+        ],
+        "count": [
+          "INT",
+          {
+            "default": 1,
+            "min": 0
+          }
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "image",
+        "count"
+      ]
+    },
+    "output": [
+      "IMAGE"
+    ],
+    "output_is_list": [
+      true
+    ],
+    "output_name": [
+      "IMAGES"
+    ],
+    "name": "ReActorImageDublicator",
+    "display_name": "Image Dublicator (List) 🌌 ReActor",
+    "description": "",
+    "python_module": "custom_nodes.comfyui-reactor-node",
+    "category": "🌌 ReActor",
+    "output_node": false
+  },
+  "ImageRGBA2RGB": {
+    "input": {
+      "required": {
+        "image": [
+          "IMAGE"
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "image"
+      ]
+    },
+    "output": [
+      "IMAGE"
+    ],
+    "output_is_list": [
+      false
+    ],
+    "output_name": [
+      "IMAGE"
+    ],
+    "name": "ImageRGBA2RGB",
+    "display_name": "Convert RGBA to RGB 🌌 ReActor",
+    "description": "",
+    "python_module": "custom_nodes.comfyui-reactor-node",
+    "category": "🌌 ReActor",
+    "output_node": false
+  },
+  "ReActorUnload": {
+    "input": {
+      "required": {
+        "trigger": [
+          "IMAGE"
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "trigger"
+      ]
+    },
+    "output": [
+      "IMAGE"
+    ],
+    "output_is_list": [
+      false
+    ],
+    "output_name": [
+      "IMAGE"
+    ],
+    "name": "ReActorUnload",
+    "display_name": "Unload ReActor Models 🌌 ReActor",
+    "description": "",
+    "python_module": "custom_nodes.comfyui-reactor-node",
+    "category": "🌌 ReActor",
     "output_node": false
   }
 }
