@@ -152,6 +152,22 @@ export class ModelRepository {
     })
   }
 
+  async findModelByName (name: string) {
+    const model = await this.prisma.models.findUnique({
+      where: { name },
+      include: {
+        huggingfaceLinks: {
+          select: { repo: true, file: true, },
+        },
+        civitaiLinks: {
+          select: { civitaiId: true, civitaiVersionId: true, },
+        },
+      },
+    })
+
+    return model
+  }
+
   async getModelByName (name: string) {
     const model = await this.prisma.models.findUnique({
       where: { name },

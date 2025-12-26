@@ -66,20 +66,28 @@ export class AppBaseTgBotService {
     const models: string[] = []
 
     for (const paramName in workflowVariantParams) {
-      const [, name] = paramName.split(':')
-      const wfvParamSchema = this.wflib.getWfvParamSchema(paramName)
+      const value = workflowVariantParams[paramName]
 
-      if (wfvParamSchema.isComfyUiModel) {
-        const value = workflowVariantParams[paramName]
-        const modelName = String(value.value ?? value)
+      if (!value) {
+        continue
+      }
 
-        if (['❓', 'N/A'].includes(modelName)) {
+      const [classType, name] = paramName.split(':')
+      // const wfvParamSchema = this.wflib.getWfvParamSchema(paramName)
+      const classTypeSchema = this.wflib.getWfNodeClassTypeSchema(classType)
+
+      const categories = classTypeSchema?.category?.split('/') || []
+      const isLoaderNode = categories.includes('loaders')
+
+      if (isLoaderNode) {
+        const modelName = value
+        const modelData = await this.modelrepo.findModelByName(value)
+
+        if (!modelData) {
           continue
         }
 
         models.push(modelName)
-
-        const modelData = await this.modelrepo.getModelByName(modelName)
         workflowVariantParams[paramName] = modelData?.comfyUiFileName || null
 
         if (modelInfoLoaded?.includes(modelName)) {
