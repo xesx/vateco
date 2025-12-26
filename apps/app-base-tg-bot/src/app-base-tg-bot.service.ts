@@ -83,13 +83,13 @@ export class AppBaseTgBotService {
       }
 
       const [classType, name] = paramName.split(':')
-      // const wfvParamSchema = this.wflib.getWfvParamSchema(paramName)
+      const wfvParamSchema = this.wflib.getWfvParamSchema(paramName)
       const classTypeSchema = this.wflib.getWfNodeClassTypeSchema(classType)
 
       const categories = classTypeSchema?.category?.split('/') || []
       const isLoaderNode = categories.includes('loaders')
 
-      if (isLoaderNode) {
+      if (isLoaderNode || wfvParamSchema.isComfyUiModel) {
         const modelName = value
         const modelData = await this.modelrepo.findModelByName(value)
 
