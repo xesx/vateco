@@ -5,7 +5,7 @@ import * as repo from '@repo'
 import * as synth from '@synth'
 
 const COMFYUI_MODEL_DIRS = [
-  'LLavacheckpoints',
+  'audio_encoders',
   'checkpoints',
   'clip',
   'clip_vision',
@@ -14,18 +14,28 @@ const COMFYUI_MODEL_DIRS = [
   'diffusers',
   'diffusion_models',
   'embeddings',
+  'facedetection',
+  'facerestore_models',
   'gligen',
   'hypernetworks',
+  'insightface',
   'instantid',
+  'ipadapter',
+  'latent_upscale_models',
   'loras',
+  'model_patches',
   'photomaker',
   'pulid',
+  'reactor',
   'style_models',
   'text_encoders',
   'unet',
   'upscale_models',
   'vae',
   'vae_approx',
+  'LLavacheckpoints',
+
+  'unknown',
 ]
 
 @Injectable()
