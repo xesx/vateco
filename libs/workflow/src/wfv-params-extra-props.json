@@ -206,5 +206,10 @@
     "user": false,
     "type": "string",
     "default": "r_"
+  },
+  "ReActorFaceSwap:swap_model": {
+    "user": false,
+    "default": "inswapper_128",
+    "isComfyUiModel": true
   }
 }
