@@ -21,7 +21,7 @@ export class WorkflowViewSynthService {
     const message = 'Main menu:'
     const keyboard = this.tgbotlib.generateInlineKeyboard(kb.MAIN_MENU)
 
-    await this.tgbotlib.sendMessageV2({ ctx, chatId, message, extra: { parse_mode: 'Markdown', ...keyboard } })
+    await this.tgbotlib.sendMessageV2({ ctx, chatId, message, extra: keyboard })
   }
 
   async showWfvReplyMenu (ctx) {
@@ -36,7 +36,7 @@ export class WorkflowViewSynthService {
     const keyboardSchema = kb.workflowsMenu({ workflows, prefixAction, backAction })
     const keyboard = this.tgbotlib.generateInlineKeyboard(keyboardSchema)
 
-    await this.tgbotlib.sendMessageV2({ ctx, chatId, message, extra: { parse_mode: 'Markdown', ...keyboard } })
+    await this.tgbotlib.sendMessageV2({ ctx, chatId, message, extra: keyboard })
   }
 
   async showWfvRunMenu ({ ctx, chatId, userId, workflowVariantId, prefixAction = '', backAction }: { ctx?: any; chatId?: string; userId: number; workflowVariantId: number; prefixAction?: string; backAction: string }) {
@@ -51,7 +51,7 @@ export class WorkflowViewSynthService {
       backAction,
     }))
 
-    await this.tgbotlib.sendMessageV2({ ctx, chatId, message, extra: { parse_mode: 'Markdown', ...keyboard } })
+    await this.tgbotlib.sendMessageV2({ ctx, chatId, message, extra: keyboard })
     await this.tgbotlib.safeAnswerCallback(ctx)
   }
 
@@ -111,14 +111,20 @@ export class WorkflowViewSynthService {
     await this.tgbotlib.sendMessageV2({ ctx, chatId, message, extra: { parse_mode: 'HTML', ...keyboard } })
   }
 
-  async showSuggestInputWfvParamValue ({ ctx, chatId, paramName, currentValue, workflowVariantId }: { ctx?: any; chatId?: string; paramName: string; currentValue: any; workflowVariantId: number }) {
+  async showSuggestInputWfvParamValue ({ ctx, chatId, paramName, label, wfvParamId, currentValue, workflowVariantId }: { ctx?: any; chatId?: string; paramName: string; label?: string | null, wfvParamId: number | number, currentValue: any; workflowVariantId: number }) {
     await this.tgbotlib.safeAnswerCallback(ctx)
 
     const currentValueAsCode = this.msglib.genCodeMessage(String(currentValue))
-    const message = `Current value: ${currentValueAsCode}\nSend new value for parameter <b>"${paramName}"</b>`
+    const message = `Current value: ${currentValueAsCode}\nSend new value for parameter <b>"${label ?? paramName}"</b> (${paramName}):`
 
-    const keyboard = this.tgbotlib.generateInlineKeyboard([[['Back', `wfv:${workflowVariantId}`]]])
+    const rawKeyboardOptions: [string, string][][] = [[['Back', `wfv:${workflowVariantId}`]]]
 
+    // todo
+    if (paramName.startsWith('LoadImage:image') && currentValue?.length > 13) {
+      rawKeyboardOptions[0].push(['Show Image', `wfvp:${wfvParamId}:show`])
+    }
+
+    const keyboard = this.tgbotlib.generateInlineKeyboard(rawKeyboardOptions)
     await this.tgbotlib.sendMessageV2({ ctx, chatId, message, extra: { parse_mode: 'HTML', ...keyboard } })
   }
 

@@ -53,6 +53,7 @@ export class HandlerActionTgBotService {
     this.bot.action(/wfvp:([0-9]+):mtag:(.+)$/, (ctx) => this.wfvParamModelTagMenu(ctx)) // select model with tags
     this.bot.action(/wfvp:([0-9]+):set:(.+)$/, (ctx) => this.wfvParamSet(ctx))
     this.bot.action(/wfvp:([0-9]+):fset:(.+)$/, (ctx) => this.wfvParamForceSet(ctx)) // force set
+    this.bot.action(/wfvp:([0-9]+):show$/, (ctx) => this.wfvParamShow(ctx)) // force set
 
     this.bot.action('image:use-as-input', (ctx) => this.imageUseAsInput(ctx))
 
@@ -192,7 +193,7 @@ export class HandlerActionTgBotService {
     const { instance } = ctx.session
 
     if (instance) {
-      await this.wfsynth.view.showWfvList({ ctx, tags: ['own-instance', 'new'], prefixAction: '', backAction: 'instance:manage' })
+      await this.wfsynth.view.showWfvList({ ctx, tags: ['enable', 'new'], prefixAction: '', backAction: 'instance:manage' })
       return
     }
 
@@ -229,6 +230,7 @@ export class HandlerActionTgBotService {
 
     const {
       paramName,
+      wfvParam: { label },
       workflowVariantId,
       wfvParamType,
       currentValue,
@@ -282,7 +284,7 @@ export class HandlerActionTgBotService {
 
     // suggest value form text input
     ctx.session.inputWaiting = paramName
-    await this.wfsynth.view.showSuggestInputWfvParamValue({ ctx, paramName, currentValue, workflowVariantId })
+    await this.wfsynth.view.showSuggestInputWfvParamValue({ ctx, paramName, label, wfvParamId, currentValue, workflowVariantId })
   }
 
   async wfvInfo (ctx) {
@@ -473,6 +475,25 @@ export class HandlerActionTgBotService {
 
     await this.wfsynth.param.setWfvUserParamValue({ userId, wfvParamId, value })
     await this.wfsynth.view.showWfvRunMenu({ ctx, userId, workflowVariantId, prefixAction: '', backAction: 'wfv:list' })
+  }
+
+  async wfvParamShow (ctx) {
+    const [,wfvParamId] = ctx.match
+    const { userId } = ctx.session
+
+    const { paramName, currentValue } = await this.wfsynth.param.getWfvUserParamInfo({ userId, wfvParamId })
+
+    if (paramName.startsWith('LoadImage:image')) {
+      const keyboard = this.tgbotlib.generateInlineKeyboard([[
+        [`Use it`, 'image:use-as-input'],
+        ['Delete', 'message:delete']
+      ]])
+
+      await this.tgbotlib.sendPhotoV2({ ctx, photo: currentValue as string, extra: keyboard })
+      return
+    }
+
+    await this.tgbotlib.sendMessageV2({ ctx, message: currentValue.toString() })
   }
 
   async wfvRun (ctx) {

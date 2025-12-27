@@ -34,7 +34,7 @@ export class InstanceViewSynthService {
     const keyboard = this.tgbotlib.generateInlineKeyboard(kb.ownInstanceManageMenu())
 
     await this.tgbotlib.safeAnswerCallback(ctx)
-    await this.tgbotlib.sendMessageV2({ ctx, chatId, message, extra: { parse_mode: 'Markdown', ...keyboard } })
+    await this.tgbotlib.sendMessageV2({ ctx, chatId, message, extra: keyboard })
   }
 
   async showInsatanceStatus ({ ctx, instanceId, status, state, gpu, startDate, durationInHrs, appsMenuLink }: { ctx: any, instanceId: string; status: string; state: string; gpu: string; startDate: string; durationInHrs: string; appsMenuLink: string }) {

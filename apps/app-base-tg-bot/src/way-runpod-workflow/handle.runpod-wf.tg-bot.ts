@@ -106,49 +106,10 @@ export class HandleRunpodWfTgBot {
     }
   }
 
-  async actionWorkflowParamSelect (ctx: RunpodWfMatchContext) {
+  actionWorkflowParamSelect (ctx: RunpodWfMatchContext) {
     const [,workflowId, param] = ctx.match
     const [paramName, value] = param.split(':')
 
-    // const workflow = this.wflib.getWorkflow(workflowId)
-    // const wfParam = workflow?.params[paramName]
-    // const currentValue = ctx.session.workflowParams[paramName]
-    //
-    // if (value) {
-    //   if (wfParam.enum) {
-    //     ctx.session.workflowParams[paramName] = wfParam.enum[value]
-    //   } else {
-    //     ctx.session.workflowParams[paramName] = value
-    //   }
-    //
-    //   if (['integer', 'number'].includes(wfParam.type)) {
-    //     ctx.session.workflowParams[paramName] = Number(ctx.session.workflowParams[paramName])
-    //   }
-    //
-    //   await this.view.showWorkflowRunMenu(ctx)
-    //   return
-    // }
-
-    // if (wfParam.enum) {
-    //   const message = `Set parameter *"${paramName}"*\nCurrent value: *"${currentValue}"*`
-    //   const enumOptions: [string, string][][] = wfParam.enum
-    //     .map((value, i) => [[value, `act:rp-wf:wf:${workflowId}:param:${paramName}:${i}`]])
-    //   enumOptions.push([['Back', `act:rp-wf:wf:${workflowId}`]])
-    //
-    //   const keyboard = this.tgbotlib.generateInlineKeyboard(enumOptions)
-    //   this.tgbotlib.reply(ctx, message, keyboard)
-    //   return
-    // }
-    //
-    // if (wfParam.type === 'string' || ['integer', 'number'].includes(wfParam.type)) {
-    //   ctx.session.inputWaiting = paramName
-    //   this.tgbotlib.safeAnswerCallback(ctx)
-    //
-    //   const message = this.msglib.genCodeMessage(String(currentValue))
-    //   this.tgbotlib.reply(ctx, message , { parse_mode: 'HTML' })
-    //   // this.tgbotlib.reply(ctx, `Enter value for parameter *"${paramName}"*\nCurrent value: *"${currentValue}"*` , { parse_mode: 'Markdown' })
-    //   return
-    // }
   }
 
   async actionWorkflowSelect (ctx: RunpodWfMatchContext) {

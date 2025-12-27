@@ -30,8 +30,6 @@ export class ViewRunpodWfTgBot {
     //   prefixAction: 'act:rp-wf',
     //   backAction: 'act:main-menu'
     // }))
-    //
-    // this.tgbotlib.reply(ctx, message, { parse_mode: 'Markdown', ...keyboard })
   }
 
   async showWorkflowRunMenu (ctx: RunpodWfContext) {

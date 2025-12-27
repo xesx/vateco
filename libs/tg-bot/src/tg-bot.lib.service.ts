@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config'
 
 import * as FormData from 'form-data'
 import axios from 'axios'
+import { InputFile } from 'telegraf/types'
 
 import { Context, Markup, Telegraf } from 'telegraf'
 
@@ -95,11 +96,36 @@ export class TgBotLibService {
   }
 
   // Метод для отправки сообщения по chatId
-  async sendMessageV2 ({ ctx, chatId, message = 'undefined message', extra = {} }: { ctx?: any, chatId?: string, message?: string, extra: any }): Promise<void> {
+  async sendMessageV2 ({ ctx, chatId, message = 'undefined message', extra = {} }: { ctx?: any, chatId?: string, message?: string, extra?: any }): Promise<void> {
+    extra = { parse_mode: 'HTML', ...extra }
+
     if (ctx) {
       await this.reply(ctx, message, extra)
     } else if (chatId) {
       await this.bot.telegram.sendMessage(chatId, message, extra)
+    } else {
+      throw new Error('Either ctx or chatId must be provided')
+    }
+  }
+
+  async sendPhotoV2 ({ ctx, chatId, photo, caption, extra = {} }: { ctx?: any, chatId?: string, photo: string | Buffer, caption?: string, extra?: any }): Promise<void> {
+    extra = { parse_mode: 'HTML', caption, ...extra }
+
+    // @ts-expect-error todo
+    let photoForSend: InputFile = photo
+
+    if (typeof photo !== 'string') {
+      photoForSend = {
+        source: photo,
+        filename: 'image',
+      }
+    }
+
+    // await ctx.telegram.sendPhoto(chatId, fileId);
+    if (ctx) {
+      await ctx.sendPhoto(photoForSend, extra)
+    } else if (chatId) {
+      await this.bot.telegram.sendPhoto(chatId, photoForSend, extra)
     } else {
       throw new Error('Either ctx or chatId must be provided')
     }

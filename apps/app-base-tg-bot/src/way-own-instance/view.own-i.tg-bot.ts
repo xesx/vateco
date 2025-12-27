@@ -55,7 +55,6 @@ export class ViewOwnITgBot {
     // })
     // const keyboard = this.tgbotlib.generateInlineKeyboard(keyboardSchema)
     //
-    // await this.tgbotlib.reply(ctx, message, { parse_mode: 'Markdown', ...keyboard })
     //
 
     await this.wfsynth.view.showWfvList({

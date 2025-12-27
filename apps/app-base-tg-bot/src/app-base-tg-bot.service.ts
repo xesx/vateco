@@ -297,4 +297,27 @@ export class AppBaseTgBotService {
     await ctx.reply(`Workflow variant with ID: ${workflowVariantId} deleted`)
     await this.tgbotlib.safeAnswerCallback(ctx)
   }
+
+  async exportWorkflowVariant (ctx) {
+    const { workflowVariantId, userId } = ctx.session
+
+    const { workflowTemplateId, name } = await this.wfrepo.getWorkflowVariant(workflowVariantId)
+    const wft = await this.wfrepo.getWorkflowTemplate(workflowTemplateId)
+
+    const params = await this.wfrepo.getMergedWorkflowVariantParamsValueMap({ userId, workflowVariantId })
+
+
+    const compiledWorkflowSchema = this.wflib.compileWorkflowSchema({ workflow: wft.schema, params })
+
+    // Create JSON file and send to Telegram bot chat
+    const filename = `wfv-${name}`
+    const fileBuffer = Buffer.from(JSON.stringify(compiledWorkflowSchema, null, 2), 'utf-8')
+
+    await ctx.sendDocument({
+      source: fileBuffer,
+      filename,
+    })
+
+    await this.tgbotlib.safeAnswerCallback(ctx)
+  }
 }

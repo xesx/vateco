@@ -45,6 +45,6 @@ export class BaseCommandTgBot {
   async startWfvTest (ctx) {
     const keyboard = this.tgbotlib.generateInlineKeyboard([[['Start Test', 'wfv:list']]])
 
-    await this.tgbotlib.sendMessageV2({ ctx, message: 'press to start', extra: { parse_mode: 'Markdown', ...keyboard } })
+    await this.tgbotlib.sendMessageV2({ ctx, message: 'press to start', extra: keyboard })
   }
 }

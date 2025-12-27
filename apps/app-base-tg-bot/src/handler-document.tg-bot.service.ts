@@ -32,7 +32,7 @@ export class HandlerDocumentTgBotService {
   async workflowTemplateCreate (ctx, next) {
     const caption = ctx.message.caption
 
-    if (!caption?.startsWith('_wft_create')) {
+    if (!caption?.startsWith('wft-create')) {
       return next()
     }
 
