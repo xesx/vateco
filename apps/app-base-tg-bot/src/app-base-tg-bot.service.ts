@@ -310,7 +310,7 @@ export class AppBaseTgBotService {
     const compiledWorkflowSchema = this.wflib.compileWorkflowSchema({ workflow: wft.schema, params })
 
     // Create JSON file and send to Telegram bot chat
-    const filename = `wfv-${name}`
+    const filename = `wfv-${name}.json`
     const fileBuffer = Buffer.from(JSON.stringify(compiledWorkflowSchema, null, 2), 'utf-8')
 
     await ctx.sendDocument({

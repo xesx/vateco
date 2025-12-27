@@ -21,7 +21,7 @@ export class CloudApiCallLibService {
       return res.data
     } catch (error) {
       console.log('vastAiRequest_91 Error:', url, error)
-      // throw error
+      throw error
     }
   }
 
