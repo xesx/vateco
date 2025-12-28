@@ -189,13 +189,4 @@ export class WorkflowViewSynthService {
       useIndexAsValue: false,
     })
   }
-
-  async showImageMenu ({ ctx, chatId, photo }) {
-    const keyboard = this.tgbotlib.generateInlineKeyboard([[
-      [`Use it`, 'image:use-as-input'],
-      ['Delete', 'message:delete']
-    ]])
-
-    await this.tgbotlib.sendPhotoV2({ ctx, chatId, photo, extra: keyboard })
-  }
 }

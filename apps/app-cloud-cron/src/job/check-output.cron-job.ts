@@ -121,7 +121,7 @@ export class CheckOutputCronJob {
       l.log(`CheckOutputCronJob_handleCheckOutputJob_45 Sending image ${image} to Telegram chat ${TG_CHAT_ID}`)
       try {
         const keyboard = this.tgbotlib.generateInlineKeyboard([[
-          [`Use it`, 'image:use-as-input'],
+          [`Use it`, 'img-use:wfv-list'],
           ['Delete', 'message:delete']
         ]])
 

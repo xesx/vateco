@@ -55,12 +55,9 @@ export class HandlerActionTgBotService {
     this.bot.action(/^wfvp:([0-9]+):fset:(.+)$/, (ctx) => this.wfvParamForceSet(ctx)) // force set
     this.bot.action(/^wfvp:([0-9]+):show$/, (ctx) => this.wfvParamShow(ctx)) // force set
 
-    // this.bot.action('image:use-as-input', (ctx) => this.imageUseAsInput(ctx))
     this.bot.action('img-use:wfv-list', (ctx) => this.imageUseWfvList(ctx))
     this.bot.action(/^img-use:wfv:([0-9]+)$/, (ctx) => this.imageUseInWfv(ctx))
     this.bot.action(/^img-use:wfvp:([0-9]+)$/, (ctx) => this.imageUseInWfvParam(ctx))
-
-
 
     this.bot.action('message:delete', (ctx) => this.messageDelete(ctx))
   }
