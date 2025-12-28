@@ -99,6 +99,7 @@ export class TgBotLibService {
   async sendMessageV2 ({ ctx, chatId, message = 'undefined message', extra = {} }: { ctx?: any, chatId?: string, message?: string, extra?: any }): Promise<void> {
     extra = { parse_mode: 'HTML', ...extra }
 
+    console.log('\x1b[36m', 'ctx, chatId', ctx, chatId, '\x1b[0m');
     if (ctx) {
       await this.reply(ctx, message, extra)
     } else if (chatId) {
