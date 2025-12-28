@@ -55,7 +55,9 @@ export class HandlerActionTgBotService {
     this.bot.action(/wfvp:([0-9]+):fset:(.+)$/, (ctx) => this.wfvParamForceSet(ctx)) // force set
     this.bot.action(/wfvp:([0-9]+):show$/, (ctx) => this.wfvParamShow(ctx)) // force set
 
-    this.bot.action('image:use-as-input', (ctx) => this.imageUseAsInput(ctx))
+    // this.bot.action('image:use-as-input', (ctx) => this.imageUseAsInput(ctx))
+    this.bot.action('image:use-as-input', (ctx) => this.imageUseAsInputV2(ctx))
+
 
     this.bot.action('message:delete', (ctx) => this.messageDelete(ctx))
   }
@@ -498,6 +500,51 @@ export class HandlerActionTgBotService {
 
   async wfvRun (ctx) {
     await this.tgbotsrv.runWfv(ctx)
+  }
+
+  async imageUseAsInputV2 (ctx) {
+    const { workflowVariantId, userId } = ctx.session
+
+    if (!workflowVariantId) {
+      await this.tgbotlib.safeAnswerCallback(ctx)
+      return
+    }
+
+    const currentWfvImageParams = await this.wfrepo.findWorkflowVariantsByParamName({
+      paramName: 'LoadImage:image:',
+    })
+
+    console.log('\x1b[36m', 'currentWfvImageParams', currentWfvImageParams, '\x1b[0m');
+    return await this.tgbotlib.safeAnswerCallback(ctx)
+
+    // if (!currentWfvImageParams.length) {
+    //   // return await this.tgbotlib.safeAnswerCallback(ctx)
+    // }
+
+    // const fileId = this.tgbotlib.getImageFileIdFromMessage({ message: ctx.update?.callback_query?.message })
+    // console.log('HandlerActionTgBotService_imageUseAsInput_23 fileId', fileId)
+    //
+    // if (!fileId) {
+    //   console.log('HandlerActionTgBotService_imageUseAsInput_34 No fileId found in message')
+    //   await ctx.reply('No image found in message')
+    //   await this.tgbotlib.safeAnswerCallback(ctx)
+    //   return
+    // }
+    //
+    // // TODO more than one image param?
+    // if (currentWfvImageParams.length === 1) {
+    //   await this.wfrepo.setWorkflowVariantUserParam({
+    //     userId,
+    //     workflowVariantId,
+    //     paramName: imageWorkflowVariantParams[0].paramName,
+    //     value: fileId,
+    //   })
+    // } else {
+    //   // const keyboard = this.tgbotlib.generateInlineKeyboard([[
+    //   //   [`Use it`, 'image:use-as-input'],
+    //   //   ['Delete', 'message:delete']
+    //   // ]])
+    // }
   }
 
   async imageUseAsInput (ctx) {
