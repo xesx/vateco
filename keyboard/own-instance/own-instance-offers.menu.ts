@@ -8,7 +8,7 @@ export function ownInstanceOffersMenu(offers: any[]): [string, string][][] {
 
     const offerDescription = [gpuInfo, geolocation, dhp, cuda, reliability2].join(' ')
 
-    return [[offerDescription, `act:own-i:offer:select:${o.id}`]]
+    return [[offerDescription, `offer:select:${o.id}`]]
   }).concat([[
     ['⬅️ Back', 'offer:menu'],
     ['🔄 Refresh', 'offer:search'],
