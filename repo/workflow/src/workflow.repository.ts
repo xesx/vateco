@@ -253,14 +253,15 @@ export class WorkflowRepository {
 
   async findWorkflowVariantsByParamName ({ paramName }: { paramName: string }) {
     const [classType, name] = paramName.split(':')
+    const likePattern = `${classType}:${name}:%`
 
     const workflowVariants = await this.prisma.$queryRaw<WorkflowVariants[]>`
       SELECT DISTINCT wv.*
-        FROM workflow_variant_params AS wvp
+        FROM workflow_variant_params AS wfvp
        INNER JOIN workflow_variants AS wv
-               ON wv.id = wvp.workflow_variant_id
+               ON wv.id = wfvp.workflow_variant_id
        WHERE 1=1
-         AND wfp.param_name like '${classType}:${name}:%'
+         AND wfvp.param_name LIKE ${likePattern}
     `
 
     return workflowVariants

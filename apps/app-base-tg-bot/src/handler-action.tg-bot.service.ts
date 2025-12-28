@@ -33,30 +33,33 @@ export class HandlerActionTgBotService {
     this.bot.action('main-menu', (ctx) => this.mainMenu(ctx))
 
     this.bot.action('offer:menu', (ctx) => this.offerMenu(ctx))
-    this.bot.action(/offer:param:([a-z]+)$/i, (ctx) => this.offerParamSelect(ctx))
-    this.bot.action(/offer:param:([a-z]+):set:(.+)$/i, (ctx) => this.offerParamSet(ctx))
+    this.bot.action(/^offer:param:([a-z]+)$/i, (ctx) => this.offerParamSelect(ctx))
+    this.bot.action(/^offer:param:([a-z]+):set:(.+)$/i, (ctx) => this.offerParamSet(ctx))
     this.bot.action('offer:search', (ctx) => this.offerSearch(ctx))
-    this.bot.action(/offer:select:(.+)$/, (ctx) => this.offerSelect(ctx))
+    this.bot.action(/^offer:select:(.+)$/, (ctx) => this.offerSelect(ctx))
 
     // instance:create:
-    this.bot.action(/instance:create:(.+)$/, (ctx) => this.instanceCreate(ctx))
+    this.bot.action(/^instance:create:(.+)$/, (ctx) => this.instanceCreate(ctx))
     this.bot.action('instance:manage', (ctx) => this.instanceManage(ctx))
     this.bot.action('instance:status', (ctx) => this.instanceStatus(ctx))
     this.bot.action('instance:destroy', (ctx) => this.instanceDestroy(ctx))
 
     this.bot.action('wfv:list', (ctx) => this.wfvList(ctx))
-    this.bot.action(/wfv:([0-9]+)$/, (ctx) => this.wfvSelect(ctx))
-    this.bot.action(/wfv:([0-9]+):run$/, (ctx) => this.wfvRun(ctx))
-    this.bot.action(/wfv:([0-9]+):info$/, (ctx) => this.wfvInfo(ctx))
-    this.bot.action(/wfvp:([0-9]+)$/, (ctx) => this.wfvParamSelect(ctx))
-    this.bot.action(/wfvp:([0-9]+):mtag:(.+):search:([0-9]+)$/, (ctx) => this.wfvParamModelsSearch(ctx)) // select model with tags
-    this.bot.action(/wfvp:([0-9]+):mtag:(.+)$/, (ctx) => this.wfvParamModelTagMenu(ctx)) // select model with tags
-    this.bot.action(/wfvp:([0-9]+):set:(.+)$/, (ctx) => this.wfvParamSet(ctx))
-    this.bot.action(/wfvp:([0-9]+):fset:(.+)$/, (ctx) => this.wfvParamForceSet(ctx)) // force set
-    this.bot.action(/wfvp:([0-9]+):show$/, (ctx) => this.wfvParamShow(ctx)) // force set
+    this.bot.action(/^wfv:([0-9]+)$/, (ctx) => this.wfvSelect(ctx))
+    this.bot.action(/^wfv:([0-9]+):run$/, (ctx) => this.wfvRun(ctx))
+    this.bot.action(/^wfv:([0-9]+):info$/, (ctx) => this.wfvInfo(ctx))
+    this.bot.action(/^wfvp:([0-9]+)$/, (ctx) => this.wfvParamSelect(ctx))
+    this.bot.action(/^wfvp:([0-9]+):mtag:(.+):search:([0-9]+)$/, (ctx) => this.wfvParamModelsSearch(ctx)) // select model with tags
+    this.bot.action(/^wfvp:([0-9]+):mtag:(.+)$/, (ctx) => this.wfvParamModelTagMenu(ctx)) // select model with tags
+    this.bot.action(/^wfvp:([0-9]+):set:(.+)$/, (ctx) => this.wfvParamSet(ctx))
+    this.bot.action(/^wfvp:([0-9]+):fset:(.+)$/, (ctx) => this.wfvParamForceSet(ctx)) // force set
+    this.bot.action(/^wfvp:([0-9]+):show$/, (ctx) => this.wfvParamShow(ctx)) // force set
 
     // this.bot.action('image:use-as-input', (ctx) => this.imageUseAsInput(ctx))
-    this.bot.action('image:use-as-input', (ctx) => this.imageUseAsInputV2(ctx))
+    this.bot.action('img-use', (ctx) => this.imageUseAsInputV2(ctx))
+    this.bot.action(/^img-use:wfv:([0-9]+)$/, (ctx) => this.imageUseInWfv(ctx))
+    this.bot.action(/^img-use:wfvp:([0-9]+)$/, (ctx) => this.imageUseInWfvParam(ctx))
+
 
 
     this.bot.action('message:delete', (ctx) => this.messageDelete(ctx))
@@ -487,7 +490,7 @@ export class HandlerActionTgBotService {
 
     if (paramName.startsWith('LoadImage:image')) {
       const keyboard = this.tgbotlib.generateInlineKeyboard([[
-        [`Use it`, 'image:use-as-input'],
+        [`Use it`, 'img-use'],
         ['Delete', 'message:delete']
       ]])
 
@@ -505,46 +508,52 @@ export class HandlerActionTgBotService {
   async imageUseAsInputV2 (ctx) {
     const { workflowVariantId, userId } = ctx.session
 
-    if (!workflowVariantId) {
+    const workflowVariants = await this.wfrepo.findWorkflowVariantsByParamName({ paramName: 'LoadImage:image:' })
+
+    if (workflowVariants.length === 0) {
       await this.tgbotlib.safeAnswerCallback(ctx)
       return
     }
 
-    const currentWfvImageParams = await this.wfrepo.findWorkflowVariantsByParamName({
-      paramName: 'LoadImage:image:',
+    // console.log('\x1b[36m', 'workflowVariants', workflowVariants, '\x1b[0m');
+
+    const keyboard = this.tgbotlib.generateInlineKeyboard([[
+      ...workflowVariants.map(wfv => ([wfv.name, `img-use:wfv:${wfv.id}`] as [string, string])),
+      ['Delete', 'message:delete']
+    ]])
+
+    const caption = 'select new wfv'
+    await ctx.editMessageCaption(caption, keyboard)
+  }
+
+  async imageUseInWfv (ctx) {
+    const [,workflowVariantId] = ctx.match
+
+    const imageWorkflowVariantParams = await this.wfrepo.findWorkflowVariantParamsByNameStartsWith({
+      workflowVariantId,
+      startsWith: 'LoadImage:image:',
     })
 
-    console.log('\x1b[36m', 'currentWfvImageParams', currentWfvImageParams, '\x1b[0m');
-    return await this.tgbotlib.safeAnswerCallback(ctx)
+    console.log('\x1b[36m', 'imageWorkflowVariantParams', imageWorkflowVariantParams, '\x1b[0m');
+    await this.tgbotlib.safeAnswerCallback(ctx)
+  }
 
-    // if (!currentWfvImageParams.length) {
-    //   // return await this.tgbotlib.safeAnswerCallback(ctx)
-    // }
+  async imageUseInWfvParam (ctx) {
+    const [,wfvParamId] = ctx.match
+    const { userId } = ctx.session
 
-    // const fileId = this.tgbotlib.getImageFileIdFromMessage({ message: ctx.update?.callback_query?.message })
-    // console.log('HandlerActionTgBotService_imageUseAsInput_23 fileId', fileId)
-    //
-    // if (!fileId) {
-    //   console.log('HandlerActionTgBotService_imageUseAsInput_34 No fileId found in message')
-    //   await ctx.reply('No image found in message')
-    //   await this.tgbotlib.safeAnswerCallback(ctx)
-    //   return
-    // }
-    //
-    // // TODO more than one image param?
-    // if (currentWfvImageParams.length === 1) {
-    //   await this.wfrepo.setWorkflowVariantUserParam({
-    //     userId,
-    //     workflowVariantId,
-    //     paramName: imageWorkflowVariantParams[0].paramName,
-    //     value: fileId,
-    //   })
-    // } else {
-    //   // const keyboard = this.tgbotlib.generateInlineKeyboard([[
-    //   //   [`Use it`, 'image:use-as-input'],
-    //   //   ['Delete', 'message:delete']
-    //   // ]])
-    // }
+    const { workflowVariantId } = await this.wfsynth.param.getWfvParamInfo({ wfvParamId })
+    const fileId = this.tgbotlib.getImageFileIdFromMessage({ message: ctx.update?.callback_query?.message })
+
+    if (!fileId) {
+      console.log('HandlerActionTgBotService_imageUseInWfvParam_13 No fileId found in message')
+      await ctx.reply('No image found in message')
+      await this.tgbotlib.safeAnswerCallback(ctx)
+      return
+    }
+
+    await this.wfsynth.param.setWfvUserParamValue({ userId, wfvParamId, value: fileId })
+    await this.wfsynth.view.showWfvRunMenu({ ctx, userId, workflowVariantId, prefixAction: '', backAction: 'wfv:list' })
   }
 
   async imageUseAsInput (ctx) {
