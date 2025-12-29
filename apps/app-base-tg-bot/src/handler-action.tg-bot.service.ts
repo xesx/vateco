@@ -56,6 +56,7 @@ export class HandlerActionTgBotService {
     this.bot.action(/^wfvp:([0-9]+):show$/, (ctx) => this.wfvParamShow(ctx)) // force set
 
     this.bot.action('img-use:wfv-list', (ctx) => this.imageUseWfvList(ctx))
+    this.bot.action('img-use:start', (ctx) => this.imageUseStart(ctx))
     this.bot.action(/^img-use:wfv:([0-9]+)$/, (ctx) => this.imageUseInWfv(ctx))
     this.bot.action(/^img-use:wfvp:([0-9]+)$/, (ctx) => this.imageUseInWfvParam(ctx))
 
@@ -203,24 +204,11 @@ export class HandlerActionTgBotService {
   }
 
   async wfvSelect (ctx) {
-    const { userId, instance } = ctx.session
     const [,workflowVariantIdStr] = ctx.match
     const workflowVariantId = parseInt(workflowVariantIdStr, 10)
+    const { userId } = ctx.session
 
-    ctx.session.workflowVariantId = workflowVariantId
-    delete ctx.session.inputWaiting
-
-    if (instance) {
-      const { workflowTemplateId } = await this.wfrepo.getWorkflowVariant(workflowVariantId)
-      const workflowTemplate = await this.wfrepo.getWorkflowTemplate(workflowTemplateId)
-
-      await this.cloudapilib.vastAiWorkflowTemplateLoad({
-        baseUrl: ctx.session.instance?.apiUrl,
-        instanceId: ctx.session.instance?.id,
-        token: ctx.session.instance?.token,
-        workflowTemplate,
-      })
-    }
+    await this.tgbotsrv.selectWfv({ ctx, workflowVariantId })
 
     await this.wfsynth.view.showWfvRunMenu({ ctx, userId, workflowVariantId, prefixAction: '', backAction: 'wfv:list' })
     await this.wfsynth.view.showWfvReplyMenu(ctx)
@@ -502,8 +490,19 @@ export class HandlerActionTgBotService {
     await this.tgbotsrv.runWfv(ctx)
   }
 
+  async imageUseStart (ctx) {
+    const keyboard = this.tgbotlib.generateInlineKeyboard([[
+      [`Use it`, 'img-use:wfv-list'],
+      ['Delete', 'message:delete']
+    ]])
+
+    await ctx.editMessageCaption('', keyboard)
+
+    await this.tgbotlib.safeAnswerCallback(ctx)
+  }
+
   async imageUseWfvList (ctx) {
-    const { workflowVariantId, userId } = ctx.session
+    const { workflowVariantId } = ctx.session
 
     const workflowVariants = await this.wfrepo.findWorkflowVariantsByParamName({ paramName: 'LoadImage:image:' })
 
@@ -525,7 +524,7 @@ export class HandlerActionTgBotService {
       kbRaw.push([[wfv.name, `img-use:wfv:${wfv.id}`]])
     }
 
-    kbRaw.push([['Delete', 'message:delete']])
+    kbRaw.push([['Back', 'img-use:start'], ['Delete', 'message:delete']])
 
     const keyboard = this.tgbotlib.generateInlineKeyboard(kbRaw)
 
@@ -535,15 +534,41 @@ export class HandlerActionTgBotService {
 
   async imageUseInWfv (ctx) {
     const [,workflowVariantId] = ctx.match
+    const { telegramId, userId } = ctx.session
 
     const imageWfvParams = await this.wfrepo.findWorkflowVariantParamsByNameStartsWith({
       workflowVariantId,
       startsWith: 'LoadImage:image:',
     })
 
+    if (imageWfvParams.length === 1) {
+      const wfvParam = imageWfvParams[0]
+      const fileId = this.tgbotlib.getImageFileIdFromMessage({ message: ctx.update?.callback_query?.message })
+
+      if (!fileId) {
+        console.log('HandlerActionTgBotService_imageUseInWfv_12 No fileId found in message')
+        await ctx.reply('No image found in message')
+        await this.tgbotlib.safeAnswerCallback(ctx)
+        return
+      }
+
+      await this.wfsynth.param.setWfvUserParamValue({ userId, wfvParamId: wfvParam.id, value: fileId })
+
+      const keyboard = this.tgbotlib.generateInlineKeyboard([[
+        [`Use it`, 'img-use:wfv-list'],
+        ['Delete', 'message:delete']
+      ]])
+
+      await ctx.editMessageCaption('', keyboard)
+
+      await this.tgbotsrv.selectWfv({ ctx, workflowVariantId })
+      await this.wfsynth.view.showWfvRunMenu({ chatId: telegramId, userId, workflowVariantId, prefixAction: '', backAction: 'wfv:list' })
+      return
+    }
+
     const keyboard = this.tgbotlib.generateInlineKeyboard([
       ...imageWfvParams.map(wfvp => ([[wfvp.label, `img-use:wfvp:${wfvp.id}`]] as [string, string][])),
-      [['Back', 'img-use'], ['Delete', 'message:delete']]
+      [['Back', 'img-use:wfv-list'], ['Delete', 'message:delete']]
     ])
 
     const caption = 'select wfv param for image'
@@ -567,16 +592,16 @@ export class HandlerActionTgBotService {
 
     await this.wfsynth.param.setWfvUserParamValue({ userId, wfvParamId, value: fileId })
 
-    const messageId = ctx.update?.callback_query?.message?.message_id
-    await ctx.deleteMessage(messageId)
+    const keyboard = this.tgbotlib.generateInlineKeyboard([[
+      [`Use it`, 'img-use:wfv-list'],
+      ['Delete', 'message:delete']
+    ]])
 
-    await this.wfsynth.view.showWfvRunMenu({
-      chatId: telegramId,
-      userId,
-      workflowVariantId,
-      prefixAction: '',
-      backAction: 'wfv:list',
-    })
+    await ctx.editMessageCaption('', keyboard)
+
+
+    await this.tgbotsrv.selectWfv({ ctx, workflowVariantId })
+    await this.wfsynth.view.showWfvRunMenu({ chatId: telegramId, userId, workflowVariantId, prefixAction: '', backAction: 'wfv:list' })
   }
 
   async messageDelete (ctx) {

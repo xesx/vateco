@@ -56,6 +56,25 @@ export class AppBaseTgBotService {
     }, 2000)
   }
 
+  async selectWfv ({ ctx, workflowVariantId }) {
+    const { instance } = ctx.session
+
+    ctx.session.workflowVariantId = workflowVariantId
+    delete ctx.session.inputWaiting
+
+    if (instance) {
+      const { workflowTemplateId } = await this.wfrepo.getWorkflowVariant(workflowVariantId)
+      const workflowTemplate = await this.wfrepo.getWorkflowTemplate(workflowTemplateId)
+
+      await this.cloudapilib.vastAiWorkflowTemplateLoad({
+        baseUrl: ctx.session.instance?.apiUrl,
+        instanceId: ctx.session.instance?.id,
+        token: ctx.session.instance?.token,
+        workflowTemplate,
+      })
+    }
+  }
+
   async runWfv (ctx) {
     const { workflowVariantId, userId, instance, telegramId } = ctx.session
     const modelInfoLoaded = instance?.modelInfoLoaded || []
