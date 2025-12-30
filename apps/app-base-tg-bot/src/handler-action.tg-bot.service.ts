@@ -511,8 +511,8 @@ export class HandlerActionTgBotService {
       return
     }
 
-    const currentWorkflowVariant = workflowVariants.find(wfv => wfv.id === workflowVariantId)
-    const otherWorkflowVariants = workflowVariants.filter(wfv => wfv.id !== workflowVariantId)
+    const currentWorkflowVariant = workflowVariants.find(wfv => wfv.id === Number(workflowVariantId))
+    const otherWorkflowVariants = workflowVariants.filter(wfv => wfv.id !== Number(workflowVariantId))
 
     const kbRaw: [string, string][][] = []
 
@@ -528,7 +528,7 @@ export class HandlerActionTgBotService {
 
     const keyboard = this.tgbotlib.generateInlineKeyboard(kbRaw)
 
-    const caption = 'select new wfv'
+    const caption = `select wfv for image use, current wfv: "${currentWorkflowVariant?.name ?? 'none'}"`
     await ctx.editMessageCaption(caption, keyboard)
   }
 
