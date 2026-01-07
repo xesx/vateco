@@ -28,6 +28,7 @@ export class HandlerActionTgBotService {
     private readonly wfrepo: repo.WorkflowRepository,
     private readonly modelrepo: repo.ModelRepository,
     private readonly tagrepo: repo.TagRepository,
+    private readonly setuprepo: repo.SetupRepository,
     // private readonly userrepo: repo.UserRepository,
   ) {
     this.bot.action('main-menu', (ctx) => this.mainMenu(ctx))
@@ -104,13 +105,15 @@ export class HandlerActionTgBotService {
     const [,offerId] = ctx.match
     const { telegramId } = ctx.session
 
+    const comfyuiPortableVersion = await this.setuprepo.getSetting({ name: 'comfyui_portable_version' })
+
     const result = await this.vastlib.createInstance({
       offerId,
       clientId: 'base_' + telegramId,
       env: {
         'TG_CHAT_ID': telegramId?.toString(),
-        // 'COMFY_UI_ARCHIVE_FILE': 'comfyui-cu128-py312-v4.tar.zst',
-        'COMFY_UI_ARCHIVE_FILE': 'comfyui-cu128-py312-iface-v8.tar.zst', // todo: make it configurable
+        // 'COMFY_UI_ARCHIVE_FILE': 'comfyui-cu128-py312-iface-v8.tar.zst',
+        'COMFY_UI_ARCHIVE_FILE': comfyuiPortableVersion,
       },
     })
 

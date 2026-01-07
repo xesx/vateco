@@ -17,8 +17,6 @@ import { HandlerDocumentTgBotService } from './handler-document.tg-bot.service'
 import { AppBaseTgBotService } from './app-base-tg-bot.service'
 import { BaseCommandTgBot } from './command/base.command.tg-bot'
 
-import * as owni from './way-own-instance'
-
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -56,6 +54,7 @@ import * as owni from './way-own-instance'
     repo.UserRepositoryModule,
     repo.ModelRepositoryModule,
     repo.TagRepositoryModule,
+    repo.SetupRepositoryModule,
 
     synth.WorkflowSynthModule,
     synth.OfferSynthModule,

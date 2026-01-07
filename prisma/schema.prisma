@@ -185,3 +185,12 @@ model Tags {
 
   @@map("tags")
 }
+
+model Settings {
+  name       String   @unique @map("name")
+  value      Json     @map("value")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+
+  @@map("settings")
+}
