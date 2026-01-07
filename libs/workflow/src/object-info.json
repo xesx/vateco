@@ -49913,7 +49913,8 @@
             "Qwen3-VL-32B-Instruct-FP8",
             "Qwen3-VL-32B-Thinking-FP8",
             "Qwen2.5-VL-3B-Instruct",
-            "Qwen2.5-VL-7B-Instruct"
+            "Qwen2.5-VL-7B-Instruct",
+            "Qwen3-VL-8B-Instruct-abliterated"
           ],
           {
             "default": "Qwen3-VL-2B-Instruct",
@@ -49952,7 +49953,7 @@
             "🖼️ Detailed Analysis",
             "📹 Video Summary",
             "📖 Short Story",
-            "🧩Prompt Refine & Expand"
+            "🪄 Prompt Refine & Expand"
           ],
           {
             "default": "🖼️ Detailed Description",
@@ -50056,7 +50057,8 @@
             "Qwen3-VL-32B-Instruct-FP8",
             "Qwen3-VL-32B-Thinking-FP8",
             "Qwen2.5-VL-3B-Instruct",
-            "Qwen2.5-VL-7B-Instruct"
+            "Qwen2.5-VL-7B-Instruct",
+            "Qwen3-VL-8B-Instruct-abliterated"
           ],
           {
             "default": "Qwen3-VL-2B-Instruct",
@@ -50095,13 +50097,13 @@
         "device": [
           [
             "auto",
-            "cuda",
             "cpu",
-            "mps"
+            "mps",
+            "cuda:0"
           ],
           {
             "default": "auto",
-            "tooltip": "Force execution on cuda/cpu/mps or leave auto to follow hardware detection."
+            "tooltip": "Choose where to run the model: auto, cpu, mps, or cuda:x for multi-GPU systems."
           }
         ],
         "preset_prompt": [
@@ -50114,7 +50116,7 @@
             "🖼️ Detailed Analysis",
             "📹 Video Summary",
             "📖 Short Story",
-            "🧩Prompt Refine & Expand"
+            "🪄 Prompt Refine & Expand"
           ],
           {
             "default": "🖼️ Detailed Description",
@@ -50243,6 +50245,510 @@
     ],
     "name": "AILab_QwenVL_Advanced",
     "display_name": "QwenVL (Advanced)",
+    "description": "",
+    "python_module": "custom_nodes.ComfyUI-QwenVL",
+    "category": "🧪AILab/QwenVL",
+    "output_node": false
+  },
+  "AILab_QwenVL_GGUF": {
+    "input": {
+      "required": {
+        "model_name": [
+          [
+            "Qwen3VL-4B-Instruct-F16.gguf",
+            "Qwen3VL-4B-Instruct-Q4_K_M.gguf",
+            "Qwen3VL-4B-Instruct-Q8_0.gguf",
+            "Qwen3VL-4B-Thinking-F16.gguf",
+            "Qwen3VL-4B-Thinking-Q4_K_M.gguf",
+            "Qwen3VL-4B-Thinking-Q8_0.gguf",
+            "Qwen3VL-8B-Instruct-F16.gguf",
+            "Qwen3VL-8B-Instruct-Q4_K_M.gguf",
+            "Qwen3VL-8B-Instruct-Q8_0.gguf",
+            "Qwen3VL-8B-Thinking-F16.gguf",
+            "Qwen3VL-8B-Thinking-Q4_K_M.gguf",
+            "Qwen3VL-8B-Thinking-Q8_0.gguf"
+          ],
+          {
+            "default": "Qwen3VL-4B-Instruct-F16.gguf"
+          }
+        ],
+        "preset_prompt": [
+          [
+            "🖼️ Tags",
+            "🖼️ Simple Description",
+            "🖼️ Detailed Description",
+            "🖼️ Ultra Detailed Description",
+            "🎬 Cinematic Description",
+            "🖼️ Detailed Analysis",
+            "📹 Video Summary",
+            "📖 Short Story",
+            "🪄 Prompt Refine & Expand"
+          ],
+          {
+            "default": "🖼️ Detailed Description"
+          }
+        ],
+        "custom_prompt": [
+          "STRING",
+          {
+            "default": "",
+            "multiline": true
+          }
+        ],
+        "max_tokens": [
+          "INT",
+          {
+            "default": 512,
+            "min": 64,
+            "max": 2048
+          }
+        ],
+        "keep_model_loaded": [
+          "BOOLEAN",
+          {
+            "default": true
+          }
+        ],
+        "seed": [
+          "INT",
+          {
+            "default": 1,
+            "min": 1,
+            "max": 4294967295
+          }
+        ]
+      },
+      "optional": {
+        "image": [
+          "IMAGE"
+        ],
+        "video": [
+          "IMAGE"
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "model_name",
+        "preset_prompt",
+        "custom_prompt",
+        "max_tokens",
+        "keep_model_loaded",
+        "seed"
+      ],
+      "optional": [
+        "image",
+        "video"
+      ]
+    },
+    "output": [
+      "STRING"
+    ],
+    "output_is_list": [
+      false
+    ],
+    "output_name": [
+      "RESPONSE"
+    ],
+    "name": "AILab_QwenVL_GGUF",
+    "display_name": "QwenVL (GGUF)",
+    "description": "",
+    "python_module": "custom_nodes.ComfyUI-QwenVL",
+    "category": "🧪AILab/QwenVL",
+    "output_node": false
+  },
+  "AILab_QwenVL_GGUF_Advanced": {
+    "input": {
+      "required": {
+        "model_name": [
+          [
+            "Qwen3VL-4B-Instruct-F16.gguf",
+            "Qwen3VL-4B-Instruct-Q4_K_M.gguf",
+            "Qwen3VL-4B-Instruct-Q8_0.gguf",
+            "Qwen3VL-4B-Thinking-F16.gguf",
+            "Qwen3VL-4B-Thinking-Q4_K_M.gguf",
+            "Qwen3VL-4B-Thinking-Q8_0.gguf",
+            "Qwen3VL-8B-Instruct-F16.gguf",
+            "Qwen3VL-8B-Instruct-Q4_K_M.gguf",
+            "Qwen3VL-8B-Instruct-Q8_0.gguf",
+            "Qwen3VL-8B-Thinking-F16.gguf",
+            "Qwen3VL-8B-Thinking-Q4_K_M.gguf",
+            "Qwen3VL-8B-Thinking-Q8_0.gguf"
+          ],
+          {
+            "default": "Qwen3VL-4B-Instruct-F16.gguf"
+          }
+        ],
+        "device": [
+          [
+            "auto",
+            "cpu",
+            "mps",
+            "cuda:0"
+          ],
+          {
+            "default": "auto"
+          }
+        ],
+        "preset_prompt": [
+          [
+            "🖼️ Tags",
+            "🖼️ Simple Description",
+            "🖼️ Detailed Description",
+            "🖼️ Ultra Detailed Description",
+            "🎬 Cinematic Description",
+            "🖼️ Detailed Analysis",
+            "📹 Video Summary",
+            "📖 Short Story",
+            "🪄 Prompt Refine & Expand"
+          ],
+          {
+            "default": "🖼️ Detailed Description"
+          }
+        ],
+        "custom_prompt": [
+          "STRING",
+          {
+            "default": "",
+            "multiline": true
+          }
+        ],
+        "max_tokens": [
+          "INT",
+          {
+            "default": 512,
+            "min": 64,
+            "max": 4096
+          }
+        ],
+        "temperature": [
+          "FLOAT",
+          {
+            "default": 0.6,
+            "min": 0.0,
+            "max": 2.0
+          }
+        ],
+        "top_p": [
+          "FLOAT",
+          {
+            "default": 0.9,
+            "min": 0.0,
+            "max": 1.0
+          }
+        ],
+        "repetition_penalty": [
+          "FLOAT",
+          {
+            "default": 1.2,
+            "min": 0.5,
+            "max": 2.0
+          }
+        ],
+        "frame_count": [
+          "INT",
+          {
+            "default": 16,
+            "min": 1,
+            "max": 64
+          }
+        ],
+        "ctx": [
+          "INT",
+          {
+            "default": 8192,
+            "min": 1024,
+            "max": 262144,
+            "step": 512
+          }
+        ],
+        "n_batch": [
+          "INT",
+          {
+            "default": 512,
+            "min": 64,
+            "max": 32768,
+            "step": 64
+          }
+        ],
+        "gpu_layers": [
+          "INT",
+          {
+            "default": -1,
+            "min": -1,
+            "max": 200
+          }
+        ],
+        "image_max_tokens": [
+          "INT",
+          {
+            "default": 4096,
+            "min": 256,
+            "max": 1024000,
+            "step": 256
+          }
+        ],
+        "top_k": [
+          "INT",
+          {
+            "default": 0,
+            "min": 0,
+            "max": 32768
+          }
+        ],
+        "pool_size": [
+          "INT",
+          {
+            "default": 4194304,
+            "min": 1048576,
+            "max": 10485760,
+            "step": 524288
+          }
+        ],
+        "keep_model_loaded": [
+          "BOOLEAN",
+          {
+            "default": true
+          }
+        ],
+        "seed": [
+          "INT",
+          {
+            "default": 1,
+            "min": 1,
+            "max": 4294967295
+          }
+        ]
+      },
+      "optional": {
+        "image": [
+          "IMAGE"
+        ],
+        "video": [
+          "IMAGE"
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "model_name",
+        "device",
+        "preset_prompt",
+        "custom_prompt",
+        "max_tokens",
+        "temperature",
+        "top_p",
+        "repetition_penalty",
+        "frame_count",
+        "ctx",
+        "n_batch",
+        "gpu_layers",
+        "image_max_tokens",
+        "top_k",
+        "pool_size",
+        "keep_model_loaded",
+        "seed"
+      ],
+      "optional": [
+        "image",
+        "video"
+      ]
+    },
+    "output": [
+      "STRING"
+    ],
+    "output_is_list": [
+      false
+    ],
+    "output_name": [
+      "RESPONSE"
+    ],
+    "name": "AILab_QwenVL_GGUF_Advanced",
+    "display_name": "QwenVL Advanced (GGUF)",
+    "description": "",
+    "python_module": "custom_nodes.ComfyUI-QwenVL",
+    "category": "🧪AILab/QwenVL",
+    "output_node": false
+  },
+  "AILab_QwenVL_PromptEnhancer": {
+    "input": {
+      "required": {
+        "model_name": [
+          [
+            "Qwen3-0.6B",
+            "qwen3-4b-Z-Image-Engineer",
+            "Qwen3-4B-Instruct-2507",
+            "Qwen3-VL-2B-Instruct",
+            "Qwen3-VL-2B-Thinking",
+            "Qwen3-VL-2B-Instruct-FP8",
+            "Qwen3-VL-2B-Thinking-FP8",
+            "Qwen3-VL-4B-Instruct",
+            "Qwen3-VL-4B-Thinking",
+            "Qwen3-VL-4B-Instruct-FP8",
+            "Qwen3-VL-4B-Thinking-FP8",
+            "Qwen3-VL-8B-Instruct",
+            "Qwen3-VL-8B-Thinking",
+            "Qwen3-VL-8B-Instruct-FP8",
+            "Qwen3-VL-8B-Thinking-FP8",
+            "Qwen3-VL-32B-Instruct",
+            "Qwen3-VL-32B-Thinking",
+            "Qwen3-VL-32B-Instruct-FP8",
+            "Qwen3-VL-32B-Thinking-FP8",
+            "Qwen2.5-VL-3B-Instruct",
+            "Qwen2.5-VL-7B-Instruct",
+            "Qwen3-VL-8B-Instruct-abliterated"
+          ],
+          {
+            "default": "Qwen3-0.6B",
+            "tooltip": "Pick the Qwen-VL checkpoint. First run downloads weights into models/LLM/Qwen-VL, so leave disk space."
+          }
+        ],
+        "quantization": [
+          [
+            "4-bit (VRAM-friendly)",
+            "8-bit (Balanced)",
+            "None (FP16)"
+          ],
+          {
+            "default": "None (FP16)",
+            "tooltip": "Precision vs VRAM. FP16 gives the best quality if memory allows; 8-bit suits 8–16 GB GPUs; 4-bit fits 6 GB or lower but is slower."
+          }
+        ],
+        "attention_mode": [
+          [
+            "auto",
+            "flash_attention_2",
+            "sdpa"
+          ],
+          {
+            "default": "auto",
+            "tooltip": "auto tries flash-attn v2 when installed and falls back to SDPA. Only override when debugging attention backends."
+          }
+        ],
+        "use_torch_compile": [
+          "BOOLEAN",
+          {
+            "default": false,
+            "tooltip": "Enable torch.compile('reduce-overhead') on supported CUDA/Torch 2.1+ builds for extra throughput after the first compile."
+          }
+        ],
+        "device": [
+          [
+            "auto",
+            "cuda",
+            "cpu",
+            "mps"
+          ],
+          {
+            "default": "auto",
+            "tooltip": "Choose where to run the model: auto, cpu, mps, or cuda:x for multi-GPU systems."
+          }
+        ],
+        "prompt_text": [
+          "STRING",
+          {
+            "default": "",
+            "multiline": true,
+            "tooltip": "Prompt text to enhance. Leave blank to just emit the preset instruction."
+          }
+        ],
+        "enhancement_style": [
+          [
+            "📝 Enhance",
+            "📝 Refine",
+            "📝 Creative Rewrite",
+            "📝 Detailed Visual",
+            "📝 Artistic Style",
+            "📝 Technical Specs"
+          ],
+          {
+            "default": "📝 Enhance"
+          }
+        ],
+        "custom_system_prompt": [
+          "STRING",
+          {
+            "default": "",
+            "multiline": true
+          }
+        ],
+        "max_tokens": [
+          "INT",
+          {
+            "default": 256,
+            "min": 32,
+            "max": 1024
+          }
+        ],
+        "temperature": [
+          "FLOAT",
+          {
+            "default": 0.7,
+            "min": 0.1,
+            "max": 1.0
+          }
+        ],
+        "top_p": [
+          "FLOAT",
+          {
+            "default": 0.9,
+            "min": 0.0,
+            "max": 1.0
+          }
+        ],
+        "repetition_penalty": [
+          "FLOAT",
+          {
+            "default": 1.1,
+            "min": 0.5,
+            "max": 2.0
+          }
+        ],
+        "keep_model_loaded": [
+          "BOOLEAN",
+          {
+            "default": true
+          }
+        ],
+        "seed": [
+          "INT",
+          {
+            "default": 1,
+            "min": 1,
+            "max": 4294967295
+          }
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "model_name",
+        "quantization",
+        "attention_mode",
+        "use_torch_compile",
+        "device",
+        "prompt_text",
+        "enhancement_style",
+        "custom_system_prompt",
+        "max_tokens",
+        "temperature",
+        "top_p",
+        "repetition_penalty",
+        "keep_model_loaded",
+        "seed"
+      ]
+    },
+    "output": [
+      "STRING"
+    ],
+    "output_is_list": [
+      false
+    ],
+    "output_name": [
+      "ENHANCED_OUTPUT"
+    ],
+    "name": "AILab_QwenVL_PromptEnhancer",
+    "display_name": "QwenVL Prompt Enhancer",
     "description": "",
     "python_module": "custom_nodes.ComfyUI-QwenVL",
     "category": "🧪AILab/QwenVL",
@@ -50426,21 +50932,21 @@
         "latent_suffix": [
           "STRING",
           {
-            "default": "13166088_cache",
+            "default": "11901966_cache",
             "multiline": false
           }
         ],
         "image_suffix": [
           "STRING",
           {
-            "default": "33318666_cache",
+            "default": "48341455_cache",
             "multiline": false
           }
         ],
         "conditioning_suffix": [
           "STRING",
           {
-            "default": "20496557_cache",
+            "default": "54562424_cache",
             "multiline": false
           }
         ]
@@ -70235,5 +70741,587 @@
     "python_module": "custom_nodes.comfyui-reactor-node",
     "category": "🌌 ReActor",
     "output_node": false
+  },
+  "SeedVR2VideoUpscaler": {
+    "input": {
+      "required": {
+        "image": [
+          "IMAGE",
+          {
+            "tooltip": "Input video frames as image batch.\nAccepts both RGB (3-channel) and RGBA (4-channel) formats.\nOutput format will match input format."
+          }
+        ],
+        "dit": [
+          "SEEDVR2_DIT",
+          {
+            "tooltip": "DiT model configuration from SeedVR2 (Down)Load DiT Model node"
+          }
+        ],
+        "vae": [
+          "SEEDVR2_VAE",
+          {
+            "tooltip": "VAE model configuration from SeedVR2 (Down)Load VAE Model node"
+          }
+        ],
+        "seed": [
+          "INT",
+          {
+            "tooltip": "Random seed for reproducible generation (default: 42).\nSame seed with same inputs produces identical output.",
+            "default": 42,
+            "min": 0,
+            "max": 4294967295,
+            "step": 1
+          }
+        ],
+        "resolution": [
+          "INT",
+          {
+            "tooltip": "Target resolution for the shortest edge in pixels (default: 1080).\nAutomatically maintains aspect ratio of input.\nEven values required for optimal processing.",
+            "default": 1080,
+            "min": 16,
+            "max": 16384,
+            "step": 2
+          }
+        ],
+        "max_resolution": [
+          "INT",
+          {
+            "tooltip": "Maximum resolution limit for any dimension (default: 0, no limit).\nIf any edge exceeds this after applying resolution,\nboth dimensions are scaled down proportionally.\nUseful to prevent excessive VRAM usage on extreme aspect ratios.",
+            "default": 0,
+            "min": 0,
+            "max": 16384,
+            "step": 2
+          }
+        ],
+        "batch_size": [
+          "INT",
+          {
+            "tooltip": "Number of frames processed together per batch (default: 5).\nMust follow pattern 4n+1: 1, 5, 9, 13, 17, 21, ...\n\n• Higher values: Better temporal consistency and faster processing\n• Lower values: Reduced VRAM usage\n\nIdeally match to shot length for best quality.",
+            "default": 5,
+            "min": 1,
+            "max": 16384,
+            "step": 4
+          }
+        ],
+        "uniform_batch_size": [
+          "BOOLEAN",
+          {
+            "tooltip": "Pad final batch to match batch_size (default: False).\nPrevents temporal artifacts caused by small final batch.\nAdd extra compute but recommended for optimal quality.",
+            "default": false
+          }
+        ],
+        "color_correction": [
+          "COMBO",
+          {
+            "tooltip": "Corrects color shifts in upscaled output to match original input (default: lab).\nThe upscaling process may alter colors; this applies color grading to restore them.\n\n• lab: Perceptual color matching with detail preservation (recommended)\n• wavelet: Frequency-based natural colors, preserves fine details\n• wavelet_adaptive: Wavelet base with targeted saturation correction\n• hsv: Hue-conditional saturation matching\n• adain: Statistical style transfer approach\n• none: No color correction applied",
+            "default": "lab",
+            "multiselect": false,
+            "options": [
+              "lab",
+              "wavelet",
+              "wavelet_adaptive",
+              "hsv",
+              "adain",
+              "none"
+            ]
+          }
+        ]
+      },
+      "optional": {
+        "temporal_overlap": [
+          "INT",
+          {
+            "tooltip": "Overlapping frames between consecutive batches (default: 0, disabled).\nImproves temporal consistency across batch boundaries through blending.\nValues 1-4 work well for most content.",
+            "default": 0,
+            "min": 0,
+            "max": 16,
+            "step": 1
+          }
+        ],
+        "prepend_frames": [
+          "INT",
+          {
+            "tooltip": "Number of frames to prepend (reversed from start) before processing (default: 0).\nHelps reduce artifacts at video beginning.\nPrepended frames are automatically removed from final output.",
+            "default": 0,
+            "min": 0,
+            "max": 32,
+            "step": 1
+          }
+        ],
+        "input_noise_scale": [
+          "FLOAT",
+          {
+            "tooltip": "Input noise injection scale (default: 0.0, disabled).\nAdds controlled variation to input images before encoding.\nRange: 0.0 (no noise) to 1.0 (maximum noise).\nCan help with certain types of artifacts.",
+            "default": 0.0,
+            "min": 0.0,
+            "max": 1.0,
+            "step": 0.001
+          }
+        ],
+        "latent_noise_scale": [
+          "FLOAT",
+          {
+            "tooltip": "Latent space noise injection scale (default: 0.0, disabled).\nAdds controlled variation during the diffusion process.\nRange: 0.0 (no noise) to 1.0 (maximum noise).\nCan soften details if input_noise_scale doesn't help.",
+            "default": 0.0,
+            "min": 0.0,
+            "max": 1.0,
+            "step": 0.001
+          }
+        ],
+        "offload_device": [
+          "COMBO",
+          {
+            "tooltip": "Device for storing intermediate tensors between processing phases (default: cpu).\n• 'none': Keep all tensors on inference device (fastest but highest VRAM usage)\n• 'cpu': Offload to system RAM (recommended for long videos, slower transfers)\n• 'cuda:X': Offload to another GPU (good balance if available, faster than CPU)",
+            "default": "cpu",
+            "multiselect": false,
+            "options": [
+              "none",
+              "cpu",
+              "cuda:0"
+            ]
+          }
+        ],
+        "enable_debug": [
+          "BOOLEAN",
+          {
+            "tooltip": "Enable detailed debug logging (default: False).\nShows memory usage, timing information, and processing details.\nUseful for troubleshooting errors and performance issues.",
+            "default": false
+          }
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "image",
+        "dit",
+        "vae",
+        "seed",
+        "resolution",
+        "max_resolution",
+        "batch_size",
+        "uniform_batch_size",
+        "color_correction"
+      ],
+      "optional": [
+        "temporal_overlap",
+        "prepend_frames",
+        "input_noise_scale",
+        "latent_noise_scale",
+        "offload_device",
+        "enable_debug"
+      ]
+    },
+    "output": [
+      "IMAGE"
+    ],
+    "output_is_list": [
+      false
+    ],
+    "output_name": [
+      "IMAGE"
+    ],
+    "output_tooltips": [
+      "Upscaled video frames with color correction applied. Format (RGB/RGBA) matches input. Range [0, 1] normalized for ComfyUI compatibility."
+    ],
+    "output_matchtypes": null,
+    "name": "SeedVR2VideoUpscaler",
+    "display_name": "SeedVR2 Video Upscaler (v2.5.24)",
+    "description": "SeedVR2 main upscaling node: processes video frames using DiT and VAE models with diffusion-based enhancement. Handles RGB/RGBA formats, maintains temporal consistency across frames, applies color correction, and manages VRAM through intelligent tensor offloading. \n\nRequires DiT and VAE model configurations.",
+    "python_module": "custom_nodes.seedvr2_videoupscaler",
+    "category": "SEEDVR2",
+    "output_node": false,
+    "deprecated": false,
+    "experimental": false,
+    "api_node": false
+  },
+  "SeedVR2LoadDiTModel": {
+    "input": {
+      "required": {
+        "model": [
+          "COMBO",
+          {
+            "tooltip": "DiT (Diffusion Transformer) model for video upscaling.\nModels automatically download on first use.\nAdditional models can be added to the ComfyUI models folder.",
+            "default": "seedvr2_ema_3b_fp8_e4m3fn.safetensors",
+            "multiselect": false,
+            "options": [
+              "seedvr2_ema_3b-Q4_K_M.gguf",
+              "seedvr2_ema_3b-Q8_0.gguf",
+              "seedvr2_ema_3b_fp8_e4m3fn.safetensors",
+              "seedvr2_ema_3b_fp16.safetensors",
+              "seedvr2_ema_7b-Q4_K_M.gguf",
+              "seedvr2_ema_7b_fp8_e4m3fn_mixed_block35_fp16.safetensors",
+              "seedvr2_ema_7b_fp16.safetensors",
+              "seedvr2_ema_7b_sharp-Q4_K_M.gguf",
+              "seedvr2_ema_7b_sharp_fp8_e4m3fn_mixed_block35_fp16.safetensors",
+              "seedvr2_ema_7b_sharp_fp16.safetensors"
+            ]
+          }
+        ],
+        "device": [
+          "COMBO",
+          {
+            "tooltip": "GPU device for DiT model inference (upscaling phase)",
+            "default": "cuda:0",
+            "multiselect": false,
+            "options": [
+              "cuda:0"
+            ]
+          }
+        ]
+      },
+      "optional": {
+        "blocks_to_swap": [
+          "INT",
+          {
+            "tooltip": "Number of transformer blocks to swap between devices for VRAM optimization.\n• 0: Disabled (default)\n• 3B model: 0-32 blocks\n• 7B model: 0-36 blocks\n\nRequires offload_device to be set and different from device.\nNot available on macOS (unified memory architecture).",
+            "default": 0,
+            "min": 0,
+            "max": 36,
+            "step": 1
+          }
+        ],
+        "swap_io_components": [
+          "BOOLEAN",
+          {
+            "tooltip": "Offload input/output embeddings and normalization layers to reduce VRAM.\nRequires offload_device to be set and different from device.\nNot available on macOS (unified memory architecture).",
+            "default": false
+          }
+        ],
+        "offload_device": [
+          "COMBO",
+          {
+            "tooltip": "Device to offload DiT model when not actively processing.\n• 'none': Keep model on inference device (default, fastest)\n• 'cpu': Offload to system RAM (reduces VRAM usage)\n• 'cuda:X': Offload to another GPU (good balance if available)\n\nRequired for BlockSwap (blocks_to_swap or swap_io_components).",
+            "default": "none",
+            "multiselect": false,
+            "options": [
+              "none",
+              "cpu",
+              "cuda:0"
+            ]
+          }
+        ],
+        "cache_model": [
+          "BOOLEAN",
+          {
+            "tooltip": "Keep DiT model loaded on offload_device between workflow runs.\nUseful for batch processing to avoid repeated loading.\nRequires offload_device to be set.",
+            "default": false
+          }
+        ],
+        "attention_mode": [
+          "COMBO",
+          {
+            "tooltip": "Attention computation backend:\n• sdpa: PyTorch scaled_dot_product_attention (default, stable, always available)\n• flash_attn_2: Flash Attention 2 (Ampere+, requires flash-attn package)\n• flash_attn_3: Flash Attention 3 (Hopper+, requires flash-attn with FA3 support)\n• sageattn_2: SageAttention 2 (requires sageattention package)\n• sageattn_3: SageAttention 3 (Blackwell/RTX 50xx only, requires sageattn3 package)\n\nSDPA is recommended - stable and works everywhere.\nFlash Attention and SageAttention provide speedup through optimized CUDA kernels on compatible GPUs.",
+            "default": "sdpa",
+            "multiselect": false,
+            "options": [
+              "sdpa",
+              "flash_attn_2",
+              "flash_attn_3",
+              "sageattn_2",
+              "sageattn_3"
+            ]
+          }
+        ],
+        "torch_compile_args": [
+          "TORCH_COMPILE_ARGS",
+          {
+            "tooltip": "Optional torch.compile optimization settings from SeedVR2 Torch Compile Settings node.\nProvides 20-40% speedup with compatible PyTorch 2.0+ and Triton installation."
+          }
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "model",
+        "device"
+      ],
+      "optional": [
+        "blocks_to_swap",
+        "swap_io_components",
+        "offload_device",
+        "cache_model",
+        "attention_mode",
+        "torch_compile_args"
+      ]
+    },
+    "output": [
+      "SEEDVR2_DIT"
+    ],
+    "output_is_list": [
+      false
+    ],
+    "output_name": [
+      "SEEDVR2_DIT"
+    ],
+    "output_tooltips": [
+      "DiT model configuration containing model path, device settings, BlockSwap parameters, and compilation options. Connect to Video Upscaler node."
+    ],
+    "output_matchtypes": null,
+    "name": "SeedVR2LoadDiTModel",
+    "display_name": "SeedVR2 (Down)Load DiT Model",
+    "description": "Load and configure SeedVR2 DiT (Diffusion Transformer) model for video upscaling. Supports BlockSwap memory optimization for low VRAM systems, model caching for batch processing, multi-GPU offloading, and torch.compile acceleration. \n\nConnect to Video Upscaler node.",
+    "python_module": "custom_nodes.seedvr2_videoupscaler",
+    "category": "SEEDVR2",
+    "output_node": false,
+    "deprecated": false,
+    "experimental": false,
+    "api_node": false
+  },
+  "SeedVR2LoadVAEModel": {
+    "input": {
+      "required": {
+        "model": [
+          "COMBO",
+          {
+            "tooltip": "VAE (Variational Autoencoder) model for encoding/decoding.\nModels automatically download on first use.\nAdditional models can be added to the ComfyUI models folder.",
+            "default": "ema_vae_fp16.safetensors",
+            "multiselect": false,
+            "options": [
+              "ema_vae_fp16.safetensors"
+            ]
+          }
+        ],
+        "device": [
+          "COMBO",
+          {
+            "tooltip": "GPU device for VAE model inference (encoding/decoding phases)",
+            "default": "cuda:0",
+            "multiselect": false,
+            "options": [
+              "cuda:0"
+            ]
+          }
+        ]
+      },
+      "optional": {
+        "encode_tiled": [
+          "BOOLEAN",
+          {
+            "tooltip": "Enable tiled encoding to reduce VRAM usage during the encoding phase",
+            "default": false
+          }
+        ],
+        "encode_tile_size": [
+          "INT",
+          {
+            "tooltip": "Encoding tile size in pixels (default: 1024).\nApplied to both height and width.\nLower values reduce VRAM usage but may increase processing time.\nOnly used when encode_tiled is enabled.",
+            "default": 1024,
+            "min": 64,
+            "step": 32
+          }
+        ],
+        "encode_tile_overlap": [
+          "INT",
+          {
+            "tooltip": "Pixel overlap between encoding tiles (default: 128).\nReduces visible seams between tiles through blending.\nHigher values improve quality but slow processing.\nOnly used when encode_tiled is enabled.",
+            "default": 128,
+            "min": 0,
+            "step": 32
+          }
+        ],
+        "decode_tiled": [
+          "BOOLEAN",
+          {
+            "tooltip": "Enable tiled decoding to reduce VRAM usage during the decoding phase",
+            "default": false
+          }
+        ],
+        "decode_tile_size": [
+          "INT",
+          {
+            "tooltip": "Decoding tile size in pixels (default: 1024).\nApplied to both height and width.\nLower values reduce VRAM usage but may increase processing time.\nOnly used when decode_tiled is enabled.",
+            "default": 1024,
+            "min": 64,
+            "step": 32
+          }
+        ],
+        "decode_tile_overlap": [
+          "INT",
+          {
+            "tooltip": "Pixel overlap between decoding tiles (default: 128).\nReduces visible seams between tiles through blending.\nHigher values improve quality but slow processing.\nOnly used when decode_tiled is enabled.",
+            "default": 128,
+            "min": 0,
+            "step": 32
+          }
+        ],
+        "tile_debug": [
+          "COMBO",
+          {
+            "tooltip": "Tile debug visualization mode:\n• 'false': No visualization overlay (default)\n• 'encode': Show encoding tile boundaries\n• 'decode': Show decoding tile boundaries\n\nOnly works when respective tiling is enabled.",
+            "default": "false",
+            "multiselect": false,
+            "options": [
+              "false",
+              "encode",
+              "decode"
+            ]
+          }
+        ],
+        "offload_device": [
+          "COMBO",
+          {
+            "tooltip": "Device to offload VAE model when not actively processing.\n• 'none': Keep model on inference device (default, fastest)\n• 'cpu': Offload to system RAM (reduces VRAM usage)\n• 'cuda:X': Offload to another GPU (good balance if available)",
+            "default": "none",
+            "multiselect": false,
+            "options": [
+              "none",
+              "cpu",
+              "cuda:0"
+            ]
+          }
+        ],
+        "cache_model": [
+          "BOOLEAN",
+          {
+            "tooltip": "Keep VAE model loaded on offload_device between workflow runs.\nUseful for batch processing to avoid repeated loading.\nRequires offload_device to be set.",
+            "default": false
+          }
+        ],
+        "torch_compile_args": [
+          "TORCH_COMPILE_ARGS",
+          {
+            "tooltip": "Optional torch.compile optimization settings from SeedVR2 Torch Compile Settings node.\nProvides 15-25% speedup with compatible PyTorch 2.0+ and Triton installation."
+          }
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "model",
+        "device"
+      ],
+      "optional": [
+        "encode_tiled",
+        "encode_tile_size",
+        "encode_tile_overlap",
+        "decode_tiled",
+        "decode_tile_size",
+        "decode_tile_overlap",
+        "tile_debug",
+        "offload_device",
+        "cache_model",
+        "torch_compile_args"
+      ]
+    },
+    "output": [
+      "SEEDVR2_VAE"
+    ],
+    "output_is_list": [
+      false
+    ],
+    "output_name": [
+      "SEEDVR2_VAE"
+    ],
+    "output_tooltips": [
+      "VAE model configuration containing model path, device settings, tiling parameters, and compilation options. Connect to Video Upscaler node."
+    ],
+    "output_matchtypes": null,
+    "name": "SeedVR2LoadVAEModel",
+    "display_name": "SeedVR2 (Down)Load VAE Model",
+    "description": "Load and configure SeedVR2 VAE (Variational Autoencoder) for encoding/decoding video frames to/from latent space. Supports tiled processing to handle high resolutions on limited VRAM, model caching, multi-GPU offloading, and torch.compile acceleration. \n\nConnect to Video Upscaler node.",
+    "python_module": "custom_nodes.seedvr2_videoupscaler",
+    "category": "SEEDVR2",
+    "output_node": false,
+    "deprecated": false,
+    "experimental": false,
+    "api_node": false
+  },
+  "SeedVR2TorchCompileSettings": {
+    "input": {
+      "required": {
+        "backend": [
+          "COMBO",
+          {
+            "tooltip": "Compilation backend:\n• inductor: Full optimization with Triton kernel generation and fusion (recommended)\n• cudagraphs: Lightweight wrapper using CUDA graphs, no kernel optimization",
+            "default": "inductor",
+            "multiselect": false,
+            "options": [
+              "inductor",
+              "cudagraphs"
+            ]
+          }
+        ],
+        "mode": [
+          "COMBO",
+          {
+            "tooltip": "Optimization level (compilation time vs runtime performance):\n• default: Fast compilation with good speedup (recommended for development)\n• reduce-overhead: Lower overhead, optimized for smaller models\n• max-autotune: Slowest compilation, best runtime performance (recommended for production)\n• max-autotune-no-cudagraphs: Like max-autotune but without CUDA graphs",
+            "default": "default",
+            "multiselect": false,
+            "options": [
+              "default",
+              "reduce-overhead",
+              "max-autotune",
+              "max-autotune-no-cudagraphs"
+            ]
+          }
+        ],
+        "fullgraph": [
+          "BOOLEAN",
+          {
+            "tooltip": "Compile entire model as single graph without breaks.\n• False: Allow graph breaks for better compatibility (default)\n• True: Enforce no breaks for maximum optimization (may fail with dynamic shapes)",
+            "default": false
+          }
+        ],
+        "dynamic": [
+          "BOOLEAN",
+          {
+            "tooltip": "Handle varying input shapes without recompilation.\n• False: Specialize for exact input shapes (default)\n• True: Create dynamic kernels that adapt to shape variations\n\nEnable when processing different resolutions or batch sizes.",
+            "default": false
+          }
+        ],
+        "dynamo_cache_size_limit": [
+          "INT",
+          {
+            "tooltip": "Maximum cached compiled versions per function (default: 64).\nControls how many shape variations to compile before stopping.\n\n• Increase: When processing many different input shapes (more memory usage)\n• Decrease: When recompilation cost outweighs benefits (faster fallback to eager)",
+            "default": 64,
+            "min": 0,
+            "max": 1024,
+            "step": 1
+          }
+        ],
+        "dynamo_recompile_limit": [
+          "INT",
+          {
+            "tooltip": "Maximum recompilation attempts before fallback to eager mode (default: 128).\nSafety limit to prevent infinite compilation loops.\n\nOnly increase if you see 'hit config.recompile_limit' warnings and have bounded shape variations.",
+            "default": 128,
+            "min": 0,
+            "max": 1024,
+            "step": 1
+          }
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "backend",
+        "mode",
+        "fullgraph",
+        "dynamic",
+        "dynamo_cache_size_limit",
+        "dynamo_recompile_limit"
+      ]
+    },
+    "output": [
+      "TORCH_COMPILE_ARGS"
+    ],
+    "output_is_list": [
+      false
+    ],
+    "output_name": [
+      "TORCH_COMPILE_ARGS"
+    ],
+    "output_tooltips": [
+      "torch.compile optimization settings including backend, mode, and Dynamo configuration. Connect to DiT and/or VAE model loader nodes."
+    ],
+    "output_matchtypes": null,
+    "name": "SeedVR2TorchCompileSettings",
+    "display_name": "SeedVR2 Torch Compile Settings",
+    "description": "Configure SeedVR2 torch.compile optimization for 20-40% DiT speedup and 15-25% VAE speedup. Trades longer first-run compilation time for faster inference.\n\nConnect to DiT and/or VAE model loaders. Requires PyTorch 2.0+ and Triton for inductor backend.",
+    "python_module": "custom_nodes.seedvr2_videoupscaler",
+    "category": "SEEDVR2",
+    "output_node": false,
+    "deprecated": false,
+    "experimental": false,
+    "api_node": false
   }
 }
