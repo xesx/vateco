@@ -213,6 +213,7 @@ export class WorkflowSynthService {
 
     await prisma.$transaction(async (trx: lib.PrismaLibService) => {
       await this.wfrepo.deleteWorkflowVariantTags({ workflowVariantId, trx })
+      await this.wfrepo.deleteWorkflowVariantAllUserParams({ workflowVariantId, trx })
       await this.wfrepo.deleteWorkflowVariantParams({ workflowVariantId, trx })
       await this.wfrepo.deleteWorkflowVariant({ workflowVariantId, trx })
     })
