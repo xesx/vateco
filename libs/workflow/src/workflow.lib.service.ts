@@ -81,10 +81,12 @@ export class WorkflowLibService {
         throw new Error(`WorkflowLibService_compileWorkflow_13 Parameter <<${key}>> is required`)
       }
 
-      let re = new RegExp(`{{${key}}}`, 'g')
+      const keyEscaped = key.replace(/[-/\\^$*+?.()|[\]]/g, '\\$&')
+
+      let re = new RegExp(`{{${keyEscaped}}}`, 'g')
 
       if (typeof value !== 'string') {
-        re = new RegExp(`"{{${key}}}"`, 'g')
+        re = new RegExp(`"{{${keyEscaped}}}"`, 'g')
       }
 
       templateStr = templateStr.replace(re, String(value))
