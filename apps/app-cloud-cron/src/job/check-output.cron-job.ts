@@ -171,7 +171,7 @@ export class CheckOutputCronJob {
           ['Delete', 'message:delete']
         ]])
 
-        await this.tgbotlib.sendVideo({ chatId: TG_CHAT_ID, video: buffer, extra: keyboard.reply_markup })
+        await this.tgbotlib.sendVideo({ chatId: TG_CHAT_ID, video: buffer, extra: keyboard })
       } catch (error) {
         l.error(`CheckOutputCronJob_handleCheckOutputJob_49 Error sending video ${video} to Telegram:`, this.h.herr.parseAxiosError(error))
         continue
