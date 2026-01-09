@@ -131,6 +131,28 @@ export class TgBotLibService {
     }
   }
 
+  async sendVideo ({ ctx, chatId, video, caption, extra = {} }: { ctx?: any, chatId?: string, video: string | Buffer, caption?: string, extra?: any }): Promise<void> {
+    extra = { parse_mode: 'HTML', caption, ...extra }
+
+    // @ts-expect-error todo
+    let videoForSend: InputFile = video
+
+    if (typeof video !== 'string') {
+      videoForSend = {
+        source: video,
+        filename: 'video',
+      }
+    }
+
+    if (ctx) {
+      await ctx.sendVideo(videoForSend, extra)
+    } else if (chatId) {
+      await this.bot.telegram.sendVideo(chatId, videoForSend, extra)
+    } else {
+      throw new Error('Either ctx or chatId must be provided')
+    }
+  }
+
   async sendMediaGroup (chatId, media) {
     return await this.bot.telegram.sendMediaGroup(chatId, media)
   }

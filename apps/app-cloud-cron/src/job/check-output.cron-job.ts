@@ -37,7 +37,10 @@ export class CheckOutputCronJob {
     const txts = fs.readdirSync(OUTPUT_DIR)
       .filter(file => /\.txt$/i.test(file))
 
-    if (images.length === 0 && txts.length === 0) {
+    const videos = fs.readdirSync(OUTPUT_DIR)
+      .filter(file => /\.(mp4|mov|avi|mkv)$/i.test(file))
+
+    if (images.length === 0 && txts.length === 0 && videos.length === 0) {
       return
     }
 
@@ -136,6 +139,47 @@ export class CheckOutputCronJob {
       fs.renameSync(imagePath, archivedImagePath)
 
       l.log(`CheckOutputCronJob_handleCheckOutputJob_99 archive image after sending: ${image}`)
+    }
+
+    for (const video of videos) {
+      const videoPath = join(OUTPUT_DIR, video)
+
+      const isStable = await this.waitForFileStable(videoPath, 500, 10)
+
+      if (!isStable) {
+        l.log(`CheckOutputCronJob_handleCheckOutputJob_59 File is not stable, skipping: ${video}`)
+        continue
+      }
+
+      const stats = fs.statSync(videoPath)
+      const fileSizeInBytes = stats.size
+
+      l.log(`CheckOutputCronJob_handleCheckOutputJob_60 Found video: ${video}, size: ${fileSizeInBytes} bytes`)
+
+      if (fileSizeInBytes === 0) {
+        fs.unlinkSync(videoPath)
+        l.warn(`CheckOutputCronJob_handleCheckOutputJob_67 Deleted zero-size video: ${video}`)
+        continue
+      }
+
+      const buffer = fs.readFileSync(videoPath)
+
+      l.log(`CheckOutputCronJob_handleCheckOutputJob_72 Sending video ${video} to Telegram chat ${TG_CHAT_ID}`)
+      try {
+        const keyboard = this.tgbotlib.generateInlineKeyboard([[
+          ['Use it', 'video-use:wfv-list'],
+          ['Delete', 'message:delete']
+        ]])
+
+        await this.tgbotlib.sendVideo({ chatId: TG_CHAT_ID, video: buffer, extra: keyboard.reply_markup })
+      } catch (error) {
+        l.error(`CheckOutputCronJob_handleCheckOutputJob_49 Error sending video ${video} to Telegram:`, this.h.herr.parseAxiosError(error))
+        continue
+      }
+      const archivedVideoPath = join(archivePath, video)
+      fs.renameSync(videoPath, archivedVideoPath)
+
+      l.log(`CheckOutputCronJob_handleCheckOutputJob_99 archive video after sending: ${video}`)
     }
   }
 
