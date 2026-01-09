@@ -1,4 +1,7 @@
 {
+  "LoadFramePackModel:model": {
+    "isComfyUiModel": true
+  },
   "CheckpointLoaderSimple:ckpt_name": {
     "label": "Model",
     "type": "string",
