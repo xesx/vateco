@@ -70,7 +70,7 @@ export class CheckOutputCronJob {
 
       try {
         const keyboard = this.tgbotlib.generateInlineKeyboard([[
-          ['Use it', 'text:use-as-input'],
+          ['Use it', 'txt-use:wfv-list'],
           ['Delete', 'message:delete']
         ]])
 

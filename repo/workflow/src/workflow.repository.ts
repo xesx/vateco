@@ -267,6 +267,19 @@ export class WorkflowRepository {
     return workflowVariants
   }
 
+  async findWorkflowVariantsByLabel ({ label }: { label: string }) {
+    const workflowVariants = await this.prisma.$queryRaw<WorkflowVariants[]>`
+      SELECT DISTINCT wv.*
+        FROM workflow_variant_params AS wfvp
+       INNER JOIN workflow_variants AS wv
+               ON wv.id = wfvp.workflow_variant_id
+       WHERE 1=1
+         AND wfvp.label = ${label}
+    `
+
+    return workflowVariants
+  }
+
   async findWorkflowVariantUserParam ({ userId, workflowVariantId, paramName }: { userId: number, workflowVariantId: number | string, paramName: string }) {
     workflowVariantId = Number(workflowVariantId)
 

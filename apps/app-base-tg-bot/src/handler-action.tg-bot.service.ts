@@ -19,7 +19,7 @@ export class HandlerActionTgBotService {
     private readonly wflib: lib.WorkflowLibService,
     private readonly cloudapilib: lib.CloudApiCallLibService,
     private readonly vastlib: lib.VastLibService,
-    // private readonly msglib: lib.MessageLibService,
+    private readonly msglib: lib.MessageLibService,
 
     private readonly wfsynth: synth.WorkflowSynthService,
     private readonly offersynth: synth.OfferSynthService,
@@ -60,6 +60,10 @@ export class HandlerActionTgBotService {
     this.bot.action('img-use:start', (ctx) => this.imageUseStart(ctx))
     this.bot.action(/^img-use:wfv:([0-9]+)$/, (ctx) => this.imageUseInWfv(ctx))
     this.bot.action(/^img-use:wfvp:([0-9]+)$/, (ctx) => this.imageUseInWfvParam(ctx))
+
+    this.bot.action('txt-use:wfv-list', (ctx) => this.textUseWfvList(ctx))
+    this.bot.action('txt-use:start', (ctx) => this.textUseStart(ctx))
+    this.bot.action(/^txt-use:wfv:([0-9]+)$/, (ctx) => this.textUseInWfv(ctx))
 
     this.bot.action('message:delete', (ctx) => this.messageDelete(ctx))
   }
@@ -491,6 +495,77 @@ export class HandlerActionTgBotService {
 
   async wfvRun (ctx) {
     await this.tgbotsrv.runWfv(ctx)
+  }
+
+  async textUseStart (ctx) {
+    const originalMessageText = ctx.update.callback_query.message.text.replace(/^\\n/, '')
+    const message = this.msglib.genMessageForCopy(originalMessageText)
+
+    const keyboard = this.tgbotlib.generateInlineKeyboard([[
+      [`Use it`, 'txt-use:wfv-list'],
+      ['Delete', 'message:delete']
+    ]])
+
+    await ctx.editMessageText(message, { parse_mode: 'HTML', ...keyboard })
+    await this.tgbotlib.safeAnswerCallback(ctx)
+  }
+
+  async textUseWfvList (ctx) {
+    const { workflowVariantId } = ctx.session
+
+    const originalMessageText = ctx.update.callback_query.message.text.replace(/^\\n/, '')
+    const workflowVariants = await this.wfrepo.findWorkflowVariantsByLabel({ label: 'prompt' })
+
+    if (workflowVariants.length === 0) {
+      await this.tgbotlib.safeAnswerCallback(ctx)
+      return
+    }
+
+    const currentWorkflowVariant = workflowVariants.find(wfv => wfv.id === Number(workflowVariantId))
+    const otherWorkflowVariants = workflowVariants.filter(wfv => wfv.id !== Number(workflowVariantId))
+
+    const kbRaw: [string, string][][] = []
+
+    if (currentWorkflowVariant) {
+      kbRaw.push([['-->Current workflow<--', `txt-use:wfv:${workflowVariantId}`]] as [string, string][])
+    }
+
+    for (const wfv of otherWorkflowVariants) {
+      kbRaw.push([[wfv.name, `txt-use:wfv:${wfv.id}`]])
+    }
+
+    kbRaw.push([['Back', 'txt-use:start'], ['Delete', 'message:delete']])
+
+    const keyboard = this.tgbotlib.generateInlineKeyboard(kbRaw)
+
+    const message = this.msglib.genMessageForCopy(originalMessageText)
+    await ctx.editMessageText(message, { parse_mode: 'HTML', ...keyboard })
+  }
+
+  async textUseInWfv (ctx) {
+    const [,workflowVariantId] = ctx.match
+    const { telegramId, userId } = ctx.session
+
+    const promptParam = await this.wfrepo.getWorkflowVariantParamByLabel({
+      workflowVariantId,
+      label: 'prompt',
+    })
+
+    const originalMessageText = ctx.update.callback_query.message.text.replace(/^\\n/, '')
+
+    await this.wfsynth.param.setWfvUserParamValue({ userId, wfvParamId: promptParam.id, value: originalMessageText })
+
+    const message = this.msglib.genMessageForCopy(originalMessageText)
+
+    const keyboard = this.tgbotlib.generateInlineKeyboard([[
+      [`Use it`, 'txt-use:wfv-list'],
+      ['Delete', 'message:delete']
+    ]])
+
+    await ctx.editMessageText(message, { parse_mode: 'HTML', ...keyboard })
+
+    await this.tgbotsrv.selectWfv({ ctx, workflowVariantId })
+    await this.wfsynth.view.showWfvRunMenu({ chatId: telegramId, userId, workflowVariantId, prefixAction: '', backAction: 'wfv:list' })
   }
 
   async imageUseStart (ctx) {
