@@ -29,6 +29,7 @@ export class TestCli {
     private readonly civitailib: lib.CivitaiLibService,
     private readonly modelrepo: repo.ModelRepository,
     private readonly openailib: lib.OpenaiLibService,
+    private readonly runpodlib: lib.RunpodLibService,
 
     private readonly wfsynth: synth.WorkflowSynthService,
     private readonly appcloudsynth: synth.CloudAppSynthService,
@@ -41,10 +42,14 @@ export class TestCli {
       .action(async (name) => {
         console.log(`Привет, ${name}!`)
 
-        const response = await this.openailib.improveImagePrompt({
-          prompt: 'A beautiful landscape with mountains and a river',
-          modelHint: 'flux',
-        })
+        // const response = await this.openailib.improveImagePrompt({
+        //   prompt: 'A beautiful landscape with mountains and a river',
+        //   modelHint: 'flux',
+        // })
+
+        // const response = await this.runpodlib.listTemplates()
+        // const response = await this.runpodlib.createPod()
+        const response = await this.runpodlib.getPod('s8pt6ajb3736nd')
 
         console.log('\x1b[36m', 'response', response, '\x1b[0m')
         // const info = await this.civitailib.importModelData({ modelId: '2165923' })
