@@ -11,6 +11,14 @@ async function bootstrap() {
   const config = app.get(ConfigService)
   const port = config.get<number>('ADMIN_PORT')
 
+  // Включаем CORS
+  app.enableCors({
+    origin: ['http://localhost:3000', 'http://localhost:3001'], // Frontend origins
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    credentials: true,
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  })
+
   assert(port, 'app_admin_main_bootstrap_43 "port" is undefined')
 
   await app.listen(port)

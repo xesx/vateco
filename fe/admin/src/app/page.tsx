@@ -34,15 +34,29 @@ export default function Home() {
       <div className="container mx-auto py-10 px-4">
         <div className="mb-8">
           <h1 className="text-4xl font-bold tracking-tight mb-2">
-            Добро пожаловать в Vateco App
+            Admin app main page
           </h1>
           <p className="text-muted-foreground">
-            Пример приложения на Next.js + shadcn/ui + React Query
+            Welcome!
           </p>
         </div>
 
         {/* Навигационные карточки */}
         <div className="grid gap-4 md:grid-cols-3 mb-8">
+          <Card className="hover:shadow-lg transition-shadow">
+            <CardHeader>
+              <CardTitle>Workflow Templates</CardTitle>
+              <CardDescription>
+                Управление шаблонами workflow
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Link href="/workflow-templates">
+                <Button className="w-full">Перейти →</Button>
+              </Link>
+            </CardContent>
+          </Card>
+
           <Card className="hover:shadow-lg transition-shadow">
             <CardHeader>
               <CardTitle>Workflows</CardTitle>
@@ -70,7 +84,9 @@ export default function Home() {
               </Link>
             </CardContent>
           </Card>
+        </div>
 
+        <div className="grid gap-4 md:grid-cols-3 mb-8">
           <Card className="hover:shadow-lg transition-shadow">
             <CardHeader>
               <CardTitle>Статистика</CardTitle>

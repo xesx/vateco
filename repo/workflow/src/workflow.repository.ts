@@ -1,7 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common'
 import { Prisma } from '@prisma/client'
 
-
 import * as lib from '@lib'
 
 import type { WorkflowVariants, WorkflowVariantParams } from '@prisma/client'
@@ -49,6 +48,29 @@ export class WorkflowRepository {
       data: {
         schema,
       },
+    })
+  }
+
+  async updateWorkflowTemplate ({ id, name, description, trx = this.prisma }: { id: number, name?: string, description?: string, trx?: lib.PrismaLibService }) {
+    const data: any = {}
+
+    if (name !== undefined) {
+      name = name?.trim().replace(/\s+/g, '').toLowerCase()
+
+      if (!name || name.length > 100) {
+        throw new Error('updateWorkflowTemplate Name is too long, max 100 characters')
+      }
+
+      data.name = name
+    }
+
+    if (description !== undefined) {
+      data.description = description?.trim() || ''
+    }
+
+    await trx.workflowTemplates.update({
+      where: { id },
+      data,
     })
   }
 
@@ -182,6 +204,18 @@ export class WorkflowRepository {
     }
 
     return result
+  }
+
+  async getAllWorkflowTemplates () {
+    return await this.prisma.workflowTemplates.findMany({
+      orderBy: { createdAt: 'desc' },
+    })
+  }
+
+  async deleteWorkflowTemplate ({ id, trx = this.prisma }: { id: number, trx?: lib.PrismaLibService }) {
+    await trx.workflowTemplates.delete({
+      where: { id },
+    })
   }
 
   async getWorkflowVariantParams (workflowVariantId: number | string) {

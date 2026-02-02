@@ -2,8 +2,10 @@ import { Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
 
 import * as lib from '@lib'
+import * as repo from '@repo'
 
 import { AppAdminController } from './app-admin.controller'
+import { WorkflowTemplateController } from './workflow-template.controller'
 
 @Module({
   imports: [
@@ -15,8 +17,10 @@ import { AppAdminController } from './app-admin.controller'
     lib.VastLibModule,
     lib.TgBotLibModule,
     lib.WorkflowLibModule,
+    lib.PrismaLibModule,
+    repo.WorkflowRepositoryModule,
   ],
-  controllers: [AppAdminController],
+  controllers: [AppAdminController, WorkflowTemplateController],
   providers: [],
 })
 export class AppAdminModule {}
