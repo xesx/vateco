@@ -15,6 +15,14 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
+import {
   useWorkflowTemplates,
   useCreateWorkflowTemplate,
   useDeleteWorkflowTemplate,
@@ -195,16 +203,34 @@ export default function WorkflowTemplatesPage() {
         </div>
 
         {isLoading && (
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {[1, 2, 3].map((i) => (
-              <Card key={i}>
-                <CardHeader>
-                  <div className="h-6 bg-muted rounded animate-pulse mb-2" />
-                  <div className="h-4 bg-muted rounded animate-pulse w-2/3" />
-                </CardHeader>
-              </Card>
-            ))}
-          </div>
+          <Card>
+            <CardContent className="p-0">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="w-[60px]">ID</TableHead>
+                    <TableHead>Название</TableHead>
+                    <TableHead>Описание</TableHead>
+                    <TableHead className="w-[120px]">Создан</TableHead>
+                    <TableHead className="w-[120px]">Обновлён</TableHead>
+                    <TableHead className="w-[180px] text-right">Действия</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {[1, 2, 3].map((i) => (
+                    <TableRow key={i}>
+                      <TableCell><div className="h-4 bg-muted rounded animate-pulse w-8" /></TableCell>
+                      <TableCell><div className="h-4 bg-muted rounded animate-pulse w-32" /></TableCell>
+                      <TableCell><div className="h-4 bg-muted rounded animate-pulse w-48" /></TableCell>
+                      <TableCell><div className="h-4 bg-muted rounded animate-pulse w-20" /></TableCell>
+                      <TableCell><div className="h-4 bg-muted rounded animate-pulse w-20" /></TableCell>
+                      <TableCell><div className="h-8 bg-muted rounded animate-pulse w-32 ml-auto" /></TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
         )}
 
         {error && (
@@ -232,51 +258,62 @@ export default function WorkflowTemplatesPage() {
         )}
 
         {templates && templates.length > 0 && (
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {templates.map((template) => (
-              <Card key={template.id} className="hover:shadow-lg transition-shadow">
-                <CardHeader>
-                  <CardTitle className="flex items-start justify-between">
-                    <span className="break-all">{template.name}</span>
-                    <span className="text-xs text-muted-foreground ml-2 shrink-0">
-                      #{template.id}
-                    </span>
-                  </CardTitle>
-                  <CardDescription className="min-h-[2.5rem]">
-                    {template.description || 'Нет описания'}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-xs text-muted-foreground mb-4">
-                    <div>Создан: {new Date(template.createdAt).toLocaleDateString('ru-RU')}</div>
-                    <div>Обновлён: {new Date(template.updatedAt).toLocaleDateString('ru-RU')}</div>
-                  </div>
-                  <div className="flex gap-2">
-                    <Link href={`/workflow-templates/${template.id}`} className="flex-1">
-                      <Button variant="outline" size="sm" className="w-full">
-                        <Eye className="mr-2 h-4 w-4" />
-                        Просмотр
-                      </Button>
-                    </Link>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => openEditDialog(template)}
-                    >
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="destructive"
-                      size="sm"
-                      onClick={() => openDeleteDialog(template.id)}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+          <Card>
+            <CardContent className="p-0">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="w-[60px]">ID</TableHead>
+                    <TableHead>Название</TableHead>
+                    <TableHead>Описание</TableHead>
+                    <TableHead className="w-[120px]">Создан</TableHead>
+                    <TableHead className="w-[120px]">Обновлён</TableHead>
+                    <TableHead className="w-[180px] text-right">Действия</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {templates.map((template) => (
+                    <TableRow key={template.id}>
+                      <TableCell className="font-medium">#{template.id}</TableCell>
+                      <TableCell className="font-medium">{template.name}</TableCell>
+                      <TableCell className="text-muted-foreground">
+                        {template.description || 'Нет описания'}
+                      </TableCell>
+                      <TableCell className="text-sm text-muted-foreground">
+                        {new Date(template.createdAt).toLocaleDateString('ru-RU')}
+                      </TableCell>
+                      <TableCell className="text-sm text-muted-foreground">
+                        {new Date(template.updatedAt).toLocaleDateString('ru-RU')}
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex gap-2 justify-end">
+                          <Link href={`/workflow-templates/${template.id}`}>
+                            <Button variant="outline" size="sm">
+                              <Eye className="h-4 w-4" />
+                            </Button>
+                          </Link>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => openEditDialog(template)}
+                          >
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="destructive"
+                            size="sm"
+                            onClick={() => openDeleteDialog(template.id)}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
         )}
 
         <div className="mt-8">
