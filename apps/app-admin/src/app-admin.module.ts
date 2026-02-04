@@ -6,6 +6,9 @@ import * as repo from '@repo'
 
 import { AppAdminController } from './app-admin.controller'
 import { WorkflowTemplateController } from './workflow-template.controller'
+import { WorkflowVariantController } from './workflow-variant.controller'
+import { WorkflowVariantParamsController } from './workflow-variant-params.controller'
+import { WorkflowVariantTagsController } from './workflow-variant-tags.controller'
 
 @Module({
   imports: [
@@ -20,7 +23,13 @@ import { WorkflowTemplateController } from './workflow-template.controller'
     lib.PrismaLibModule,
     repo.WorkflowRepositoryModule,
   ],
-  controllers: [AppAdminController, WorkflowTemplateController],
+  controllers: [
+    AppAdminController,
+    WorkflowTemplateController,
+    WorkflowVariantController,
+    WorkflowVariantParamsController,
+    WorkflowVariantTagsController,
+  ],
   providers: [],
 })
 export class AppAdminModule {}

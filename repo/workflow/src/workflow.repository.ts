@@ -166,6 +166,19 @@ export class WorkflowRepository {
     })
   }
 
+  async getWorkflowVariantTags(workflowVariantId: number) {
+    return await this.prisma.workflowVariantTags.findMany({
+      where: { workflowVariantId },
+      orderBy: { tag: 'asc' },
+    })
+  }
+
+  async deleteWorkflowVariantTag({ workflowVariantId, tag, trx = this.prisma }: { workflowVariantId: number, tag: string, trx?: lib.PrismaLibService }) {
+    await trx.workflowVariantTags.deleteMany({
+      where: { workflowVariantId, tag },
+    })
+  }
+
   async findWorkflowVariantsByAllTags (tags: string[]) {
     const workflows = await this.prisma.$queryRaw<WorkflowVariants[]>`
       SELECT wv.*
@@ -433,6 +446,66 @@ export class WorkflowRepository {
       },
       create: { userId, workflowVariantId, paramName, value },
       update: { value },
+    })
+  }
+
+  /**
+   * Получить список вариантов workflow (можно фильтровать по workflowTemplateId)
+   */
+  async listWorkflowVariants(workflowTemplateId?: number) {
+    if (workflowTemplateId) {
+      return this.prisma.workflowVariants.findMany({
+        where: { workflowTemplateId },
+        orderBy: { id: 'asc' },
+      })
+    }
+    return this.prisma.workflowVariants.findMany({
+      orderBy: { id: 'asc' },
+    })
+  }
+
+  /**
+   * Обновить name и/или description для workflowVariant по id
+   */
+  async updateWorkflowVariant({ id, name, description }: { id: number, name?: string, description?: string }): Promise<WorkflowVariants> {
+    const data: Partial<WorkflowVariants> = {}
+    if (name !== undefined) {
+      data.name = name.trim()
+    }
+    if (description !== undefined) {
+      data.description = description.trim()
+    }
+    if (!Object.keys(data).length) {
+      throw new Error('updateWorkflowVariant: Необходимо указать хотя бы одно поле для обновления')
+    }
+    return this.prisma.workflowVariants.update({
+      where: { id },
+      data,
+    })
+  }
+
+  async updateWorkflowVariantParam({ workflowVariantParamId, name, user, value, label, enum: enumValue, positionX, positionY, trx = this.prisma }: {
+    workflowVariantParamId: number,
+    name?: string,
+    user?: string,
+    value?: unknown,
+    label?: string,
+    enum?: unknown,
+    positionX?: number,
+    positionY?: number,
+    trx?: lib.PrismaLibService
+  }) {
+    const data: Record<string, unknown> = {}
+    if (name !== undefined) data.paramName = name
+    if (user !== undefined) data.user = user
+    if (value !== undefined) data.value = value
+    if (label !== undefined) data.label = label
+    if (enumValue !== undefined) data.enum = enumValue
+    if (positionX !== undefined) data.positionX = positionX
+    if (positionY !== undefined) data.positionY = positionY
+    await trx.workflowVariantParams.update({
+      where: { id: workflowVariantParamId },
+      data,
     })
   }
 }
