@@ -3,6 +3,7 @@ import { ConfigModule } from '@nestjs/config'
 
 import * as lib from '@lib'
 import * as repo from '@repo'
+import * as synth from '@synth'
 
 import { AppAdminController } from './app-admin.controller'
 import { WorkflowTemplateController } from './workflow-template.controller'
@@ -21,7 +22,10 @@ import { WorkflowVariantTagsController } from './workflow-variant-tags.controlle
     lib.TgBotLibModule,
     lib.WorkflowLibModule,
     lib.PrismaLibModule,
+
     repo.WorkflowRepositoryModule,
+
+    synth.WorkflowSynthModule,
   ],
   controllers: [
     AppAdminController,

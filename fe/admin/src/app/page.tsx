@@ -89,20 +89,33 @@ export default function Home() {
         <div className="grid gap-4 md:grid-cols-3 mb-8">
           <Card className="hover:shadow-lg transition-shadow">
             <CardHeader>
-              <CardTitle>Статистика</CardTitle>
+              <CardTitle>Workflow Variants</CardTitle>
               <CardDescription>
-                Общая информация
+                Управление вариантами workflow
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <Button className="w-full" variant="outline" disabled>
-                Скоро
-              </Button>
+              <Link href="/workflow-variants">
+                <Button className="w-full">Перейти →</Button>
+              </Link>
+            </CardContent>
+          </Card>
+          <Card className="hover:shadow-lg transition-shadow">
+            <CardHeader>
+              <CardTitle>Workflow Params</CardTitle>
+              <CardDescription>
+                Управление параметрами workflow variant
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Link href="/workflow-params">
+                <Button className="w-full">Перейти →</Button>
+              </Link>
             </CardContent>
           </Card>
         </div>
 
-        <div className="grid gap-6 md:grid-cols-2">
+        <div className="grid gap-6 md:grid-cols-2 mb-8">
           <Card>
             <CardHeader>
               <CardTitle>Создать пользователя</CardTitle>
@@ -219,4 +232,3 @@ export default function Home() {
     </div>
   )
 }
-
