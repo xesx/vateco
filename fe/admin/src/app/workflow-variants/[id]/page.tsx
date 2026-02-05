@@ -8,6 +8,7 @@ import { useWorkflowVariantTags, useAddWorkflowVariantTag, useDeleteWorkflowVari
 import { Trash2 } from 'lucide-react'
 import { useWorkflowVariantParams } from '@/hooks/use-workflow-variant-params'
 import { useAllTags } from '@/hooks/use-all-tags'
+import { useUpdateWorkflowVariantParam } from '@/hooks/use-update-workflow-variant-param'
 
 export default function WorkflowVariantPage() {
   const router = useRouter()
@@ -21,7 +22,38 @@ export default function WorkflowVariantPage() {
   const addTag = useAddWorkflowVariantTag()
   const deleteTag = useDeleteWorkflowVariantTag()
   const { data: workflowParams, isLoading: paramsLoading } = useWorkflowVariantParams(id)
+  const updateWorkflowVariantParam = useUpdateWorkflowVariantParam()
   const { data: allTags } = useAllTags()
+
+  // Сортировка параметров
+  const [sortField, setSortField] = useState<keyof typeof workflowParams[0] | null>(null)
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc')
+
+  const sortedParams = workflowParams && sortField
+    ? [...workflowParams].sort((a, b) => {
+        const aValue = a[sortField]
+        const bValue = b[sortField]
+        if (aValue == null && bValue == null) return 0
+        if (aValue == null) return sortOrder === 'asc' ? -1 : 1
+        if (bValue == null) return sortOrder === 'asc' ? 1 : -1
+        if (typeof aValue === 'number' && typeof bValue === 'number') {
+          return sortOrder === 'asc' ? aValue - bValue : bValue - aValue
+        }
+        return sortOrder === 'asc'
+          ? String(aValue).localeCompare(String(bValue))
+          : String(bValue).localeCompare(String(aValue))
+      })
+    : workflowParams
+
+  const handleSort = (field: keyof typeof workflowParams[0]) => {
+    if (sortField === field) {
+      setSortOrder(order => (order === 'asc' ? 'desc' : 'asc'))
+    } else {
+      setSortField(field)
+      setSortOrder('asc')
+    }
+  }
+
   const [newTag, setNewTag] = useState('')
 
   // Inline edit states
@@ -134,7 +166,7 @@ export default function WorkflowVariantPage() {
   if (!variant) return <div className="py-8 text-center">Вариант не найден</div>
 
   return (
-    <div className="flex flex-col gap-6" style={{ maxWidth: '1200px', paddingLeft: '50px' }}>
+    <div className="flex flex-col gap-6 w-screen px-5">
       <div className="mb-6 flex items-center gap-2">
         <button
           type="button"
@@ -291,34 +323,70 @@ export default function WorkflowVariantPage() {
         <div className="mb-2 text-muted-foreground">Обновлён: {variant.updatedAt ? new Date(variant.updatedAt).toLocaleString() : "-"}</div>
       </div>
       {/* Таблица параметров варианта */}
-      <div className="mb-8">
+      <div className="mb-8 overflow-x-auto">
         <div className="font-semibold mb-2">Параметры:</div>
         {paramsLoading ? (
           <div className="text-muted-foreground">Загрузка...</div>
         ) : (
-          workflowParams && workflowParams.length > 0 ? (
-            <table className="w-full border rounded">
+          sortedParams && sortedParams.length > 0 ? (
+            <table className="w-full min-w-[900px] border rounded">
               <thead>
                 <tr className="bg-muted">
-                  <th className="p-2 text-left">ID</th>
-                  <th className="p-2 text-left">Имя</th>
-                  <th className="p-2 text-left">Метка</th>
-                  <th className="p-2 text-left">Значение</th>
-                  <th className="p-2 text-left">Пользовательский</th>
-                  <th className="p-2 text-left">Enum</th>
-                  <th className="p-2 text-left">Позиция</th>
+                  <th className="p-2 text-left cursor-pointer" onClick={() => handleSort('id')}>
+                    ID {sortField === 'id' && (sortOrder === 'asc' ? '↑' : '↓')}
+                  </th>
+                  <th className="p-2 text-left cursor-pointer" onClick={() => handleSort('paramName')}>
+                    Имя {sortField === 'paramName' && (sortOrder === 'asc' ? '↑' : '↓')}
+                  </th>
+                  <th className="p-2 text-left cursor-pointer" onClick={() => handleSort('label')}>
+                    Метка {sortField === 'label' && (sortOrder === 'asc' ? '↑' : '↓')}
+                  </th>
+                  <th className="p-2 text-left cursor-pointer" onClick={() => handleSort('value')}>
+                    Значение {sortField === 'value' && (sortOrder === 'asc' ? '↑' : '↓')}
+                  </th>
+                  <th className="p-2 text-left cursor-pointer" onClick={() => handleSort('user')}>
+                    User {sortField === 'user' && (sortOrder === 'asc' ? '↑' : '↓')}
+                  </th>
+                  <th className="p-2 text-left cursor-pointer" onClick={() => handleSort('enum')}>
+                    Enum {sortField === 'enum' && (sortOrder === 'asc' ? '↑' : '↓')}
+                  </th>
+                  <th className="p-2 text-left cursor-pointer" onClick={() => handleSort('positionX')}>
+                    Позиция X {sortField === 'positionX' && (sortOrder === 'asc' ? '↑' : '↓')}
+                  </th>
+                  <th className="p-2 text-left cursor-pointer" onClick={() => handleSort('positionY')}>
+                    Позиция Y {sortField === 'positionY' && (sortOrder === 'asc' ? '↑' : '↓')}
+                  </th>
                 </tr>
               </thead>
               <tbody>
-                {workflowParams.map(param => (
-                  <tr key={param.id} className="border-t">
+                {sortedParams.map(param => (
+                  <tr
+                    key={param.id}
+                    className={
+                      `border-t${param.user === false ? ' bg-[#de8983] text-white' : ''}`
+                    }
+                  >
                     <td className="p-2">{param.id}</td>
                     <td className="p-2">{param.paramName}</td>
                     <td className="p-2">{param.label}</td>
                     <td className="p-2">{String(param.value)}</td>
-                    <td className="p-2">{param.user ? 'Да' : 'Нет'}</td>
+                    <td className="p-2">
+                      <input
+                        type="checkbox"
+                        checked={!!param.user}
+                        onChange={e => {
+                          updateWorkflowVariantParam.mutate({
+                            workflowVariantParamId: param.id,
+                            user: !param.user,
+                            workflowVariantId: id!
+                          })
+                        }}
+                        aria-label="Переключить пользовательский параметр"
+                      />
+                    </td>
                     <td className="p-2">{param.enum ? JSON.stringify(param.enum) : '-'}</td>
-                    <td className="p-2">[{param.positionX}, {param.positionY}]</td>
+                    <td className="p-2">{param.positionX}</td>
+                    <td className="p-2">{param.positionY}</td>
                   </tr>
                 ))}
               </tbody>
