@@ -10,6 +10,7 @@ import { WorkflowTemplateController } from './workflow-template.controller'
 import { WorkflowVariantController } from './workflow-variant.controller'
 import { WorkflowVariantParamsController } from './workflow-variant-params.controller'
 import { WorkflowVariantTagsController } from './workflow-variant-tags.controller'
+import { TagController } from './tag.controller'
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { WorkflowVariantTagsController } from './workflow-variant-tags.controlle
     lib.PrismaLibModule,
 
     repo.WorkflowRepositoryModule,
+    repo.TagRepositoryModule,
 
     synth.WorkflowSynthModule,
   ],
@@ -33,6 +35,7 @@ import { WorkflowVariantTagsController } from './workflow-variant-tags.controlle
     WorkflowVariantController,
     WorkflowVariantParamsController,
     WorkflowVariantTagsController,
+    TagController,
   ],
   providers: [],
 })

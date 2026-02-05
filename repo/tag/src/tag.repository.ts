@@ -36,4 +36,17 @@ export class TagRepository {
 
     return tag
   }
+
+  async getAllTags({ trx = this.prisma }: { trx?: lib.PrismaLibService } = {}): Promise<string[]> {
+    const tags = await trx.tags.findMany({ select: { name: true } })
+    return tags.map(tag => tag.name)
+  }
+
+  async createTag({ name, trx = this.prisma }: { name: string, trx?: lib.PrismaLibService }): Promise<Tags> {
+    return await trx.tags.create({ data: { name } })
+  }
+
+  async deleteTag({ name, trx = this.prisma }: { name: string, trx?: lib.PrismaLibService }): Promise<Tags> {
+    return await trx.tags.delete({ where: { name } })
+  }
 }

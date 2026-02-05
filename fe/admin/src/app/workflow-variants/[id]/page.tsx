@@ -2,11 +2,12 @@
 
 import { useRouter, useParams } from "next/navigation"
 import { useWorkflowVariant, useUpdateWorkflowVariant, useDeleteWorkflowVariant } from "@/hooks/use-workflow-variant"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { ArrowLeft } from 'lucide-react'
 import { useWorkflowVariantTags, useAddWorkflowVariantTag, useDeleteWorkflowVariantTag } from '@/hooks/use-workflow-variant-tags'
 import { Trash2 } from 'lucide-react'
 import { useWorkflowVariantParams } from '@/hooks/use-workflow-variant-params'
+import { useAllTags } from '@/hooks/use-all-tags'
 
 export default function WorkflowVariantPage() {
   const router = useRouter()
@@ -20,29 +21,111 @@ export default function WorkflowVariantPage() {
   const addTag = useAddWorkflowVariantTag()
   const deleteTag = useDeleteWorkflowVariantTag()
   const { data: workflowParams, isLoading: paramsLoading } = useWorkflowVariantParams(id)
-  const [form, setForm] = useState({ name: "", description: "" })
-  const [editMode, setEditMode] = useState(false)
+  const { data: allTags } = useAllTags()
   const [newTag, setNewTag] = useState('')
 
-  // Заполнить форму при загрузке варианта
+  // Inline edit states
+  const [editName, setEditName] = useState(false)
+  const [editDescription, setEditDescription] = useState(false)
+  const [nameValue, setNameValue] = useState('')
+  const [descriptionValue, setDescriptionValue] = useState('')
+  const nameInputRef = useRef<HTMLInputElement>(null)
+  const descInputRef = useRef<HTMLInputElement>(null)
+  const inputRef = useRef<HTMLInputElement>(null)
+
+  const [suggestions, setSuggestions] = useState<string[]>([])
+  const [showSuggestions, setShowSuggestions] = useState(false)
+  const [highlightedIndex, setHighlightedIndex] = useState(-1)
+
   useEffect(() => {
     if (variant) {
-      setForm({ name: variant.name, description: variant.description ?? "" })
+      if (nameValue !== variant.name) setNameValue(variant.name)
+      if (descriptionValue !== (variant.description ?? "")) setDescriptionValue(variant.description ?? "")
     }
-  }, [variant])
+  }, [variant, nameValue, descriptionValue])
 
-  const handleUpdate = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!id) return
-    await updateVariant.mutateAsync({ workflowVariantId: id, ...form })
-    setEditMode(false)
+  useEffect(() => {
+    if (editName && nameInputRef.current) {
+      nameInputRef.current.focus()
+    }
+  }, [editName])
+  useEffect(() => {
+    if (editDescription && descInputRef.current) {
+      descInputRef.current.focus()
+    }
+  }, [editDescription])
+
+  useEffect(() => {
+    if (!allTags) {
+      setSuggestions([])
+      setShowSuggestions(false)
+      setHighlightedIndex(-1)
+      return
+    }
+    let filtered: string[]
+    if (!newTag.trim()) {
+      filtered = allTags.filter(t => !(tags?.some(tag => tag.tag === t)))
+    } else {
+      filtered = allTags.filter(
+        t => t.toLowerCase().includes(newTag.trim().toLowerCase()) && !(tags?.some(tag => tag.tag === t))
+      )
+    }
+    setSuggestions(filtered)
+    setShowSuggestions(filtered.length > 0)
+    setHighlightedIndex(-1)
+  }, [newTag, allTags, tags])
+
+  const handleUpdateName = async () => {
+    if (!id || !nameValue.trim() || nameValue === variant?.name) {
+      setEditName(false)
+      setNameValue(variant?.name ?? '')
+      return
+    }
+    await updateVariant.mutateAsync({ workflowVariantId: id, name: nameValue, description: variant?.description ?? '' })
+    setEditName(false)
   }
-
+  const handleUpdateDescription = async () => {
+    if (!id || descriptionValue === (variant?.description ?? '')) {
+      setEditDescription(false)
+      setDescriptionValue(variant?.description ?? '')
+      return
+    }
+    await updateVariant.mutateAsync({ workflowVariantId: id, name: variant?.name ?? '', description: descriptionValue })
+    setEditDescription(false)
+  }
   const handleDelete = async () => {
     if (!id) return
     if (window.confirm("Удалить вариант?")) {
       await deleteVariant.mutateAsync(id)
       router.push("/workflow-variants")
+    }
+  }
+
+  const handleSuggestionClick = (suggestion: string) => {
+    setNewTag(suggestion)
+    setShowSuggestions(false)
+    setHighlightedIndex(-1)
+    setTimeout(() => {
+      inputRef.current?.focus()
+    }, 0)
+  }
+
+  const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (!showSuggestions || suggestions.length === 0) return
+    if (e.key === 'ArrowDown') {
+      e.preventDefault()
+      setHighlightedIndex(idx => (idx + 1) % suggestions.length)
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault()
+      setHighlightedIndex(idx => (idx - 1 + suggestions.length) % suggestions.length)
+    } else if (e.key === 'Enter' && highlightedIndex >= 0) {
+      e.preventDefault()
+      setNewTag(suggestions[highlightedIndex])
+      setShowSuggestions(false)
+      setHighlightedIndex(-1)
+    } else if (e.key === 'Escape') {
+      setShowSuggestions(false)
+      setHighlightedIndex(-1)
     }
   }
 
@@ -62,8 +145,85 @@ export default function WorkflowVariantPage() {
           <span>Назад</span>
         </button>
       </div>
-      <h1 className="text-3xl font-bold">Вариант workflow #{variant.id}</h1>
-      <p className="text-muted-foreground">Управление вариантом workflow</p>
+      {/* Шапка: идентификатор и название */}
+      <div className="flex items-center gap-3 text-3xl font-bold">
+        <span>WFV #{variant.id}:</span>
+        {editName ? (
+          <>
+            <input
+              ref={nameInputRef}
+              type="text"
+              className="border rounded px-2 py-1 text-2xl font-bold w-auto"
+              value={nameValue}
+              onChange={e => setNameValue(e.target.value)}
+              onBlur={handleUpdateName}
+              onKeyDown={e => {
+                if (e.key === 'Enter') handleUpdateName()
+                if (e.key === 'Escape') {
+                  setEditName(false)
+                  setNameValue(variant.name)
+                }
+              }}
+              maxLength={128}
+            />
+            <button
+              className="ml-2 bg-primary text-white px-3 py-1 rounded text-sm"
+              onMouseDown={e => { e.preventDefault(); handleUpdateName() }}
+              type="button"
+            >Сохранить</button>
+            <button
+              className="ml-1 bg-muted px-3 py-1 rounded text-sm"
+              onMouseDown={e => { e.preventDefault(); setEditName(false); setNameValue(variant.name) }}
+              type="button"
+            >Отмена</button>
+          </>
+        ) : (
+          <span
+            className="cursor-pointer hover:underline"
+            title="Редактировать название"
+            onClick={() => setEditName(true)}
+          >{variant.name}</span>
+        )}
+      </div>
+      {/* Описание */}
+      <div className="mb-2 text-lg">
+        {editDescription ? (
+          <>
+            <input
+              ref={descInputRef}
+              type="text"
+              className="border rounded px-2 py-1 w-full text-lg"
+              value={descriptionValue}
+              onChange={e => setDescriptionValue(e.target.value)}
+              onBlur={handleUpdateDescription}
+              onKeyDown={e => {
+                if (e.key === 'Enter') handleUpdateDescription()
+                if (e.key === 'Escape') {
+                  setEditDescription(false)
+                  setDescriptionValue(variant.description ?? '')
+                }
+              }}
+              maxLength={512}
+            />
+            <button
+              className="ml-2 bg-primary text-white px-3 py-1 rounded text-sm"
+              onMouseDown={e => { e.preventDefault(); handleUpdateDescription() }}
+              type="button"
+            >Сохранить</button>
+            <button
+              className="ml-1 bg-muted px-3 py-1 rounded text-sm"
+              onMouseDown={e => { e.preventDefault(); setEditDescription(false); setDescriptionValue(variant.description ?? '') }}
+              type="button"
+            >Отмена</button>
+          </>
+        ) : (
+          <span
+            className="cursor-pointer hover:underline text-muted-foreground"
+            title="Редактировать описание"
+            onClick={() => setEditDescription(true)}
+          >{variant.description || <span className="italic">Нет описания</span>}</span>
+        )}
+      </div>
       {/* Теги варианта */}
       <div className="mb-6">
         <div className="font-semibold mb-2">Теги:</div>
@@ -87,22 +247,42 @@ export default function WorkflowVariantPage() {
           </div>
         )}
         <form
-          className="flex gap-2 items-center"
+          className="flex gap-2 items-center relative"
           onSubmit={e => {
             e.preventDefault()
             if (!newTag.trim()) return
             addTag.mutate({ workflowVariantId: id!, tag: newTag.trim() })
             setNewTag('')
+            setShowSuggestions(false)
+            setHighlightedIndex(-1)
           }}
+          autoComplete="off"
         >
           <input
+            ref={inputRef}
             type="text"
             className="border rounded px-2 py-1 text-sm"
             placeholder="Добавить тег..."
             value={newTag}
             onChange={e => setNewTag(e.target.value)}
+            onFocus={() => setShowSuggestions(suggestions.length > 0)}
+            onBlur={() => setTimeout(() => setShowSuggestions(false), 100)}
+            onKeyDown={handleInputKeyDown}
+            autoComplete="off"
           />
           <button type="submit" className="bg-primary text-white px-3 py-1 rounded text-sm">Добавить</button>
+          {showSuggestions && suggestions.length > 0 && (
+            <ul className="absolute z-10 bg-white border rounded shadow w-full mt-1 max-h-48 overflow-auto text-sm" style={{ left: 0, top: '100%' }}>
+              {suggestions.map((s, idx) => (
+                <li
+                  key={s}
+                  className={`px-2 py-1 cursor-pointer ${idx === highlightedIndex ? 'bg-muted' : ''}`}
+                  onMouseDown={e => { e.preventDefault(); handleSuggestionClick(s) }}
+                  onMouseEnter={() => setHighlightedIndex(idx)}
+                >{s}</li>
+              ))}
+            </ul>
+          )}
         </form>
       </div>
       <div className="mb-6">
@@ -110,27 +290,6 @@ export default function WorkflowVariantPage() {
         <div className="mb-2 text-muted-foreground">Создан: {variant.createdAt ? new Date(variant.createdAt).toLocaleString() : "-"}</div>
         <div className="mb-2 text-muted-foreground">Обновлён: {variant.updatedAt ? new Date(variant.updatedAt).toLocaleString() : "-"}</div>
       </div>
-      {editMode ? (
-        <form onSubmit={handleUpdate} className="space-y-4 mb-6">
-          <div>
-            <label className="block text-sm mb-1">Название</label>
-            <input type="text" className="border rounded px-2 py-1 w-full" value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} required />
-          </div>
-          <div>
-            <label className="block text-sm mb-1">Описание</label>
-            <input type="text" className="border rounded px-2 py-1 w-full" value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} />
-          </div>
-          <div className="flex gap-2">
-            <button type="submit" className="bg-primary text-white px-4 py-2 rounded">Сохранить</button>
-            <button type="button" className="bg-muted px-4 py-2 rounded" onClick={() => setEditMode(false)}>Отмена</button>
-          </div>
-        </form>
-      ) : (
-        <div className="mb-6">
-          <div className="mb-2"><span className="font-semibold">Название:</span> {variant.name}</div>
-          <div className="mb-2"><span className="font-semibold">Описание:</span> {variant.description}</div>
-        </div>
-      )}
       {/* Таблица параметров варианта */}
       <div className="mb-8">
         <div className="font-semibold mb-2">Параметры:</div>
@@ -167,12 +326,9 @@ export default function WorkflowVariantPage() {
           ) : <span className="text-muted-foreground">Нет параметров</span>
         )}
       </div>
-      {!editMode && (
-        <div className="flex gap-2">
-          <button className="bg-muted px-4 py-2 rounded" onClick={() => setEditMode(true)}>Редактировать</button>
-          <button className="bg-destructive text-white px-4 py-2 rounded" onClick={handleDelete}>Удалить</button>
-        </div>
-      )}
+      <div className="flex gap-2">
+        <button className="bg-destructive text-white px-4 py-2 rounded" onClick={handleDelete}>Удалить</button>
+      </div>
     </div>
   )
 }
