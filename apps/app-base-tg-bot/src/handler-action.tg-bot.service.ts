@@ -31,24 +31,25 @@ export class HandlerActionTgBotService {
     private readonly setuprepo: repo.SetupRepository,
     // private readonly userrepo: repo.UserRepository,
   ) {
-    this.bot.action('main-menu', (ctx) => this.mainMenu(ctx))
+    this.bot.action(/^main-menu$/, (ctx) => this.mainMenu(ctx))
 
-    this.bot.action('offer:menu', (ctx) => this.offerMenu(ctx))
+    this.bot.action(/^offer:menu$/, (ctx) => this.offerMenu(ctx))
     this.bot.action(/^offer:param:([a-z]+)$/i, (ctx) => this.offerParamSelect(ctx))
     this.bot.action(/^offer:param:([a-z]+):set:(.+)$/i, (ctx) => this.offerParamSet(ctx))
-    this.bot.action('offer:search', (ctx) => this.offerSearch(ctx))
+    this.bot.action(/^offer:search$/, (ctx) => this.offerSearch(ctx))
     this.bot.action(/^offer:select:(.+)$/, (ctx) => this.offerSelect(ctx))
 
     // instance:create:
     this.bot.action(/^instance:create:(.+)$/, (ctx) => this.instanceCreate(ctx))
-    this.bot.action('instance:manage', (ctx) => this.instanceManage(ctx))
-    this.bot.action('instance:status', (ctx) => this.instanceStatus(ctx))
-    this.bot.action('instance:destroy', (ctx) => this.instanceDestroy(ctx))
+    this.bot.action(/^instance:manage$/, (ctx) => this.instanceManage(ctx))
+    this.bot.action(/^instance:status$/, (ctx) => this.instanceStatus(ctx))
+    this.bot.action(/^instance:destroy$/, (ctx) => this.instanceDestroy(ctx))
 
-    this.bot.action('wfv:list', (ctx) => this.wfvList(ctx))
+    this.bot.action(/^wfv:list$/, (ctx) => this.wfvList(ctx))
     this.bot.action(/^wfv:([0-9]+)$/, (ctx) => this.wfvSelect(ctx))
     this.bot.action(/^wfv:([0-9]+):run$/, (ctx) => this.wfvRun(ctx))
     this.bot.action(/^wfv:([0-9]+):info$/, (ctx) => this.wfvInfo(ctx))
+
     this.bot.action(/^wfvp:([0-9]+)$/, (ctx) => this.wfvParamSelect(ctx))
     this.bot.action(/^wfvp:([0-9]+):mtag:(.+):search:([0-9]+)$/, (ctx) => this.wfvParamModelsSearch(ctx)) // select model with tags
     this.bot.action(/^wfvp:([0-9]+):mtag:(.+)$/, (ctx) => this.wfvParamModelTagMenu(ctx)) // select model with tags
@@ -56,16 +57,16 @@ export class HandlerActionTgBotService {
     this.bot.action(/^wfvp:([0-9]+):fset:(.+)$/, (ctx) => this.wfvParamForceSet(ctx)) // force set
     this.bot.action(/^wfvp:([0-9]+):show$/, (ctx) => this.wfvParamShow(ctx)) // force set
 
-    this.bot.action('img-use:wfv-list', (ctx) => this.imageUseWfvList(ctx))
-    this.bot.action('img-use:start', (ctx) => this.imageUseStart(ctx))
+    this.bot.action(/^img-use:wfv-list$/, (ctx) => this.imageUseWfvList(ctx))
+    this.bot.action(/^img-use:start$/, (ctx) => this.imageUseStart(ctx))
     this.bot.action(/^img-use:wfv:([0-9]+)$/, (ctx) => this.imageUseInWfv(ctx))
     this.bot.action(/^img-use:wfvp:([0-9]+)$/, (ctx) => this.imageUseInWfvParam(ctx))
 
-    this.bot.action('txt-use:wfv-list', (ctx) => this.textUseWfvList(ctx))
-    this.bot.action('txt-use:start', (ctx) => this.textUseStart(ctx))
+    this.bot.action(/^txt-use:wfv-list$/, (ctx) => this.textUseWfvList(ctx))
+    this.bot.action(/^txt-use:start$/, (ctx) => this.textUseStart(ctx))
     this.bot.action(/^txt-use:wfv:([0-9]+)$/, (ctx) => this.textUseInWfv(ctx))
 
-    this.bot.action('message:delete', (ctx) => this.messageDelete(ctx))
+    this.bot.action(/^message:delete$/, (ctx) => this.messageDelete(ctx))
   }
 
   async mainMenu (ctx: TAppBaseTgBotContext) {
@@ -202,12 +203,23 @@ export class HandlerActionTgBotService {
   async wfvList (ctx) {
     const { instance } = ctx.session
 
+    let backAction = 'main-menu'
+
     if (instance) {
-      await this.wfsynth.view.showWfvList({ ctx, tags: ['enable', 'new'], prefixAction: '', backAction: 'instance:manage' })
-      return
+      backAction = 'instance:manage'
     }
 
-    await this.wfsynth.view.showWfvList({ ctx, tags: ['own-instance', 'new'], prefixAction: '', backAction: 'main-menu' })
+    const workflows = await this.wfrepo.findWorkflowVariantsByAllTags(['enable'])
+    const enumArr = workflows.map(wfv => ({ label: wfv.name, value: wfv.id }))
+
+    await this.wfsynth.view.showDefaultMenu({
+      ctx,
+      message: `Select workflow:`,
+      enumArr,
+      prefixAction: 'wfv',
+      backAction,
+      useIndexAsValue: false,
+    })
   }
 
   async wfvSelect (ctx) {
@@ -241,7 +253,7 @@ export class HandlerActionTgBotService {
         if (wfvParamEnum.startsWith('$.enumModelTag')) {
           enumArr = await this.wfsynth.compileEnum(wfvParamEnum) as any[]
 
-          await this.wfsynth.view.showWfvEnumMenu({
+          await this.wfsynth.view.showDefaultMenu({
             ctx,
             message: `Select model tags:`,
             enumArr,
@@ -261,7 +273,7 @@ export class HandlerActionTgBotService {
       }
 
       if (Array.isArray(enumArr)) {
-        await this.wfsynth.view.showWfvEnumMenu({
+        await this.wfsynth.view.showDefaultMenu({
           ctx,
           message: `Current value: **${String(currentValue)}** \nSelect new value:`,
           enumArr,
@@ -381,7 +393,7 @@ export class HandlerActionTgBotService {
         value: newModelTags.find(t => t.name === tag.name)?.id || 0,
       }))
 
-    await this.wfsynth.view.showWfvEnumMenu({
+    await this.wfsynth.view.showDefaultMenu({
       ctx,
       message: `Select model tags:`,
       enumArr,

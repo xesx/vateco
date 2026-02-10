@@ -55,7 +55,7 @@ export class WorkflowViewSynthService {
     await this.tgbotlib.safeAnswerCallback(ctx)
   }
 
-  async showWfvEnumMenu ({ ctx, chatId, message, enumArr, prefixAction, backAction, extraActions, useIndexAsValue = true }
+  async showDefaultMenu ({ ctx, chatId, message, enumArr, prefixAction, backAction, extraActions, useIndexAsValue = true }
   : {
     ctx?: any;
     chatId?: string;
@@ -184,7 +184,7 @@ export class WorkflowViewSynthService {
         value: model.id,
       }))
 
-    await this.showWfvEnumMenu({
+    await this.showDefaultMenu({
       ctx,
       chatId,
       message: `Select model:`,
