@@ -328,6 +328,22 @@ export class AppBaseTgBotService {
 
     const compiledWorkflowSchema = this.wflib.compileWorkflowSchema({ workflow: wft.schema, params })
 
+    Object.entries(compiledWorkflowSchema).forEach(([nodeId, node]) => {
+      if (node['class_type'] !== 'Power Lora Loader (rgthree)') {
+        return
+      }
+
+      Object.entries(node.inputs).forEach(([inputName, inputValue]) => {
+        if (!inputName.startsWith('lora_')) {
+          return
+        }
+
+        if (inputValue.on || !inputValue.lora || inputValue.lora === '❓') {
+          delete compiledWorkflowSchema[nodeId].inputs[inputName]
+        }
+      })
+    })
+
     // Create JSON file and send to Telegram bot chat
     const filename = `wfv-${name}.json`
     const fileBuffer = Buffer.from(JSON.stringify(compiledWorkflowSchema, null, 2), 'utf-8')
