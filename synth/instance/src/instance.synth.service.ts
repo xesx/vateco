@@ -26,9 +26,13 @@ export class InstanceSynthService {
     const ipAddress = instance.public_ipaddr
     const instanceApiPort = instance.ports?.['3042/tcp']?.[0]?.HostPort || 'N/A'
     const instanceAppPort = instance.ports?.['1111/tcp']?.[0]?.HostPort
+    const comfyuiPort = instance.ports?.['8188/tcp']?.[0]?.HostPort
+    const jupyterPort = instance.ports?.['8080/tcp']?.[0]?.HostPort
 
     const apiUrl = `http://${ipAddress}:${instanceApiPort}`
     const appsMenuLink = instanceAppPort ? `http://${ipAddress}:${instanceAppPort}?token=${token}` : 'N/A'
+    const comfyuiLink = comfyuiPort ? `http://${ipAddress}:${comfyuiPort}?token=${token}` : 'N/A'
+    const jupyterLink = jupyterPort ? `http://${ipAddress}:${jupyterPort}?token=${token}` : 'N/A'
     const startDate = new Date(Math.round(((instance.start_date || 0) * 1000))).toLocaleString()
 
     const status = instance.actual_status
@@ -44,6 +48,8 @@ export class InstanceSynthService {
       instanceAppPort,
       apiUrl,
       appsMenuLink,
+      comfyuiLink,
+      jupyterLink,
       startDate,
       durationInHrs,
       status,

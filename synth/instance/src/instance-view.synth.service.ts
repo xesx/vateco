@@ -10,7 +10,7 @@ export class InstanceViewSynthService {
 
   constructor(
     private readonly tgbotlib: lib.TgBotLibService,
-    // private readonly msglib: lib.MessageLibService,
+    private readonly msglib: lib.MessageLibService,
   ) {}
 
   async showOfferMenu (ctx) {
@@ -37,15 +37,12 @@ export class InstanceViewSynthService {
     await this.tgbotlib.sendMessageV2({ ctx, chatId, message, extra: keyboard })
   }
 
-  async showInsatanceStatus ({ ctx, instanceId, status, state, gpu, startDate, durationInHrs, appsMenuLink }: { ctx: any, instanceId: string; status: string; state: string; gpu: string; startDate: string; durationInHrs: string; appsMenuLink: string }) {
-    const message = `🖥️ *Instance #${instanceId}*\n`
-      + `\n📊 *Status:* ${status || 'unknown'}`
-      + `\n📊 *State:* ${state || 'unknown'}`
-      + `\n🖥️ *GPU:* ${gpu}`
-      // + `\n💰 *Price:* $${(instance.dph_total?.toFixed(2)) || '0'}/hour`
-      + `\n⏰ *Start at:* ${startDate}\n (duration: ${durationInHrs} hrs)`
-      // + `\n⏰ *Remaining:* ${((instance.duration ?? 0) / (60 * 60 * 24)).toFixed(2)} days)`
-      + (appsMenuLink ? `\n🔗 *Apps Menu Link:* [-->>](${appsMenuLink})`: '')
+  async showInstanceStatus ({ ctx, instanceId, status, state, gpu, startDate, durationInHrs, appsMenuLink, comfyuiLink, jupyterLink }:
+    { ctx: any, instanceId: string; status: string; state: string; gpu: string; startDate: string; durationInHrs: string; appsMenuLink: string, comfyuiLink: string; jupyterLink: string }) {
+    const message = this.msglib.generateMessage({
+      type: 'instance-status',
+      data: { instanceId, status, state, gpu, startDate, durationInHrs, appsMenuLink, comfyuiLink, jupyterLink },
+    })
 
     await this.tgbotlib.safeAnswerCallback(ctx)
     const keyboard = this.tgbotlib.generateInlineKeyboard([

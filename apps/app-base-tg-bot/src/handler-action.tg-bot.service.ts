@@ -152,6 +152,8 @@ export class HandlerActionTgBotService {
       instanceApiPort,
       apiUrl,
       appsMenuLink,
+      comfyuiLink,
+      jupyterLink,
       startDate,
       durationInHrs,
       status,
@@ -164,7 +166,7 @@ export class HandlerActionTgBotService {
     ctx.session.instance.apiPort = instanceApiPort
     ctx.session.instance.apiUrl = apiUrl
 
-    await this.instancesynth.view.showInsatanceStatus({
+    await this.instancesynth.view.showInstanceStatus({
       ctx,
       instanceId,
       status,
@@ -173,6 +175,8 @@ export class HandlerActionTgBotService {
       startDate,
       durationInHrs,
       appsMenuLink,
+      comfyuiLink,
+      jupyterLink,
     })
   }
 

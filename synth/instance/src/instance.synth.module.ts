@@ -9,7 +9,7 @@ import * as lib from '@lib'
   imports: [
     lib.TgBotLibModule,
     lib.VastLibModule,
-    // lib.MessagesLibModule,
+    lib.MessagesLibModule,
   ],
   providers: [
     InstanceSynthService,
