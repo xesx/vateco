@@ -61,14 +61,14 @@ export function workflowRunMenu ({ wfvParams, prefixAction, workflowVariantId, b
       value = value.label ?? value.value
     }
 
-    value = String(value).length > 15 ? String(value).slice(0, 13) + '...' : String(value)
+    // value = String(value).length > 15 ? String(value).slice(0, 14) + '...' : String(value)
 
     const x = param.positionX
     const prevParam = i > 0 ? sortedParams[i - 1] : undefined
     const prevX = prevParam?.positionX
 
     const action = `${prefixAction}wfvp:${param.id}`
-    const label = param.label ? param.label + `(${value})` : `${value}`
+    const label = param.label ? param.label + `: ${value}` : `${value}`
 
     if (prevX !== undefined && x !== undefined && x === prevX) {
       acc[acc.length - 1].push([label, action])

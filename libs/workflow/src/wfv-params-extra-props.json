@@ -182,6 +182,20 @@
     "positionX": 1010,
     "positionY": 1
   },
+  "EmptySD3LatentImage:width": {
+    "label": "width",
+    "default": 1024,
+    "enum": [512, 640, 768, 896, 1024, 1280, 1536, 1792, 2048],
+    "positionX": 1010,
+    "positionY": 0
+  },
+  "EmptySD3LatentImage:height": {
+    "label": "height",
+    "default": 1024,
+    "enum": [512, 640, 768, 896, 1024, 1280, 1536, 1792, 2048],
+    "positionX": 1010,
+    "positionY": 1
+  },
   "CLIPSetLastLayer:stop_at_clip_layer": {
     "label": "clip skip",
     "default": -1,
