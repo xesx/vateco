@@ -328,12 +328,12 @@ export class AppBaseTgBotService {
 
     const compiledWorkflowSchema = this.wflib.compileWorkflowSchema({ workflow: wft.schema, params })
 
-    Object.entries(compiledWorkflowSchema).forEach(([nodeId, node]) => {
+    Object.entries(compiledWorkflowSchema).forEach(([nodeId, node]: any[]) => {
       if (node['class_type'] !== 'Power Lora Loader (rgthree)') {
         return
       }
 
-      Object.entries(node.inputs).forEach(([inputName, inputValue]) => {
+      Object.entries(node.inputs).forEach(([inputName, inputValue]: any[]) => {
         if (!inputName.startsWith('lora_')) {
           return
         }

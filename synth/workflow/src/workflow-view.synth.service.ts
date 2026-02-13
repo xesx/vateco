@@ -43,7 +43,7 @@ export class WorkflowViewSynthService {
     const workflowVariant = await this.wfrepo.getWorkflowVariant(workflowVariantId)
     const wfvParams = await this.wfrepo.getWorkflowMergedWorkflowVariantParams({ userId, workflowVariantId })
 
-    const message = `Workflow ${workflowVariant.name}`
+    const message = this.msglib.genCodeMessage(`Workflow ${workflowVariant.name}:\n-----------------------------------`)
     const keyboard = this.tgbotlib.generateInlineKeyboard(kb.workflowRunMenu({
       wfvParams,
       workflowVariantId,

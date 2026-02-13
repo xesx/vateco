@@ -189,6 +189,7 @@ export class WorkflowRepository {
          AND wvt.tag in (${Prisma.join(tags)})
        GROUP BY wv.id
       HAVING COUNT(*) = ${tags.length}
+       ORDER BY wv.name
     `
 
     return workflows

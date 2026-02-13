@@ -216,9 +216,11 @@ export class HandlerActionTgBotService {
     const workflows = await this.wfrepo.findWorkflowVariantsByAllTags(['enable'])
     const enumArr = workflows.map(wfv => ({ label: wfv.name, value: wfv.id }))
 
+    const message = this.msglib.genCodeMessage('Workflows list:\n-----------------------------------')
+
     await this.wfsynth.view.showDefaultMenu({
       ctx,
-      message: `Select workflow:`,
+      message,
       enumArr,
       prefixAction: 'wfv',
       backAction,
