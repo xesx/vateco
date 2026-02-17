@@ -1,1 +1,1 @@
-export const WORKFLOW_VARIANT_REPLY = [['🚀 Generate'], ['🎛 Params', '📝 Show prompt']] as [string][]
+export const WORKFLOW_VARIANT_REPLY = [['🚀 Generate'], ['🎛 Params', '📝 Show prompt', '❌ Cancel']] as string[][]

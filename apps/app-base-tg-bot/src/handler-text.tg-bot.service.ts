@@ -22,6 +22,7 @@ export class HandlerTextTgBotService {
     this.bot.hears('🎛 Params', (ctx) => this.textParams(ctx))
     this.bot.hears('📝 Show prompt', (ctx) => this.textShowPrompt(ctx))
     this.bot.hears('🚀 Generate', (ctx) => this.textGenerate(ctx))
+    this.bot.hears('❌ Cancel', (ctx) => this.cancelGenerate(ctx))
 
     this.bot.hears(/^https:\/\/huggingface\.co\/\S+/i, (ctx, next) => this.tgbotsrv.createModelByHuggingfaceLink(ctx, next))
     this.bot.hears(/^https:\/\/civitai\.com\/models\/\S+/i, (ctx, next) => this.tgbotsrv.createModelByCivitaiLink(ctx, next))
@@ -38,6 +39,16 @@ export class HandlerTextTgBotService {
 
   async textGenerate (ctx) {
     await this.tgbotsrv.runWfv(ctx)
+  }
+
+  async cancelGenerate (ctx) {
+    const { userId, workflowVariantId, instance } = ctx.session
+
+    if (!instance) {
+      return
+    }
+
+    // await this.wfsynth.cancelRun({ userId, workflowVariantId })
   }
 
   async textShowPrompt (ctx) {
