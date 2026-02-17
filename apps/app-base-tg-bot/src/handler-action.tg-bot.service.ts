@@ -516,7 +516,7 @@ export class HandlerActionTgBotService {
   }
 
   async textUseStart (ctx) {
-    const originalMessageText = ctx.update.callback_query.message.text.replace(/^\\n/, '')
+    const originalMessageText = ctx.update.callback_query.message.text.trim()
     const message = this.msglib.genMessageForCopy(originalMessageText)
 
     const keyboard = this.tgbotlib.generateInlineKeyboard([[
@@ -531,7 +531,7 @@ export class HandlerActionTgBotService {
   async textUseWfvList (ctx) {
     const { workflowVariantId } = ctx.session
 
-    const originalMessageText = ctx.update.callback_query.message.text.replace(/^\\n/, '')
+    const originalMessageText = ctx.update.callback_query.message.text.trim()
     const workflowVariants = await this.wfrepo.findWorkflowVariantsByLabel({ label: 'prompt' })
 
     if (workflowVariants.length === 0) {
@@ -542,19 +542,25 @@ export class HandlerActionTgBotService {
     const currentWorkflowVariant = workflowVariants.find(wfv => wfv.id === Number(workflowVariantId))
     const otherWorkflowVariants = workflowVariants.filter(wfv => wfv.id !== Number(workflowVariantId))
 
-    const kbRaw: [string, string][][] = []
+    const enumArr: Record<string, any>[] = []
 
     if (currentWorkflowVariant) {
-      kbRaw.push([['-->Current workflow<--', `txt-use:wfv:${workflowVariantId}`]] as [string, string][])
+      enumArr.push({ label: '-->Current workflow<--', value: currentWorkflowVariant.id })
     }
 
     for (const wfv of otherWorkflowVariants) {
-      kbRaw.push([[wfv.name, `txt-use:wfv:${wfv.id}`]])
+      enumArr.push({ label: wfv.name, value: wfv.id })
     }
 
-    kbRaw.push([['Back', 'txt-use:start'], ['Delete', 'message:delete']])
-
-    const keyboard = this.tgbotlib.generateInlineKeyboard(kbRaw)
+    const keyboard = this.wfsynth.view.generateDefaultKeyboardMenu({
+      enumArr,
+      prefixAction: 'txt-use:wfv:',
+      extraActions: [
+        ['Delete', 'message:delete'],
+        ['Back', 'txt-use:start']
+      ],
+      useIndexAsValue: false,
+    })
 
     const message = this.msglib.genMessageForCopy(originalMessageText)
     await ctx.editMessageText(message, { parse_mode: 'HTML', ...keyboard })
@@ -569,7 +575,7 @@ export class HandlerActionTgBotService {
       label: 'prompt',
     })
 
-    const originalMessageText = ctx.update.callback_query.message.text.replace(/^\\n/, '')
+    const originalMessageText = ctx.update.callback_query.message.text.trim()
 
     await this.wfsynth.param.setWfvUserParamValue({ userId, wfvParamId: promptParam.id, value: originalMessageText })
 
@@ -610,21 +616,29 @@ export class HandlerActionTgBotService {
     const currentWorkflowVariant = workflowVariants.find(wfv => wfv.id === Number(workflowVariantId))
     const otherWorkflowVariants = workflowVariants.filter(wfv => wfv.id !== Number(workflowVariantId))
 
-    const kbRaw: [string, string][][] = []
+    const enumArr: Record<string, any>[] = []
 
     if (currentWorkflowVariant) {
-      kbRaw.push([['-->Current workflow<--', `img-use:wfv:${workflowVariantId}`]] as [string, string][])
+      enumArr.push({ label: '-->Current workflow<--', value: currentWorkflowVariant.id })
     }
 
     for (const wfv of otherWorkflowVariants) {
-      kbRaw.push([[wfv.name, `img-use:wfv:${wfv.id}`]])
+      enumArr.push({ label: wfv.name, value: wfv.id })
     }
 
-    kbRaw.push([['Back', 'img-use:start'], ['Delete', 'message:delete']])
+    const caption = this.msglib.genCodeMessage('Workflows list:\n-----------------------------------')
 
-    const keyboard = this.tgbotlib.generateInlineKeyboard(kbRaw)
+    const keyboard = this.wfsynth.view.generateDefaultKeyboardMenu({
+      enumArr,
+      prefixAction: 'img-use:wfv:',
+      extraActions: [
+        ['Delete', 'message:delete'],
+        ['Back', 'img-use:start']
+      ],
+      useIndexAsValue: false,
+    })
 
-    const caption = `select wfv for image use, current wfv: "${currentWorkflowVariant?.name ?? 'none'}"`
+    // const caption = `select wfv for image use, current wfv: "${currentWorkflowVariant?.name ?? 'none'}"`
     await ctx.editMessageCaption(caption, keyboard)
   }
 

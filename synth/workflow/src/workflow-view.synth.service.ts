@@ -55,11 +55,8 @@ export class WorkflowViewSynthService {
     await this.tgbotlib.safeAnswerCallback(ctx)
   }
 
-  async showDefaultMenu ({ ctx, chatId, message, enumArr, prefixAction, backAction, extraActions, useIndexAsValue = true }
+  generateDefaultKeyboardMenu ({ enumArr, prefixAction, backAction, extraActions, useIndexAsValue = true }
   : {
-    ctx?: any;
-    chatId?: string;
-    message: string;
     enumArr: any[];
     prefixAction: string;
     backAction?: string;
@@ -107,7 +104,21 @@ export class WorkflowViewSynthService {
       enumOptions.push([['Back', backAction]])
     }
 
-    const keyboard = this.tgbotlib.generateInlineKeyboard(enumOptions)
+    return this.tgbotlib.generateInlineKeyboard(enumOptions)
+  }
+
+  async showDefaultMenu ({ ctx, chatId, message, enumArr, prefixAction, backAction, extraActions, useIndexAsValue = true }
+  : {
+    ctx?: any;
+    chatId?: string;
+    message: string;
+    enumArr: any[];
+    prefixAction: string;
+    backAction?: string;
+    extraActions?: [string, string][];
+    useIndexAsValue?: boolean;
+  }) {
+    const keyboard = this.generateDefaultKeyboardMenu({ enumArr, prefixAction, backAction, extraActions, useIndexAsValue })
     await this.tgbotlib.sendMessageV2({ ctx, chatId, message, extra: { parse_mode: 'HTML', ...keyboard } })
   }
 

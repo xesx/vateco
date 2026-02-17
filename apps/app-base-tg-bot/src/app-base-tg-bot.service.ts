@@ -109,6 +109,13 @@ export class AppBaseTgBotService {
       const isLoaderNode = categories.includes('loaders')
 
       if (isLoaderNode || wfvParamSchema.isComfyUiModel) {
+        if (paramName.startsWith('Power Lora Loader (rgthree):lora')) {
+          const isLoraEnabled = workflowVariantParams[paramName.replace('lora', 'loraEnabled')]
+
+          if (!isLoraEnabled) {
+            continue
+          }
+        }
         const modelName = value
         const modelData = await this.modelrepo.findModelByName(value)
 
