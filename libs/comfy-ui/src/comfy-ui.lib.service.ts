@@ -70,6 +70,30 @@ export class ComfyUiLibService {
     }
   }
 
+  async queue (): Promise<any> {
+    const url = this.COMFY_UI_URL + '/queue'
+
+    try {
+      const res = await axios.get(url)
+      return res.data
+    } catch (error) {
+      console.log('ComfyUiLibService_queue_13')
+      throw error
+    }
+  }
+
+  async interrupt (promptId): Promise<any> {
+    const url = this.COMFY_UI_URL + '/interrupt'
+
+    try {
+      const res = await axios.post(url, { prompt_id: promptId })
+      return res.data
+    } catch (error) {
+      console.log('ComfyUiLibService_interrupt_13')
+      throw error
+    }
+  }
+
   async wsConnect (url?: string): Promise<WebSocket> {
     const { l } = this
 

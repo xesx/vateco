@@ -22,6 +22,7 @@ import { FileAppCloudApiController } from './file.app-cloud-api.controller'
     }),
     lib.VastLibModule,
     lib.TgBotLibModule,
+    lib.ComfyUiLibModule,
 
     synth.CloudAppSynthModule
   ],

@@ -57,4 +57,9 @@ export class CloudApiCallLibService {
     const url = baseUrl + '/file/upload'
     return await this.vastAiRequest({ url, instanceId, token, data: form, headers: form.getHeaders() })
   }
+
+  async vastAiCancelAll ({ baseUrl, instanceId, token }): Promise<any> {
+    const url = baseUrl + '/cancel/all'
+    return await this.vastAiRequest({ url, instanceId, token })
+  }
 }

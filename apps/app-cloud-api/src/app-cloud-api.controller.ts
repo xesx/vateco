@@ -16,6 +16,7 @@ export class AppCloudApiController {
     private readonly tgBotLibService: lib.TgBotLibService,
     private readonly configService: ConfigService,
     private readonly appcloudsynth: synth.CloudAppSynthService,
+    private readonly comfyuilib: lib.ComfyUiLibService,
   ) {
     this.WORKSPACE = this.configService.get<string>('WORKSPACE') || '/workspace'
     this.GENERATE_TASKS_DIR = `${this.WORKSPACE}/generate_tasks`
@@ -127,5 +128,20 @@ export class AppCloudApiController {
     fs.writeFileSync(filePath, JSON.stringify(content), "utf8")
 
     console.log(`appCloudApiWorkflowRun_99 Workflow run task for "${body.id}" added in ${filePath}, content: ${JSON.stringify(content)}`)
+  }
+
+  @Post('cancel/all')
+  async appCloudApiCancelAll () {
+    const response = await this.comfyuilib.queue()
+
+    // queue_pending
+    const queue_running = response?.queue_running
+    const prompt_id = queue_running?.[0]?.[1]
+
+    console.log(`appCloudApiCancelAll_99 Current running prompt_id: ${prompt_id}`)
+
+    if (prompt_id) {
+      await this.comfyuilib.interrupt(prompt_id)
+    }
   }
 }
