@@ -2,7 +2,7 @@
 
 import { useRouter, useParams } from "next/navigation"
 import { useModel } from "@/hooks/use-model"
-import { useUpdateModel } from "@/hooks/use-models"
+import { useUpdateModel, useDeleteModel } from "@/hooks/use-models"
 import { useModelTags, useSetModelTags } from "@/hooks/use-model-tags"
 import { useAllTags } from "@/hooks/use-all-tags"
 import { useState, useMemo, useRef } from "react"
@@ -16,6 +16,7 @@ export default function ModelPage() {
 
   const { data: model, isLoading, error } = useModel(id)
   const updateModel = useUpdateModel()
+  const deleteModel = useDeleteModel()
   const { data: tags, isLoading: tagsLoading } = useModelTags(id)
   const setModelTags = useSetModelTags()
   const { data: allTags } = useAllTags()
@@ -41,12 +42,12 @@ export default function ModelPage() {
 
   const suggestions = useMemo(() => {
     if (!allTags) return []
-    const currentTagNames = tags?.map(t => t.tag) ?? []
+    const currentTags = tags ?? []
     if (!newTag.trim()) {
-      return allTags.filter(t => !currentTagNames.includes(t))
+      return allTags.filter(t => !currentTags.includes(t))
     }
     return allTags.filter(
-      t => t.toLowerCase().includes(newTag.trim().toLowerCase()) && !currentTagNames.includes(t)
+      t => t.toLowerCase().includes(newTag.trim().toLowerCase()) && !currentTags.includes(t)
     )
   }, [newTag, allTags, tags])
 
@@ -84,9 +85,16 @@ export default function ModelPage() {
     setEditField(null)
   }
 
+  const handleDelete = async () => {
+    if (!id) return
+    if (!window.confirm(`Удалить модель «${model?.label}»?`)) return
+    await deleteModel.mutateAsync(id)
+    router.push("/models")
+  }
+
   const handleAddTag = async (tag: string) => {
     if (!id || !tag.trim()) return
-    const currentTags = tags?.map(t => t.tag) ?? []
+    const currentTags = tags ?? []
     if (currentTags.includes(tag.trim())) return
     await setModelTags.mutateAsync({ modelId: id, tags: [...currentTags, tag.trim()] })
     setNewTag("")
@@ -95,7 +103,7 @@ export default function ModelPage() {
 
   const handleRemoveTag = async (tagToRemove: string) => {
     if (!id) return
-    const currentTags = tags?.map(t => t.tag) ?? []
+    const currentTags = tags ?? []
     await setModelTags.mutateAsync({ modelId: id, tags: currentTags.filter(t => t !== tagToRemove) })
   }
 
@@ -127,10 +135,7 @@ export default function ModelPage() {
     }
   }
 
-  const COMFY_DIRECTORIES = [
-    "checkpoints", "loras", "controlnet", "clip",
-    "vae", "upscale_models", "ipadapter", "embeddings",
-  ]
+  const COMFY_DIRECTORIES = ["checkpoints", "loras", "controlnet", "clip", "vae", "upscale_models", "ipadapter", "embeddings"]
 
   if (isLoading) return <div className="py-8 text-center">Загрузка...</div>
   if (error) return <div className="py-8 text-destructive text-center">Ошибка: {error.message}</div>
@@ -272,12 +277,12 @@ export default function ModelPage() {
         ) : (
           <div className="flex flex-wrap gap-2 mb-3">
             {tags && tags.length > 0 ? tags.map((tag, idx) => (
-              <span key={tag.id + "-" + tag.tag + "-" + idx} className="inline-flex items-center bg-accent px-2 py-1 rounded text-sm">
-                {tag.tag}
+              <span key={tag + "-" + idx} className="inline-flex items-center bg-accent px-2 py-1 rounded text-sm">
+                {tag}
                 <button
                   className="ml-2 text-destructive hover:text-red-700"
                   title="Удалить тег"
-                  onClick={() => handleRemoveTag(tag.tag)}
+                  onClick={() => handleRemoveTag(tag)}
                   type="button"
                 >
                   <Trash2 className="h-3 w-3" />
@@ -341,6 +346,17 @@ export default function ModelPage() {
           </pre>
         </div>
       )}
+
+      <div className="flex gap-2 pb-8">
+        <button
+          className="bg-destructive text-white px-4 py-2 rounded"
+          onClick={handleDelete}
+          disabled={deleteModel.isPending}
+          type="button"
+        >
+          {deleteModel.isPending ? "Удаление..." : "Удалить модель"}
+        </button>
+      </div>
     </div>
   )
 }

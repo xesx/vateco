@@ -100,3 +100,16 @@ export function useCreateModelFromHuggingface() {
   })
 }
 
+export function useDeleteModel() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async (id: number) => {
+      const { data } = await api.post<{ success: boolean }>('/model/delete', { id })
+      return data.success
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['models'] })
+    },
+  })
+}
+

@@ -5,16 +5,7 @@ import { useModels, useCreateModel, useCreateModelFromCivitai, useCreateModelFro
 import type { Model } from "@/hooks/use-models"
 import { Edit, Plus } from "lucide-react"
 
-const COMFY_DIRECTORIES = [
-  "checkpoints",
-  "loras",
-  "controlnet",
-  "clip",
-  "vae",
-  "upscale_models",
-  "ipadapter",
-  "embeddings",
-]
+const COMFY_DIRECTORIES = ['checkpoints', 'diffusion_models', 'loras', 'clip', 'clip_vision', , 'vae', 'controlnet', 'embeddings', 'text_encoders']
 
 export default function ModelsPage() {
   const [directory, setDirectory] = useState("")

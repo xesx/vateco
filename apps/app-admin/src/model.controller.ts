@@ -99,6 +99,18 @@ export class ModelController {
     }
   }
 
+  @Post('delete')
+  async delete(@Body() body: { id: number }) {
+    try {
+      const { id } = body
+      if (!id) throw new Error('ID обязателен')
+      await this.modelRepo.deleteModel(id)
+      return { success: true }
+    } catch (error) {
+      throw new HttpException({ success: false, error: error instanceof Error ? error.message : String(error) }, HttpStatus.BAD_REQUEST)
+    }
+  }
+
   @Post('add-civitai-link')
   async addCivitaiLink(@Body() body: { modelId: number; url: string }) {
     try {

@@ -237,4 +237,13 @@ export class ModelRepository {
       })
     }
   }
+
+  async deleteModel(id: number): Promise<void> {
+    await this.prisma.$transaction(async (trx) => {
+      await trx.modelTags.deleteMany({ where: { modelId: id } })
+      await trx.modelHuggingfaceLinks.deleteMany({ where: { modelId: id } })
+      await trx.modelCivitaiLinks.deleteMany({ where: { modelId: id } })
+      await trx.models.delete({ where: { id } })
+    })
+  }
 }
