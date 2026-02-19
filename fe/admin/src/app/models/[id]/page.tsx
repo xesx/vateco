@@ -208,7 +208,7 @@ export default function ModelPage() {
   const labelValue = getFieldValue("label")
 
   return (
-    <div className="flex flex-col gap-6 w-full" style={{ maxWidth: "1000px", paddingLeft: "24px" }}>
+    <div className="flex flex-col gap-6 w-full" style={{ maxWidth: "1400px", paddingLeft: "24px" }}>
       {/* Назад */}
       <div className="flex items-center gap-2">
         <button
@@ -226,92 +226,95 @@ export default function ModelPage() {
         <span>Model #{model.id}: {labelValue || model.label}</span>
       </div>
 
-      {/* Поля модели */}
-      <div className="border rounded p-4 bg-card">
-        <div className="font-semibold mb-3">Основные данные</div>
-        {renderEditableField("label", "Label")}
-        {renderEditableField("name", "Name (системное)")}
-        {renderEditableField("comfyUiDirectory", "Директория", false, true, COMFY_DIRECTORIES)}
-        {renderEditableField("comfyUiFileName", "Имя файла")}
-        {renderEditableField("baseModel", "Base Model")}
-        {renderEditableField("description", "Описание", true)}
+      {/* Основные данные + Теги */}
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-4 items-start">
+        {/* Поля модели */}
+        <div className="border rounded p-4 bg-card">
+          <div className="font-semibold mb-3">Основные данные</div>
+          {renderEditableField("label", "Label")}
+          {renderEditableField("name", "Name (системное)")}
+          {renderEditableField("comfyUiDirectory", "Директория", false, true, COMFY_DIRECTORIES)}
+          {renderEditableField("comfyUiFileName", "Имя файла")}
+          {renderEditableField("baseModel", "Base Model")}
+          {renderEditableField("description", "Описание", true)}
 
-        <div className="flex items-start gap-2 py-2">
-          <span className="text-muted-foreground w-40 shrink-0 text-sm pt-1">Создан:</span>
-          <span className="text-sm">{model.createdAt ? new Date(model.createdAt).toLocaleString("ru-RU") : "—"}</span>
-        </div>
-        <div className="flex items-start gap-2 py-2">
-          <span className="text-muted-foreground w-40 shrink-0 text-sm pt-1">Обновлён:</span>
-          <span className="text-sm">{model.updatedAt ? new Date(model.updatedAt).toLocaleString("ru-RU") : "—"}</span>
-        </div>
-      </div>
-
-      {/* Теги */}
-      <div className="border rounded p-4 bg-card">
-        <div className="font-semibold mb-3">Теги</div>
-        {tagsLoading ? (
-          <div className="text-muted-foreground text-sm">Загрузка...</div>
-        ) : (
-          <div className="flex flex-wrap gap-2 mb-3">
-            {tags && tags.length > 0 ? tags.map((tag, idx) => (
-              <span key={tag + "-" + idx} className="inline-flex items-center bg-accent px-2 py-1 rounded text-sm">
-                {tag}
-                <button
-                  className="ml-2 text-destructive hover:text-red-700"
-                  title="Удалить тег"
-                  onClick={() => handleRemoveTag(tag)}
-                  type="button"
-                >
-                  <Trash2 className="h-3 w-3" />
-                </button>
-              </span>
-            )) : <span className="text-muted-foreground text-sm">Нет тегов</span>}
+          <div className="flex items-start gap-2 py-2">
+            <span className="text-muted-foreground w-40 shrink-0 text-sm pt-1">Создан:</span>
+            <span className="text-sm">{model.createdAt ? new Date(model.createdAt).toLocaleString("ru-RU") : "—"}</span>
           </div>
-        )}
+          <div className="flex items-start gap-2 py-2">
+            <span className="text-muted-foreground w-40 shrink-0 text-sm pt-1">Обновлён:</span>
+            <span className="text-sm">{model.updatedAt ? new Date(model.updatedAt).toLocaleString("ru-RU") : "—"}</span>
+          </div>
+        </div>
 
-        <form
-          className="flex gap-2 items-center relative"
-          onSubmit={e => {
-            e.preventDefault()
-            handleAddTag(newTag)
-          }}
-          autoComplete="off"
-        >
-          <input
-            ref={tagInputRef}
-            type="text"
-            className="border rounded px-2 py-1 text-sm"
-            placeholder="Добавить тег..."
-            value={newTag}
-            onChange={e => setNewTag(e.target.value)}
-            onFocus={() => setShowSuggestions(suggestions.length > 0)}
-            onBlur={() => setTimeout(() => setShowSuggestions(false), 100)}
-            onKeyDown={handleTagInputKeyDown}
-            autoComplete="off"
-          />
-          <button type="submit" className="bg-primary text-white px-3 py-1 rounded text-sm">Добавить</button>
-          {showSuggestions && suggestions.length > 0 && (
-            <ul
-              className="absolute z-10 bg-white border rounded shadow w-full mt-1 max-h-48 overflow-auto text-sm"
-              style={{ left: 0, top: "100%" }}
-            >
-              {suggestions.map((s, idx) => (
-                <li
-                  key={s}
-                  className={`px-2 py-1 cursor-pointer ${idx === highlightedIndex ? "bg-muted" : ""}`}
-                  onMouseDown={e => {
-                    e.preventDefault()
-                    setNewTag(s)
-                    setShowSuggestions(false)
-                    setHighlightedIndex(-1)
-                    setTimeout(() => tagInputRef.current?.focus(), 0)
-                  }}
-                  onMouseEnter={() => setHighlightedIndex(idx)}
-                >{s}</li>
-              ))}
-            </ul>
+        {/* Теги */}
+        <div className="border rounded p-4 bg-card">
+          <div className="font-semibold mb-3">Теги</div>
+          {tagsLoading ? (
+            <div className="text-muted-foreground text-sm">Загрузка...</div>
+          ) : (
+            <div className="flex flex-wrap gap-2 mb-3">
+              {tags && tags.length > 0 ? tags.map((tag, idx) => (
+                <span key={tag + "-" + idx} className="inline-flex items-center bg-accent px-2 py-1 rounded text-sm">
+                  {tag}
+                  <button
+                    className="ml-2 text-destructive hover:text-red-700"
+                    title="Удалить тег"
+                    onClick={() => handleRemoveTag(tag)}
+                    type="button"
+                  >
+                    <Trash2 className="h-3 w-3" />
+                  </button>
+                </span>
+              )) : <span className="text-muted-foreground text-sm">Нет тегов</span>}
+            </div>
           )}
-        </form>
+
+          <form
+            className="flex gap-2 items-center relative"
+            onSubmit={e => {
+              e.preventDefault()
+              handleAddTag(newTag)
+            }}
+            autoComplete="off"
+          >
+            <input
+              ref={tagInputRef}
+              type="text"
+              className="border rounded px-2 py-1 text-sm w-full"
+              placeholder="Добавить тег..."
+              value={newTag}
+              onChange={e => setNewTag(e.target.value)}
+              onFocus={() => setShowSuggestions(suggestions.length > 0)}
+              onBlur={() => setTimeout(() => setShowSuggestions(false), 100)}
+              onKeyDown={handleTagInputKeyDown}
+              autoComplete="off"
+            />
+            <button type="submit" className="bg-primary text-white px-3 py-1 rounded text-sm shrink-0">Добавить</button>
+            {showSuggestions && suggestions.length > 0 && (
+              <ul
+                className="absolute z-10 bg-white border rounded shadow w-full mt-1 max-h-48 overflow-auto text-sm"
+                style={{ left: 0, top: "100%" }}
+              >
+                {suggestions.map((s, idx) => (
+                  <li
+                    key={s}
+                    className={`px-2 py-1 cursor-pointer ${idx === highlightedIndex ? "bg-muted" : ""}`}
+                    onMouseDown={e => {
+                      e.preventDefault()
+                      setNewTag(s)
+                      setShowSuggestions(false)
+                      setHighlightedIndex(-1)
+                      setTimeout(() => tagInputRef.current?.focus(), 0)
+                    }}
+                    onMouseEnter={() => setHighlightedIndex(idx)}
+                  >{s}</li>
+                ))}
+              </ul>
+            )}
+          </form>
+        </div>
       </div>
 
       {/* Meta (JSON) */}
