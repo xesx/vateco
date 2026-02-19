@@ -11,6 +11,7 @@ import { WorkflowVariantController } from './workflow-variant.controller'
 import { WorkflowVariantParamsController } from './workflow-variant-params.controller'
 import { WorkflowVariantTagsController } from './workflow-variant-tags.controller'
 import { TagController } from './tag.controller'
+import { ModelController } from './model.controller'
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { TagController } from './tag.controller'
     WorkflowVariantParamsController,
     WorkflowVariantTagsController,
     TagController,
+    ModelController,
   ],
   providers: [],
 })

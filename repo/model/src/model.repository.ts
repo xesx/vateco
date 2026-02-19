@@ -199,4 +199,42 @@ export class ModelRepository {
 
     return model
   }
+
+  async updateModel({ id, name, comfyUiDirectory, comfyUiFileName, label, description, meta, baseModel }: { id: number, name?: string, comfyUiDirectory?: string, comfyUiFileName?: string, label?: string, description?: string, meta?: unknown, baseModel?: string }) {
+    const data: Record<string, unknown> = {}
+    if (name !== undefined) data.name = name
+    if (comfyUiDirectory !== undefined) data.comfyUiDirectory = comfyUiDirectory
+    if (comfyUiFileName !== undefined) data.comfyUiFileName = comfyUiFileName
+    if (label !== undefined) data.label = label
+    if (description !== undefined) data.description = description
+    if (meta !== undefined) data.meta = meta === null ? {} : meta
+    if (baseModel !== undefined) data.baseModel = baseModel
+    await this.prisma.models.update({
+      where: { id },
+      data,
+    })
+  }
+
+  async getModelTags(modelId: number): Promise<string[]> {
+    const tags = await this.prisma.modelTags.findMany({
+      where: { modelId },
+      select: { tag: true },
+      orderBy: { tag: 'asc' },
+    })
+
+    return tags.map(t => t.tag)
+  }
+
+  async setModelTags({ modelId, tags }: { modelId: number, tags: string[] }): Promise<void> {
+    // Удаляем старые теги
+    await this.prisma.modelTags.deleteMany({ where: { modelId } })
+
+    // Добавляем новые
+    if (tags.length > 0) {
+      await this.prisma.modelTags.createMany({
+        data: tags.map(tag => ({ modelId, tag })),
+        skipDuplicates: true,
+      })
+    }
+  }
 }
