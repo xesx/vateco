@@ -27,6 +27,7 @@ import { ModelController } from './model.controller'
 
     repo.WorkflowRepositoryModule,
     repo.TagRepositoryModule,
+    repo.ModelRepositoryModule,
 
     synth.WorkflowSynthModule,
   ],
