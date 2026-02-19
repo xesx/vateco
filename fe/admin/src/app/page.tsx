@@ -113,6 +113,20 @@ export default function Home() {
               </Link>
             </CardContent>
           </Card>
+
+          <Card className="hover:shadow-lg transition-shadow">
+            <CardHeader>
+              <CardTitle>Модели</CardTitle>
+              <CardDescription>
+                Управление моделями ComfyUI
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Link href="/models">
+                <Button className="w-full">Перейти →</Button>
+              </Link>
+            </CardContent>
+          </Card>
         </div>
 
         <div className="grid gap-6 md:grid-cols-2 mb-8">
