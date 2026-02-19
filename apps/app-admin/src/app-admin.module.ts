@@ -24,6 +24,7 @@ import { ModelController } from './model.controller'
     lib.TgBotLibModule,
     lib.WorkflowLibModule,
     lib.PrismaLibModule,
+    lib.CivitaiLibModule,
 
     repo.WorkflowRepositoryModule,
     repo.TagRepositoryModule,
