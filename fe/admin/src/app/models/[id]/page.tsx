@@ -223,36 +223,13 @@ export default function ModelPage() {
 
       {/* Заголовок */}
       <div className="flex items-center gap-3 text-3xl font-bold">
-        <span>Model #{model.id}:</span>
-        {editField === "label" ? (
-          <>
-            <input
-              type="text"
-              className="border rounded px-2 py-1 text-2xl font-bold"
-              value={labelValue}
-              onChange={e => setFieldValue("label", e.target.value)}
-              onBlur={() => handleSave("label")}
-              onKeyDown={e => {
-                if (e.key === "Enter") handleSave("label")
-                if (e.key === "Escape") handleCancel("label")
-              }}
-              autoFocus
-            />
-            <button className="bg-primary text-white px-3 py-1 rounded text-sm" onClick={() => handleSave("label")} type="button">Сохранить</button>
-            <button className="bg-muted px-3 py-1 rounded text-sm" onClick={() => handleCancel("label")} type="button">Отмена</button>
-          </>
-        ) : (
-          <span
-            className="cursor-pointer hover:underline"
-            title="Редактировать метку"
-            onClick={() => setEditField("label")}
-          >{model.label}</span>
-        )}
+        <span>Model #{model.id}: {labelValue || model.label}</span>
       </div>
 
       {/* Поля модели */}
       <div className="border rounded p-4 bg-card">
         <div className="font-semibold mb-3">Основные данные</div>
+        {renderEditableField("label", "Label")}
         {renderEditableField("name", "Name (системное)")}
         {renderEditableField("comfyUiDirectory", "Директория", false, true, COMFY_DIRECTORIES)}
         {renderEditableField("comfyUiFileName", "Имя файла")}

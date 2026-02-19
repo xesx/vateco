@@ -1,13 +1,15 @@
 "use client"
 
 import React, { useState } from "react"
+import { useRouter } from "next/navigation"
 import { useModels, useCreateModel, useCreateModelFromCivitai, useCreateModelFromHuggingface } from "@/hooks/use-models"
 import type { Model } from "@/hooks/use-models"
 import { Edit, Plus } from "lucide-react"
 
-const COMFY_DIRECTORIES = ['checkpoints', 'diffusion_models', 'loras', 'clip', 'clip_vision', , 'vae', 'controlnet', 'embeddings', 'text_encoders']
+const COMFY_DIRECTORIES = ['checkpoints', 'diffusion_models', 'loras', 'clip', 'clip_vision', 'vae', 'controlnet', 'embeddings', 'text_encoders']
 
 export default function ModelsPage() {
+  const router = useRouter()
   const [directory, setDirectory] = useState("")
   const { data: models, isLoading, error } = useModels(directory)
   const createModel = useCreateModel()
@@ -66,14 +68,13 @@ export default function ModelsPage() {
     setCreateError(null)
     if (!civitaiForm.url || !civitaiForm.comfyUiDirectory) return
     try {
-      await createFromCivitai.mutateAsync({
+      const result = await createFromCivitai.mutateAsync({
         url: civitaiForm.url,
         comfyUiDirectory: civitaiForm.comfyUiDirectory,
         label: civitaiForm.label || undefined,
         baseModel: civitaiForm.baseModel || undefined,
       })
-      setCivitaiForm({ url: "", comfyUiDirectory: "", label: "", baseModel: "" })
-      setShowCivitaiForm(false)
+      router.push(`/models/${result.id}`)
     } catch (err: unknown) {
       setCreateError(err instanceof Error ? err.message : String(err))
     }
@@ -84,14 +85,13 @@ export default function ModelsPage() {
     setCreateError(null)
     if (!hfForm.url || !hfForm.comfyUiDirectory) return
     try {
-      await createFromHuggingface.mutateAsync({
+      const result = await createFromHuggingface.mutateAsync({
         url: hfForm.url,
         comfyUiDirectory: hfForm.comfyUiDirectory,
         label: hfForm.label || undefined,
         baseModel: hfForm.baseModel || undefined,
       })
-      setHfForm({ url: "", comfyUiDirectory: "", label: "", baseModel: "" })
-      setShowHuggingfaceForm(false)
+      router.push(`/models/${result.id}`)
     } catch (err: unknown) {
       setCreateError(err instanceof Error ? err.message : String(err))
     }
