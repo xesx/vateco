@@ -140,12 +140,17 @@ export class ModelController {
       if (!url.startsWith('https://huggingface.co/')) throw new Error('Ссылка должна начинаться с https://huggingface.co/')
 
       const withoutBase = url.replace('https://huggingface.co/', '')
+
       const blobIndex = withoutBase.indexOf('/blob/main/')
+      const resolveIndex = withoutBase.indexOf('/resolve/main/')
 
-      if (blobIndex === -1) throw new Error('Неверный формат ссылки. Ожидается .../blob/main/...')
+      if (blobIndex === -1 && resolveIndex === -1) throw new Error('Неверный формат ссылки. Ожидается .../blob/main/... или .../resolve/main/...')
 
-      const hfRepo = withoutBase.slice(0, blobIndex)
-      const file = withoutBase.slice(blobIndex + '/blob/main/'.length)
+      const separatorIndex = blobIndex !== -1 ? blobIndex : resolveIndex
+      const separatorLength = blobIndex !== -1 ? '/blob/main/'.length : '/resolve/main/'.length
+
+      const hfRepo = withoutBase.slice(0, separatorIndex)
+      const file = withoutBase.slice(separatorIndex + separatorLength)
 
       await this.modelRepo.createModelHuggingfaceLink({ modelId, repo: hfRepo, file })
       return { success: true, data: { repo: hfRepo, file } }
@@ -164,10 +169,14 @@ export class ModelController {
 
       const withoutBase = url.replace('https://huggingface.co/', '')
       const blobIndex = withoutBase.indexOf('/blob/main/')
-      if (blobIndex === -1) throw new Error('Неверный формат ссылки. Ожидается .../blob/main/...')
+      const resolveIndex = withoutBase.indexOf('/resolve/main/')
+      if (blobIndex === -1 && resolveIndex === -1) throw new Error('Неверный формат ссылки. Ожидается .../blob/main/... или .../resolve/main/...')
 
-      const hfRepo = withoutBase.slice(0, blobIndex)
-      const file = withoutBase.slice(blobIndex + '/blob/main/'.length)
+      const separatorIndex = blobIndex !== -1 ? blobIndex : resolveIndex
+      const separatorLength = blobIndex !== -1 ? '/blob/main/'.length : '/resolve/main/'.length
+
+      const hfRepo = withoutBase.slice(0, separatorIndex)
+      const file = withoutBase.slice(separatorIndex + separatorLength)
 
       const fileName = file.split('/').at(-1) ?? file
       const name = fileName

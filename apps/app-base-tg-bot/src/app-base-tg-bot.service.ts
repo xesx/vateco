@@ -138,7 +138,7 @@ export class AppBaseTgBotService {
         }
       }
 
-      if (name === 'seed' && workflowVariantParams.seedType === 'random') {
+      if (['seed', 'noise_seed'].includes(name) && workflowVariantParams.seedType === 'random') {
         workflowVariantParams[paramName] = this.wflib.generateSeed()
       }
     }
