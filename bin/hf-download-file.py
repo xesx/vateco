@@ -3,11 +3,16 @@
 Скрипт для скачивания файлов с HuggingFace в папку models ComfyUI.
 
 Использование:
-  python hf-download-file.py <url>
+  python hf-download-file.py <url> [директория]
 
-Пример URL:
-  https://huggingface.co/black-forest-labs/FLUX.1-dev/resolve/main/flux1-dev.safetensors
-  https://huggingface.co/black-forest-labs/FLUX.1-dev/blob/main/flux1-dev.safetensors
+Аргументы:
+  url          — ссылка на файл на HuggingFace
+  директория   — (опционально) путь относительно папки models (например: loras или loras/flux)
+                 Если не передан, скрипт спросит интерактивно.
+
+Пример:
+  python hf-download-file.py https://huggingface.co/black-forest-labs/FLUX.1-dev/resolve/main/flux1-dev.safetensors
+  python hf-download-file.py https://huggingface.co/black-forest-labs/FLUX.1-dev/resolve/main/flux1-dev.safetensors checkpoints
 """
 
 import sys
@@ -105,6 +110,7 @@ def main() -> None:
         sys.exit(1)
 
     url = sys.argv[1]
+    target_subfolder_arg = sys.argv[2] if len(sys.argv) >= 3 else None
 
     try:
         repo_id, filename, revision = parse_hf_url(url)
@@ -116,7 +122,12 @@ def main() -> None:
     print(f"  Файл        : {filename}")
     print(f"  Ревизия     : {revision}")
 
-    target_subfolder = pick_target_folder()
+    if target_subfolder_arg:
+        print(f"  Директория  : {target_subfolder_arg}")
+        target_subfolder = target_subfolder_arg
+    else:
+        target_subfolder = pick_target_folder()
+
     download(repo_id, filename, revision, target_subfolder)
 
 
