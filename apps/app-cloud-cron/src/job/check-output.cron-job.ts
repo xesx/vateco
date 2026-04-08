@@ -163,7 +163,7 @@ export class CheckOutputCronJob {
         continue
       }
 
-      const archivedVideoPath = join(archivePath, Date.now().toString())
+      const archivedVideoPath = join(archivePath, 'v_' + Date.now().toString() + '.' + video.split('.').pop())
       fs.renameSync(videoPath, archivedVideoPath)
 
       l.log(
