@@ -2,7 +2,7 @@ import * as fs from 'fs'
 import { setTimeout } from 'timers/promises'
 import { join } from 'path'
 
-import * as sharp from 'sharp'
+// import * as sharp from 'sharp'
 import { Injectable, Logger } from '@nestjs/common'
 
 import * as lib from '@lib'
@@ -26,6 +26,7 @@ export class CheckOutputCronJob {
     }
 
     const archivePath = join(OUTPUT_DIR, 'archive')
+
     if (!fs.existsSync(archivePath)) {
       fs.mkdirSync(archivePath)
       l.log(`CheckOutputCronJob_handleCheckOutputJob_24 Created archive directory: ${archivePath}`)
@@ -162,9 +163,18 @@ export class CheckOutputCronJob {
         continue
       }
 
-      const buffer = fs.readFileSync(videoPath)
+      const archivedVideoPath = join(archivePath, Date.now().toString())
+      fs.renameSync(videoPath, archivedVideoPath)
 
-      l.log(`CheckOutputCronJob_handleCheckOutputJob_72 Sending video ${video} to Telegram chat ${TG_CHAT_ID}`)
+      l.log(
+        `CheckOutputCronJob_handleCheckOutputJob_99 archive video: ${video}, ${archivedVideoPath}`,
+      )
+
+      const buffer = fs.readFileSync(archivedVideoPath)
+
+      l.log(
+        `CheckOutputCronJob_handleCheckOutputJob_72 Sending video ${archivedVideoPath} to Telegram chat ${TG_CHAT_ID}`,
+      )
       try {
         const keyboard = this.tgbotlib.generateInlineKeyboard([[
           ['Use it', 'video-use:wfv-list'],
@@ -174,12 +184,7 @@ export class CheckOutputCronJob {
         await this.tgbotlib.sendVideo({ chatId: TG_CHAT_ID, video: buffer, extra: keyboard })
       } catch (error) {
         l.error(`CheckOutputCronJob_handleCheckOutputJob_49 Error sending video ${video} to Telegram:`, this.h.herr.parseAxiosError(error))
-        continue
       }
-      const archivedVideoPath = join(archivePath, video)
-      fs.renameSync(videoPath, archivedVideoPath)
-
-      l.log(`CheckOutputCronJob_handleCheckOutputJob_99 archive video after sending: ${video}`)
     }
   }
 
