@@ -11,7 +11,6 @@ import { HelperAppCloudCronService } from '../helper.app-cloud-cron.service'
 type TWorkflowTask = {
   chatId: string
   workflowTemplateId: string
-  count?: number
   workflowVariantParams: Record<string, any>
   models: string[]
 }
@@ -58,10 +57,10 @@ export class WorkflowRunCronJob {
         continue
       }
 
-      const { chatId, workflowTemplateId, count = 1, workflowVariantParams, models } = taskData
+      const { chatId, workflowTemplateId, workflowVariantParams, models } = taskData
       fs.unlinkSync(taskFilePath)
 
-      l.log(`🕐 Run workflow cron job executed, found "${workflowTemplateId}" workflow to run ${count} times`)
+      l.log(`🕐 Run workflow cron job executed, found "${workflowTemplateId}" workflow`)
 
       const workflow = JSON.parse(fs.readFileSync(join(WORKFLOW_DIR, `${workflowTemplateId}.json`), 'utf8'))
 
@@ -127,34 +126,46 @@ export class WorkflowRunCronJob {
       // const message = this.msglib.genCodeMessage('Generation in progress...')
       // this.tgbotlib.sendMessage({ chatId: TG_CHAT_ID, text: message })
 
-      for (let i = 0; i < count; i++) {
-        l.log(`handleRunWorkflowJob_55 Running workflow ${workflowTemplateId}, iteration ${i + 1} of ${count}`)
-        l.log(`handleRunWorkflowJob_60 Workflow params: ${JSON.stringify(workflowVariantParams)}`)
+      l.log(`handleRunWorkflowJob_55 Running workflow ${workflowTemplateId}`)
+      l.log(`handleRunWorkflowJob_60 Workflow params: ${JSON.stringify(workflowVariantParams)}`)
 
-        const compiledWorkflowSchema = this.wflib.compileWorkflowSchema({ workflow, params: workflowVariantParams })
+      const compiledWorkflowSchema = this.wflib.compileWorkflowSchema({
+        workflow,
+        params: workflowVariantParams,
+      })
 
-        try {
-          const response = await this.comfyuilib.prompt(compiledWorkflowSchema)
-          l.log(`handleRunWorkflowJob_80 Workflow ${workflowTemplateId} run completed, response: ${JSON.stringify(response)}`)
+      try {
+        const response = await this.comfyuilib.prompt(compiledWorkflowSchema)
+        l.log(
+          `handleRunWorkflowJob_80 Workflow ${workflowTemplateId} run completed, response: ${JSON.stringify(response)}`,
+        )
 
-          const promptId = response.prompt_id
-          const progressFilename = `${promptId}.json`
+        const promptId = response.prompt_id
+        const progressFilename = `${promptId}.json`
 
-          const content = {
-            chatId,
-            promptId,
-            workflowTemplateId,
-            workflowVariantParams,
-            // filenamePrefix: compiledParams.filenamePrefix || '',
-            workflow: compiledWorkflowSchema,
-          }
-
-          fs.writeFileSync(join(GENERATE_PROGRESS_TASKS_DIR, progressFilename), JSON.stringify(content, null, 2), "utf8")
-        } catch (error) {
-          l.error('handleRunWorkflowJob_85 Error', this.h.herr.parseAxiosError(error))
-          const message = this.msglib.genCodeMessage(`Error during workflow "${workflowTemplateId}" execution: ${error.message}`)
-          await this.tgbotlib.sendMessage({ chatId: TG_CHAT_ID, text: message })
+        const content = {
+          chatId,
+          promptId,
+          workflowTemplateId,
+          workflowVariantParams,
+          // filenamePrefix: compiledParams.filenamePrefix || '',
+          workflow: compiledWorkflowSchema,
         }
+
+        fs.writeFileSync(
+          join(GENERATE_PROGRESS_TASKS_DIR, progressFilename),
+          JSON.stringify(content, null, 2),
+          'utf8',
+        )
+      } catch (error) {
+        l.error(
+          'handleRunWorkflowJob_85 Error',
+          this.h.herr.parseAxiosError(error),
+        )
+        const message = this.msglib.genCodeMessage(
+          `Error during workflow "${workflowTemplateId}" execution: ${error.message}`,
+        )
+        await this.tgbotlib.sendMessage({ chatId: TG_CHAT_ID, text: message })
       }
     }
   }

@@ -6,6 +6,7 @@ import { message } from 'telegraf/filters'
 // import * as lib from '@lib'
 import * as repo from '@repo'
 import * as synth from '@synth'
+import * as lib from '@lib'
 
 import { TAppBaseTgBotContext } from './types'
 import { AppBaseTgBotService } from './app-base-tg-bot.service'
@@ -16,6 +17,7 @@ export class HandlerTextTgBotService {
     @InjectBot() private readonly bot: Telegraf<TAppBaseTgBotContext>,
     private readonly tgbotsrv: AppBaseTgBotService,
     private readonly wfsynth: synth.WorkflowSynthService,
+    private readonly cloudapilib: lib.CloudApiCallLibService,
 
     private readonly wfrepo: repo.WorkflowRepository,
   ) {
@@ -42,13 +44,16 @@ export class HandlerTextTgBotService {
   }
 
   async cancelGenerate (ctx) {
-    const { userId, workflowVariantId, instance } = ctx.session
+    const { instance } = ctx.session
 
     if (!instance) {
-      return
+      console.log('HandlerTextTgBotService_cancelGenerate_13 No instance in session')
+      throw new Error('WFV_CANCEL_ERROR No instance available. Please create and start an instance first.')
     }
 
-    // await this.wfsynth.cancelRun({ userId, workflowVariantId })
+    const { id: instanceId, apiUrl: baseUrl, token } = instance
+
+    await this.cloudapilib.vastAiCancelAll({ baseUrl, instanceId, token })
   }
 
   async textShowPrompt (ctx) {

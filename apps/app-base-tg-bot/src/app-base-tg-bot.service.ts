@@ -101,7 +101,7 @@ export class AppBaseTgBotService {
         continue
       }
 
-      const [classType, name] = paramName.split(':')
+      const [classType] = paramName.split(':')
       const wfvParamSchema = this.wflib.getWfvParamSchema(paramName)
       const classTypeSchema = this.wflib.getWfNodeClassTypeSchema(classType)
 
@@ -137,18 +137,39 @@ export class AppBaseTgBotService {
           ctx.session.instance?.modelInfoLoaded.push(modelName)
         }
       }
-
-      if (['seed', 'noise_seed'].includes(name) && workflowVariantParams.seedType === 'random') {
-        workflowVariantParams[paramName] = this.wflib.generateSeed()
-      }
     }
 
     const { workflowTemplateId } = await this.wfrepo.getWorkflowVariant(workflowVariantId)
 
-    const count = workflowVariantParams.generationNumber || 1
     const chatId = telegramId
 
-    await this.cloudapilib.vastAiWorkflowRun({ baseUrl, instanceId, token, count, workflowTemplateId, workflowVariantParams, models, chatId })
+    const count = workflowVariantParams.generationNumber || 1
+
+    for (let i = 0; i < count; i++) {
+      for (const paramName in workflowVariantParams) {
+        const value = workflowVariantParams[paramName]
+
+        if (!value) {
+          continue
+        }
+
+        const [, name] = paramName.split(':')
+
+        if (['seed', 'noise_seed'].includes(name) && workflowVariantParams.seedType === 'random') {
+          workflowVariantParams[paramName] = this.wflib.generateSeed()
+        }
+      }
+
+      await this.cloudapilib.vastAiWorkflowRun({
+        baseUrl,
+        instanceId,
+        token,
+        workflowTemplateId,
+        workflowVariantParams,
+        models,
+        chatId,
+      })
+    }
 
     await this.tgbotlib.safeAnswerCallback(ctx)
   }
