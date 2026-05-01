@@ -926,12 +926,7 @@
     "input": {
       "required": {
         "image": [
-          [
-            "E107MVD.jpg",
-            "comic-art-style.jpg",
-            "tW8lXhRrAXzluvjNPudag (1).png",
-            "tW8lXhRrAXzluvjNPudag.png"
-          ],
+          [],
           {
             "image_upload": true
           }

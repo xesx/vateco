@@ -131,7 +131,7 @@ export class WorkflowViewSynthService {
     const rawKeyboardOptions: [string, string][][] = [[['Back', `wfv:${workflowVariantId}`]]]
 
     // todo
-    if (paramName.startsWith('LoadImage:image') && currentValue?.length > 13) {
+    if (paramName.startsWith('LoadImage:image:') && currentValue?.length > 13) {
       rawKeyboardOptions[0].push(['Show Image', `wfvp:${wfvParamId}:show`])
     }
 
