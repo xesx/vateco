@@ -1,7 +1,7 @@
 #!/bin/bash
 
-RCLONE_CONFIG_DIR="${HOME}/.config/rclone"
-RCLONE_CONFIG_FILE="${RCLONE_CONFIG_DIR}/rclone.conf"
+#RCLONE_CONFIG_DIR="${HOME}/.config/rclone"
+#RCLONE_CONFIG_FILE="${RCLONE_CONFIG_DIR}/rclone.conf"
 
 git clone https://github.com/xesx/vateco.git
 
@@ -21,14 +21,14 @@ PIP_PACKAGES=(
 # Make rclone config
 mkdir -p "${RCLONE_CONFIG_DIR}"
 
-cat > "${RCLONE_CONFIG_FILE}" <<EOF
-[ydisk]
-type = yandex
-token = {"access_token":"$YANDEX_DISK_ACCESS_TOKEN","token_type":"OAuth","refresh_token":"$YANDEX_DISK_REFRESH_TOKEN","expiry":"$YANDEX_DISK_TOKEN_EXPIRY"}
-EOF
+#cat > "${RCLONE_CONFIG_FILE}" <<EOF
+#[ydisk]
+#type = yandex
+#token = {"access_token":"$YANDEX_DISK_ACCESS_TOKEN","token_type":"OAuth","refresh_token":"$YANDEX_DISK_REFRESH_TOKEN","expiry":"$YANDEX_DISK_TOKEN_EXPIRY"}
+#EOF
 
 # Запуск rclone API-сервера без авторизации на порту 5572
-nohup rclone rcd --rc-addr=:5572 --rc-no-auth > /var/log/rclone.log 2>&1 &
+#nohup rclone rcd --rc-addr=:5572 --rc-no-auth > /var/log/rclone.log 2>&1 &
 
 function provisioning_start() {
     printf "\n##############################################\n#                                            #\n#          Provisioning container            #\n#                                            #\n#         This will take some time           #\n#                                            #\n# Your container will be ready on completion #\n#                                            #\n##############################################\n\n"
