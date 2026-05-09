@@ -310,6 +310,7 @@ export class WorkflowRepository {
                ON wv.id = wfvp.workflow_variant_id
        WHERE 1=1
          AND wfvp.param_name LIKE ${likePattern}
+       ORDER BY wv.name
     `
 
     return workflowVariants
