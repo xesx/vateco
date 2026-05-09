@@ -10,14 +10,16 @@ import { MessageLibService } from './message.lib.service'
 export class MessagesLibModule implements OnModuleInit {
   onModuleInit() {
     Handlebars.registerHelper('progressBar', function (current: number, total: number) {
-      if (!total || total <= 0) return '[------------------------------] 0%'
+        if (!total || total <= 0) return '[------------------------------] 0%'
 
-      const percentage = (current / total) * 100
-      const filled = '+'.repeat(Math.floor((percentage / 100) * 30))
-      const empty = '·'.repeat(30 - filled.length)
+        const percentage = Math.min(100, Math.max(0, (current / total) * 100))
+        const filledCount = Math.min(30, Math.floor((percentage / 100) * 30))
+        const filled = '+'.repeat(filledCount)
+        const empty = '·'.repeat(30 - filledCount)
 
-      return `[${filled}${empty}] ${Math.round(percentage)}%`
-    })
+        return `[${filled}${empty}] ${Math.round(percentage)}%`
+      },
+    )
 
     Handlebars.registerHelper('formatBytes', (bytes: number, decimals = 2) => {
       if (bytes === 0) return '0 B'
