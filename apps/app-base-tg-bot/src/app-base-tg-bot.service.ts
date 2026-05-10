@@ -183,7 +183,7 @@ export class AppBaseTgBotService {
   }
 
   async runWfvOnRunpodEndpoint (ctx) {
-    const { workflowVariantId, userId } = ctx.session
+    const { workflowVariantId, userId, telegramId } = ctx.session
 
     if (!workflowVariantId) {
       console.log('AppBaseTgBotService_runWfvOnRunpodEndpoint_13 No workflowVariantId in session')
@@ -219,22 +219,64 @@ export class AppBaseTgBotService {
       }
     }
 
-    const compiledWorkflowSchema = this.wflib.compileWorkflowSchema({
-      workflow: wft.schema,
-      params: wfvParams,
-    })
-
-    const data = await this.runpodLib.runSync({
-      workflow: compiledWorkflowSchema,
-      runpodEndpoint: wfv.runpodEndpoint,
-    })
-
-    const base64Data = data.output.images?.[0].data
-    const imgBuffer = Buffer.from(base64Data, 'base64')
-
-    await ctx.sendPhoto({ source: imgBuffer, filename: 'image' }, { caption: 'Here is your generated image.' })
-
     await this.tgbotlib.safeAnswerCallback(ctx)
+    const count = wfvParams.generationNumber || 1
+
+    for (let i = 0; i < count; i++) {
+      for (const paramName in wfvParams) {
+        const value = wfvParams[paramName]
+
+        if (!value) {
+          continue
+        }
+
+        const [, name] = paramName.split(':')
+
+        if (['seed', 'noise_seed'].includes(name) && wfvParams.seedType === 'random') {
+          wfvParams[paramName] = this.wflib.generateSeed()
+        }
+      }
+
+      const imageFileIds: string[] = []
+      const images: any[] = []
+
+      Object.entries(wfvParams || {}).forEach(([key, value]) => {
+        if (key.startsWith('LoadImage:image')) {
+          imageFileIds.push(value) // value is fileId from tg bot chat
+        }
+      })
+
+      for (const fileId of imageFileIds) {
+        const imageBuffer = await this.tgbotlib.importImageBufferByFileId({ fileId })
+
+        images.push({
+          name: fileId,
+          image: imageBuffer.toString('base64'),
+        })
+      }
+
+      const compiledWorkflowSchema = this.wflib.compileWorkflowSchema({
+        workflow: wft.schema,
+        params: wfvParams,
+      })
+
+
+      const data = await this.runpodLib.runServerlessEndpointSync({
+        workflow: compiledWorkflowSchema,
+        images,
+        runpodEndpoint: wfv.runpodEndpoint,
+      })
+
+      const base64Data = data.output.images?.[0].data
+      const imgBuffer = Buffer.from(base64Data, 'base64')
+
+      const keyboard = this.tgbotlib.generateInlineKeyboard([[
+        [`Use it`, 'img-use:wfv-list'],
+        ['Delete', 'message:delete']
+      ]])
+
+      await this.tgbotlib.sendPhoto({ chatId: telegramId, photo: imgBuffer, inlineKeyboard: keyboard.reply_markup })
+    }
   }
 
   async createModelByHuggingfaceLink (ctx, next) {

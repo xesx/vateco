@@ -144,23 +144,29 @@ export class RunpodLibService {
     return response?.data
   }
 
-  async runSync ({ workflow, runpodEndpoint }): Promise<any> {
+  async runServerlessEndpointSync ({ workflow, images, runpodEndpoint }: any): Promise<any> {
     // private readonly baseUrl = 'https://api.runpod.ai/v2/yjippcmguvsx1n'
     const baseUrl = 'https://api.runpod.ai/v2'
 
     const path = `/${runpodEndpoint}/runsync`
-    const data = { input: { workflow } }
+    const data = { input: { workflow, images } }
 
+    console.log('\x1b[36m', '-->>>>workflow', JSON.stringify(workflow), '\x1b[0m');
     const startTime = Date.now()
 
-    const response = await axios.post(
-      this.generateRequestUrl(path),
-      data,
-      { headers: this.headers }
-    )
+    try {
+      const response = await axios.post(
+        `${baseUrl}${path}`,
+        data,
+        { headers: this.headers }
+      )
 
-    console.log('RunpodLibService_runSync_99 time:', (Date.now() - startTime) / 1000, 's')
+      console.log('RunpodLibService_runSync_99 time:', (Date.now() - startTime) / 1000, 's')
 
-    return response?.data
+      return response?.data
+    } catch (error) {
+      console.error(error)
+      throw new Error('Error while running runpod')
+    }
   }
 }
