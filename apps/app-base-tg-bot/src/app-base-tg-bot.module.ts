@@ -43,6 +43,7 @@ import { BaseCommandTgBot } from './command/base.command.tg-bot'
     lib.TgBotLibModule,
     lib.MessagesLibModule,
     lib.VastLibModule,
+    lib.RunpodLibModule,
     lib.CloudApiCallLibModule,
     lib.RcloneLibModule,
     lib.WorkflowLibModule,

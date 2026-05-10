@@ -55,6 +55,7 @@ model WorkflowVariants {
   workflowTemplateId Int      @map("workflow_template_id")
   name               String   @unique @map("name")
   description        String?  @map("description")
+  runpodEndpoint     String?  @map("runpod_endpoint")
 
   workflowTemplate WorkflowTemplates           @relation(fields: [workflowTemplateId], references: [id])
   userParams       WorkflowVariantUserParams[] // связь с WorkflowVariantUserParams

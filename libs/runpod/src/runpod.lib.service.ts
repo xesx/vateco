@@ -144,20 +144,23 @@ export class RunpodLibService {
     return response?.data
   }
 
-  // async runSync ({ workflow }): Promise<any> {
-  // private readonly baseUrl = 'https://api.runpod.ai/v2/yjippcmguvsx1n'
+  async runSync ({ workflow, runpodEndpoint }): Promise<any> {
+    // private readonly baseUrl = 'https://api.runpod.ai/v2/yjippcmguvsx1n'
+    const baseUrl = 'https://api.runpod.ai/v2'
 
-  //   const path = '/runsync'
-  //   const data = { input: { workflow } }
-  //
-  //   const startTime = Date.now()
-  //   const response = await axios.post(
-  //     this.generateRequestUrl(path),
-  //     data,
-  //     { headers: this.headers }
-  //   )
-  //   console.log('RunpodLibService_runSync_99 time:', (Date.now() - startTime) / 1000, 's')
-  //
-  //   return response?.data
-  // }
+    const path = `/${runpodEndpoint}/runsync`
+    const data = { input: { workflow } }
+
+    const startTime = Date.now()
+
+    const response = await axios.post(
+      this.generateRequestUrl(path),
+      data,
+      { headers: this.headers }
+    )
+
+    console.log('RunpodLibService_runSync_99 time:', (Date.now() - startTime) / 1000, 's')
+
+    return response?.data
+  }
 }

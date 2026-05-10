@@ -44,11 +44,13 @@ export class AppBaseTgBotService {
     private readonly tgbotlib: lib.TgBotLibService,
     private readonly cloudapilib: lib.CloudApiCallLibService,
     private readonly wflib: lib.WorkflowLibService,
+    private readonly civitailib: lib.CivitaiLibService,
+    private readonly runpodLib: lib.RunpodLibService,
 
     private readonly modelrepo: repo.ModelRepository,
     private readonly wfrepo: repo.WorkflowRepository,
+
     private readonly wfsynth: synth.WorkflowSynthService,
-    private readonly civitailib: lib.CivitaiLibService,
   ) {
     setTimeout(() => {
       tgbotlib.sendMessage({ chatId: '185857068:185857068',
@@ -84,18 +86,26 @@ export class AppBaseTgBotService {
       return this.tgbotlib.safeAnswerCallback(ctx)
     }
 
-    if (!instance) {
-      console.log('AppBaseTgBotService_runWfv No instance in session')
-      throw new Error('WFV_RUN_ERROR No instance available. Please create and start an instance first.')
+    const { workflowTemplateId, runpodEndpoint } = await this.wfrepo.getWorkflowVariant(workflowVariantId)
+
+    if (!instance && runpodEndpoint) {
+      return await this.runWfvOnRunpodEndpoint(ctx)
     }
 
-    const { id: instanceId, apiUrl: baseUrl, token } = instance
-    const workflowVariantParams = await this.wfrepo.getMergedWorkflowVariantParamsValueMap({ userId, workflowVariantId })
+    if (!instance) {
+      console.log('AppBaseTgBotService_runWfv_31 No instance in session')
+      throw new Error(
+        'WFV_RUN_ERROR No instance available. Please create and start an instance first.',
+      )
+    }
 
+    const wfvParams = await this.wfrepo.getMergedWorkflowVariantParamsValueMap({ userId, workflowVariantId })
+
+    const { id: instanceId, apiUrl: baseUrl, token } = instance
     const models: string[] = []
 
-    for (const paramName in workflowVariantParams) {
-      const value = workflowVariantParams[paramName]
+    for (const paramName in wfvParams) {
+      const value = wfvParams[paramName]
 
       if (!value) {
         continue
@@ -110,7 +120,7 @@ export class AppBaseTgBotService {
 
       if (isLoaderNode || wfvParamSchema.isComfyUiModel) {
         if (paramName.startsWith('Power Lora Loader (rgthree):lora')) {
-          const isLoraEnabled = workflowVariantParams[paramName.replace('lora', 'loraEnabled')]
+          const isLoraEnabled = wfvParams[paramName.replace('lora', 'loraEnabled')]
 
           if (!isLoraEnabled) {
             continue
@@ -124,7 +134,7 @@ export class AppBaseTgBotService {
         }
 
         models.push(modelName)
-        workflowVariantParams[paramName] = modelData?.comfyUiFileName || null
+        wfvParams[paramName] = modelData?.comfyUiFileName || null
 
         if (modelInfoLoaded?.includes(modelName)) {
           continue
@@ -139,15 +149,13 @@ export class AppBaseTgBotService {
       }
     }
 
-    const { workflowTemplateId } = await this.wfrepo.getWorkflowVariant(workflowVariantId)
-
     const chatId = telegramId
 
-    const count = workflowVariantParams.generationNumber || 1
+    const count = wfvParams.generationNumber || 1
 
     for (let i = 0; i < count; i++) {
-      for (const paramName in workflowVariantParams) {
-        const value = workflowVariantParams[paramName]
+      for (const paramName in wfvParams) {
+        const value = wfvParams[paramName]
 
         if (!value) {
           continue
@@ -155,8 +163,8 @@ export class AppBaseTgBotService {
 
         const [, name] = paramName.split(':')
 
-        if (['seed', 'noise_seed'].includes(name) && workflowVariantParams.seedType === 'random') {
-          workflowVariantParams[paramName] = this.wflib.generateSeed()
+        if (['seed', 'noise_seed'].includes(name) && wfvParams.seedType === 'random') {
+          wfvParams[paramName] = this.wflib.generateSeed()
         }
       }
 
@@ -165,11 +173,66 @@ export class AppBaseTgBotService {
         instanceId,
         token,
         workflowTemplateId,
-        workflowVariantParams,
+        wfvParams,
         models,
         chatId,
       })
     }
+
+    await this.tgbotlib.safeAnswerCallback(ctx)
+  }
+
+  async runWfvOnRunpodEndpoint (ctx) {
+    const { workflowVariantId, userId } = ctx.session
+
+    if (!workflowVariantId) {
+      console.log('AppBaseTgBotService_runWfvOnRunpodEndpoint_13 No workflowVariantId in session')
+      return this.tgbotlib.safeAnswerCallback(ctx)
+    }
+
+    const wfv = await this.wfrepo.getWorkflowVariant(workflowVariantId)
+    const wft = await this.wfrepo.getWorkflowTemplate(wfv.workflowTemplateId)
+    const wfvParams = await this.wfrepo.getMergedWorkflowVariantParamsValueMap({ userId, workflowVariantId })
+
+    for (const paramName in wfvParams) {
+      const value = wfvParams[paramName]
+
+      if (!value) {
+        continue
+      }
+
+      const [classType] = paramName.split(':')
+      const wfvParamSchema = this.wflib.getWfvParamSchema(paramName)
+      const classTypeSchema = this.wflib.getWfNodeClassTypeSchema(classType)
+
+      const categories = classTypeSchema?.category?.split('/') || []
+      const isLoaderNode = categories.includes('loaders')
+
+      if (isLoaderNode || wfvParamSchema.isComfyUiModel) {
+        const modelData = await this.modelrepo.findModelByName(value)
+
+        if (!modelData) {
+          continue
+        }
+
+        wfvParams[paramName] = modelData.comfyUiFileName
+      }
+    }
+
+    const compiledWorkflowSchema = this.wflib.compileWorkflowSchema({
+      workflow: wft.schema,
+      params: wfvParams,
+    })
+
+    const data = await this.runpodLib.runSync({
+      workflow: compiledWorkflowSchema,
+      runpodEndpoint: wfv.runpodEndpoint,
+    })
+
+    const base64Data = data.output.images?.[0].data
+    const imgBuffer = Buffer.from(base64Data, 'base64')
+
+    await ctx.sendPhoto({ source: imgBuffer, filename: 'image' }, { caption: 'Here is your generated image.' })
 
     await this.tgbotlib.safeAnswerCallback(ctx)
   }
