@@ -32,6 +32,7 @@ model Users {
   lastName   String?  @map("last_name")
 
   workflowVariantUserParams WorkflowVariantUserParams[] // связь с WorkflowVariantUserParams
+  userWorkflowVariantRuns   UserWorkflowVariantRuns[]
 
   @@map("users")
 }
@@ -60,8 +61,9 @@ model WorkflowVariants {
   workflowTemplate WorkflowTemplates           @relation(fields: [workflowTemplateId], references: [id])
   userParams       WorkflowVariantUserParams[] // связь с WorkflowVariantUserParams
 
-  params WorkflowVariantParams[] // связь с WorkflowVariantParams
-  tags   WorkflowVariantTags[] // связь с WorkflowVariantTags
+  params                  WorkflowVariantParams[] // связь с WorkflowVariantParams
+  tags                    WorkflowVariantTags[] // связь с WorkflowVariantTags
+  userWorkflowVariantRuns UserWorkflowVariantRuns[]
 
   @@map("workflow_variants")
 }
@@ -170,26 +172,40 @@ model ModelTags {
   @@map("model_tags")
 }
 
-model Prompts {
-  id        Int      @id @default(autoincrement()) @map("id")
-  prompt    String   @db.Text @map("prompt")
-  hash      String   @unique @db.VarChar(64) @map("hash")// SHA-256 = 64 hex chars
-  createdAt DateTime @default(now()) @map("created_at")
+enum UserWorkflowVariantRunStatus {
+  new
+  in_progress
+  completed
+  failed
+}
 
-  @@index([hash], name: "prompt_hash_idx")
-  @@map("prompts")
+model UserWorkflowVariantRuns {
+  id                Int                          @id @default(autoincrement()) @map("id")
+  createdAt         DateTime                     @default(now()) @map("created_at")
+  updatedAt         DateTime                     @default(now()) @updatedAt @map("updated_at")
+  userId            Int                          @map("user_id")
+  workflowVariantId Int                          @map("workflow_variant_id")
+  status            UserWorkflowVariantRunStatus @default(new) @map("status")
+  userParams        Json                         @default("{}") @map("user_params") // Store user parameters of the workflow run
+  meta              Json                         @default("{}") @map("meta") // Store additional metadata about the workflow run
+
+  user            Users            @relation(fields: [userId], references: [id])
+  workflowVariant WorkflowVariants @relation(fields: [workflowVariantId], references: [id])
+
+  @@index([userId, workflowVariantId], name: "user_workflow_variant_run_idx")
+  @@map("user_workflow_variant_runs")
 }
 
 model Tags {
-  id        Int      @id @default(autoincrement())
-  name      String   @unique
+  id   Int    @id @default(autoincrement())
+  name String @unique
 
   @@map("tags")
 }
 
 model Settings {
-  name       String   @unique @map("name")
-  value      Json     @map("value")
+  name      String   @unique @map("name")
+  value     Json     @map("value")
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
 
