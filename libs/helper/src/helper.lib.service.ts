@@ -1,4 +1,5 @@
 // import * as assert from 'node:assert/strict'
+import { setTimeout } from 'timers/promises'
 
 import { Injectable } from '@nestjs/common'
 // import { ConfigService } from '@nestjs/config'
@@ -14,4 +15,8 @@ export class HelperLibService {
     readonly htar: TarHelperLibService,
     readonly format: FormatHelperLibService,
   ) {}
+
+  async sleep (ms: number): Promise<void> {
+    await setTimeout(ms)
+  }
 }

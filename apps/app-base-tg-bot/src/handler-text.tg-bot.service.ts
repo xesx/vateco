@@ -18,6 +18,7 @@ export class HandlerTextTgBotService {
     private readonly tgbotsrv: AppBaseTgBotService,
     private readonly wfsynth: synth.WorkflowSynthService,
     private readonly cloudapilib: lib.CloudApiCallLibService,
+    private readonly h: lib.HelperLibService,
 
     private readonly wfrepo: repo.WorkflowRepository,
   ) {
@@ -70,11 +71,8 @@ export class HandlerTextTgBotService {
   async textAnyOther (ctx, next) {
     const { userId, workflowVariantId } = ctx.session
 
-    const message = ctx.message.text
-      .replace(/\r\n/g, '\n')     // Windows → Unix переносы
-      .replace(/\n+/g, ' ')       // убираем лишние переводы строк
-      .replace(/\s+/g, ' ')       // схлопываем все пробелы/табы
-      .trim()
+    const message = this.h.format.sanitizeJsonString(ctx.message.text)
+    console.log('\x1b[36m', 'message', message, '\x1b[0m')
 
     if (ctx.session.inputWaiting) {
       const { inputWaiting: paramName } = ctx.session

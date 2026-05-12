@@ -169,4 +169,46 @@ export class RunpodLibService {
       throw new Error('Error while running runpod')
     }
   }
+
+  async runServerlessEndpoint ({ workflow, images, runpodEndpoint }: any): Promise<any> {
+    const baseUrl = 'https://api.runpod.ai/v2'
+
+    const path = `/${runpodEndpoint}/run`
+    const data = { input: { workflow, images } }
+
+    console.log('\x1b[36m', '-->>>>workflow', JSON.stringify(workflow), '\x1b[0m');
+
+    try {
+      const response = await axios.post(
+        `${baseUrl}${path}`,
+        data,
+        { headers: this.headers }
+      )
+
+      return response?.data
+    } catch (error) {
+      console.error(error)
+      throw new Error('Error while running runpod')
+    }
+  }
+
+  async checkTaskStatusServerlessEndpoint ({ id, runpodEndpoint }: any): Promise<any> {
+    const baseUrl = 'https://api.runpod.ai/v2'
+
+    const path = `/${runpodEndpoint}/status/${id}`
+
+    try {
+      const response = await axios.get(
+        `${baseUrl}${path}`,
+        { headers: this.headers }
+      )
+
+      return response?.data
+    } catch (error) {
+      console.error(error)
+      throw new Error('Error while check runpod task status')
+    }
+  }
+
+  // POST https://api.runpod.ai/v2/flmjew7a9xua3n/cancel/6558eba1-69aa-428e-8924-028424ae5980-e2
 }

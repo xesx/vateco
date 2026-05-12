@@ -46,6 +46,7 @@ export class AppBaseTgBotService {
     private readonly wflib: lib.WorkflowLibService,
     private readonly civitailib: lib.CivitaiLibService,
     private readonly runpodLib: lib.RunpodLibService,
+    private readonly h: lib.HelperLibService,
 
     private readonly modelrepo: repo.ModelRepository,
     private readonly wfrepo: repo.WorkflowRepository,
@@ -78,26 +79,32 @@ export class AppBaseTgBotService {
   }
 
   async runWfv (ctx) {
-    const { workflowVariantId, userId, instance, telegramId } = ctx.session
-    const modelInfoLoaded = instance?.modelInfoLoaded || []
+    const { workflowVariantId, instance} = ctx.session
 
     if (!workflowVariantId) {
       console.log('ActionOwnITgBot_actionWfvRun_21 No workflowId in session')
       return this.tgbotlib.safeAnswerCallback(ctx)
     }
 
-    const { workflowTemplateId, runpodEndpoint } = await this.wfrepo.getWorkflowVariant(workflowVariantId)
+    if (instance) {
+      return await this.runWfvOnVastAiInstance(ctx)
+    }
 
-    if (!instance && runpodEndpoint) {
+    const { runpodEndpoint } = await this.wfrepo.getWorkflowVariant(workflowVariantId)
+
+    if (runpodEndpoint) {
       return await this.runWfvOnRunpodEndpoint(ctx)
     }
 
-    if (!instance) {
-      console.log('AppBaseTgBotService_runWfv_31 No instance in session')
-      throw new Error(
-        'WFV_RUN_ERROR No instance available. Please create and start an instance first.',
-      )
-    }
+    console.log('AppBaseTgBotService_runWfv_31 No instance in session or endpoint')
+    throw new Error('WFV_RUN_ERROR No instance or endpoint available')
+  }
+
+  async runWfvOnVastAiInstance (ctx) {
+    const { workflowVariantId, userId, instance, telegramId } = ctx.session
+    const modelInfoLoaded = instance?.modelInfoLoaded || []
+
+    const { workflowTemplateId } = await this.wfrepo.getWorkflowVariant(workflowVariantId)
 
     const wfvParams = await this.wfrepo.getMergedWorkflowVariantParamsValueMap({ userId, workflowVariantId })
 
@@ -185,13 +192,8 @@ export class AppBaseTgBotService {
   async runWfvOnRunpodEndpoint (ctx) {
     const { workflowVariantId, userId, telegramId } = ctx.session
 
-    if (!workflowVariantId) {
-      console.log('AppBaseTgBotService_runWfvOnRunpodEndpoint_13 No workflowVariantId in session')
-      return this.tgbotlib.safeAnswerCallback(ctx)
-    }
-
-    const wfv = await this.wfrepo.getWorkflowVariant(workflowVariantId)
-    const wft = await this.wfrepo.getWorkflowTemplate(wfv.workflowTemplateId)
+    const { workflowTemplateId, runpodEndpoint } = await this.wfrepo.getWorkflowVariant(workflowVariantId)
+    const wft = await this.wfrepo.getWorkflowTemplate(workflowTemplateId)
     const wfvParams = await this.wfrepo.getMergedWorkflowVariantParamsValueMap({ userId, workflowVariantId })
 
     for (const paramName in wfvParams) {
@@ -220,7 +222,9 @@ export class AppBaseTgBotService {
     }
 
     await this.tgbotlib.safeAnswerCallback(ctx)
+
     const count = wfvParams.generationNumber || 1
+    const tasksIds: string[] = []
 
     for (let i = 0; i < count; i++) {
       for (const paramName in wfvParams) {
@@ -261,22 +265,55 @@ export class AppBaseTgBotService {
       })
 
 
-      const data = await this.runpodLib.runServerlessEndpointSync({
+      const data = await this.runpodLib.runServerlessEndpoint({
         workflow: compiledWorkflowSchema,
         images,
-        runpodEndpoint: wfv.runpodEndpoint,
+        runpodEndpoint,
       })
 
-      const base64Data = data.output.images?.[0].data
-      const imgBuffer = Buffer.from(base64Data, 'base64')
-
-      const keyboard = this.tgbotlib.generateInlineKeyboard([[
-        [`Use it`, 'img-use:wfv-list'],
-        ['Delete', 'message:delete']
-      ]])
-
-      await this.tgbotlib.sendPhoto({ chatId: telegramId, photo: imgBuffer, inlineKeyboard: keyboard.reply_markup })
+      console.log('\x1b[36m', 'runServerlessEndpoint', data, '\x1b[0m')
+      tasksIds.push(data.id)
     }
+
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
+    setTimeout(async () => {
+      for (const id of tasksIds) {
+        let status = ''
+        const messageId = await this.tgbotlib.sendMessage({ chatId: telegramId, text: 'Task status: IN_QUEUE' })
+
+        while (true) {
+          const data = await this.runpodLib.checkTaskStatusServerlessEndpoint({ id, runpodEndpoint })
+
+          if (!['IN_QUEUE', 'IN_PROGRESS', 'COMPLETED'].includes(data.status)) {
+            console.log('Unexpected task status: ', data)
+            await this.tgbotlib.editMessage({ chatId: telegramId, messageId, text: `Unexpected task status: ${data.status}` })
+            break
+          }
+
+          if (data.status !== status) {
+            console.log('\x1b[36m', 'checkTaskStatusServerlessEndpoint', data, '\x1b[0m')
+            await this.tgbotlib.editMessage({ chatId: telegramId, messageId, text: `Task status: ${data.status}` })
+            status = data.status
+          }
+
+          if (status === 'COMPLETED') {
+            const base64Data = data.output.images?.[0].data
+            const imgBuffer = Buffer.from(base64Data, 'base64')
+
+            const keyboard = this.tgbotlib.generateInlineKeyboard([[
+              [`Use it`, 'img-use:wfv-list'],
+              ['Delete', 'message:delete']
+            ]])
+
+            await this.tgbotlib.sendPhoto({ chatId: telegramId, photo: imgBuffer, inlineKeyboard: keyboard.reply_markup })
+
+            break
+          }
+
+          await this.h.sleep(1000)
+        }
+      }
+    }, 0)
   }
 
   async createModelByHuggingfaceLink (ctx, next) {
