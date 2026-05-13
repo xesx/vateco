@@ -85,17 +85,10 @@ export class AppBaseTgBotService {
 
     if (!workflowVariantId) {
       console.log('ActionOwnITgBot_actionWfvRun_21 No workflowId in session')
-      return this.tgbotlib.safeAnswerCallback(ctx)
+      return await this.tgbotlib.safeAnswerCallback(ctx)
     }
 
     if (instance) {
-      // await this.runrepo.createRun({
-      //   userId,
-      //   workflowVariantId,
-      //   userParams,
-      //   meta: { instance },
-      // })
-
       return await this.runWfvOnVastAiInstance(ctx)
     }
 
@@ -105,7 +98,7 @@ export class AppBaseTgBotService {
       return await this.runWfvOnRunpodEndpoint(ctx)
     }
 
-    console.log('AppBaseTgBotService_runWfv_31 No instance in session or endpoint')
+    console.log('AppBaseTgBotService_runWfv_31 No instance in session or endpoint', ctx.session)
     throw new Error('WFV_RUN_ERROR No instance or endpoint available')
   }
 
@@ -285,7 +278,7 @@ export class AppBaseTgBotService {
         runpodEndpoint,
       })
 
-      meta['runPodTaskId'] = data.id
+      meta['runPodJobId'] = data.id
 
       await this.runrepo.createUserWorkflowVariantRun({
         userId,
@@ -303,20 +296,20 @@ export class AppBaseTgBotService {
         let status = 'IN_QUEUE'
 
         const userWfvRun = await this.runrepo.getUserWorkflowVariantRun({ id })
-        const { runpodEndpoint, runPodTaskId, chatId } = userWfvRun.meta as any
+        const { runpodEndpoint, runPodJobId, chatId } = userWfvRun.meta as any
 
-        const messageId = await this.tgbotlib.sendMessage({ chatId, text: 'Task status: IN_QUEUE' })
+        const messageId = await this.tgbotlib.sendMessage({ chatId, text: 'Job status: IN_QUEUE' })
 
         while (true) {
           let data: any
 
           try {
-            data = await this.runpodLib.checkTaskStatusServerlessEndpoint({ id: runPodTaskId, runpodEndpoint })
+            data = await this.runpodLib.checkTaskStatusServerlessEndpoint({ id: runPodJobId, runpodEndpoint })
           } catch (error) {
             console.log('AppBaseTgBotService_runWfvOnRunpodEndpoint_51 Error while check status', this.h.herr.parseAxiosError(error))
 
             await this.runrepo.setUserWorkflowVariantRunStatus({ id, status: 'failed' })
-            await this.tgbotlib.editMessage({ chatId: telegramId, messageId, text: `Task status: FAILED` })
+            await this.tgbotlib.editMessageV2({ chatId, messageId, text: `Job status: FAILED` })
 
             break
           }
@@ -327,16 +320,9 @@ export class AppBaseTgBotService {
             console.log('Unexpected task status: ', data)
 
             await this.runrepo.setUserWorkflowVariantRunStatus({ id, status: 'failed' })
-            await this.tgbotlib.editMessage({ chatId: telegramId, messageId, text: `Unexpected task status: ${data.status}` })
+            await this.tgbotlib.editMessageV2({ chatId, messageId, text: `Unexpected job status: ${data.status}` })
 
             break
-          }
-
-          if (status !== data.status && data.status === 'IN_PROGRESS') {
-            // console.log('\x1b[36m', 'checkTaskStatusServerlessEndpoint', data, '\x1b[0m')
-            await this.runrepo.setUserWorkflowVariantRunStatus({ id, status: 'in_progress' })
-            await this.tgbotlib.editMessageV2({ chatId: telegramId, messageId, text: `Task status: IN_PROGRESS` })
-            status = data.status
           }
 
           if (data.status === 'COMPLETED') {
@@ -348,12 +334,18 @@ export class AppBaseTgBotService {
               ['Delete', 'message:delete']
             ]])
 
-            await this.tgbotlib.sendPhoto({ chatId: telegramId, photo: imgBuffer, inlineKeyboard: keyboard.reply_markup })
+            await this.tgbotlib.sendPhoto({ chatId, photo: imgBuffer, inlineKeyboard: keyboard.reply_markup })
             await this.runrepo.setUserWorkflowVariantRunStatus({ id, status: 'completed' })
 
             break
           }
 
+          if (status !== data.status && data.status === 'IN_PROGRESS') {
+            await this.runrepo.setUserWorkflowVariantRunStatus({ id, status: 'in_progress' })
+            await this.tgbotlib.editMessageV2({ chatId, messageId, text: `Job status: IN_PROGRESS` })
+          }
+
+          status = data.status
           await this.h.sleep(1000)
         }
       }
