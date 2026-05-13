@@ -56,7 +56,7 @@ import { BaseCommandTgBot } from './command/base.command.tg-bot'
     repo.ModelRepositoryModule,
     repo.TagRepositoryModule,
     repo.SetupRepositoryModule,
-    repo.UserWorkflowVariantRunsRepositoryModule,
+    repo.RunRepositoryModule,
 
     synth.WorkflowSynthModule,
     synth.OfferSynthModule,

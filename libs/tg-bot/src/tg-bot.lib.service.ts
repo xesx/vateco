@@ -204,8 +204,12 @@ export class TgBotLibService {
       })
       return response.data
     } catch (error: any) {
-      console.error('Error editing message:', error.message)
+      console.error('Error editing message:', { text }, error.message)
     }
+  }
+
+  async editMessageV2 ({ chatId, messageId, text }) {
+    return await this.bot.telegram.editMessageText(chatId, messageId, undefined, text, { parse_mode: 'HTML' })
   }
 
   async sendPhoto({ chatId, photo, caption, inlineKeyboard }: {

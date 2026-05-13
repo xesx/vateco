@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common'
 import * as lib from '@lib'
 import * as repo from '@repo'
 import * as synth from '@synth'
-import { run } from 'node:test'
+import { UserWorkflowVariantRunStatus } from '@prisma/client'
 
 const COMFYUI_MODEL_DIRS = [
   'audio_encoders',
@@ -51,7 +51,7 @@ export class AppBaseTgBotService {
 
     private readonly modelrepo: repo.ModelRepository,
     private readonly wfrepo: repo.WorkflowRepository,
-    private readonly runrepo: repo.UserWorkflowVariantRunsRepository,
+    private readonly runrepo: repo.RunRepository,
 
     private readonly wfsynth: synth.WorkflowSynthService,
   ) {
@@ -233,17 +233,13 @@ export class AppBaseTgBotService {
     await this.tgbotlib.safeAnswerCallback(ctx)
 
     const count = wfvParams.generationNumber || 1
-    const tasksIds: string[] = []
 
     const userParams = await this.wfrepo.getWorkflowVariantUserParamsMap({ userId, workflowVariantId })
-    const runId = await this.runrepo.createRun({
-      userId,
-      workflowVariantId,
-      userParams,
-      meta: { runpodEndpoint },
-    })
+    const wfvRunParamsId = await this.runrepo.createWorkflowVariantRunParams({ params: userParams })
 
     for (let i = 0; i < count; i++) {
+      const meta = { runpodEndpoint, chatId: telegramId }
+
       for (const paramName in wfvParams) {
         const value = wfvParams[paramName]
 
@@ -255,6 +251,7 @@ export class AppBaseTgBotService {
 
         if (['seed', 'noise_seed'].includes(name) && wfvParams.seedType === 'random') {
           wfvParams[paramName] = this.wflib.generateSeed()
+          meta[paramName] = wfvParams[paramName]
         }
       }
 
@@ -288,35 +285,49 @@ export class AppBaseTgBotService {
         runpodEndpoint,
       })
 
-      // console.log('\x1b[36m', 'runServerlessEndpoint', data, '\x1b[0m')
-      tasksIds.push(data.id)
-    }
+      meta['runPodTaskId'] = data.id
 
-    await this.runrepo.setStatus({ id: runId, status: 'in_progress' })
+      await this.runrepo.createUserWorkflowVariantRun({
+        userId,
+        workflowVariantId,
+        wfvRunParamsId,
+        meta,
+      })
+    }
 
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
     setTimeout(async () => {
-      for (const id of tasksIds) {
-        let status = 'NEW'
-        const messageId = await this.tgbotlib.sendMessage({ chatId: telegramId, text: 'Task status: NEW' })
+      const userWfvRunIds = await this.runrepo.findActiveUserWorkflowVariantRunIds({ userId })
+
+      for (const id of userWfvRunIds) {
+        let status = 'IN_QUEUE'
+
+        const userWfvRun = await this.runrepo.getUserWorkflowVariantRun({ id })
+        const { runpodEndpoint, runPodTaskId, chatId } = userWfvRun.meta as any
+
+        const messageId = await this.tgbotlib.sendMessage({ chatId, text: 'Task status: IN_QUEUE' })
 
         while (true) {
-          const data = await this.runpodLib.checkTaskStatusServerlessEndpoint({ id, runpodEndpoint })
+          const data = await this.runpodLib.checkTaskStatusServerlessEndpoint({ id: runPodTaskId, runpodEndpoint })
+          // console.log('\x1b[36m', 'data', data, '\x1b[0m')
 
           if (!['IN_QUEUE', 'IN_PROGRESS', 'COMPLETED'].includes(data.status)) {
-            // await this.runrepo.setStatus({ id, status: 'failed' })
             console.log('Unexpected task status: ', data)
+
+            await this.runrepo.setUserWorkflowVariantRunStatus({ id, status: 'failed' })
             await this.tgbotlib.editMessage({ chatId: telegramId, messageId, text: `Unexpected task status: ${data.status}` })
+
             break
           }
 
-          if (data.status !== status) {
+          if (status !== data.status && data.status === 'IN_PROGRESS') {
             // console.log('\x1b[36m', 'checkTaskStatusServerlessEndpoint', data, '\x1b[0m')
-            await this.tgbotlib.editMessage({ chatId: telegramId, messageId, text: `Task status: ${data.status}` })
+            await this.runrepo.setUserWorkflowVariantRunStatus({ id, status: 'in_progress' })
+            await this.tgbotlib.editMessageV2({ chatId: telegramId, messageId, text: `Task status: IN_PROGRESS` })
             status = data.status
           }
 
-          if (status === 'COMPLETED') {
+          if (data.status === 'COMPLETED') {
             const base64Data = data.output.images?.[0].data
             const imgBuffer = Buffer.from(base64Data, 'base64')
 
@@ -326,15 +337,14 @@ export class AppBaseTgBotService {
             ]])
 
             await this.tgbotlib.sendPhoto({ chatId: telegramId, photo: imgBuffer, inlineKeyboard: keyboard.reply_markup })
+            await this.runrepo.setUserWorkflowVariantRunStatus({ id, status: 'completed' })
 
             break
           }
 
-          await this.h.sleep(1500)
+          await this.h.sleep(1000)
         }
       }
-
-      await this.runrepo.setStatus({ id: runId, status: 'completed' })
     }, 0)
   }
 
