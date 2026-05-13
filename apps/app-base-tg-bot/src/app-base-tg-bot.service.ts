@@ -308,7 +308,19 @@ export class AppBaseTgBotService {
         const messageId = await this.tgbotlib.sendMessage({ chatId, text: 'Task status: IN_QUEUE' })
 
         while (true) {
-          const data = await this.runpodLib.checkTaskStatusServerlessEndpoint({ id: runPodTaskId, runpodEndpoint })
+          let data: any
+
+          try {
+            data = await this.runpodLib.checkTaskStatusServerlessEndpoint({ id: runPodTaskId, runpodEndpoint })
+          } catch (error) {
+            console.log('AppBaseTgBotService_runWfvOnRunpodEndpoint_51 Error while check status', this.h.herr.parseAxiosError(error))
+
+            await this.runrepo.setUserWorkflowVariantRunStatus({ id, status: 'failed' })
+            await this.tgbotlib.editMessage({ chatId: telegramId, messageId, text: `Task status: FAILED` })
+
+            break
+          }
+
           // console.log('\x1b[36m', 'data', data, '\x1b[0m')
 
           if (!['IN_QUEUE', 'IN_PROGRESS', 'COMPLETED'].includes(data.status)) {

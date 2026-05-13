@@ -205,8 +205,8 @@ export class RunpodLibService {
 
       return response?.data
     } catch (error) {
-      console.error(error)
-      throw new Error('Error while check runpod task status')
+      console.log('RunpodLibService_checkTaskStatusServerlessEndpoint_73 Error while check runpod task status')
+      throw error
     }
   }
 
