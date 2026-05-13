@@ -83,13 +83,15 @@ export class WorkflowLibService {
 
       const keyEscaped = key.replace(/[-/\\^$*+?.()|[\]]/g, '\\$&')
 
-      let re = new RegExp(`{{${keyEscaped}}}`, 'g')
-
-      if (typeof value !== 'string') {
-        re = new RegExp(`"{{${keyEscaped}}}"`, 'g')
+      if (typeof value === 'string') {
+        const re = new RegExp(`{{${keyEscaped}}}`, 'g')
+        // Экранируем строку для безопасной вставки в JSON (убираем обрамляющие кавычки, которые добавляет JSON.stringify)
+        const escapedValue = JSON.stringify(value).slice(1, -1)
+        templateStr = templateStr.replace(re, escapedValue)
+      } else {
+        const re = new RegExp(`"{{${keyEscaped}}}"`, 'g')
+        templateStr = templateStr.replace(re, String(value))
       }
-
-      templateStr = templateStr.replace(re, String(value))
     }
 
     try {
