@@ -334,6 +334,7 @@ export class AppBaseTgBotService {
               ['Delete', 'message:delete']
             ]])
 
+            await this.tgbotlib.editMessageV2({ chatId, messageId, text: `Job status: COMPLETED` })
             await this.tgbotlib.sendPhoto({ chatId, photo: imgBuffer, inlineKeyboard: keyboard.reply_markup })
             await this.runrepo.setUserWorkflowVariantRunStatus({ id, status: 'completed' })
 
