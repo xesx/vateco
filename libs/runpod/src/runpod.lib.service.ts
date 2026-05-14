@@ -176,7 +176,7 @@ export class RunpodLibService {
     const path = `/${runpodEndpoint}/run`
     const data = { input: { workflow, images } }
 
-    console.log('\x1b[36m', '-->>>>workflow', JSON.stringify(workflow), '\x1b[0m');
+    console.log('\x1b[36m', '-->>>>workflow', JSON.stringify(data), '\x1b[0m');
 
     try {
       const response = await axios.post(

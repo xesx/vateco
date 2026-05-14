@@ -15,7 +15,7 @@ import { HandlerPhotoTgBotService } from './handler-photo.tg-bot.service'
 import { HandlerDocumentTgBotService } from './handler-document.tg-bot.service'
 
 import { AppBaseTgBotService } from './app-base-tg-bot.service'
-// import { BaseCommandTgBot } from './command/base.command.tg-bot'
+import { BaseCommandTgBot } from './command/base.command.tg-bot'
 
 @Module({
   imports: [
@@ -75,18 +75,8 @@ import { AppBaseTgBotService } from './app-base-tg-bot.service'
     HandlerPhotoTgBotService,
     HandlerDocumentTgBotService,
 
-    // BaseCommandTgBot,
-
-    // owni.WayOwnITgBot,
-    // owni.CommonHandlerOwnITgBot,
-    // owni.ActionOwnITgBot,
-    // owni.ViewOwnITgBot,
-    // owni.TextMessageHandlerOwnITgBot,
-
-    // rpwf.WayOwnITgBot,
-    // rpwf.HandleRunpodWfTgBot,
-    // rpwf.ViewRunpodWfTgBot,
+    BaseCommandTgBot,
   ],
 })
 
-export class AppBaseTgBotModule {}
+export class AppGpTgBotModule {}
