@@ -290,13 +290,34 @@ export class AppBaseTgBotService {
 
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
     setTimeout(async () => {
-      const userWfvRunIds = await this.runrepo.findActiveUserWorkflowVariantRunIds({ userId })
+      // const userWfvRunIds = await this.runrepo.findActiveUserWorkflowVariantRunIds({ userId })
 
-      for (const id of userWfvRunIds) {
+      let userWfvRun = await this.runrepo.findOldestActiveUserWorkflowVariantRun({ userId })
+      console.log('\x1b[36m', 'userWfvRun', userWfvRun, '\x1b[0m')
+
+      if (!userWfvRun) {
+        return
+      }
+
+      // for (const id of userWfvRunIds) {
+      while (userWfvRun) {
+        // const userWfvRun = await this.runrepo.findOldestActiveUserWorkflowVariantRun({ userId })
+        const now = Date.now()
         let status = 'IN_QUEUE'
 
-        const userWfvRun = await this.runrepo.getUserWorkflowVariantRun({ id })
-        const { runpodEndpoint, runPodJobId, chatId } = userWfvRun.meta as any
+        // const userWfvRun = await this.runrepo.getUserWorkflowVariantRun({ id })
+        const { id, createdAt, updatedAt } = userWfvRun
+        const { runpodEndpoint, runPodJobId, chatId } = userWfvRun.meta
+
+        if (createdAt.getTime() !== updatedAt.getTime() && Date.now() - updatedAt.getTime() < 5000) {
+          return
+        }
+
+        await this.runrepo.upgradeUserWorkflowVariantRunUpdatedAt({ id })
+
+        console.log('\x1b[36m', 'userWfvRun', userWfvRun, '\x1b[0m')
+        console.log('\x1b[36m', 'createdAt === updatedAt', createdAt === updatedAt, '\x1b[0m')
+        console.log('\x1b[36m', 'now - updatedAt.getTime()', now - updatedAt.getTime(), '\x1b[0m')
 
         const messageId = await this.tgbotlib.sendMessage({ chatId, text: 'Job status: IN_QUEUE' })
 
@@ -349,6 +370,7 @@ export class AppBaseTgBotService {
           status = data.status
           await this.h.sleep(1000)
         }
+        userWfvRun = await this.runrepo.findOldestActiveUserWorkflowVariantRun({ userId })
       }
     }, 0)
   }

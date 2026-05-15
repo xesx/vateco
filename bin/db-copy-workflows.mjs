@@ -56,16 +56,16 @@ async function copyTable() {
           }))
         })
 
-        const workflowVariantUserParams = await sourceDb.workflowVariantUserParams.findMany({ where: { workflowVariantId: wfv.id } })
-        await targetDb.workflowVariantUserParams.createMany({
-          skipDuplicates: true,
-          data: workflowVariantUserParams.map(param => ({
-            userId: param.userId,
-            workflowVariantId: localWfv.id,
-            paramName: param.paramName,
-            value: param.value,
-          }))
-        })
+        // const workflowVariantUserParams = await sourceDb.workflowVariantUserParams.findMany({ where: { workflowVariantId: wfv.id } })
+        // await targetDb.workflowVariantUserParams.createMany({
+        //   skipDuplicates: true,
+        //   data: workflowVariantUserParams.map(param => ({
+        //     userId: param.userId,
+        //     workflowVariantId: localWfv.id,
+        //     paramName: param.paramName,
+        //     value: param.value,
+        //   }))
+        // })
 
         const workflowVariantTags = await sourceDb.workflowVariantTags.findMany({ where: { workflowVariantId: wfv.id } })
         await targetDb.workflowVariantTags.createMany({

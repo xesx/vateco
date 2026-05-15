@@ -205,6 +205,22 @@ export class RunRepository {
     return result
   }
 
+  /**
+   * Обновить updatedAt запуска варианта workflow (touch).
+   */
+  async upgradeUserWorkflowVariantRunUpdatedAt ({
+    id,
+    trx = this.prisma,
+  }: {
+    id: number
+    trx?: lib.PrismaLibService
+  }): Promise<void> {
+    await trx.userWorkflowVariantRuns.update({
+      where: { id },
+      data: { updatedAt: new Date() },
+    })
+  }
+
   async findActiveUserWorkflowVariantRunIds ({
     userId,
   }: {
@@ -216,10 +232,22 @@ export class RunRepository {
         status: { in: [UserWorkflowVariantRunStatus.new, UserWorkflowVariantRunStatus.in_progress] },
       },
       select: { id: true },
-      orderBy: { createdAt: 'asc' },
+      orderBy: { updatedAt: 'asc' },
     })
 
     return result.map(({ id }) => id)
+  }
+
+  async findOldestActiveUserWorkflowVariantRun ({ userId }: { userId: number }): Promise<any> {
+    const result = await this.prisma.userWorkflowVariantRuns.findFirst({
+      where: {
+        userId,
+        status: { in: [UserWorkflowVariantRunStatus.new, UserWorkflowVariantRunStatus.in_progress] },
+      },
+      orderBy: { updatedAt: 'asc' },
+    })
+
+    return result
   }
 }
 
