@@ -64,7 +64,7 @@ export class AppBaseTgBotService {
   async selectWfv ({ ctx, workflowVariantId }) {
     const { instance } = ctx.session
 
-    ctx.session.workflowVariantId = workflowVariantId
+    ctx.session.workflowVariantId = Number(workflowVariantId)
     delete ctx.session.inputWaiting
 
     if (instance) {
