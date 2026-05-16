@@ -109,14 +109,14 @@ export class WorkflowViewSynthService {
 
   async showDefaultMenu ({ ctx, chatId, message, enumArr, prefixAction, backAction, extraActions, useIndexAsValue = true }
   : {
-    ctx?: any;
-    chatId?: string;
-    message: string;
-    enumArr: any[];
-    prefixAction: string;
-    backAction?: string;
-    extraActions?: [string, string][];
-    useIndexAsValue?: boolean;
+    ctx?: any
+    chatId?: string
+    message: string
+    enumArr: any[]
+    prefixAction: string
+    backAction?: string
+    extraActions?: [string, string][]
+    useIndexAsValue?: boolean
   }) {
     const keyboard = this.generateDefaultKeyboardMenu({ enumArr, prefixAction, backAction, extraActions, useIndexAsValue })
     await this.tgbotlib.sendMessageV2({ ctx, chatId, message, extra: { parse_mode: 'HTML', ...keyboard } })
@@ -128,7 +128,10 @@ export class WorkflowViewSynthService {
     const currentValueAsCode = this.msglib.genCodeMessage(String(currentValue))
     const message = `Current value: ${currentValueAsCode}\nSend new value for parameter <b>"${label ?? paramName}"</b> (${paramName}):`
 
-    const rawKeyboardOptions: [string, string][][] = [[['Back', `wfv:${workflowVariantId}`]]]
+    const rawKeyboardOptions: [string, string][][] = [[
+      ['⬅️Back', `wfv:${workflowVariantId}`],
+      ['🔄Reset', `wfvp:${wfvParamId}:reset`],
+    ]]
 
     // todo
     if (paramName.startsWith('LoadImage:image:') && currentValue?.length > 13) {

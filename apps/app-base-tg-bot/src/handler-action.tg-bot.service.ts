@@ -49,6 +49,7 @@ export class HandlerActionTgBotService {
     this.bot.action(/^wfv:([0-9]+)$/, (ctx) => this.wfvSelect(ctx))
     this.bot.action(/^wfv:([0-9]+):run$/, (ctx) => this.wfvRun(ctx))
     this.bot.action(/^wfv:([0-9]+):info$/, (ctx) => this.wfvInfo(ctx))
+    this.bot.action(/^wfv:([0-9]+):reset$/, (ctx) => this.wfvReset(ctx))
 
     this.bot.action(/^wfvp:([0-9]+)$/, (ctx) => this.wfvParamSelect(ctx))
     this.bot.action(/^wfvp:([0-9]+):mtag:(.+):search:([0-9]+)$/, (ctx) => this.wfvParamModelsSearch(ctx)) // select model with tags
@@ -56,6 +57,7 @@ export class HandlerActionTgBotService {
     this.bot.action(/^wfvp:([0-9]+):set:(.+)$/, (ctx) => this.wfvParamSet(ctx))
     this.bot.action(/^wfvp:([0-9]+):fset:(.+)$/, (ctx) => this.wfvParamForceSet(ctx)) // force set
     this.bot.action(/^wfvp:([0-9]+):show$/, (ctx) => this.wfvParamShow(ctx)) // force set
+    this.bot.action(/^wfvp:([0-9]+):reset$/, (ctx) => this.wfvParamReset(ctx))
 
     this.bot.action(/^img-use:wfv-list$/, (ctx) => this.imageUseWfvList(ctx))
     this.bot.action(/^img-use:start$/, (ctx) => this.imageUseStart(ctx))
@@ -266,8 +268,9 @@ export class HandlerActionTgBotService {
             prefixAction: `wfvp:${wfvParamId}:mtag`,
             // backAction: `wfv:${workflowVariantId}`,
             extraActions: [
-              ['Search', `wfvp:${wfvParamId}:mtag:all:search:0`],
-              ['Back', `wfv:${workflowVariantId}`]
+              ['🔎Search', `wfvp:${wfvParamId}:mtag:all:search:0`],
+              ['🔄Reset', `wfvp:${wfvParamId}:reset`],
+              ['⬅️Back', `wfv:${workflowVariantId}`]
             ],
             useIndexAsValue: false,
           })
@@ -284,7 +287,11 @@ export class HandlerActionTgBotService {
           message: `Current value: **${String(currentValue)}** \nSelect new value:`,
           enumArr,
           prefixAction: `wfvp:${wfvParamId}:set`,
-          backAction: `wfv:${workflowVariantId}`,
+          // backAction: `wfv:${workflowVariantId}`,
+          extraActions: [
+            ['🔄Reset', `wfvp:${wfvParamId}:reset`],
+            ['⬅️Back', `wfv:${workflowVariantId}`],
+          ],
         })
         return
       }
@@ -492,6 +499,19 @@ export class HandlerActionTgBotService {
     await this.wfsynth.view.showWfvRunMenu({ ctx, userId, workflowVariantId, prefixAction: '', backAction: 'wfv:list' })
   }
 
+  async wfvParamReset (ctx) {
+    const { userId } = ctx.session
+    const [,wfvParamId] = ctx.match
+
+    const {
+      paramName,
+      workflowVariantId: wfvId,
+    } = await this.wfrepo.getWorkflowVariantParamById(Number(wfvParamId))
+
+    await this.wfrepo.deleteWfvUserParam({ userId, paramName, wfvId })
+    await this.wfsynth.view.showWfvRunMenu({ ctx, userId, workflowVariantId: wfvId, prefixAction: '', backAction: 'wfv:list' })
+  }
+
   async wfvParamShow (ctx) {
     const [,wfvParamId] = ctx.match
     const { userId } = ctx.session
@@ -513,6 +533,16 @@ export class HandlerActionTgBotService {
 
   async wfvRun (ctx) {
     await this.tgbotsrv.runWfv(ctx)
+  }
+
+  async wfvReset (ctx) {
+    const { userId } = ctx.session
+
+    const [,wfvIdStr] = ctx.match
+    const wfvId = parseInt(wfvIdStr, 10)
+
+    await this.wfrepo.deleteWfvUserParams({ userId, wfvId })
+    await this.wfsynth.view.showWfvRunMenu({ ctx, userId, workflowVariantId: wfvId, prefixAction: '', backAction: 'wfv:list' })
   }
 
   async textUseStart (ctx) {

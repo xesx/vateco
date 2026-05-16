@@ -31,6 +31,12 @@ export class LockRepository {
     trx?: lib.PrismaLibService
   }): Promise<Locks | null> {
     // Удалить устаревшую блокировку, если есть
+    // await trx.$executeRaw`
+    //   DELETE
+    //     FROM "locks"
+    //    WHERE "key" = ${key}
+    //      AND "expired_at" < CURRENT_TIMESTAMP
+    // `
     await trx.locks.deleteMany({
       where: {
         key,
@@ -76,29 +82,31 @@ export class LockRepository {
   }
 
   async isLocked ({ key, trx = this.prisma }: { key: string, trx?: lib.PrismaLibService }): Promise<boolean> {
-    const lock = await trx.locks.findFirst({
-      where: {
-        key,
-        OR: [
-          { expiredAt: null },
-          { expiredAt: { gt: new Date() } },
-        ],
-      },
-    })
+    const [result] = await trx.$queryRaw<Array<{ isLocked: boolean }>>`
+      SELECT EXISTS (
+        SELECT 1
+          FROM "locks"
+         WHERE "key" = ${key}
+           AND (
+             "expired_at" IS NULL
+             OR "expired_at" > CURRENT_TIMESTAMP
+           )
+      ) AS "isLocked"
+    `
 
-    return lock !== null
+    return result?.isLocked ?? false
   }
 
   async cleanExpiredLocks ({ trx = this.prisma }: { trx?: lib.PrismaLibService } = {}): Promise<number> {
-    const result = await trx.locks.deleteMany({
-      where: {
-        expiredAt: { lt: new Date() },
-      },
-    })
+    const deletedCount = await trx.$executeRaw`
+      DELETE
+        FROM "locks"
+       WHERE "expired_at" < CURRENT_TIMESTAMP
+    `
 
-    this.l.log(`cleanExpiredLocks: удалено ${result.count} устаревших блокировок`)
+    this.l.log(`cleanExpiredLocks: удалено ${deletedCount} устаревших блокировок`)
 
-    return result.count
+    return deletedCount
   }
 }
 

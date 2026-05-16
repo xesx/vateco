@@ -7,7 +7,7 @@ import * as wfParamsExtraProps from './wfv-params-extra-props.json'
 
 @Injectable()
 export class WorkflowLibService {
-  readonly comfyuiObjectInfo = comfyuiObjectInfo
+  readonly comfyuiObjectInfo: Record<string, any> = comfyuiObjectInfo
   readonly wfMetaParamSchema = wfMetaParamSchema
   readonly wfParamsExtraProps = wfParamsExtraProps
 

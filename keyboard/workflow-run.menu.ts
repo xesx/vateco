@@ -80,7 +80,7 @@ export function workflowRunMenu ({ wfvParams, prefixAction, workflowVariantId, b
   }, [])
     .concat([[
       ['⬅️ Back', backAction],
-      // ['📚 Info', `wfv:${workflowVariantId}:info`],
+      ['🔄️ Reset', `wfv:${workflowVariantId}:reset`],
       ['🚀 Generate', `${prefixAction}wfv:${workflowVariantId}:run`],
     ]])
 
