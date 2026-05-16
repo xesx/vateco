@@ -224,3 +224,13 @@ model Settings {
 
   @@map("settings")
 }
+
+model Locks {
+  key       String    @id @map("key")
+  value     Json      @map("value")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @default(now()) @updatedAt @map("updated_at")
+  expiredAt DateTime? @map("expired_at")
+
+  @@map("locks")
+}
