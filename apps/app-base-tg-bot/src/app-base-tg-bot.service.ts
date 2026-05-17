@@ -3,7 +3,6 @@ import { Injectable } from '@nestjs/common'
 import * as lib from '@lib'
 import * as repo from '@repo'
 import * as synth from '@synth'
-import { UserWorkflowVariantRunStatus } from '@prisma/client'
 
 const COMFYUI_MODEL_DIRS = [
   'audio_encoders',
@@ -52,6 +51,7 @@ export class AppBaseTgBotService {
     private readonly modelrepo: repo.ModelRepository,
     private readonly wfrepo: repo.WorkflowRepository,
     private readonly runrepo: repo.RunRepository,
+    private readonly lockrepo: repo.LockRepository,
 
     private readonly wfsynth: synth.WorkflowSynthService,
   ) {

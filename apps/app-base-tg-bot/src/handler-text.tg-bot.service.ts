@@ -21,6 +21,7 @@ export class HandlerTextTgBotService {
     private readonly h: lib.HelperLibService,
 
     private readonly wfrepo: repo.WorkflowRepository,
+    private readonly lockrepo: repo.LockRepository,
   ) {
     this.bot.hears('🎛 Params', (ctx) => this.textParams(ctx))
     this.bot.hears('📝 Show prompt', (ctx) => this.textShowPrompt(ctx))
@@ -35,7 +36,14 @@ export class HandlerTextTgBotService {
     this.bot.hears(/^wfv-export/, (ctx) => this.tgbotsrv.exportWorkflowVariant(ctx))
 
     // for test
-    // this.bot.hears(/^_wfv_test/, (ctx) => this.startWfvTest(ctx))
+    this.bot.hears(/^test$/, async () => {
+      console.log('\x1b[36m', 'test!!!!', '\x1b[0m');
+      await this.lockrepo.tryGetLock({
+        key: 'test-lock',
+        value: { some: 'value' },
+        expiredAt: new Date(Date.now() + 60 * 1000), // истекает через 1 минуту
+      })
+    })
 
     this.bot.on(message('text'), (ctx, next) => this.textAnyOther(ctx, next))
   }
