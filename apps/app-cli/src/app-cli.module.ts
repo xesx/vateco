@@ -29,6 +29,7 @@ import * as command from './command'
 
     repo.ModelRepositoryModule,
     repo.WorkflowRepositoryModule,
+    repo.LockRepositoryModule,
 
     synth.CloudAppSynthModule,
     synth.WorkflowSynthModule,

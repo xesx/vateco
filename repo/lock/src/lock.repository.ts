@@ -12,51 +12,35 @@ export class LockRepository {
     private readonly prisma: lib.PrismaLibService,
   ) {}
 
-  async tryGetLock ({ key, value, expiredAt, trx = this.prisma }: {
+  async tryGetLock ({ key, value, ttlInSec, trx = this.prisma }: {
     key: string
     value: Prisma.InputJsonValue
-    expiredAt?: Date
+    ttlInSec: number
     trx?: lib.PrismaLibService
   }): Promise<boolean> {
-    console.log('\x1b[36m', 'key', key, '\x1b[0m')
     const isCreated = await trx.$executeRaw`
       INSERT INTO locks (key, value, expired_at)
-      VALUES (${key}, ${value}, ${expiredAt})
+      VALUES (${key}, ${JSON.stringify(value)}::jsonb, CURRENT_TIMESTAMP + (${ttlInSec} * interval '1 second'))
       ON CONFLICT (key) DO NOTHING
     `
 
-    console.log('\x1b[36m', 'isCreated', isCreated, '\x1b[0m')
-
     if (isCreated) {
-      this.l.log(`tryGetLock: успешно получена блокировка для ключа ${key}`)
+      this.l.log(`LockRepository_tryGetLock_30 success get lock`, { key, value, ttlInSec })
       return true
     }
 
-    // const isUpdated = await trx.$executeRaw`
-    //   UPDATE locks
-    //      set expired_at = ${expiredAt}
-    //        , value = '${value}'
-    //    WHERE key = ${key}
-    //      AND expired_at < CURRENT_TIMESTAMP
-    // `
+    const isUpdated = await trx.$executeRaw`
+      UPDATE locks
+         set expired_at = CURRENT_TIMESTAMP + (${ttlInSec} * interval '1 second')
+           , updated_at = CURRENT_TIMESTAMP
+           , value = ${JSON.stringify(value)}::jsonb
+       WHERE TRUE
+         AND key = ${key}
+         AND expired_at < CURRENT_TIMESTAMP
+    `
 
-    const updated = await trx.locks.updateMany({
-      where: {
-        key,
-        expiredAt: {
-          lt: new Date(),
-        },
-      },
-      data: {
-        value,
-        expiredAt: expiredAt,
-      },
-    })
-
-    console.log('\x1b[36m', 'updatedCount', updated.count, '\x1b[0m')
-
-    if (updated.count > 0) {
-      this.l.log(`tryGetLock: обновлена протухшая блокировка для ключа ${key}`)
+    if (isUpdated) {
+      this.l.log(`LockRepository_tryGetLock_50 success get lock`, { key, value, ttlInSec })
       return true
     }
 
