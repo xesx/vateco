@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common'
 
 import * as lib from '@lib'
 
-import { Prisma } from '@prisma/client'
+// import { Prisma } from '@prisma/client'
 
 @Injectable()
 export class LockRepository {
@@ -14,7 +14,7 @@ export class LockRepository {
 
   async tryGetLock ({ key, value, ttlInSec, trx = this.prisma }: {
     key: string
-    value: Prisma.InputJsonValue
+    value: string | number
     ttlInSec: number
     trx?: lib.PrismaLibService
   }): Promise<boolean> {
@@ -39,24 +39,41 @@ export class LockRepository {
          AND expired_at < CURRENT_TIMESTAMP
     `
 
+    return Boolean(isUpdated)
+  }
+
+  async tryReleaseLock ({ key, value, trx = this.prisma }: { key: string, value: string | number, trx?: lib.PrismaLibService }): Promise<boolean> {
+    const isDeleted = await trx.$executeRaw`
+      DELETE
+        FROM locks
+       WHERE key = ${key}
+         AND value = ${JSON.stringify(value)}::jsonb
+    `
+
+    return Boolean(isDeleted)
+  }
+
+  async tryExtendLock ({ key, value, ttlInSec, trx = this.prisma }: { key: string, value: string | number, ttlInSec: number, trx?: lib.PrismaLibService }): Promise<boolean> {
+    const isUpdated = await trx.$executeRaw`
+      UPDATE locks
+         set expired_at = CURRENT_TIMESTAMP + (${ttlInSec} * interval '1 second')
+           , updated_at = CURRENT_TIMESTAMP
+       WHERE TRUE
+         AND key = ${key}
+         AND value = ${JSON.stringify(value)}::jsonb
+         AND expired_at > CURRENT_TIMESTAMP
+    `
+
     if (isUpdated) {
-      this.l.log(`LockRepository_tryGetLock_50 success get lock`, { key, value, ttlInSec })
       return true
     }
 
-    return false
-  }
-
-  async releaseLock ({ key, trx = this.prisma }: { key: string, trx?: lib.PrismaLibService }): Promise<void> {
-    await trx.locks.delete({
-      where: { key },
-    })
+    return await this.tryGetLock({ key, value, ttlInSec, trx })
   }
 
   async cleanExpiredLocks ({ trx = this.prisma }: { trx?: lib.PrismaLibService } = {}): Promise<number> {
     const deletedCount = await trx.$executeRaw`
-      DELETE
-        FROM locks
+      DELETE FROM locks
        WHERE expired_at < CURRENT_TIMESTAMP
     `
 

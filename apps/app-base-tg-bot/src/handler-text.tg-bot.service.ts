@@ -36,14 +36,9 @@ export class HandlerTextTgBotService {
     this.bot.hears(/^wfv-export/, (ctx) => this.tgbotsrv.exportWorkflowVariant(ctx))
 
     // for test
-    this.bot.hears(/^test$/, async () => {
-      console.log('\x1b[36m', 'test!!!!', '\x1b[0m');
-      await this.lockrepo.tryGetLock({
-        key: 'test-lock',
-        value: { some: 'value' },
-        expiredAt: new Date(Date.now() + 60 * 1000), // истекает через 1 минуту
-      })
-    })
+    // this.bot.hears(/^test$/, async () => {
+    //   console.log('\x1b[36m', 'test!!!!', '\x1b[0m')
+    // })
 
     this.bot.on(message('text'), (ctx, next) => this.textAnyOther(ctx, next))
   }

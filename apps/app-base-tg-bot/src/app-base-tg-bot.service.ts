@@ -290,34 +290,26 @@ export class AppBaseTgBotService {
 
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
     setTimeout(async () => {
-      // const userWfvRunIds = await this.runrepo.findActiveUserWorkflowVariantRunIds({ userId })
+      const key = `wfv-run-check:${userId}`
+      const value = Date.now()
+      const ttlInSec = 10
+      let isLockExtended = true
+
+      const isLocked = await this.lockrepo.tryGetLock({ key, value, ttlInSec })
+      if (!isLocked) { return }
 
       let userWfvRun = await this.runrepo.findOldestActiveUserWorkflowVariantRun({ userId })
-      console.log('\x1b[36m', 'userWfvRun', userWfvRun, '\x1b[0m')
+      // console.log('\x1b[36m', 'userWfvRun', userWfvRun, '\x1b[0m')
 
       if (!userWfvRun) {
         return
       }
 
-      // for (const id of userWfvRunIds) {
       while (userWfvRun) {
-        // const userWfvRun = await this.runrepo.findOldestActiveUserWorkflowVariantRun({ userId })
-        const now = Date.now()
         let status = 'IN_QUEUE'
 
-        // const userWfvRun = await this.runrepo.getUserWorkflowVariantRun({ id })
-        const { id, createdAt, updatedAt } = userWfvRun
+        const { id } = userWfvRun
         const { runpodEndpoint, runPodJobId, chatId } = userWfvRun.meta
-
-        if (createdAt.getTime() !== updatedAt.getTime() && Date.now() - updatedAt.getTime() < 5000) {
-          return
-        }
-
-        await this.runrepo.upgradeUserWorkflowVariantRunUpdatedAt({ id })
-
-        console.log('\x1b[36m', 'userWfvRun', userWfvRun, '\x1b[0m')
-        console.log('\x1b[36m', 'createdAt === updatedAt', createdAt === updatedAt, '\x1b[0m')
-        console.log('\x1b[36m', 'now - updatedAt.getTime()', now - updatedAt.getTime(), '\x1b[0m')
 
         const messageId = await this.tgbotlib.sendMessage({ chatId, text: 'Job status: IN_QUEUE' })
 
@@ -329,13 +321,8 @@ export class AppBaseTgBotService {
           } catch (error) {
             console.log('AppBaseTgBotService_runWfvOnRunpodEndpoint_51 Error while check status', this.h.herr.parseAxiosError(error))
 
-            await this.runrepo.setUserWorkflowVariantRunStatus({ id, status: 'failed' })
-            await this.tgbotlib.editMessageV2({ chatId, messageId, text: `Job status: FAILED` })
-
-            break
+            data = { status: 'FAILED' }
           }
-
-          // console.log('\x1b[36m', 'data', data, '\x1b[0m')
 
           if (!['IN_QUEUE', 'IN_PROGRESS', 'COMPLETED'].includes(data.status)) {
             console.log('Unexpected task status: ', data)
@@ -368,10 +355,20 @@ export class AppBaseTgBotService {
           }
 
           status = data.status
+
           await this.h.sleep(1000)
+
+          isLockExtended = await this.lockrepo.tryExtendLock({ key, value, ttlInSec })
+          if (!isLockExtended) { return }
         }
+
+        isLockExtended = await this.lockrepo.tryExtendLock({ key, value, ttlInSec })
+        if (!isLockExtended) { return }
+
         userWfvRun = await this.runrepo.findOldestActiveUserWorkflowVariantRun({ userId })
       }
+
+      await this.lockrepo.tryReleaseLock({ key, value })
     }, 0)
   }
 
