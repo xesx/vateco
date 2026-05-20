@@ -1,5 +1,0 @@
-export * from './way.own-i.tg-bot'
-export * from './view.own-i.tg-bot'
-export * from './action.own-i.tg-bot'
-export * from './common-handler.own-i.tg-bot'
-export * from './text-message-handler.own-i.tg-bot'

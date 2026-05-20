@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common'
 
-import { wfParamSchema } from '../../../workflow'
 import * as comfyuiObjectInfo from './object-info.json'
 import * as wfMetaParamSchema from './meta-params.json'
 import * as wfParamsExtraProps from './wfv-params-extra-props.json'
@@ -10,8 +9,6 @@ export class WorkflowLibService {
   readonly comfyuiObjectInfo: Record<string, any> = comfyuiObjectInfo
   readonly wfMetaParamSchema = wfMetaParamSchema
   readonly wfParamsExtraProps = wfParamsExtraProps
-
-  readonly wfParamSchema = wfParamSchema
 
   getWfNodeClassTypeSchema (classType: string): any {
     return this.comfyuiObjectInfo[classType]

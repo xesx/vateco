@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common'
 
 import * as lib from '@lib'
 import * as repo from '@repo'
-import * as kb from '@kb'
+// import * as kb from '@kb'
 
 import { WorkflowCompilerSynthService } from './workflow-compiler.synth.service'
 import { WorkflowCookSynthService } from './workflow-cook.synth.service'
@@ -60,32 +60,6 @@ export class WorkflowSynthService {
     l.log(`WorkflowSynthService_cookAndUpdateWorkflowTemplate_105 Update workflow template with ID: ${workflowTemplateId}`)
   }
 
-  cookWorkflowTemplate (rawWorkflow: any) {
-    const cookedWorkflow = {}
-
-    for (const key in rawWorkflow) {
-      const node = rawWorkflow[key]
-      const classType = node.class_type
-      const title = node._meta?.title || ''
-
-      const cookFunctionName = cookNodeMap[classType]
-
-      if (cookFunctionName) {
-        if (typeof this.cook[cookFunctionName] !== 'function') {
-          throw new Error(`WorkflowSynthService_cookWorkflow_45 Cook function not found: ${cookFunctionName} for node title: ${title}`)
-        }
-        cookedWorkflow[key] = this.cook[cookFunctionName](node)
-      } else {
-        console.log(`WorkflowSynthService_cookWorkflow_52 Skipping cook for node with class_type: ${classType}, title: ${title}`)
-        cookedWorkflow[key] = node
-      }
-    }
-
-    this.validateWorkflowTemplate(cookedWorkflow)
-
-    return cookedWorkflow
-  }
-
   cookWorkflowTemplateV2 (rawWorkflow: any) {
     const cookedWorkflow = {}
 
@@ -101,29 +75,7 @@ export class WorkflowSynthService {
       }
     }
 
-    // this.validateWorkflowTemplate(cookedWorkflow)
-
     return cookedWorkflow
-  }
-
-  validateWorkflowTemplate (workflowTemplate: any) {
-    const { wfParamSchema } = this.wflib
-
-    const paramKeys = this.wflib.getWorkflowTemplateParamKeys(workflowTemplate)
-
-    for (const key of paramKeys) {
-      if (!wfParamSchema[key]) {
-        throw new Error(`WorkflowSynthService_validateWorkflowTemplate_62 Unknown workflow parameter key: ${key}`)
-      }
-    }
-
-    return true
-  }
-
-  async generateWorkflowVariantRunMenu ({ workflowVariantId, userId, prefixAction = 'empty', backAction = 'empty' }: { workflowVariantId: number, userId: number, prefixAction?: string, backAction?: string }) {
-    const wfvParams = await this.wfrepo.getWorkflowMergedWorkflowVariantParams({ userId, workflowVariantId })
-
-    return this.tgbotlib.generateInlineKeyboard(kb.workflowRunMenu({ wfvParams, workflowVariantId, prefixAction, backAction }))
   }
 
   async createWorkflowVariant ({ workflowTemplateId, name, description }: { workflowTemplateId: number, name?: string, description?: string }) {
