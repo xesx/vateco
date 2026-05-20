@@ -289,89 +289,90 @@ export class AppBaseTgBotService {
     }
 
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
-    setTimeout(async () => {
-      const key = `wfv-run-check:${userId}`
-      const value = Date.now()
-      const ttlInSec = 10
-      let isLockExtended = true
+    setTimeout(() => this.checkWfvUserRun({ userId }), 0)
+  }
 
-      const isLocked = await this.lockrepo.tryGetLock({ key, value, ttlInSec })
-      if (!isLocked) { return }
+  async checkWfvUserRun ({ userId }) {
+    const key = `wfv-run-check:${userId}`
+    const value = Date.now()
+    const ttlInSec = 10
+    let isLockExtended = true
 
-      let userWfvRun = await this.runrepo.findOldestActiveUserWorkflowVariantRun({ userId })
-      // console.log('\x1b[36m', 'userWfvRun', userWfvRun, '\x1b[0m')
+    const isLocked = await this.lockrepo.tryGetLock({ key, value, ttlInSec })
+    if (!isLocked) { return }
 
-      if (!userWfvRun) {
-        return
-      }
+    let userWfvRun = await this.runrepo.findOldestActiveUserWorkflowVariantRun({ userId })
+    // console.log('\x1b[36m', 'userWfvRun', userWfvRun, '\x1b[0m')
 
-      while (userWfvRun) {
-        let status = 'IN_QUEUE'
+    if (!userWfvRun) {
+      return
+    }
 
-        const { id } = userWfvRun
-        const { runpodEndpoint, runPodJobId, chatId } = userWfvRun.meta
+    while (userWfvRun) {
+      let status = 'IN_QUEUE'
 
-        const messageId = await this.tgbotlib.sendMessage({ chatId, text: 'Job status: IN_QUEUE' })
+      const { id } = userWfvRun
+      const { runpodEndpoint, runPodJobId, chatId } = userWfvRun.meta
 
-        while (true) {
-          let data: any
+      const messageId = await this.tgbotlib.sendMessage({ chatId, text: 'Job status: IN_QUEUE' })
 
-          try {
-            data = await this.runpodLib.checkTaskStatusServerlessEndpoint({ id: runPodJobId, runpodEndpoint })
-          } catch (error) {
-            console.log('AppBaseTgBotService_runWfvOnRunpodEndpoint_51 Error while check status', this.h.herr.parseAxiosError(error))
+      while (true) {
+        let data: any
 
-            data = { status: 'FAILED' }
-          }
+        try {
+          data = await this.runpodLib.checkTaskStatusServerlessEndpoint({ id: runPodJobId, runpodEndpoint })
+        } catch (error) {
+          console.log('AppBaseTgBotService_runWfvOnRunpodEndpoint_51 Error while check status', this.h.herr.parseAxiosError(error))
 
-          if (!['IN_QUEUE', 'IN_PROGRESS', 'COMPLETED'].includes(data.status)) {
-            console.log('Unexpected task status: ', data)
-
-            await this.runrepo.setUserWorkflowVariantRunStatus({ id, status: 'failed' })
-            await this.tgbotlib.editMessageV2({ chatId, messageId, text: `Unexpected job status: ${data.status}` })
-
-            break
-          }
-
-          if (data.status === 'COMPLETED') {
-            const base64Data = data.output.images?.[0].data
-            const imgBuffer = Buffer.from(base64Data, 'base64')
-
-            const keyboard = this.tgbotlib.generateInlineKeyboard([[
-              [`Use it`, 'img-use:wfv-list'],
-              ['Delete', 'message:delete']
-            ]])
-
-            await this.tgbotlib.editMessageV2({ chatId, messageId, text: `Job status: COMPLETED` })
-            await this.tgbotlib.sendPhoto({ chatId, photo: imgBuffer, inlineKeyboard: keyboard.reply_markup })
-            await this.runrepo.setUserWorkflowVariantRunStatus({ id, status: 'completed' })
-
-            break
-          }
-
-          if (status !== data.status && data.status === 'IN_PROGRESS') {
-            await this.runrepo.setUserWorkflowVariantRunStatus({ id, status: 'in_progress' })
-            await this.tgbotlib.editMessageV2({ chatId, messageId, text: `Job status: IN_PROGRESS` })
-          }
-
-          status = data.status
-
-          await this.h.sleep(1000)
-
-          isLockExtended = await this.lockrepo.tryExtendLock({ key, value, ttlInSec })
-          if (!isLockExtended) { return }
+          data = { status: 'FAILED' }
         }
+
+        if (!['IN_QUEUE', 'IN_PROGRESS', 'COMPLETED'].includes(data.status)) {
+          console.log('Unexpected task status: ', data)
+
+          await this.runrepo.setUserWorkflowVariantRunStatus({ id, status: 'failed' })
+          await this.tgbotlib.editMessageV2({ chatId, messageId, text: `Unexpected job status: ${data.status}` })
+
+          break
+        }
+
+        if (data.status === 'COMPLETED') {
+          const base64Data = data.output.images?.[0].data
+          const imgBuffer = Buffer.from(base64Data, 'base64')
+
+          const keyboard = this.tgbotlib.generateInlineKeyboard([[
+            [`Use it`, 'img-use:wfv-list'],
+            ['Delete', 'message:delete']
+          ]])
+
+          await this.tgbotlib.editMessageV2({ chatId, messageId, text: `Job status: COMPLETED` })
+          await this.tgbotlib.sendPhoto({ chatId, photo: imgBuffer, inlineKeyboard: keyboard.reply_markup })
+          await this.runrepo.setUserWorkflowVariantRunStatus({ id, status: 'completed' })
+
+          break
+        }
+
+        if (status !== data.status && data.status === 'IN_PROGRESS') {
+          await this.runrepo.setUserWorkflowVariantRunStatus({ id, status: 'in_progress' })
+          await this.tgbotlib.editMessageV2({ chatId, messageId, text: `Job status: IN_PROGRESS` })
+        }
+
+        status = data.status
+
+        await this.h.sleep(1000)
 
         isLockExtended = await this.lockrepo.tryExtendLock({ key, value, ttlInSec })
         if (!isLockExtended) { return }
-
-        userWfvRun = await this.runrepo.findOldestActiveUserWorkflowVariantRun({ userId })
       }
 
-      await this.lockrepo.tryReleaseLock({ key, value })
-    }, 0)
-  }
+      isLockExtended = await this.lockrepo.tryExtendLock({ key, value, ttlInSec })
+      if (!isLockExtended) { return }
 
+      userWfvRun = await this.runrepo.findOldestActiveUserWorkflowVariantRun({ userId })
+    }
+
+    await this.lockrepo.tryReleaseLock({ key, value })
+  }
   async createModelByHuggingfaceLink (ctx, next) {
     const { text: message } = ctx.message
 
