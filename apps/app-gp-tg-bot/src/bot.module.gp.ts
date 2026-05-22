@@ -7,15 +7,15 @@ import * as lib from '@lib'
 import * as repo from '@repo'
 import * as synth from '@synth'
 
-import { MiddlewareTgBotService } from './middleware.tg-bot.service'
-import { HandlerCommandTgBotService } from './handler-command.tg-bot.service'
-import { HandlerActionTgBotService } from './handler-action.tg-bot.service'
-import { HandlerTextTgBotService } from './handler-text.tg-bot.service'
-import { HandlerPhotoTgBotService } from './handler-photo.tg-bot.service'
-import { HandlerDocumentTgBotService } from './handler-document.tg-bot.service'
-
-import { AppBaseTgBotService } from './app-base-tg-bot.service'
-import { BaseCommandTgBot } from './command/base.command.tg-bot'
+import { BotMiddlewareGp } from './bot-middleware.gp'
+import { BotCommandGp } from './bot-command.gp'
+// import { HandlerActionTgBotService } from './handler-action.tg-bot.service'
+// import { HandlerTextTgBotService } from './handler-text.tg-bot.service'
+// import { HandlerPhotoTgBotService } from './handler-photo.tg-bot.service'
+// import { HandlerDocumentTgBotService } from './handler-document.tg-bot.service'
+//
+// import { AppBaseTgBotService } from './app-base-tg-bot.service'
+// import { BaseCommandTgBot } from './command/base.command.tg-bot'
 
 @Module({
   imports: [
@@ -45,7 +45,6 @@ import { BaseCommandTgBot } from './command/base.command.tg-bot'
     lib.VastLibModule,
     lib.RunpodLibModule,
     lib.CloudApiCallLibModule,
-    lib.RcloneLibModule,
     lib.WorkflowLibModule,
     lib.RunpodLibModule,
     lib.CivitaiLibModule,
@@ -66,17 +65,17 @@ import { BaseCommandTgBot } from './command/base.command.tg-bot'
   ],
   controllers: [],
   providers: [
-    AppBaseTgBotService,
+    // AppBaseTgBotService,
     // order is important, as handlers are executed in the order they are registered
-    MiddlewareTgBotService,
-    HandlerCommandTgBotService,
-    HandlerActionTgBotService,
-    HandlerTextTgBotService,
-    HandlerPhotoTgBotService,
-    HandlerDocumentTgBotService,
+    BotMiddlewareGp,
+    BotCommandGp,
+    // HandlerActionTgBotService,
+    // HandlerTextTgBotService,
+    // HandlerPhotoTgBotService,
+    // HandlerDocumentTgBotService,
 
-    BaseCommandTgBot,
+    // BaseCommandTgBot,
   ],
 })
 
-export class AppGpTgBotModule {}
+export class BotModuleGp {}

@@ -11,6 +11,7 @@
     "push:amvera": "git checkout amvera-master && git rebase master && git push amvera amvera-master:master --force && git checkout master",
     "format": "prettier --write \"apps/**/*.ts\" \"libs/**/*.ts\"",
     "start:tg": "nest start app-base-tg-bot --watch",
+    "start:gp": "nest start app-gp-tg-bot --watch",
     "start:my-tg-bot:amvera": "node dist/apps/app-base-tg-bot/src/main.js",
     "start:admin:dev": "npx nest start app-admin --watch",
     "start:cloud-api:dev": "npx nest start app-cloud-api --watch",

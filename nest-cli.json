@@ -23,6 +23,15 @@
         "tsConfigPath": "apps/app-base-tg-bot/tsconfig.app.json"
       }
     },
+    "app-gp-tg-bot": {
+      "type": "application",
+      "root": "apps/app-gp-tg-bot",
+      "entryFile": "main",
+      "sourceRoot": "apps/app-gp-tg-bot/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/app-gp-tg-bot/tsconfig.app.json"
+      }
+    },
     "app-cron": {
       "type": "application",
       "root": "apps/app-cron",

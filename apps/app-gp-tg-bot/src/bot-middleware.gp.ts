@@ -9,7 +9,7 @@ import * as repo from '@repo'
 import { TAppBaseTgBotContext } from './types'
 
 @Injectable()
-export class MiddlewareTgBotService {
+export class BotMiddlewareGp {
   constructor(
     @InjectBot() private readonly bot: Telegraf<TAppBaseTgBotContext>,
     private readonly tgbotlib: lib.TgBotLibService,
@@ -27,7 +27,7 @@ export class MiddlewareTgBotService {
     try {
       return await next()
     } catch (err) {
-      console.error('BaseCommandTgBot_bot_use_57 Error processing update:', err)
+      console.error('BotMiddlewareGp_errorHandler_57 Error processing update:', err)
 
       await this.tgbotlib.safeAnswerCallback(ctx)
       return await ctx.reply(`An error occurred: ${err.message.slice(0, 300)}...`)
@@ -48,23 +48,15 @@ export class MiddlewareTgBotService {
   }
 
   private async initSession(ctx, next) {
-    const { username, 'first_name': firstName, 'last_name': lastName, id: telegramId } = ctx.chat ?? {}
+    const { username, 'first_name': firstName, 'last_name': lastName, id: chatId } = ctx.chat ?? {}
 
     ctx.session ??= {}
 
     if (!ctx.session?.userId) {
-      ctx.session.userId = await this.userrepo.createUser({ telegramId, username, firstName, lastName })
+      ctx.session.userId = await this.userrepo.createUser({ telegramId: chatId, username, firstName, lastName })
     }
 
-    ctx.session.telegramId = telegramId
-    ctx.session.step ??= 'start'
-    ctx.session.offer ??= {}
-
-    ctx.session.offer.gpu ??= 'any'
-    ctx.session.offer.geolocation ??= 'any'
-    ctx.session.offer.inDataCenterOnly ??= 'false'
-
-    // ctx.session.inputWaiting = undefined
+    ctx.session.chatId = chatId
 
     return await next()
   }
