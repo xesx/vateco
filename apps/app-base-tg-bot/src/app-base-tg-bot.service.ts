@@ -311,8 +311,8 @@ export class AppBaseTgBotService {
     while (userWfvRun) {
       let status = 'IN_QUEUE'
 
-      const { id } = userWfvRun
-      const { runpodEndpoint, runPodJobId, chatId } = userWfvRun.meta
+      const { id, workflowVariantId: wfvId, workflowVariantRunParamsId: wfvParamsId } = userWfvRun
+      const { runpodEndpoint, runPodJobId, chatId } = userWfvRun.meta as any
 
       const messageId = await this.tgbotlib.sendMessage({ chatId, text: 'Job status: IN_QUEUE' })
 
@@ -342,6 +342,7 @@ export class AppBaseTgBotService {
 
           const keyboard = this.tgbotlib.generateInlineKeyboard([[
             [`Use it`, 'img-use:wfv-list'],
+            [`ReGen`, `wfv:${wfvId}:set-params:${wfvParamsId}`],
             ['Delete', 'message:delete']
           ]])
 

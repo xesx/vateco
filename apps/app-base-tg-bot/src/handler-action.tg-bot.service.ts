@@ -29,6 +29,7 @@ export class HandlerActionTgBotService {
     private readonly modelrepo: repo.ModelRepository,
     private readonly tagrepo: repo.TagRepository,
     private readonly setuprepo: repo.SetupRepository,
+    private readonly runrepo: repo.RunRepository,
     // private readonly userrepo: repo.UserRepository,
   ) {
     this.bot.action(/^main-menu$/, (ctx) => this.mainMenu(ctx))
@@ -50,6 +51,7 @@ export class HandlerActionTgBotService {
     this.bot.action(/^wfv:([0-9]+):run$/, (ctx) => this.wfvRun(ctx))
     this.bot.action(/^wfv:([0-9]+):info$/, (ctx) => this.wfvInfo(ctx))
     this.bot.action(/^wfv:([0-9]+):reset$/, (ctx) => this.wfvReset(ctx))
+    this.bot.action(/^wfv:([0-9]+):set-params:([0-9]+)$/, (ctx) => this.wfvSetRunParams(ctx))
 
     this.bot.action(/^wfvp:([0-9]+)$/, (ctx) => this.wfvParamSelect(ctx))
     this.bot.action(/^wfvp:([0-9]+):mtag:(.+):search:([0-9]+)$/, (ctx) => this.wfvParamModelsSearch(ctx)) // select model with tags
@@ -543,6 +545,22 @@ export class HandlerActionTgBotService {
 
     await this.wfrepo.deleteWfvUserParams({ userId, wfvId })
     await this.wfsynth.view.showWfvRunMenu({ ctx, userId, workflowVariantId: wfvId, prefixAction: '', backAction: 'wfv:list' })
+  }
+
+  async wfvSetRunParams (ctx) {
+    const { userId, telegramId: chatId } = ctx.session
+
+    const [,wfvIdStr, wfvRunParamsIdStr] = ctx.match
+    const workflowVariantId = parseInt(wfvIdStr, 10)
+    const wfvRunParamsId = parseInt(wfvRunParamsIdStr, 10)
+
+    const wfvParams = await this.runrepo.getWorkflowVariantRunParams({ id: wfvRunParamsId })
+
+    for (const paramName in wfvParams.params as any) {
+      await this.wfrepo.setWorkflowVariantUserParam({ userId, workflowVariantId, paramName, value: wfvParams.params![paramName] })
+    }
+
+    await this.wfsynth.view.showWfvRunMenu({ chatId, userId, workflowVariantId, prefixAction: '', backAction: 'wfv:list' })
   }
 
   async textUseStart (ctx) {

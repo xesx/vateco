@@ -238,7 +238,7 @@ export class RunRepository {
     return result.map(({ id }) => id)
   }
 
-  async findOldestActiveUserWorkflowVariantRun ({ userId }: { userId: number }): Promise<any> {
+  async findOldestActiveUserWorkflowVariantRun ({ userId }: { userId: number }): Promise<ReturnType<RunRepository['getUserWorkflowVariantRun']> | null> {
     const result = await this.prisma.userWorkflowVariantRuns.findFirst({
       where: {
         userId,
