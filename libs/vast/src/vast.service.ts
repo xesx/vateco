@@ -54,7 +54,7 @@ export class VastLibService {
         'disk_space': { 'gte': 30 },
         'allocated_storage': 30,
         'rentable': { 'eq': true },
-        'reliability2': { 'gte': 0.9 },
+        'reliability2': { 'gte': 0.7 },
         'duration': { 'gte': 1 },
         'cuda_max_good': { 'gte': 12.8 },
         'direct_port_count': { 'gte': 2 },
@@ -62,7 +62,7 @@ export class VastLibService {
         'static_ip': { 'eq': true },
         'inet_down_cost': { 'lte': 0.01 },
         'inet_up_cost': { 'lte': 0.01 },
-        'dph_total': { 'lte': 0.8 },
+        'dph_total': { 'lte': 3.5 },
         'type': 'on-demand',
 
         'order': [['dph_total', 'asc']],
