@@ -22,13 +22,13 @@
     "positionX": 0,
     "positionY": 1
   },
-  "promptFish": {
+  "metaString": {
     "type": "string",
-    "default": "{{prompt}}",
-    "description": "The prompt template to use for generation. You can use {{prompt}} as a placeholder for the actual prompt.",
-    "label": "template",
+    "default": "",
+    "description": "some string for templates",
+    "label": "meta string",
     "isMetaParam": true,
-    "positionX": 0,
-    "positionY": 2
+    "positionX": 300,
+    "positionY": 0
   }
 }

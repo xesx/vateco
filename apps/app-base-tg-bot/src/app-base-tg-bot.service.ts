@@ -120,6 +120,14 @@ export class AppBaseTgBotService {
         continue
       }
 
+      if (typeof value === 'string' && value.match(/\{\{[^}]+\}\}/g)) {
+        const names = [...value.matchAll(/\{\{([^}]+)\}\}/g)].map(m => m[1])
+
+        for (const name of names) {
+          wfvParams[paramName] = wfvParams[paramName].replaceAll(`{{${name}}}`, wfvParams[name] || '')
+        }
+      }
+
       const [classType] = paramName.split(':')
       const wfvParamSchema = this.wflib.getWfvParamSchema(paramName)
       const classTypeSchema = this.wflib.getWfNodeClassTypeSchema(classType)

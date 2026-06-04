@@ -15,6 +15,7 @@ export class WorkflowLibService {
   }
 
   getMetaParam (name) {
+    name = name.split(':')[0]
     return this.wfMetaParamSchema[name]
   }
 
