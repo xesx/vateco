@@ -30,6 +30,7 @@ export class HandlerActionTgBotService {
     private readonly tagrepo: repo.TagRepository,
     private readonly setuprepo: repo.SetupRepository,
     private readonly runrepo: repo.RunRepository,
+    private readonly texteditrepo: repo.UserTextEditsRepository,
     // private readonly userrepo: repo.UserRepository,
   ) {
     this.bot.action(/^main-menu$/, (ctx) => this.mainMenu(ctx))
@@ -69,6 +70,12 @@ export class HandlerActionTgBotService {
     this.bot.action(/^txt-use:wfv-list$/, (ctx) => this.textUseWfvList(ctx))
     this.bot.action(/^txt-use:start$/, (ctx) => this.textUseStart(ctx))
     this.bot.action(/^txt-use:wfv:([0-9]+)$/, (ctx) => this.textUseInWfv(ctx))
+    this.bot.action(/^txt:edit$/, (ctx) => this.textEdit(ctx))
+    this.bot.action(/^txt:edit:([0-9]+):show$/, (ctx) => this.textEditShow(ctx))
+    this.bot.action(/^txt:edit:([0-9]+):([0-9]+)$/, (ctx) => this.textEditTag(ctx))
+    this.bot.action(/^txt:edit:([0-9]+):([0-9]+):remove$/, (ctx) => this.textEditTagRemove(ctx))
+    this.bot.action(/^txt:edit:([0-9]+):([0-9]+):([0-9]+)$/, (ctx) => this.textEditTagPart(ctx))
+    this.bot.action(/^txt:edit:([0-9]+):([0-9]+):([0-9]+):remove$/, (ctx) => this.textEditTagPartRemove(ctx))
 
     this.bot.action(/^message:delete$/, (ctx) => this.messageDelete(ctx))
   }
@@ -611,6 +618,135 @@ export class HandlerActionTgBotService {
 
     const message = this.msglib.genMessageForCopy(originalMessageText)
     await ctx.editMessageText(message, { parse_mode: 'HTML', ...keyboard })
+  }
+
+  async textEdit (ctx) {
+    const { userId, telegramId: chatId } = ctx.session
+
+    const originalMessageText = ctx.update.callback_query.message.text.trim()
+
+    const textTags = originalMessageText
+      .replaceAll('\n', ',')
+      .split(',')
+      .map(i => i.trim())
+      .filter(i => i.length > 0)
+
+    const id = await this.texteditrepo.create({ userId, text: textTags.join(',') })
+
+    const keyboard = this.wfsynth.view.generateDefaultKeyboardMenu({
+      enumArr: textTags.map(tag => ({ label: tag, value: tag })),
+      prefixAction: `txt:edit:${id}:`,
+      extraActions: [
+        ['Use it', 'txt-use:wfv-list'],
+        ['Delete', 'message:delete'],
+      ],
+      useIndexAsValue: true,
+    })
+
+    const message = this.msglib.genMessageForCopy(textTags.join(','))
+
+    await this.tgbotlib.safeAnswerCallback(ctx)
+    await this.tgbotlib.sendMessageV2({ chatId, message, extra: keyboard })
+  }
+
+  async textEditShow (ctx) {
+    const [,textEditId] = ctx.match
+
+    const userTextEdit = await this.texteditrepo.findById({ id: Number(textEditId) })
+    const textTags = userTextEdit.text.split(',')
+
+    const keyboard = this.wfsynth.view.generateDefaultKeyboardMenu({
+      enumArr: textTags.map(tag => ({ label: tag, value: tag })),
+      prefixAction: `txt:edit:${textEditId}:`,
+      extraActions: [
+        ['Use it', 'txt-use:wfv-list'],
+        ['Delete', 'message:delete'],
+      ],
+      useIndexAsValue: true,
+    })
+
+    const message = this.msglib.genMessageForCopy(textTags.join(','))
+    await ctx.editMessageText(message, { parse_mode: 'HTML', ...keyboard })
+  }
+
+  async textEditTag (ctx) {
+    const [,textEditId, textTagNumber] = ctx.match
+
+    const userTextEdit = await this.texteditrepo.findById({ id: Number(textEditId) })
+    const text = userTextEdit.text
+
+    const textTag = text.split(',')[textTagNumber]
+    const textTagParts = textTag.split(' ')
+
+    const keyboard = this.wfsynth.view.generateDefaultKeyboardMenu({
+      enumArr: textTagParts.map(p => ({ label: p, value: p })),
+      prefixAction: `txt:edit:${textEditId}:${textTagNumber}:`,
+      extraActions: [
+        ['Remove tag', `txt:edit:${textEditId}:${textTagNumber}:remove`],
+        ['Back', `txt:edit:${textEditId}:show`],
+      ],
+      useIndexAsValue: true,
+    })
+
+    ctx.session.inputWaiting = `txt:edit:${textEditId}:${textTagNumber}`
+
+    const message = this.msglib.genMessageForCopy(textTag)
+    await ctx.editMessageText(message, { parse_mode: 'HTML', ...keyboard })
+  }
+
+  async textEditTagRemove (ctx) {
+    const [,textEditId, textTagNumber] = ctx.match
+
+    const userTextEdit = await this.texteditrepo.findById({ id: Number(textEditId) })
+
+    const textTags = userTextEdit.text.split(',')
+    textTags.splice(textTagNumber, 1)
+
+    await this.texteditrepo.updateText({ id: Number(textEditId), text: textTags.join(',') })
+
+    await this.textEditShow(ctx)
+  }
+
+  async textEditTagPart (ctx) {
+    const [,textEditId, textTagNumber, textTagPartNumber] = ctx.match
+
+    const userTextEdit = await this.texteditrepo.findById({ id: Number(textEditId) })
+    const text = userTextEdit.text
+
+    const textTag = text.split(',')[textTagNumber]
+
+    const keyboard = this.wfsynth.view.generateDefaultKeyboardMenu({
+      enumArr: [],
+      prefixAction: '',
+      extraActions: [
+        ['Remove word', `txt:edit:${textEditId}:${textTagNumber}:${textTagPartNumber}:remove`],
+        ['Back', `txt:edit:${textEditId}:${textTagNumber}`],
+      ],
+      useIndexAsValue: true,
+    })
+
+    ctx.session.inputWaiting = `txt:edit:${textEditId}:${textTagNumber}:${textTagPartNumber}`
+
+    const message = this.msglib.genMessageForCopy(textTag)
+    await ctx.editMessageText(message, { parse_mode: 'HTML', ...keyboard })
+  }
+
+  async textEditTagPartRemove (ctx) {
+    const [,textEditId, textTagNumber, textTagPartNumber] = ctx.match
+
+    const userTextEdit = await this.texteditrepo.findById({ id: Number(textEditId) })
+    const text = userTextEdit.text
+    const textTags = text.split(',')
+    const textTag = textTags[textTagNumber]
+
+    const textTagParts = textTag.split(' ')
+
+    textTagParts.splice(textTagPartNumber, 1)
+    textTags[textTagNumber] = textTagParts.join(' ')
+
+    await this.texteditrepo.updateText({ id: Number(textEditId), text: textTags.join(',') })
+
+    await this.textEditTag(ctx)
   }
 
   async textUseInWfv (ctx) {

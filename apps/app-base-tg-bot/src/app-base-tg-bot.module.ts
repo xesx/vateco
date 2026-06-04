@@ -58,6 +58,7 @@ import { AppBaseTgBotService } from './app-base-tg-bot.service'
     repo.SetupRepositoryModule,
     repo.RunRepositoryModule,
     repo.LockRepositoryModule,
+    repo.UserTextEditsRepositoryModule,
 
     synth.WorkflowSynthModule,
     synth.OfferSynthModule,

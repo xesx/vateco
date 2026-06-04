@@ -22,6 +22,7 @@ export class HandlerTextTgBotService {
 
     private readonly wfrepo: repo.WorkflowRepository,
     private readonly lockrepo: repo.LockRepository,
+    private readonly texteditrepo: repo.UserTextEditsRepository,
   ) {
     this.bot.hears('🎛 Params', (ctx) => this.textParams(ctx))
     this.bot.hears('📝 Show prompt', (ctx) => this.textShowPrompt(ctx))
@@ -79,6 +80,20 @@ export class HandlerTextTgBotService {
 
     if (ctx.session.inputWaiting) {
       const { inputWaiting: paramName } = ctx.session
+
+      if (paramName.startsWith('txt:edit:')) {
+        const [,,textEditId, tagIndex, partIndex] = paramName.split(':')
+
+        if (partIndex) {
+          await this.texteditrepo.updateTextTagPart({ id: +textEditId, tagIndex: +tagIndex, partIndex: +partIndex, text: message })
+        } else if (tagIndex) {
+          await this.texteditrepo.updateTextTag({ id: +textEditId, tagIndex: +tagIndex, text: message })
+        } else if (textEditId) {
+          await this.texteditrepo.updateText({ id: +textEditId, text: message })
+        }
+
+        return
+      }
 
       const value = message
 
