@@ -16,9 +16,13 @@ export class HandlerTextTgBotService {
   constructor(
     @InjectBot() private readonly bot: Telegraf<TAppBaseTgBotContext>,
     private readonly tgbotsrv: AppBaseTgBotService,
+
     private readonly wfsynth: synth.WorkflowSynthService,
+    private readonly promptsynth: synth.PromptSynthService,
+
     private readonly cloudapilib: lib.CloudApiCallLibService,
     private readonly h: lib.HelperLibService,
+    private readonly tgbotlib: lib.TgBotLibService,
 
     private readonly wfrepo: repo.WorkflowRepository,
     private readonly lockrepo: repo.LockRepository,
@@ -73,29 +77,35 @@ export class HandlerTextTgBotService {
   }
 
   async textAnyOther (ctx, next) {
-    const { userId, workflowVariantId } = ctx.session
+    const { userId, workflowVariantId, telegramId: chatId } = ctx.session
 
-    const message = this.h.format.sanitizeJsonString(ctx.message.text)
-    console.log('\x1b[36m', 'message', message, '\x1b[0m')
+    const textMessage = this.h.format.sanitizeJsonString(ctx.message.text)
+    console.log('\x1b[36m', 'textMessage', textMessage, '\x1b[0m')
 
     if (ctx.session.inputWaiting) {
       const { inputWaiting: paramName } = ctx.session
 
       if (paramName.startsWith('txt:edit:')) {
-        const [,,textEditId, tagIndex, partIndex] = paramName.split(':')
+        const [,,id, tagIndex, partIndex] = paramName.split(':').map(i => Number(i))
+        const text = textMessage
 
         if (partIndex) {
-          await this.texteditrepo.updateTextTagPart({ id: +textEditId, tagIndex: +tagIndex, partIndex: +partIndex, text: message })
+          await this.texteditrepo.updateTextTagPart({ id, tagIndex, partIndex, text })
         } else if (tagIndex) {
-          await this.texteditrepo.updateTextTag({ id: +textEditId, tagIndex: +tagIndex, text: message })
-        } else if (textEditId) {
-          await this.texteditrepo.updateText({ id: +textEditId, text: message })
+          await this.texteditrepo.updateTextTag({ id, tagIndex, text })
+        } else if (id) {
+          await this.texteditrepo.updateText({ id, text })
         }
+
+        const { message, keyboard } = await this.promptsynth.textedit.genTextEditShowMessage(id)
+
+        await this.tgbotlib.safeAnswerCallback(ctx)
+        await this.tgbotlib.sendMessageV2({ chatId, message, extra: keyboard })
 
         return
       }
 
-      const value = message
+      const value = textMessage
 
       await this.wfrepo.setWorkflowVariantUserParam({ userId, workflowVariantId, paramName, value })
 
@@ -112,7 +122,7 @@ export class HandlerTextTgBotService {
           userId,
           workflowVariantId,
           paramName: positivePromptParam.paramName,
-          value: message,
+          value: textMessage,
         })
 
         return await this.tgbotsrv.runWfv(ctx)

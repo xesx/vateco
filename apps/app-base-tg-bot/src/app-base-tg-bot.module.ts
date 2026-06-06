@@ -63,6 +63,7 @@ import { AppBaseTgBotService } from './app-base-tg-bot.service'
     synth.WorkflowSynthModule,
     synth.OfferSynthModule,
     synth.InstanceSynthModule,
+    synth.PromptSynthModule,
 
     lib.HelperLibModule,
   ],

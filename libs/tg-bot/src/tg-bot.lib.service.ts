@@ -301,4 +301,55 @@ export class TgBotLibService {
 
     return Buffer.from(tgRes.data)
   }
+
+  generateDefaultKeyboardMenu ({ enumArr, prefixAction, backAction, extraActions, useIndexAsValue = true }: {
+    enumArr: any[];
+    prefixAction: string;
+    backAction?: string;
+    extraActions?: [string, string][];
+    useIndexAsValue?: boolean;
+  }) {
+    const maxLineLength = 28
+    const enumOptions: [string, string][][] = []
+    let currentRow: any[] = []
+    let currentLength = 0
+    let currentItemsInRow = 0
+
+    prefixAction = prefixAction.endsWith(':') ? prefixAction : `${prefixAction}:`
+
+    enumArr
+      .map((value: any) => typeof value === 'object' ? value : { value, label: value })
+      .forEach(({ value, label }, i) => {
+        const button = [label, `${prefixAction}${useIndexAsValue ? i : value}`]
+        const buttonLength = label.length + 2 // запас на формат Telegram
+
+        // Если не помещается — перенос
+        if (currentLength + buttonLength > maxLineLength || currentItemsInRow >= 8) {
+          enumOptions.push(currentRow)
+          currentRow = []
+          currentLength = 0
+          currentItemsInRow = 0
+        }
+
+        currentRow.push(button)
+        currentLength += buttonLength
+        currentItemsInRow += 1
+      })
+
+    enumOptions.push(currentRow)
+    currentRow = []
+    currentLength = 0
+
+    if (extraActions) {
+      extraActions.forEach(action => {
+        enumOptions.push([action])
+      })
+    }
+
+    if (backAction) {
+      enumOptions.push([['Back', backAction]])
+    }
+
+    return this.generateInlineKeyboard(enumOptions)
+  }
 }
