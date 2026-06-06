@@ -89,6 +89,7 @@ export class HandlerTextTgBotService {
         const [,,id, tagIndex, partIndex] = paramName.split(':').map(i => Number(i))
         const text = textMessage
 
+        console.log('\x1b[36m', 'id, tagIndex, partIndex', id, tagIndex, partIndex, '\x1b[0m');
         if (partIndex) {
           await this.texteditrepo.updateTextTagPart({ id, tagIndex, partIndex, text })
         } else if (tagIndex) {
