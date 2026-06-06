@@ -33,8 +33,8 @@ export class TextEditSynthService {
       enumArr: textTags.map(tag => ({ label: tag, value: tag })),
       prefixAction: `txt:edit:${userTextEditId}:`,
       extraActions: [
-        ['Use it', 'txt-use:wfv-list'],
-        ['Delete', 'message:delete'],
+        ['🔧Use it', 'txt-use:wfv-list'],
+        ['🗑️Delete', 'message:delete'],
       ],
       useIndexAsValue: true,
     })

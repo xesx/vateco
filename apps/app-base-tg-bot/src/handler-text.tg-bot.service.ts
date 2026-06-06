@@ -89,12 +89,11 @@ export class HandlerTextTgBotService {
         const [,,id, tagIndex, partIndex] = paramName.split(':').map(i => Number(i))
         const text = textMessage
 
-        console.log('\x1b[36m', 'id, tagIndex, partIndex', id, tagIndex, partIndex, '\x1b[0m');
-        if (partIndex) {
+        if (isFinite(partIndex)) {
           await this.texteditrepo.updateTextTagPart({ id, tagIndex, partIndex, text })
-        } else if (tagIndex) {
+        } else if (isFinite(tagIndex)) {
           await this.texteditrepo.updateTextTag({ id, tagIndex, text })
-        } else if (id) {
+        } else if (isFinite(id)) {
           await this.texteditrepo.updateText({ id, text })
         }
 
