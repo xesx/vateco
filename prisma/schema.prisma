@@ -26,7 +26,7 @@ model Users {
   id         Int      @id @default(autoincrement()) @map("id")
   createdAt  DateTime @default(now()) @map("created_at")
   updatedAt  DateTime @default(now()) @updatedAt @map("updated_at")
-  telegramId Int      @unique @map("telegram_id")
+  telegramId BigInt   @unique @map("telegram_id")
   username   String?  @map("username")
   firstName  String?  @map("first_name")
   lastName   String?  @map("last_name")
