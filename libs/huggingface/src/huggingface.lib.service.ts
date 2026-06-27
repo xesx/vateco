@@ -27,6 +27,7 @@ export class HuggingfaceLibService {
 
         const timer = setTimeout(() => {
           isTimedOut = true
+          console.log('HuggingfaceLibService_download_73 Timeout reached, killing the child process and retry')
           child.kill('SIGKILL')
         }, timeoutMs)
 
