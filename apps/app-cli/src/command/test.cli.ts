@@ -44,13 +44,21 @@ export class TestCli {
       .action(async (name) => {
         console.log(`hello, ${name}!`)
 
-        const response = await this.lockrepo.tryGetLock({
-          key: 'test-key',
-          value: 'test',
-          ttlInSec: 60,
-        })
+        const pathToImage = '/Users/alex/dev/ComfyUI/output/ComfyUI_00059_.png'
+        const imageStats = await fs.promises.stat(pathToImage)
+        const metadata = await sharp(pathToImage).metadata()
 
-        console.log('\x1b[36m', 'response', response, '\x1b[0m')
+        console.log('\x1b[36m', 'imagePath', pathToImage, '\x1b[0m')
+        console.log('\x1b[36m', 'fileSize', filesize(imageStats.size).human('si'), '\x1b[0m')
+        console.log('\x1b[36m', 'metadata', metadata, '\x1b[0m')
+
+        // const response = await this.lockrepo.tryGetLock({
+        //   key: 'test-key',
+        //   value: 'test',
+        //   ttlInSec: 60,
+        // })
+        //
+        // console.log('\x1b[36m', 'response', response, '\x1b[0m')
 
         // console.log('\x1b[36m', 'message', message, '\x1b[0m')
       })

@@ -575,7 +575,8 @@ export class HandlerActionTgBotService {
     const message = this.msglib.genMessageForCopy(originalMessageText)
 
     const keyboard = this.tgbotlib.generateInlineKeyboard([[
-      [`Use it`, 'txt-use:wfv-list'],
+      ['Use it', 'txt-use:wfv-list'],
+      ['Edit', 'txt:edit'],
       ['Delete', 'message:delete']
     ]])
 
@@ -738,7 +739,8 @@ export class HandlerActionTgBotService {
     const message = this.msglib.genMessageForCopy(originalMessageText)
 
     const keyboard = this.tgbotlib.generateInlineKeyboard([[
-      [`Use it`, 'txt-use:wfv-list'],
+      ['Use it', 'txt-use:wfv-list'],
+      ['Edit', 'txt:edit'],
       ['Delete', 'message:delete']
     ]])
 

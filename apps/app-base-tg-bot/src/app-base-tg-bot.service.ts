@@ -1,3 +1,4 @@
+import * as sharp from 'sharp'
 import { Injectable } from '@nestjs/common'
 
 import * as lib from '@lib'
@@ -44,6 +45,7 @@ export class AppBaseTgBotService {
     private readonly tgbotlib: lib.TgBotLibService,
     private readonly cloudapilib: lib.CloudApiCallLibService,
     private readonly wflib: lib.WorkflowLibService,
+    private readonly msglib: lib.MessageLibService,
     private readonly civitailib: lib.CivitaiLibService,
     private readonly runpodLib: lib.RunpodLibService,
     private readonly h: lib.HelperLibService,
@@ -347,16 +349,36 @@ export class AppBaseTgBotService {
         if (data.status === 'COMPLETED') {
           const base64Data = data.output.images?.[0].data
           const imgBuffer = Buffer.from(base64Data, 'base64')
-
-          const keyboard = this.tgbotlib.generateInlineKeyboard([[
-            [`Use it`, 'img-use:wfv-list'],
-            [`ReGen`, `wfv:${wfvId}:set-params:${wfvParamsId}`],
-            ['Delete', 'message:delete']
-          ]])
+          const metadata = await sharp(imgBuffer).metadata()
 
           await this.tgbotlib.editMessageV2({ chatId, messageId, text: `Job status: COMPLETED` })
-          await this.tgbotlib.sendPhoto({ chatId, photo: imgBuffer, inlineKeyboard: keyboard.reply_markup })
           await this.runrepo.setUserWorkflowVariantRunStatus({ id, status: 'completed' })
+
+          // if image save with "🪛 Save image with extra metadata" from Crytools
+          // show only text from meta data
+          if (metadata?.comments?.[0]?.keyword === 'extra') {
+            const text = metadata.comments[0].text
+
+            const keyboard = this.tgbotlib.generateInlineKeyboard([[
+              ['Use it', 'txt-use:wfv-list'],
+              ['Edit', 'txt:edit'],
+              ['Delete', 'message:delete']
+            ]])
+
+            await this.tgbotlib.sendMessageV2({
+              chatId,
+              message: this.msglib.genMessageForCopy(text),
+              extra: { parse_mode: 'HTML', ...keyboard } }
+            )
+          } else {
+            const keyboard = this.tgbotlib.generateInlineKeyboard([[
+              [`Use it`, 'img-use:wfv-list'],
+              [`ReGen`, `wfv:${wfvId}:set-params:${wfvParamsId}`],
+              ['Delete', 'message:delete']
+            ]])
+
+            await this.tgbotlib.sendPhoto({ chatId, photo: imgBuffer, inlineKeyboard: keyboard.reply_markup })
+          }
 
           break
         }
