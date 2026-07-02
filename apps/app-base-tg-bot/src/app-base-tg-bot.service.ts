@@ -282,8 +282,8 @@ export class AppBaseTgBotService {
       })
 
 
-      console.log('compiledWorkflowSchema --->>>>>>>', JSON.stringify(compiledWorkflowSchema, null, 2))
-      const data = await this.runpodLib.runServerlessEndpoint({
+      // console.log('compiledWorkflowSchema --->>>>>>>', JSON.stringify(compiledWorkflowSchema, null, 2))
+      const data = await this.runpodLib.runSegrverlessEndpoint({
         workflow: compiledWorkflowSchema,
         images,
         runpodEndpoint,
