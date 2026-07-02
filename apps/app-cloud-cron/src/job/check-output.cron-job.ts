@@ -2,7 +2,7 @@ import * as fs from 'fs'
 import { setTimeout } from 'timers/promises'
 import { join } from 'path'
 
-// import * as sharp from 'sharp'
+import * as sharp from 'sharp'
 import { Injectable, Logger } from '@nestjs/common'
 
 import * as lib from '@lib'
@@ -116,6 +116,7 @@ export class CheckOutputCronJob {
       // console.log('\x1b[36m', 'prompt', all?.comments?.find?.(i => i.keyword === 'prompt')?.text, '\x1b[0m')
 
       const buffer = fs.readFileSync(imagePath)
+      const metadata = await sharp(buffer).metadata()
 
       // const maxSize = 5 * 1024 * 1024 // 5MB
       // if (buffer.length > maxSize) {
@@ -125,12 +126,30 @@ export class CheckOutputCronJob {
 
       l.log(`CheckOutputCronJob_handleCheckOutputJob_45 Sending image ${image} to Telegram chat ${TG_CHAT_ID}`)
       try {
-        const keyboard = this.tgbotlib.generateInlineKeyboard([[
-          [`Use it`, 'img-use:wfv-list'],
-          ['Delete', 'message:delete']
-        ]])
+        // if image save with "🪛 Save image with extra metadata" from Crytools
+        // show only text from meta data
+        if (metadata?.comments?.[0]?.keyword === 'extra') {
+          const text = metadata.comments[0].text
 
-        await this.tgbotlib.sendPhoto({ chatId: TG_CHAT_ID, photo: buffer, inlineKeyboard: keyboard.reply_markup })
+          const keyboard = this.tgbotlib.generateInlineKeyboard([[
+            ['Use it', 'txt-use:wfv-list'],
+            ['Edit', 'txt:edit'],
+            ['Delete', 'message:delete']
+          ]])
+
+          await this.tgbotlib.sendMessageV2({
+            chatId: TG_CHAT_ID,
+            message: this.msglib.genMessageForCopy(text),
+            extra: { parse_mode: 'HTML', ...keyboard } }
+          )
+        } else {
+          const keyboard = this.tgbotlib.generateInlineKeyboard([[
+            [`Use it`, 'img-use:wfv-list'],
+            ['Delete', 'message:delete']
+          ]])
+
+          await this.tgbotlib.sendPhoto({ chatId: TG_CHAT_ID, photo: buffer, inlineKeyboard: keyboard.reply_markup })
+        }
       } catch (error) {
         l.error(`CheckOutputCronJob_handleCheckOutputJob_49 Error sending image ${image} to Telegram:`, this.h.herr.parseAxiosError(error))
         continue
