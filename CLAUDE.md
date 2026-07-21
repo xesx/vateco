@@ -106,9 +106,3 @@ Postgres via `PrismaLibService` (extends `PrismaClient`, connects on module init
 ### Config / secrets
 
 No secrets are committed; `.env.template` documents required vars (`DATABASE_URL`, `TELEGRAM_BOT_TOKEN`, `VAST_AI_API_KEY`, `RUNPOD_API_KEY`, `HF_TOKEN`, `TG_CHAT_ID`, `WORKSPACE`, ...). In deployment, secrets are pulled from Infisical (`bin/import-secrets.sh`, `bin/amvera-build.sh`) into `.env` at build/provision time.
-
-## Code style
-
-- Enforced by `eslint.config.mjs` + `.prettierrc`: no semicolons (`semi: never`), single quotes, trailing commas. `any` is explicitly allowed (`@typescript-eslint/no-explicit-any: off`) and most `no-unsafe-*` rules are off — this codebase does not fight TypeScript's strictness on dynamic/JSON-shaped data (workflow schemas, task files, API payloads).
-- Services/modules follow a strict suffix-by-role naming convention tied to their directory: `*.lib.service.ts`/`*.lib.module.ts` in `libs/*`, `*.repository.ts`/`*.repository.module.ts` in `repo/*`, `*.synth.service.ts`/`*.synth.module.ts` in `synth/*`, `*.cron-job.ts` in the cron apps, `*.cli.ts` in the CLI apps, `*.tg-bot.service.ts` in the bot app. Match the existing suffix when adding a new file in one of these areas.
-- Logger convention: each class creates `private readonly l = new Logger(ClassName.name)`, and log messages are prefixed with a `functionName_lineNumberOrId` tag (e.g. `l.log('handleRunWorkflowJob_55 ...')`) for grepping logs in production.

@@ -1,5 +1,5 @@
 import * as sharp from 'sharp'
-import { Injectable } from '@nestjs/common'
+import { Injectable, Logger } from '@nestjs/common'
 
 import * as lib from '@lib'
 import * as repo from '@repo'
@@ -41,6 +41,8 @@ const COMFYUI_MODEL_DIRS = [
 
 @Injectable()
 export class AppBaseTgBotService {
+  private readonly l = new Logger(AppBaseTgBotService.name)
+
   constructor(
     private readonly tgbotlib: lib.TgBotLibService,
     private readonly cloudapilib: lib.CloudApiCallLibService,
@@ -86,7 +88,7 @@ export class AppBaseTgBotService {
     const { workflowVariantId, instance } = ctx.session
 
     if (!workflowVariantId) {
-      console.log('ActionOwnITgBot_actionWfvRun_21 No workflowId in session')
+      this.l.warn('AppBaseTgBotService_runWfv_21 No workflowVariantId in session')
       return await this.tgbotlib.safeAnswerCallback(ctx)
     }
 
@@ -100,7 +102,7 @@ export class AppBaseTgBotService {
       return await this.runWfvOnRunpodEndpoint(ctx)
     }
 
-    console.log('AppBaseTgBotService_runWfv_31 No instance in session or endpoint', ctx.session)
+    this.l.error('AppBaseTgBotService_runWfv_31 No instance in session or endpoint', { session: ctx.session })
     throw new Error('WFV_RUN_ERROR No instance or endpoint available')
   }
 
@@ -333,13 +335,13 @@ export class AppBaseTgBotService {
         try {
           data = await this.runpodLib.checkTaskStatusServerlessEndpoint({ id: runPodJobId, runpodEndpoint })
         } catch (error) {
-          console.log('AppBaseTgBotService_runWfvOnRunpodEndpoint_51 Error while check status', this.h.herr.parseAxiosError(error))
+          this.l.error('AppBaseTgBotService_checkWfvUserRun_51 Error while checking task status', this.h.herr.parseAxiosError(error))
 
           data = { status: 'FAILED' }
         }
 
         if (!['IN_QUEUE', 'IN_PROGRESS', 'COMPLETED'].includes(data.status)) {
-          console.log('Unexpected task status: ', data)
+          this.l.warn('AppBaseTgBotService_checkWfvUserRun_52 Unexpected task status', { data })
 
           await this.runrepo.setUserWorkflowVariantRunStatus({ id, status: 'failed' })
           await this.tgbotlib.editMessageV2({ chatId, messageId, text: `Unexpected job status: ${data.status}` })
