@@ -355,17 +355,43 @@ export class AppBaseTgBotService {
 
         if (data.status === 'COMPLETED') {
           const base64Data = data.output.images?.[0].data
-          const imgBuffer = Buffer.from(base64Data, 'base64')
-          const metadata = await sharp(imgBuffer).metadata()
+          const textData = data.output.texts?.[0]?.data
 
-          await this.tgbotlib.editMessageV2({ chatId, messageId, text: `Job status: COMPLETED` })
-          await this.runrepo.setUserWorkflowVariantRunStatus({ id, status: 'completed' })
+          if (base64Data) {
+            const imgBuffer = Buffer.from(base64Data, 'base64')
+            const metadata = await sharp(imgBuffer).metadata()
 
-          // if image save with "🪛 Save image with extra metadata" from Crytools
-          // show only text from meta data
-          if (metadata?.comments?.[0]?.keyword === 'extra') {
-            const text = metadata.comments[0].text
+            await this.tgbotlib.editMessageV2({ chatId, messageId, text: `Job status: COMPLETED` })
+            await this.runrepo.setUserWorkflowVariantRunStatus({ id, status: 'completed' })
 
+            // if image save with "🪛 Save image with extra metadata" from Crytools
+            // show only text from meta data
+            if (metadata?.comments?.[0]?.keyword === 'extra') {
+              const text = metadata.comments[0].text
+
+              const keyboard = this.tgbotlib.generateInlineKeyboard([[
+                ['Use it', 'txt-use:wfv-list'],
+                ['Edit', 'txt:edit'],
+                ['Delete', 'message:delete']
+              ]])
+
+              await this.tgbotlib.sendMessageV2({
+                chatId,
+                message: this.msglib.genMessageForCopy(text),
+                extra: { parse_mode: 'HTML', ...keyboard } }
+              )
+            } else {
+              const keyboard = this.tgbotlib.generateInlineKeyboard([[
+                [`Use it`, 'img-use:wfv-list'],
+                [`ReGen`, `wfv:${wfvId}:set-params:${wfvParamsId}`],
+                ['Delete', 'message:delete']
+              ]])
+
+              await this.tgbotlib.sendPhoto({ chatId, photo: imgBuffer, inlineKeyboard: keyboard.reply_markup })
+            }
+          }
+
+          if (textData) {
             const keyboard = this.tgbotlib.generateInlineKeyboard([[
               ['Use it', 'txt-use:wfv-list'],
               ['Edit', 'txt:edit'],
@@ -374,17 +400,9 @@ export class AppBaseTgBotService {
 
             await this.tgbotlib.sendMessageV2({
               chatId,
-              message: this.msglib.genMessageForCopy(text),
+              message: this.msglib.genMessageForCopy(textData),
               extra: { parse_mode: 'HTML', ...keyboard } }
             )
-          } else {
-            const keyboard = this.tgbotlib.generateInlineKeyboard([[
-              [`Use it`, 'img-use:wfv-list'],
-              [`ReGen`, `wfv:${wfvId}:set-params:${wfvParamsId}`],
-              ['Delete', 'message:delete']
-            ]])
-
-            await this.tgbotlib.sendPhoto({ chatId, photo: imgBuffer, inlineKeyboard: keyboard.reply_markup })
           }
 
           break
