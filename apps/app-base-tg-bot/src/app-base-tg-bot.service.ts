@@ -258,6 +258,10 @@ export class AppBaseTgBotService {
           wfvParams[paramName] = this.wflib.generateSeed()
           meta[paramName] = wfvParams[paramName]
         }
+
+        if (paramName.startsWith('Save Text File:path:')) {
+          wfvParams[paramName] = '/comfyui/output'
+        }
       }
 
       const imageFileIds: string[] = []
