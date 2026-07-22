@@ -49,7 +49,7 @@ export class AppBaseTgBotService {
     private readonly wflib: lib.WorkflowLibService,
     private readonly msglib: lib.MessageLibService,
     private readonly civitailib: lib.CivitaiLibService,
-    private readonly runpodLib: lib.RunpodLibService,
+    private readonly runpodlib: lib.RunpodLibService,
     private readonly h: lib.HelperLibService,
 
     private readonly modelrepo: repo.ModelRepository,
@@ -285,7 +285,7 @@ export class AppBaseTgBotService {
 
 
       // console.log('compiledWorkflowSchema --->>>>>>>', JSON.stringify(compiledWorkflowSchema, null, 2))
-      const data = await this.runpodLib.runSegrverlessEndpoint({
+      const data = await this.runpodlib.runServerlessEndpoint({
         workflow: compiledWorkflowSchema,
         images,
         runpodEndpoint,
@@ -333,7 +333,7 @@ export class AppBaseTgBotService {
         let data: any
 
         try {
-          data = await this.runpodLib.checkTaskStatusServerlessEndpoint({ id: runPodJobId, runpodEndpoint })
+          data = await this.runpodlib.checkTaskStatusServerlessEndpoint({ id: runPodJobId, runpodEndpoint })
         } catch (error) {
           this.l.error('AppBaseTgBotService_checkWfvUserRun_51 Error while checking task status', this.h.herr.parseAxiosError(error))
 
