@@ -688,6 +688,8 @@ export class HandlerActionTgBotService {
     const text = userTextEdit.text
 
     const textTag = text.split(',')[textTagNumber]
+    const textTagParts = textTag.split(' ')
+    const textTagPart = textTagParts[textTagPartNumber]
 
     const keyboard = this.wfsynth.view.generateDefaultKeyboardMenu({
       enumArr: [],
@@ -701,7 +703,7 @@ export class HandlerActionTgBotService {
 
     ctx.session.inputWaiting = `txt:edit:${textEditId}:${textTagNumber}:${textTagPartNumber}`
 
-    const message = this.msglib.genMessageForCopy(textTag)
+    const message = this.msglib.genMessageForCopy(textTagPart)
     await ctx.editMessageText(message, { parse_mode: 'HTML', ...keyboard })
   }
 
