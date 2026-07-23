@@ -49,6 +49,7 @@ import { AppBaseTgBotService } from './app-base-tg-bot.service'
     lib.WorkflowLibModule,
     lib.RunpodLibModule,
     lib.CivitaiLibModule,
+    lib.RandomImageLibModule,
 
     repo.TgBotSessionsStoreRepositoryModule,
     repo.WorkflowRepositoryModule,

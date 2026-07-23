@@ -26,6 +26,7 @@ import * as command from './command'
     lib.CivitaiLibModule,
     lib.OpenaiLibModule,
     lib.RunpodLibModule,
+    lib.RandomImageLibModule,
 
     repo.ModelRepositoryModule,
     repo.WorkflowRepositoryModule,
