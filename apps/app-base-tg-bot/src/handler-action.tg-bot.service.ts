@@ -773,16 +773,16 @@ export class HandlerActionTgBotService {
       return
     }
 
-    const currentWorkflowVariant = workflowVariants.find(wfv => wfv.id === Number(workflowVariantId))
-
     const enumArr: Record<string, any>[] = []
-
-    if (currentWorkflowVariant) {
-      enumArr.push({ label: '-->Current workflow<--', value: currentWorkflowVariant.id })
-    }
 
     for (const wfv of workflowVariants) {
       enumArr.push({ label: wfv.name, value: wfv.id })
+    }
+
+    const currentWorkflowVariant = workflowVariants.find(wfv => wfv.id === Number(workflowVariantId))
+
+    if (currentWorkflowVariant) {
+      enumArr.push({ label: '-->Current workflow<--', value: currentWorkflowVariant.id })
     }
 
     const caption = this.msglib.genCodeMessage('Workflows list:\n-----------------------------------')
