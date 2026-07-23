@@ -354,13 +354,13 @@ export class AppBaseTgBotService {
         }
 
         if (data.status === 'COMPLETED') {
-          const base64Data = data.output.images?.[0].data
-          const textData = data.output.texts?.[0]?.data
+          const base64Images = data.output.images?.map?.(i => i.data) ?? []
+          const texts = data.output.texts?.map?.(i => i.data) ?? []
 
           await this.tgbotlib.editMessageV2({ chatId, messageId, text: `Job status: COMPLETED` })
           await this.runrepo.setUserWorkflowVariantRunStatus({ id, status: 'completed' })
 
-          if (base64Data) {
+          for (const base64Data of base64Images) {
             const imgBuffer = Buffer.from(base64Data, 'base64')
             const metadata = await sharp(imgBuffer).metadata()
 
@@ -391,7 +391,7 @@ export class AppBaseTgBotService {
             }
           }
 
-          if (textData) {
+          for (const textData of texts) {
             const keyboard = this.tgbotlib.generateInlineKeyboard([[
               ['Use it', 'txt-use:wfv-list'],
               ['Edit', 'txt:edit'],
