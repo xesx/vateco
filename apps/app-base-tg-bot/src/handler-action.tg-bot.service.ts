@@ -16,6 +16,7 @@ export class HandlerActionTgBotService {
     private readonly tgbotsrv: AppBaseTgBotService,
 
     private readonly tgbotlib: lib.TgBotLibService,
+    private readonly rndimg: lib.RandomImageLibService,
     private readonly wflib: lib.WorkflowLibService,
     private readonly cloudapilib: lib.CloudApiCallLibService,
     private readonly vastlib: lib.VastLibService,
@@ -66,6 +67,7 @@ export class HandlerActionTgBotService {
     this.bot.action(/^img-use:start$/, (ctx) => this.imageUseStart(ctx))
     this.bot.action(/^img-use:wfv:([0-9]+)$/, (ctx) => this.imageUseInWfv(ctx))
     this.bot.action(/^img-use:wfvp:([0-9]+)$/, (ctx) => this.imageUseInWfvParam(ctx))
+    this.bot.action(/^img:edit:random$/, (ctx) => this.imageEditRandom(ctx))
 
     this.bot.action(/^txt-use:wfv-list$/, (ctx) => this.textUseWfvList(ctx))
     this.bot.action(/^txt-use:start$/, (ctx) => this.textUseStart(ctx))
@@ -871,6 +873,23 @@ export class HandlerActionTgBotService {
 
     await this.tgbotsrv.selectWfv({ ctx, workflowVariantId })
     await this.wfsynth.view.showWfvRunMenu({ chatId: telegramId, userId, workflowVariantId, prefixAction: '', backAction: 'wfv:list' })
+  }
+
+  async imageEditRandom (ctx) {
+    const res = await this.rndimg.getRandomImage()
+
+    const keyboard = this.tgbotlib.generateInlineKeyboard([[
+      [`Use it`, 'img-use:wfv-list'],
+      [`🔄`, 'img:edit:random'],
+      ['Delete', 'message:delete']
+    ]])
+
+    await ctx.editMessageMedia(
+      { type: 'photo', media: { source: res.content, filename: 'image' } },
+      keyboard,
+    )
+
+    // await this.tgbotlib.safeAnswerCallback(ctx)
   }
 
   async messageDelete (ctx) {

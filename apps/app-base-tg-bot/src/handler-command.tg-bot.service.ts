@@ -42,6 +42,7 @@ export class HandlerCommandTgBotService {
 
     const keyboard = this.tgbotlib.generateInlineKeyboard([[
       [`Use it`, 'img-use:wfv-list'],
+      [`🔄`, 'img:edit:random'],
       ['Delete', 'message:delete']
     ]])
 

@@ -24,17 +24,6 @@ export class RandomImageLibService {
     )
   }
 
-  async importModelData (dir = '/') {
-    try {
-      // Get directory contents
-      const directoryItems = await this.client.getDirectoryContents(`/refs${dir}`) as FileStat[]
-      console.log('\x1b[36m', 'directoryItems', directoryItems, '\x1b[0m')
-    } catch (error) {
-      console.log('RandomImageLibService_importModelData_70 Error import model data', error, error.message)
-      throw new Error('RandomImageLibService_importModelData_71 Error importing model data from RandomImageLibService')
-    }
-  }
-
   async getRandomImage (): Promise<{ filename: string, path: string, content: Buffer }> {
     try {
       const randomItem = await this.walkToRandomImage('/refs')
