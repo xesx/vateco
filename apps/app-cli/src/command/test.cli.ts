@@ -46,9 +46,16 @@ export class TestCli {
       .action(async (name) => {
         console.log(`hello, ${name}!`)
 
+        const wfvJsonRaw = fs.readFileSync('/Users/a.alekhin/Downloads/wfv-QwenVL-i2i-v5-with-two-control-nets.json')
+        const wfv = JSON.parse(wfvJsonRaw)
+
+        const nodeIds = [573, 574, 576, 577, 578, 579]
+        const wfvNewJson = this.wflib.bypassWfvNodes({ wfv, nodeIds })
+        const wfvNewStr = JSON.stringify(wfvNewJson)
+        console.log('\x1b[36m', 'wfvNewStr', wfvNewStr, '\x1b[0m')
         // Get directory contents
-        const res = await this.rndimg.getRandomImage()
-        console.log('\x1b[36m', 'res', res, '\x1b[0m')
+        // const res = await this.rndimg.getRandomImage()
+        // console.log('\x1b[36m', 'res', res, '\x1b[0m')
 
         // const pathToImage = '/Users/alex/dev/ComfyUI/output/ComfyUI_00059_.png'
         // const imageStats = await fs.promises.stat(pathToImage)

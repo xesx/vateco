@@ -70,6 +70,18 @@ export class WorkflowLibService {
   }
 
   compileWorkflowSchema ({ workflow, params = {} }) {
+    for (const key of Object.keys(params)) {
+      const value = params[key]
+
+      if (key.startsWith('bypass:') && value === true) {
+        const nodeIds = key.split(':')
+          .map((id) => parseInt(id, 10))
+          .filter((id) => !isNaN(id))
+
+        workflow = this.bypassWfvNodes({ wfv: workflow, nodeIds })
+      }
+    }
+
     let templateStr = JSON.stringify(workflow)
 
     for (const key of Object.keys(params)) {
