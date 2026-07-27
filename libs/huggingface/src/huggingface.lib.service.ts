@@ -15,7 +15,7 @@ export class HuggingfaceLibService {
 
   async download ({ repo = 'alalarty/models2', filename, dir }) {
     const env = { ...process.env, HF_HUB_ENABLE_HF_TRANSFER: '1' }
-    const timeoutMs = 60_000
+    const timeoutMs = 180_000
 
     while (true) {
       const isCompleted = await new Promise<boolean>((resolve, reject) => {
