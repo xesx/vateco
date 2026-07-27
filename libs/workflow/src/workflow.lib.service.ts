@@ -73,7 +73,7 @@ export class WorkflowLibService {
     for (const key of Object.keys(params)) {
       const value = params[key]
 
-      if (key.startsWith('bypass:') && value === true) {
+      if (key.startsWith('bypass:') && value === false) {
         const nodeIds = key.split(':')
           .map((id) => parseInt(id, 10))
           .filter((id) => !isNaN(id))
