@@ -35,6 +35,7 @@ export class HandlerTextTgBotService {
 
     this.bot.hears(/^https:\/\/huggingface\.co\/\S+/i, (ctx, next) => this.tgbotsrv.createModelByHuggingfaceLink(ctx, next))
     this.bot.hears(/^https:\/\/civitai\.com\/models\/\S+/i, (ctx, next) => this.tgbotsrv.createModelByCivitaiLink(ctx, next))
+    this.bot.hears(/^https:\/\/civitai\.red\/models\/\S+/i, (ctx, next) => this.tgbotsrv.createModelByCivitaiLink(ctx, next))
 
     this.bot.hears(/^wfv-create/, (ctx) => this.tgbotsrv.createWorkflowVariant(ctx))
     this.bot.hears(/^wfv-delete/, (ctx) => this.tgbotsrv.deleteWorkflowVariant(ctx))

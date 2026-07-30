@@ -319,13 +319,25 @@ export class HandlerActionTgBotService {
         if (wfvUserParam?.value) {
           const loraModel = await this.modelrepo.getModelByName(wfvUserParam.value as string)
           const meta = loraModel.meta as any
-          const trigger = meta?.trigger?.join(', ')
+          const trigger = meta?.trigger || []
 
-          if (trigger) {
-            await this.tgbotlib.sendMessageV2({
-              chatId,
-              message: this.msglib.genCodeMessage(trigger),
-            })
+          for (const t of trigger) {
+            if (Array.isArray(t)) {
+              const trrigersStr = t.join(', ')
+
+              await this.tgbotlib.sendMessageV2({
+                chatId,
+                message: this.msglib.genCodeMessage(trrigersStr),
+              })
+            } else {
+              const trrigersStr = trigger.join(', ')
+              await this.tgbotlib.sendMessageV2({
+                chatId,
+                message: this.msglib.genCodeMessage(trrigersStr),
+              })
+
+              break
+            }
           }
         }
       }
