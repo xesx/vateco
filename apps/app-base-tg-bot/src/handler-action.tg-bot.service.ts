@@ -254,7 +254,7 @@ export class HandlerActionTgBotService {
 
   async wfvParamSelect (ctx) {
     const [,wfvParamId] = ctx.match
-    const { userId } = ctx.session
+    const { userId, telegramId: chatId } = ctx.session
 
     const {
       paramName,
@@ -312,6 +312,24 @@ export class HandlerActionTgBotService {
     if (wfvParamType === 'boolean') {
       await this.wfsynth.param.toggleWfvUserParamBoolean({ userId, wfvParamId })
       await this.wfsynth.view.showWfvRunMenu({ ctx, userId, workflowVariantId, prefixAction: '', backAction: 'wfv:list' })
+
+      if (paramName.startsWith('Power Lora Loader (rgthree):loraEnabled') && !currentValue) {
+        const wfvUserParam = await this.wfrepo.findWorkflowVariantUserParam({ userId, workflowVariantId, paramName: paramName.replace('loraEnabled', 'lora') })
+
+        if (wfvUserParam?.value) {
+          const loraModel = await this.modelrepo.getModelByName(wfvUserParam.value as string)
+          const meta = loraModel.meta as any
+          const trigger = meta?.trigger?.join(', ')
+
+          if (trigger) {
+            await this.tgbotlib.sendMessageV2({
+              chatId,
+              message: this.msglib.genCodeMessage(trigger),
+            })
+          }
+        }
+      }
+
       return
     }
 
