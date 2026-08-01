@@ -12,7 +12,7 @@ export class TgBotSessionsStoreRepository implements AsyncSessionStore<any> {
   ) {}
 
   async get (key: string): Promise<any> {
-    const MAX_ATTEMPTS = 3
+    const MAX_ATTEMPTS = 2
 
     for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
       try {
