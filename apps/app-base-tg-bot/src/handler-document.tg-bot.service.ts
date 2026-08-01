@@ -61,7 +61,7 @@ export class HandlerDocumentTgBotService {
   async workflowTemplateUpdate (ctx, next) {
     const caption = ctx.message.caption
 
-    if (!caption?.startsWith('_wft_update')) {
+    if (!caption?.startsWith('wft-update')) {
       return next()
     }
 
