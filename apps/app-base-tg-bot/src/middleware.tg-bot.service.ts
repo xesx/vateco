@@ -17,9 +17,10 @@ export class MiddlewareTgBotService {
     private readonly userrepo: repo.UserRepository,
     store: repo.TgBotSessionsStoreRepository,
   ) {
-    bot.use(session({ store }))
-
     bot.use((ctx, next) => this.errorHandler(ctx, next))
+
+    bot.use(session({ store }))
+    
     bot.use((ctx, next) => this.assertUserAuthorized(ctx, next))
     bot.use((ctx, next) => this.initSession(ctx, next))
   }
