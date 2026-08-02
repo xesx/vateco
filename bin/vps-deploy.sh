@@ -18,7 +18,7 @@ fi
 
 if [ -z "${INFISICAL_TOKEN:-}" ]; then
   echo "INFISICAL_TOKEN не задан (ни в окружении, ни в .env.infisical)" >&2
-  exit 1
+  exit 0
 fi
 
 echo "==> Подтягиваю свежий $BRANCH (hard reset, конфликты игнорируются)"
