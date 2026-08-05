@@ -7,13 +7,16 @@ import * as lib from '@lib'
 import * as synth from '@synth'
 
 import { TAppBaseTgBotContext } from './types'
+import { AppBaseTgBotService } from './app-base-tg-bot.service'
 
 @Injectable()
 export class HandlerCommandTgBotService {
   constructor(
     @InjectBot() private readonly bot: Telegraf<TAppBaseTgBotContext>,
+
+    private readonly tgbotsrv: AppBaseTgBotService,
+
     private readonly tgbotlib: lib.TgBotLibService,
-    private readonly rndimg: lib.RandomImageLibService,
     // private readonly wflib: lib.WorkflowLibService,
     // private readonly msglib: lib.MessageLibService,
 
@@ -38,10 +41,6 @@ export class HandlerCommandTgBotService {
   }
 
   async commandImg (ctx) {
-    const res = await this.rndimg.getRandomImage()
-
-    const keyboard = this.tgbotlib.generateImageKeyboard([[`🔄`, 'img:edit:random']])
-
-    await this.tgbotlib.sendPhotoV2({ ctx, photo: res.content, extra: keyboard })
+    await this.tgbotsrv.importRandomImage(ctx)
   }
 }

@@ -50,6 +50,7 @@ export class AppBaseTgBotService {
     private readonly msglib: lib.MessageLibService,
     private readonly civitailib: lib.CivitaiLibService,
     private readonly runpodlib: lib.RunpodLibService,
+    private readonly rndimglib: lib.RandomImageLibService,
     private readonly h: lib.HelperLibService,
 
     private readonly modelrepo: repo.ModelRepository,
@@ -187,6 +188,11 @@ export class AppBaseTgBotService {
         if (['seed', 'noise_seed'].includes(name) && wfvParams.seedType === 'random') {
           wfvParams[paramName] = this.wflib.generateSeed()
         }
+
+        if (paramName.startsWith('LoadImage:image') && value === 'random') {
+          const message = await this.importRandomImage(ctx)
+          wfvParams[paramName] = this.tgbotlib.getImageFileIdFromMessage({ message })
+        }
       }
 
       await this.cloudapilib.vastAiWorkflowRun({
@@ -257,6 +263,11 @@ export class AppBaseTgBotService {
         if (['seed', 'noise_seed'].includes(name) && wfvParams.seedType === 'random') {
           wfvParams[paramName] = this.wflib.generateSeed()
           meta[paramName] = wfvParams[paramName]
+        }
+
+        if (paramName.startsWith('LoadImage:image') && value === 'random') {
+          const message = await this.importRandomImage(ctx)
+          wfvParams[paramName] = this.tgbotlib.getImageFileIdFromMessage({ message })
         }
 
         if (paramName.startsWith('Save Text File:path:')) {
@@ -633,5 +644,15 @@ export class AppBaseTgBotService {
     })
 
     await this.tgbotlib.safeAnswerCallback(ctx)
+  }
+
+  async importRandomImage (ctx) {
+    const res = await this.rndimglib.getRandomImage()
+
+    const keyboard = this.tgbotlib.generateImageKeyboard([[`🔄`, 'img:edit:random']])
+
+    const message = await this.tgbotlib.sendPhotoV2({ ctx, photo: res.content, extra: keyboard })
+
+    return message
   }
 }

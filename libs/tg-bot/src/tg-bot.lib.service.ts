@@ -119,7 +119,7 @@ export class TgBotLibService {
     }
   }
 
-  async sendPhotoV2 ({ ctx, chatId, photo, caption, extra = {} }: { ctx?: any, chatId?: string, photo: string | Buffer, caption?: string, extra?: any }): Promise<void> {
+  async sendPhotoV2 ({ ctx, chatId, photo, caption, extra = {} }: { ctx?: any, chatId?: string, photo: string | Buffer, caption?: string, extra?: any }): Promise<any> {
     extra = { parse_mode: 'HTML', caption, ...extra }
 
     // @ts-expect-error todo
@@ -134,9 +134,9 @@ export class TgBotLibService {
 
     // await ctx.telegram.sendPhoto(chatId, fileId);
     if (ctx) {
-      await ctx.sendPhoto(photoForSend, extra)
+      return await ctx.sendPhoto(photoForSend, extra)
     } else if (chatId) {
-      await this.bot.telegram.sendPhoto(chatId, photoForSend, extra)
+      return await this.bot.telegram.sendPhoto(chatId, photoForSend, extra)
     } else {
       throw new Error('Either ctx or chatId must be provided')
     }
