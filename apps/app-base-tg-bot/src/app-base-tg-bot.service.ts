@@ -174,6 +174,7 @@ export class AppBaseTgBotService {
     const chatId = telegramId
 
     const count = wfvParams.generationNumber || 1
+    let randomImage = false
 
     for (let i = 0; i < count; i++) {
       for (const paramName in wfvParams) {
@@ -189,7 +190,9 @@ export class AppBaseTgBotService {
           wfvParams[paramName] = this.wflib.generateSeed()
         }
 
-        if (paramName.startsWith('LoadImage:image') && value === 'random') {
+        if (paramName.startsWith('LoadImage:image') && (value === 'random' || randomImage)) {
+          randomImage = true
+
           const message = await this.importRandomImage(ctx)
           wfvParams[paramName] = this.tgbotlib.getImageFileIdFromMessage({ message })
         }
@@ -248,6 +251,8 @@ export class AppBaseTgBotService {
     const userParams = await this.wfrepo.getWorkflowVariantUserParamsMap({ userId, workflowVariantId })
     const wfvRunParamsId = await this.runrepo.createWorkflowVariantRunParams({ params: userParams })
 
+    let randomImage = false
+
     for (let i = 0; i < count; i++) {
       const meta = { runpodEndpoint, chatId: telegramId }
 
@@ -265,7 +270,9 @@ export class AppBaseTgBotService {
           meta[paramName] = wfvParams[paramName]
         }
 
-        if (paramName.startsWith('LoadImage:image') && value === 'random') {
+        if (paramName.startsWith('LoadImage:image') && (value === 'random' || randomImage)) {
+          randomImage = true
+
           const message = await this.importRandomImage(ctx)
           wfvParams[paramName] = this.tgbotlib.getImageFileIdFromMessage({ message })
         }
