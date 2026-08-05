@@ -198,15 +198,15 @@ export class AppBaseTgBotService {
         }
       }
 
-      // await this.cloudapilib.vastAiWorkflowRun({
-      //   baseUrl,
-      //   instanceId,
-      //   token,
-      //   workflowTemplateId,
-      //   wfvParams,
-      //   models,
-      //   chatId,
-      // })
+      await this.cloudapilib.vastAiWorkflowRun({
+        baseUrl,
+        instanceId,
+        token,
+        workflowTemplateId,
+        wfvParams,
+        models,
+        chatId,
+      })
     }
 
     await this.tgbotlib.safeAnswerCallback(ctx)
