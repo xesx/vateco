@@ -81,6 +81,7 @@ model WorkflowVariantParams {
   enum              Json?    @map("enum")
   positionX         Int?     @map("position_x")
   positionY         Int?     @map("position_y")
+  group             String?  @map("group")
 
   workflowVariant WorkflowVariants @relation(fields: [workflowVariantId], references: [id])
 

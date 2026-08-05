@@ -41,7 +41,17 @@ export class WorkflowViewSynthService {
 
   async showWfvRunMenu ({ ctx, chatId, userId, workflowVariantId, prefixAction = '', backAction }: { ctx?: any; chatId?: string; userId: number; workflowVariantId: number; prefixAction?: string; backAction: string }) {
     const workflowVariant = await this.wfrepo.getWorkflowVariant(workflowVariantId)
-    const wfvParams = await this.wfrepo.getWorkflowMergedWorkflowVariantParams({ userId, workflowVariantId })
+    let wfvParams = await this.wfrepo.getWorkflowMergedWorkflowVariantParams({ userId, workflowVariantId })
+
+    const groupParams = wfvParams.filter(i => i.paramName.startsWith('group'))
+
+    for (const groupParam of groupParams) {
+      const [, group, prop] = groupParam.paramName.split(':')
+
+      if (prop === 'visible' && groupParam.value === false) {
+        wfvParams = wfvParams.filter(i => i.group !== group)
+      }
+    }
 
     const message = this.msglib.genCodeMessage(`Workflow ${workflowVariant.name}:\n-----------------------------------`)
     const keyboard = this.tgbotlib.generateInlineKeyboard(kb.workflowRunMenu({
