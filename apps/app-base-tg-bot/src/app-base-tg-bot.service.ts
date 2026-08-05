@@ -381,11 +381,7 @@ export class AppBaseTgBotService {
                 extra: { parse_mode: 'HTML', ...keyboard } }
               )
             } else {
-              const keyboard = this.tgbotlib.generateInlineKeyboard([[
-                [`Use it`, 'img-use:wfv-list'],
-                [`ReGen`, `wfv:${wfvId}:set-params:${wfvParamsId}`],
-                ['Delete', 'message:delete']
-              ]])
+              const keyboard = this.tgbotlib.generateImageKeyboard([[`ReGen`, `wfv:${wfvId}:set-params:${wfvParamsId}`]])
 
               await this.tgbotlib.sendPhoto({ chatId, photo: imgBuffer, inlineKeyboard: keyboard.reply_markup })
             }

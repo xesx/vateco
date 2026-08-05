@@ -77,6 +77,17 @@ export class TgBotLibService {
     )
   }
 
+  generateImageKeyboard (extra: [string, string][] = []) {
+    const raw = [[
+      [`▶️`, 'img-use:wfv-list'],
+      ...extra,
+      [`⭐`, 'img:save'],
+      ['🗑️', 'message:delete']
+    ]]
+
+    return this.generateInlineKeyboard(raw as [string, string][][])
+  }
+
   generateReplyKeyboard (options: string[][]){
     return Markup.keyboard(options)
       .resize()   // подгоняет под экран

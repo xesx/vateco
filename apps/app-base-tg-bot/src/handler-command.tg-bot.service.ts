@@ -40,11 +40,7 @@ export class HandlerCommandTgBotService {
   async commandImg (ctx) {
     const res = await this.rndimg.getRandomImage()
 
-    const keyboard = this.tgbotlib.generateInlineKeyboard([[
-      [`Use it`, 'img-use:wfv-list'],
-      [`🔄`, 'img:edit:random'],
-      ['Delete', 'message:delete']
-    ]])
+    const keyboard = this.tgbotlib.generateImageKeyboard([[`🔄`, 'img:edit:random']])
 
     await this.tgbotlib.sendPhotoV2({ ctx, photo: res.content, extra: keyboard })
   }

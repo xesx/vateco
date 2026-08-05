@@ -21,6 +21,7 @@ export class HandlerActionTgBotService {
     private readonly cloudapilib: lib.CloudApiCallLibService,
     private readonly vastlib: lib.VastLibService,
     private readonly msglib: lib.MessageLibService,
+    private readonly fstorelib: lib.FileStorageLibService,
 
     private readonly wfsynth: synth.WorkflowSynthService,
     private readonly offersynth: synth.OfferSynthService,
@@ -68,6 +69,7 @@ export class HandlerActionTgBotService {
     this.bot.action(/^img-use:wfv:([0-9]+)$/, (ctx) => this.imageUseInWfv(ctx))
     this.bot.action(/^img-use:wfvp:([0-9]+)$/, (ctx) => this.imageUseInWfvParam(ctx))
     this.bot.action(/^img:edit:random$/, (ctx) => this.imageEditRandom(ctx))
+    this.bot.action(/^img:save$/, (ctx) => this.imageSave(ctx))
 
     this.bot.action(/^txt-use:wfv-list$/, (ctx) => this.textUseWfvList(ctx))
     this.bot.action(/^txt-use:start$/, (ctx) => this.textUseStart(ctx))
@@ -560,10 +562,7 @@ export class HandlerActionTgBotService {
     const { paramName, currentValue } = await this.wfsynth.param.getWfvUserParamInfo({ userId, wfvParamId })
 
     if (paramName.startsWith('LoadImage:image')) {
-      const keyboard = this.tgbotlib.generateInlineKeyboard([[
-        [`Use it`, 'img-use:wfv-list'],
-        ['Delete', 'message:delete']
-      ]])
+      const keyboard = this.tgbotlib.generateImageKeyboard()
 
       await this.tgbotlib.sendPhotoV2({ ctx, photo: currentValue as string, extra: keyboard })
       return
@@ -785,10 +784,7 @@ export class HandlerActionTgBotService {
   }
 
   async imageUseStart (ctx) {
-    const keyboard = this.tgbotlib.generateInlineKeyboard([[
-      [`Use it`, 'img-use:wfv-list'],
-      ['Delete', 'message:delete']
-    ]])
+    const keyboard = this.tgbotlib.generateImageKeyboard()
 
     await ctx.editMessageCaption('', keyboard)
 
@@ -855,10 +851,7 @@ export class HandlerActionTgBotService {
 
       await this.wfsynth.param.setWfvUserParamValue({ userId, wfvParamId: wfvParam.id, value: fileId })
 
-      const keyboard = this.tgbotlib.generateInlineKeyboard([[
-        [`Use it`, 'img-use:wfv-list'],
-        ['Delete', 'message:delete']
-      ]])
+      const keyboard = this.tgbotlib.generateImageKeyboard()
 
       await ctx.editMessageCaption('', keyboard)
 
@@ -893,10 +886,7 @@ export class HandlerActionTgBotService {
 
     await this.wfsynth.param.setWfvUserParamValue({ userId, wfvParamId, value: fileId })
 
-    const keyboard = this.tgbotlib.generateInlineKeyboard([[
-      [`Use it`, 'img-use:wfv-list'],
-      ['Delete', 'message:delete']
-    ]])
+    const keyboard = this.tgbotlib.generateImageKeyboard()
 
     await ctx.editMessageCaption('', keyboard)
 
@@ -908,11 +898,7 @@ export class HandlerActionTgBotService {
   async imageEditRandom (ctx) {
     const res = await this.rndimg.getRandomImage()
 
-    const keyboard = this.tgbotlib.generateInlineKeyboard([[
-      [`Use it`, 'img-use:wfv-list'],
-      [`🔄`, 'img:edit:random'],
-      ['Delete', 'message:delete']
-    ]])
+    const keyboard = this.tgbotlib.generateImageKeyboard([[`🔄`, 'img:edit:random']])
 
     await ctx.editMessageMedia(
       { type: 'photo', media: { source: res.content, filename: 'image' } },
@@ -920,6 +906,22 @@ export class HandlerActionTgBotService {
     )
 
     // await this.tgbotlib.safeAnswerCallback(ctx)
+  }
+
+  async imageSave (ctx) {
+    const { telegramId } = ctx.session
+    const fileId = this.tgbotlib.getImageFileIdFromMessage({ message: ctx.update?.callback_query?.message })
+
+    if (fileId) {
+      const imageBuffer = await this.tgbotlib.importImageBufferByFileId({ fileId })
+      await this.fstorelib.saveImage(`/save/${telegramId}/${fileId}.jpg`, imageBuffer)
+    } else {
+      console.log('HandlerActionTgBotService_imageSave no fileId found in message')
+      await ctx.reply('No image found in message')
+    }
+
+    await this.tgbotlib.safeAnswerCallback(ctx)
+
   }
 
   async messageDelete (ctx) {

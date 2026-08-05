@@ -143,10 +143,7 @@ export class CheckOutputCronJob {
             extra: { parse_mode: 'HTML', ...keyboard } }
           )
         } else {
-          const keyboard = this.tgbotlib.generateInlineKeyboard([[
-            [`Use it`, 'img-use:wfv-list'],
-            ['Delete', 'message:delete']
-          ]])
+          const keyboard = this.tgbotlib.generateImageKeyboard()
 
           await this.tgbotlib.sendPhoto({ chatId: TG_CHAT_ID, photo: buffer, inlineKeyboard: keyboard.reply_markup })
         }
