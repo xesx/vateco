@@ -198,15 +198,15 @@ export class AppBaseTgBotService {
         }
       }
 
-      await this.cloudapilib.vastAiWorkflowRun({
-        baseUrl,
-        instanceId,
-        token,
-        workflowTemplateId,
-        wfvParams,
-        models,
-        chatId,
-      })
+      // await this.cloudapilib.vastAiWorkflowRun({
+      //   baseUrl,
+      //   instanceId,
+      //   token,
+      //   workflowTemplateId,
+      //   wfvParams,
+      //   models,
+      //   chatId,
+      // })
     }
 
     await this.tgbotlib.safeAnswerCallback(ctx)
@@ -654,12 +654,19 @@ export class AppBaseTgBotService {
   }
 
   async importRandomImage (ctx) {
-    const res = await this.rndimglib.getRandomImage()
+    const attempts = 5
 
-    const keyboard = this.tgbotlib.generateImageKeyboard([[`🔄`, 'img:edit:random']])
+    for (let i = 0; i < attempts; i++) {
+      const res = await this.rndimglib.getRandomImage()
 
-    const message = await this.tgbotlib.sendPhotoV2({ ctx, photo: res.content, extra: keyboard })
+      const keyboard = this.tgbotlib.generateImageKeyboard([[`🔄`, 'img:edit:random']])
 
-    return message
+      try {
+        const message = await this.tgbotlib.sendPhotoV2({ ctx, photo: res.content, extra: keyboard })
+        return message
+      } catch (e) {
+        console.error(e)
+      }
+    }
   }
 }
