@@ -387,11 +387,7 @@ export class AppBaseTgBotService {
             if (metadata?.comments?.[0]?.keyword === 'extra') {
               const text = metadata.comments[0].text
 
-              const keyboard = this.tgbotlib.generateInlineKeyboard([[
-                ['Use it', 'txt-use:wfv-list'],
-                ['Edit', 'txt:edit'],
-                ['Delete', 'message:delete']
-              ]])
+              const keyboard = this.tgbotlib.generateTextKeyboard()
 
               await this.tgbotlib.sendMessageV2({
                 chatId,
@@ -406,11 +402,7 @@ export class AppBaseTgBotService {
           }
 
           for (const textData of texts) {
-            const keyboard = this.tgbotlib.generateInlineKeyboard([[
-              ['Use it', 'txt-use:wfv-list'],
-              ['Edit', 'txt:edit'],
-              ['Delete', 'message:delete']
-            ]])
+            const keyboard = this.tgbotlib.generateTextKeyboard()
 
             await this.tgbotlib.sendMessageV2({
               chatId,

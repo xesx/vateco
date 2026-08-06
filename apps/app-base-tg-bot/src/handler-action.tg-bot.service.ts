@@ -80,6 +80,7 @@ export class HandlerActionTgBotService {
     this.bot.action(/^txt:edit:([0-9]+):([0-9]+):remove$/, (ctx) => this.textEditTagRemove(ctx))
     this.bot.action(/^txt:edit:([0-9]+):([0-9]+):([0-9]+)$/, (ctx) => this.textEditTagPart(ctx))
     this.bot.action(/^txt:edit:([0-9]+):([0-9]+):([0-9]+):remove$/, (ctx) => this.textEditTagPartRemove(ctx))
+    this.bot.action(/^txt:save$/, (ctx) => this.textSave(ctx))
 
     this.bot.action(/^message:delete$/, (ctx) => this.messageDelete(ctx))
   }
@@ -605,11 +606,7 @@ export class HandlerActionTgBotService {
     const originalMessageText = ctx.update.callback_query.message.text.trim()
     const message = this.msglib.genMessageForCopy(originalMessageText)
 
-    const keyboard = this.tgbotlib.generateInlineKeyboard([[
-      ['Use it', 'txt-use:wfv-list'],
-      ['Edit', 'txt:edit'],
-      ['Delete', 'message:delete']
-    ]])
+    const keyboard = this.tgbotlib.generateTextKeyboard()
 
     await ctx.editMessageText(message, { parse_mode: 'HTML', ...keyboard })
     await this.tgbotlib.safeAnswerCallback(ctx)
@@ -771,11 +768,7 @@ export class HandlerActionTgBotService {
 
     const message = this.msglib.genMessageForCopy(originalMessageText)
 
-    const keyboard = this.tgbotlib.generateInlineKeyboard([[
-      ['Use it', 'txt-use:wfv-list'],
-      ['Edit', 'txt:edit'],
-      ['Delete', 'message:delete']
-    ]])
+    const keyboard = this.tgbotlib.generateTextKeyboard()
 
     await ctx.editMessageText(message, { parse_mode: 'HTML', ...keyboard })
 
@@ -924,8 +917,36 @@ export class HandlerActionTgBotService {
 
   }
 
+  async textSave (ctx) {
+    const { telegramId } = ctx.session
+    const message = ctx.update?.callback_query?.message
+    const text = message?.text?.trim()
+    const date = message?.date
+
+    if (text) {
+      const hash = this.generateShortHash(text)
+      await this.fstorelib.saveText(`/save/${telegramId}/${date}_${hash}.txt`, text)
+    } else {
+      console.log('HandlerActionTgBotService_textSave no text found in message')
+      await ctx.reply('No text found in message')
+    }
+
+    await this.tgbotlib.safeAnswerCallback(ctx)
+
+  }
+
   async messageDelete (ctx) {
     const messageId = ctx.update?.callback_query?.message?.message_id
     await ctx.deleteMessage(messageId)
+  }
+
+  private generateShortHash (text: string): string {
+    let hash = 5381
+
+    for (let i = 0; i < text.length; i++) {
+      hash = ((hash << 5) + hash + text.charCodeAt(i)) | 0 // hash * 33 + char
+    }
+
+    return (hash >>> 0).toString(36)
   }
 }

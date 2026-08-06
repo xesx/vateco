@@ -88,6 +88,18 @@ export class TgBotLibService {
     return this.generateInlineKeyboard(raw as [string, string][][])
   }
 
+  generateTextKeyboard (extra: [string, string][] = []) {
+    const raw = [[
+      [`▶️`, 'txt-use:wfv-list'],
+      ['✏️', 'txt:edit'],
+      ...extra,
+      [`⭐`, 'txt:save'],
+      ['🗑️', 'message:delete']
+    ]]
+
+    return this.generateInlineKeyboard(raw as [string, string][][])
+  }
+
   generateReplyKeyboard (options: string[][]){
     return Markup.keyboard(options)
       .resize()   // подгоняет под экран

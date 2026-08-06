@@ -70,11 +70,7 @@ export class CheckOutputCronJob {
       l.log(`CheckOutputCronJob_handleCheckOutputJob_45 Sending text file ${txt} to Telegram chat ${TG_CHAT_ID}`)
 
       try {
-        const keyboard = this.tgbotlib.generateInlineKeyboard([[
-          ['Use it', 'txt-use:wfv-list'],
-          ['Edit', 'txt:edit'],
-          ['Delete', 'message:delete']
-        ]])
+        const keyboard = this.tgbotlib.generateTextKeyboard()
 
         const message = this.msglib.genMessageForCopy(buffer.toString('utf-8'))
         await this.tgbotlib.sendMessageV2({
@@ -131,11 +127,7 @@ export class CheckOutputCronJob {
         if (metadata?.comments?.[0]?.keyword === 'extra') {
           const text = metadata.comments[0].text
 
-          const keyboard = this.tgbotlib.generateInlineKeyboard([[
-            ['Use it', 'txt-use:wfv-list'],
-            ['Edit', 'txt:edit'],
-            ['Delete', 'message:delete']
-          ]])
+          const keyboard = this.tgbotlib.generateTextKeyboard()
 
           await this.tgbotlib.sendMessageV2({
             chatId: TG_CHAT_ID,

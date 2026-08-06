@@ -161,11 +161,7 @@ export class WorkflowViewSynthService {
     const positivePromptParam = await this.wfrepo.getWorkflowVariantParamByLabel({ workflowVariantId, label: 'prompt' })
     const positivePromptUserParam = await this.wfrepo.findWorkflowVariantUserParam({ userId, workflowVariantId, paramName: positivePromptParam.paramName })
 
-    const keyboard = this.tgbotlib.generateInlineKeyboard([[
-      ['Use it', 'txt-use:wfv-list'],
-      ['Edit', 'txt:edit'],
-      ['Delete', 'message:delete']
-    ]])
+    const keyboard = this.tgbotlib.generateTextKeyboard()
 
     if (positivePromptUserParam) {
       const message = this.msglib.genMessageForCopy(positivePromptUserParam.value as string)
