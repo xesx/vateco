@@ -903,11 +903,15 @@ export class HandlerActionTgBotService {
 
   async imageSave (ctx) {
     const { telegramId } = ctx.session
-    const fileId = this.tgbotlib.getImageFileIdFromMessage({ message: ctx.update?.callback_query?.message })
+    const message = ctx.update?.callback_query?.message
+    const date = message?.date
+
+    const fileId = this.tgbotlib.getImageFileIdFromMessage({ message })
 
     if (fileId) {
       const imageBuffer = await this.tgbotlib.importImageBufferByFileId({ fileId })
-      await this.fstorelib.saveImage(`/save/${telegramId}/${fileId}.jpg`, imageBuffer)
+      const hash = this.generateShortHash(fileId)
+      await this.fstorelib.saveImage(`/save/${telegramId}/${date}_${hash}.jpg`, imageBuffer)
     } else {
       console.log('HandlerActionTgBotService_imageSave no fileId found in message')
       await ctx.reply('No image found in message')
