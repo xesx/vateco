@@ -143,8 +143,12 @@ export class WorkflowLibService {
      * Найти реальный источник для ссылки [nodeId, outputIndex],
      * "проходя сквозь" bypass-ноды (в т.ч. цепочки из нескольких).
      * inputName — имя входа у потребителя, помогает выбрать нужный вход.
+     *
+     * Если у bypass-ноды нет входа с точным/синонимичным совпадением имени —
+     * связь не устанавливается (без попыток связать разнотипные входы/выходы),
+     * нода просто исключается из графа, а вход потребителя остаётся без источника.
      */
-    function resolveSource(nodeId, outputIndex, inputName, seen = new Set()) {
+    function resolveSource(nodeId, outputIndex, inputName, seen = new Set()): [string, number] | null {
       const id = String(nodeId)
 
       if (!nodeIdsSet.has(id)) {
@@ -164,28 +168,12 @@ export class WorkflowLibService {
 
       const linked = Object.entries(node.inputs ?? {}).filter(([, v]) => isLink(v))
 
-      if (linked.length === 0) {
-        throw new Error(
-          `byPassNodes: нода ${id} (${node.class_type}) не имеет входов-связей — ` +
-          `её нельзя bypass'нуть, потребители останутся без источника`
-        )
-      }
-
-      // 1) точное/синонимичное совпадение по имени входа потребителя
-      let candidate = linked.find(([name]) => namesMatch(name, inputName))
-
-      // 2) позиционное соответствие: N-й выход -> N-й линкованный вход
-      //    (работает для нод вида LoraLoader: outputs [MODEL, CLIP] <- inputs [model, clip])
-      if (!candidate) candidate = linked[outputIndex]
-
-      // 3) единственный линкованный вход — берём его
-      if (!candidate && linked.length === 1) candidate = linked[0]
+      // точное/синонимичное совпадение по имени входа потребителя
+      const candidate = linked.find(([name]) => namesMatch(name, inputName))
 
       if (!candidate) {
-        throw new Error(
-          `byPassNodes: не удалось сопоставить выход ${outputIndex} ноды ${id} ` +
-          `(${node.class_type}) с её входами [${linked.map(([n]) => n).join(', ')}]`
-        )
+        // нет пары точного совпадения — не пытаемся связать разнотипные входы/выходы
+        return null
       }
 
       const [, [srcId, srcIdx]] = candidate as [string, [string, number]]
@@ -211,7 +199,14 @@ export class WorkflowLibService {
           continue
         }
 
-        node.inputs[inputName] = resolveSource(srcId, srcIdx, inputName)
+        const resolved = resolveSource(srcId, srcIdx, inputName)
+
+        if (resolved) {
+          node.inputs[inputName] = resolved
+        } else {
+          // не удалось найти точное совпадение — просто убираем связь
+          delete node.inputs[inputName]
+        }
       }
     }
 
