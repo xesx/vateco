@@ -23,6 +23,32 @@ export class WorkflowLibService {
     return this.getMetaParam(name) ?? this.getWfNodeParamByFullName(name)
   }
 
+  /**
+   * Получить дефолтное/пустое значение для входа ноды по схеме ComfyUI.
+   * Используется, когда связь с обязательным входом не удалось восстановить
+   * (например, при bypassWfvNodes), чтобы не оставлять required-вход без значения.
+   * Возвращает undefined, если схема не найдена или дефолт подобрать нельзя.
+   */
+  getDefaultParamValue (classType: string, paramName: string): any {
+    let schema: any
+
+    try {
+      schema = this.getWfNodeParamByFullName(`${classType}:${paramName}`)
+    } catch {
+      return undefined
+    }
+
+    if (!schema) return undefined
+    if (schema.default !== undefined) return schema.default
+    if (Array.isArray(schema.enum) && schema.enum.length > 0) return schema.enum[0]
+
+    if (schema.type === 'string') return ''
+    if (schema.type === 'integer' || schema.type === 'number') return 0
+    if (schema.type === 'boolean') return false
+
+    return undefined
+  }
+
   getWfNodeParamByFullName (fullName: string): any {
     const [classType, paramName] = fullName.split(':')
     const classInfo = this.getWfNodeClassTypeSchema(classType)
@@ -204,8 +230,15 @@ export class WorkflowLibService {
         if (resolved) {
           node.inputs[inputName] = resolved
         } else {
-          // не удалось найти точное совпадение — просто убираем связь
-          delete node.inputs[inputName]
+          // не удалось найти точное совпадение — убираем связь, но если вход обязательный,
+          // подставляем дефолтное/пустое значение по схеме, чтобы не сломать валидацию ComfyUI
+          const defaultValue = this.getDefaultParamValue(node.class_type, inputName)
+
+          if (defaultValue !== undefined) {
+            node.inputs[inputName] = defaultValue
+          } else {
+            delete node.inputs[inputName]
+          }
         }
       }
     }
