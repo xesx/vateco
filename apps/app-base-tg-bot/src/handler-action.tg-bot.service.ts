@@ -677,7 +677,7 @@ export class HandlerActionTgBotService {
     const userTextEdit = await this.texteditrepo.findById({ id: Number(textEditId) })
     const text = userTextEdit.text
 
-    const textTag = text.split(',')[textTagNumber]
+    const textTag = text.split(/[.,;]/)[textTagNumber]
     const textTagParts = textTag.split(' ')
 
     const keyboard = this.wfsynth.view.generateDefaultKeyboardMenu({
@@ -701,7 +701,7 @@ export class HandlerActionTgBotService {
 
     const userTextEdit = await this.texteditrepo.findById({ id: Number(textEditId) })
 
-    const textTags = userTextEdit.text.split(',')
+    const textTags = userTextEdit.text.split(/[.,;]/)
     textTags.splice(textTagNumber, 1)
 
     await this.texteditrepo.updateText({ id: Number(textEditId), text: textTags.join(',') })
@@ -715,7 +715,7 @@ export class HandlerActionTgBotService {
     const userTextEdit = await this.texteditrepo.findById({ id: Number(textEditId) })
     const text = userTextEdit.text
 
-    const textTag = text.split(',')[textTagNumber]
+    const textTag = text.split(/[.,;]/)[textTagNumber]
     const textTagParts = textTag.split(' ')
     const textTagPart = textTagParts[textTagPartNumber]
 
@@ -740,7 +740,7 @@ export class HandlerActionTgBotService {
 
     const userTextEdit = await this.texteditrepo.findById({ id: Number(textEditId) })
     const text = userTextEdit.text
-    const textTags = text.split(',')
+    const textTags = text.split(/[.,;]/)
     const textTag = textTags[textTagNumber]
 
     const textTagParts = textTag.split(' ')

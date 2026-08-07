@@ -12,6 +12,9 @@ import * as kb from '@kb'
 import * as lib from '@lib'
 import * as synth from '@synth'
 import * as repo from '@repo'
+import { InjectBot } from 'nestjs-telegraf'
+import { Telegraf } from 'telegraf'
+import { TAppBaseTgBotContext } from '../../../app-base-tg-bot/src/types'
 // import { packageDirectorySync } from 'pkg-dir'
 
 // const rootDir = packageDirectorySync()
@@ -20,6 +23,8 @@ import * as repo from '@repo'
 @Injectable()
 export class TestCli {
   constructor(
+    @InjectBot() private readonly bot: Telegraf<TAppBaseTgBotContext>,
+
     private readonly vastlib: lib.VastLibService,
     private readonly comfyuilib: lib.ComfyUiLibService,
     private readonly tgbotlib: lib.TgBotLibService,
@@ -46,13 +51,23 @@ export class TestCli {
       .action(async (name) => {
         console.log(`hello, ${name}!`)
 
-        const wfvJsonRaw = fs.readFileSync('/Users/a.alekhin/Downloads/wfv-QwenVL-i2i-v5-with-two-control-nets.json')
-        const wfv = JSON.parse(wfvJsonRaw)
+        // что видит именно твой чат
+        const chatCmds = await this.bot.telegram.getMyCommands({
+          scope: { type: 'chat', chat_id: '185857068' },
+        })
+        const privateCmds = await this.bot.telegram.getMyCommands({
+          scope: { type: 'all_private_chats' },
+        })
+        const defaultCmds = await this.bot.telegram.getMyCommands()
+        console.log({ chatCmds, privateCmds, defaultCmds })
 
-        const nodeIds = [573, 574, 576, 577, 578, 579]
-        const wfvNewJson = this.wflib.bypassWfvNodes({ wfv, nodeIds })
-        const wfvNewStr = JSON.stringify(wfvNewJson)
-        console.log('\x1b[36m', 'wfvNewStr', wfvNewStr, '\x1b[0m')
+        // const wfvJsonRaw = fs.readFileSync('/Users/a.alekhin/Downloads/wfv-QwenVL-i2i-v5-with-two-control-nets.json')
+        // const wfv = JSON.parse(wfvJsonRaw)
+        //
+        // const nodeIds = [573, 574, 576, 577, 578, 579]
+        // const wfvNewJson = this.wflib.bypassWfvNodes({ wfv, nodeIds })
+        // const wfvNewStr = JSON.stringify(wfvNewJson)
+        // console.log('\x1b[36m', 'wfvNewStr', wfvNewStr, '\x1b[0m')
         // Get directory contents
         // const res = await this.rndimg.getRandomImage()
         // console.log('\x1b[36m', 'res', res, '\x1b[0m')

@@ -27,7 +27,7 @@ export class TextEditSynthService {
     const userTextEdit = await this.texteditrepo.findById({ id: Number(userTextEditId) })
     const { text } = userTextEdit
 
-    const textTags = text.split(',')
+    const textTags = text.split(/[.,;]/)
 
     const keyboard = this.tgbotlib.generateDefaultKeyboardMenu({
       enumArr: textTags.map(tag => ({ label: tag, value: tag })),

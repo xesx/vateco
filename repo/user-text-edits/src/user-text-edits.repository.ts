@@ -98,7 +98,7 @@ export class UserTextEditsRepository {
   }): Promise<void> {
     const userTextEdit = await this.findById({ id })
 
-    const textTags = userTextEdit.text.split(',')
+    const textTags = userTextEdit.text.split(/[.,;]/)
     textTags[tagIndex] = text
 
     await this.updateText({ id, text: textTags.join(',') })
@@ -111,7 +111,7 @@ export class UserTextEditsRepository {
     text: string,
   }): Promise<void> {
     const userTextEdit = await this.findById({ id })
-    const textTags = userTextEdit.text.split(',')
+    const textTags = userTextEdit.text.split(/[.,;]/)
     const textTag = textTags[tagIndex]
 
     const textTagParts = textTag.split(' ')
